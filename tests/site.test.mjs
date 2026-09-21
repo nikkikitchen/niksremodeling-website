@@ -22,7 +22,7 @@ function runtime(page = '') {
 test('approved homepage sections and all local links resolve', () => {
   const html = read('index.html');
   assert.match(html, /Everything You Need to Build a Space You Love\./);
-  assert.match(html, /EVERYTHING UNDER ONE ROOF/);
+  assert.match(html, /EVERYTHING UNDER THE ROOF/);
   for (const file of readdirSync(root).filter(name => name.endsWith('.html'))) {
     for (const match of read(file).matchAll(/(?:href|src)="([^"?]+)(?:\?[^\"]*)?"/g)) {
       const url = match[1];
@@ -42,7 +42,7 @@ test('every category and utility page renders with shared branding', () => {
   for (const page of ['materials', 'supplies', 'tools', 'furniture', 'appliances', 'cabinets', 'installation', 'calculators', 'cart']) {
     const { document } = runtime(page);
     assert.match(document.body.innerHTML, /NIK'S REMODELING/);
-    assert.match(document.body.innerHTML, /EVERYTHING UNDER ONE ROOF/);
+    assert.match(document.body.innerHTML, /EVERYTHING UNDER THE ROOF/);
     assert.ok(document.title.includes("Nik's Remodeling"));
   }
 });
