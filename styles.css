@@ -94,3 +94,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
  .favorite-home .product-category-row{grid-template-columns:repeat(2,1fr)}
  .favorite-home .blueband h2{font-size:39px}
 }
+
+/* Restore the approved brown NR branding on the Favorite homepage. */
+.favorite-home .logo .mark{filter:grayscale(1) sepia(1) saturate(2.4) hue-rotate(338deg) brightness(.62) contrast(1.15)}
+.favorite-home .logo strong{color:#4b2f1f}
+.favorite-home .logo em{color:#8b6548}
