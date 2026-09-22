@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
 const files = ['index.html', 'materials.html', 'supplies.html', 'tools.html',
   'furniture.html', 'appliances.html', 'cabinets.html', 'installation.html',
-  'calculators.html', 'project-cart.html', 'styles.css', 'app.js',
+  'calculators.html', 'project-cart.html', 'styles.css', 'favorite.css', 'app.js',
   'assets/nr-logo.png', 'assets/favorite-stone-arches-hero.jpg', '_headers', '.nojekyll'];
 mkdirSync(new URL('assets/', output), { recursive: true });
 const hashes = {};
