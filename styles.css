@@ -3,4 +3,3 @@
 
 .brand-logo{width:72px;height:auto;max-height:83px;display:block;flex:0 0 72px;object-fit:contain}.logo{min-width:0}.logo>span{min-width:0}
 
-.hero .wrap{position:relative}.hero-logo{position:absolute;top:28px;left:0;width:118px;height:auto;z-index:3;display:block;box-shadow:0 8px 24px rgba(0,0,0,.18);border-radius:4px}.hero .content{padding-top:190px}@media(max-width:620px){.hero-logo{top:20px;left:4vw;width:96px}.hero .content{padding-top:155px}}
