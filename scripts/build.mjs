@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, copyFileSync, cpSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +10,7 @@ const files = ['index.html', 'materials.html', 'supplies.html', 'tools.html',
   'calculators.html', 'project-cart.html', 'styles.css', 'app.js',
   '_headers', '.nojekyll'];
 mkdirSync(output, { recursive: true });
+cpSync(new URL('../assets/', import.meta.url), new URL('assets/', output), { recursive: true });
 const hashes = {};
 for (const file of files) {
   const source = new URL('../' + file, import.meta.url);
