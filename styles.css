@@ -27,3 +27,5 @@
 .project-flow{padding:26px 0;background:#e9f2fa;border-top:1px solid #d5e3ef}.project-flow-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}.project-flow h2{margin:4px 0}.project-flow p{margin:0;color:var(--muted)}.project-flow-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:600px){.project-flow-actions,.project-flow-actions .btn{width:100%;text-align:center}}
 
 .supply-all-offered{margin:24px 0;border:1px solid var(--line);border-radius:12px;padding:16px;background:#f7fafc}.supply-all-offered summary{cursor:pointer;color:var(--blue2);font-weight:800;font-size:18px}.supply-all-offered .supply-guide-grid{margin-top:18px}.supply-select-visible{margin-top:16px}
+
+.products .card[hidden]{display:none}
