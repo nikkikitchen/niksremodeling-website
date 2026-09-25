@@ -29,3 +29,5 @@
 .supply-all-offered{margin:24px 0;border:1px solid var(--line);border-radius:12px;padding:16px;background:#f7fafc}.supply-all-offered summary{cursor:pointer;color:var(--blue2);font-weight:800;font-size:18px}.supply-all-offered .supply-guide-grid{margin-top:18px}.supply-select-visible{margin-top:16px}
 
 .products .card[hidden]{display:none}
+
+.supply-choice{display:flex;flex-direction:column;gap:6px}.supply-choice>label:first-child{display:flex;gap:10px;align-items:flex-start}.supply-qty-label{font-size:13px;color:var(--blue2);font-weight:700;margin-left:28px}.supply-choice input.supply-qty{width:78px;height:auto;min-height:32px;flex:none;padding:5px 7px;margin:0 0 0 5px;border:1px solid var(--line);border-radius:5px;font:inherit}
