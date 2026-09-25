@@ -219,7 +219,13 @@ function calcMaterial(){
    result=`${(Math.ceil(cubicYards*(1+waste)*100)/100).toFixed(2)} cubic yards`;detail=`${cubicYards.toFixed(2)} cu. yd. slab volume + ${Math.round(waste*100)}% allowance`;
   }
   if(!result)throw Error('Choose a material.');
-  const areaName=document.getElementById('material-name').value.trim();materialEstimates.push({type,floorKind:type==='flooring'?document.getElementById('floor-kind').value:undefined,title:`${labels[type]}${areaName?` — ${areaName}`:''}`,result,detail});
+  const areaName=document.getElementById('material-name').value.trim();let measurements={};
+  if(type==='flooring'){const length=materialPositive('floor-length'),width=materialPositive('floor-width');measurements={area:length*width,coverage:length*width*(1+materialNumber('floor-waste')),perimeter:2*(length+width)}}
+  if(type==='paint'){measurements={area:materialPositive('paint-length')*materialPositive('paint-height')-materialNumber('paint-openings'),coverage:materialPositive('paint-coverage'),coats:materialPositive('paint-coats')}}
+  if(type==='lumber'){measurements={length:materialPositive('wood-length'),studs:Math.ceil(materialPositive('wood-length')*12/materialPositive('wood-spacing'))+1}}
+  if(type==='drywall'){measurements={area:materialPositive('dry-length')*materialPositive('dry-height')-materialNumber('dry-openings'),sheets:Math.ceil((materialPositive('dry-length')*materialPositive('dry-height')-materialNumber('dry-openings'))*(1+materialNumber('dry-waste'))/materialPositive('dry-sheet'))}}
+  if(type==='concrete'){measurements={area:materialPositive('concrete-length')*materialPositive('concrete-width'),yards:materialPositive('concrete-length')*materialPositive('concrete-width')*materialPositive('concrete-depth')/12/27,perimeter:2*(materialPositive('concrete-length')+materialPositive('concrete-width'))}}
+  materialEstimates.push({type,floorKind:type==='flooring'?document.getElementById('floor-kind').value:undefined,title:`${labels[type]}${areaName?` — ${areaName}`:''}`,result,detail,measurements});
   if(materialEstimates.length>50)materialEstimates.shift();saveMaterialEstimates();renderMaterialEstimates();
  }catch(e){error.textContent=e.message;error.hidden=false}
 }
@@ -240,12 +246,20 @@ const APPLIANCE_SUPPLY_GUIDE={
 };
 function applianceSupplyGroup(item){const match=PRODUCTS.appliances.find(p=>p.name===item.name);return match&&APPLIANCE_SUPPLY_GUIDE[match.category]?match.category:null}
 const SUPPLY_QUANTITIES_KEY='niks-supply-quantities-v1';
-function supplyStartingQuantity(group,name,estimates){const matching=estimates.filter(item=>estimateSupplyGroup(item)===group);if(!matching.length)return null;let total=0,unit='';for(const item of matching){const amount=Number.parseFloat(item.result);if(!Number.isFinite(amount)||amount<=0)continue;
- if(['tile','floating','glue','nail','flooring'].includes(group)&&(/underlayment|vapor barrier|moisture barrier/i.test(name))){total+=amount;unit='sq. ft.'}
- else if(group==='paint'&&name==='Primer'){const gallons=Number.parseFloat(item.result);total+=Math.max(1,Math.ceil(gallons/2));unit='gallons (one coat estimate)'}
- else if(group==='drywall'&&name==='Drywall screws'){total+=Math.max(1,Math.ceil(amount/5));unit='lb. (planning estimate)'}
- else if(group==='concrete'&&name==='Compactible gravel or crushed stone'){total+=Math.max(1,Math.ceil(amount));unit='cu. yd. (verify base depth)'}
- }return total?{quantity:Math.ceil(total),unit}:null}
+function supplyStartingQuantity(group,name,estimates){const matching=estimates.filter(item=>estimateSupplyGroup(item)===group);if(!matching.length)return null;
+ const rules={
+ tile:{'Compatible tile mortar':[m=>m.coverage/50,'50 lb. bags, 50 sq. ft./bag assumed'],'Grout':[m=>m.coverage/100,'bags, 100 sq. ft./bag assumed'],'Tile spacers or leveling clips':[m=>m.coverage/100,'packs, 100 sq. ft./pack assumed'],'Backer board, screws and alkali-resistant tape or uncoupling membrane':[m=>m.coverage/15,'4 × 4 ft. board equivalents or 15 sq. ft. membrane sections'],'Waterproofing membrane and seam tape':[m=>m.coverage,'sq. ft. coverage, if waterproofing is required']},
+ floating:{'Compatible underlayment':[m=>m.coverage,'sq. ft. coverage'],'Moisture or vapor barrier':[m=>m.coverage,'sq. ft. coverage, if required'],'Underlayment seam tape':[m=>m.coverage/500,'rolls, 500 sq. ft./roll assumed'],'Baseboard or shoe molding':[m=>m.perimeter,'linear ft. perimeter']},
+ glue:{'Manufacturer-approved flooring adhesive':[m=>m.coverage/150,'pails, 150 sq. ft./pail assumed']},
+ nail:{'Approved flooring nails or staples':[m=>m.coverage/200,'boxes, 200 sq. ft./box assumed'],'Specified underlayment or flooring paper':[m=>m.coverage,'sq. ft. coverage'],'Baseboard or shoe molding':[m=>m.perimeter,'linear ft. perimeter']},
+ flooring:{'Subfloor preparation supplies':[m=>m.coverage,'sq. ft. to assess']},
+ paint:{'Primer':[m=>m.area/m.paintCoverage,'gallons, one coat at entered coverage'],'Patching compound or spackle':[m=>m.area/500,'containers, one per 500 sq. ft. assumed'],'Sandpaper or sanding screens':[m=>m.area/400,'packs, one per 400 sq. ft. assumed'],"Painter’s tape and masking film":[m=>m.area/400,'rolls, one per 400 sq. ft. assumed'],'Drop cloths':[m=>m.area/400,'cloths, one per 400 sq. ft. assumed'],'Brushes, roller covers, frame and tray':[m=>m.area/400,'roller kits, one per 400 sq. ft. assumed']},
+ lumber:{'Framing nails or approved structural screws':[m=>m.studs/100,'boxes, one per 100 studs assumed'],'Treated bottom plate and sill gasket':[m=>m.length,'linear ft. bottom plate, if required']},
+ drywall:{'Drywall screws':[m=>m.sheets/5,'lb., one per 5 sheets assumed'],'Joint tape':[m=>m.sheets/20,'rolls, one per 20 sheets assumed'],'Joint compound':[m=>m.sheets/10,'buckets, one per 10 sheets assumed'],'Sanding supplies and drywall primer':[m=>m.area/350,'gallons primer, 350 sq. ft./gallon assumed']},
+ concrete:{'Compactible gravel or crushed stone':[m=>m.area*4/12/27,'cu. yd. base, 4 in. depth assumed'],'Form boards, stakes and fasteners':[m=>m.perimeter,'linear ft. of form boards'],'Reinforcement and supports':[m=>m.area,'sq. ft. reinforcement area, if specified'],'Vapor barrier and seam tape':[m=>m.area,'sq. ft. coverage, if required'],'Curing compound or curing cover':[m=>m.area/200,'gallons compound, 200 sq. ft./gallon assumed']}
+ };
+ const rule=rules[group]?.[name];if(!rule)return null;let total=0;for(const item of matching){const old=Number.parseFloat(item.result),detail=Number.parseFloat(item.detail),raw=item.measurements||{};const m={coverage:raw.coverage||old,area:raw.area||detail||old,perimeter:raw.perimeter||0,paintCoverage:raw.coverage||350,length:raw.length||Number.parseFloat(item.detail)||0,studs:raw.studs||old,sheets:raw.sheets||old};const value=rule[0](m);if(Number.isFinite(value)&&value>0)total+=value}return total?{quantity:Math.ceil(total),unit:rule[1]}:null}
+
 const SUPPLY_CHECKS_KEY='niks-supply-checks-v1';
 const SUPPLY_GUIDE={
  general:{label:'General Job Supplies',items:[['Floor and surface protection','Protect finishes along work paths.'],['Painter’s tape and masking film','For masking and temporary protection.'],['Drop cloths and plastic sheeting','For dust and surface protection.'],['Construction adhesive','Only where the product assembly calls for it.'],['Caulk and sealant','Match interior, exterior, wet-area or paintable use.'],['Assorted compatible fasteners','Select for the material and substrate.'],['Shims and spacers','For fitting and alignment.'],['Cleaning supplies and trash bags','For worksite cleanup.'],['Safety glasses, gloves and dust protection','Choose for the task and product directions.']]},
