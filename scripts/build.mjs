@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
-const files = ['index.html', 'materials.html', 'supplies.html', 'tools.html',
+const files = ['index.html', 'project.html', 'materials.html', 'supplies.html', 'tools.html',
   'furniture.html', 'appliances.html', 'cabinets.html', 'installation.html',
   'calculators.html', 'project-cart.html', 'styles.css', 'app.js',
   '_headers', '.nojekyll'];
