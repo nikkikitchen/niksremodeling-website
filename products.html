@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Nik's Remodeling tools and power accessories catalog"><title>Tools & Power Accessories | Nik's Remodeling</title><link rel="stylesheet" href="/styles.css"><style>
+.catalog-preview-bar{background:#e8f2fb;border-bottom:1px solid #c8dceb;color:#073c70;font-weight:800;padding:11px 0}.catalog-preview-note{border-left:4px solid var(--blue);background:#edf5fb;padding:14px 18px;margin:24px 0;color:var(--ink);line-height:1.55}.catalog-preview-note strong{display:block}.catalog-preview-filter{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}.catalog-preview-filter button{background:#fff;color:var(--blue2);border:1px solid #b8cbdc;border-radius:7px;padding:9px 14px;cursor:pointer;font-weight:700}.catalog-preview-filter button.active{background:var(--blue);color:#fff;border-color:var(--blue)}.catalog-preview-filter input{border:1px solid var(--line);border-radius:7px;padding:10px 12px;min-width:220px;flex:1}.catalog-preview-count{color:var(--muted);font-size:14px}.catalog-preview-photo{height:210px;background:#edf2f6;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;color:#687480;font-size:13px}.catalog-preview-photo svg{width:47px;height:47px;fill:none;stroke:#8ca5b8;stroke-width:1.6;margin-bottom:10px}.catalog-preview-price{font-weight:900;color:var(--blue2);font-size:20px;margin:10px 0 4px}.catalog-preview-draft{font-size:12px;color:var(--muted);margin-bottom:16px}.catalog-preview-products .add-project{margin:6px 0 13px}.catalog-preview-source{color:var(--blue2);text-decoration:underline;font-size:13px;font-weight:800}.catalog-preview-products .card .body{display:flex;flex-direction:column}.catalog-preview-products .card .body .catalog-preview-source{margin-top:auto}.catalog-preview-products .card h3{line-height:1.35}.catalog-preview-products .card{overflow:hidden}.catalog-preview-footer-note{font-size:13px;color:var(--muted);margin-top:28px}
+</style></head><body data-page="catalog-preview"><script src="/app.js"></script><script>
+const raw=`ONEVAN 8000RPM Impact Wrench|3256809556139243
+10" Compound Miter Saw|3256810529773309
+DEWALT DCD887 Brushless Drill|3256810541231471
+Dewalt DCF921 Impact Wrench|3256810575923471
+21V Cordless Drill/Driver Kit|3256812026542301
+SEESII 6' Extended Ratchet Wrench|3256810594327471
+ONEVAN 1200N.M Impact Wrench|3256811594083471
+Dewalt DCD796 Compact Cordless Drill|3256811605471
+SEESII 3/8" 21V Cordless Electric Wrench|3256811609471
+125mm Brushless Electric Angle Grinder|3256810522471
+2026 Makita DTD173 18V Cordless Impact Driver|3256810582471
+Dewalt DCF850 20V Electric Screwdriver|3256810712471
+SEESII Angle Grinder 4 1/2" Cordless Brushless|3256811204471
+Dewalt DCF512 20V Cordless Ratchet Wrench|3256811302471
+DEWALT MAX Cordless Reciprocating Saw|3256811402471
+DEWALT DCD796 20V Brushless Impact Screwdriver|3256811502471
+DEWALT DCF922 20V MAX ATOMIC 1/2" Impact Wrench|3256811602471
+Cordless Brushless Heavy Duty Impact Wrench DEWALT DCF900|3256811607959704
+New 100% Original Dewalt 6000mAh 20V/60V Battery|3256812426041462
+Milwaukee M12 1/2" M18 FUEL Brushless Impact Wrench|3256812910427204
+DEWALT DCF922 20V Compact Impact Wrench|3256811609346956
+Dewalt Brushless Turbo Fan Leaf Blower|3256810344052472
+DEWALT DCD805 20V Power Tools Brushless Impact Drill|3256807290444842
+125MM Brushless Electric Angle Grinder Variable Speed|3256808405558985
+Makita 18V DTD173 Brushless Electric Screwdriver|3256810399172899
+TaskStar 6&8 Inch Brushless Handheld Chain Saw|3256813048358775
+Original Dewalt 60V/20V Battery, 5AH 6AH 9AH|3256812422267975
+125mm Brushless Electric Angle Grinder Combo Kit|3256807434363294
+DeWalt DCF900 High Torque Brushless 20V Impact Wrench|3256810520750308
+DEWALT DCF922B 20V MAX ATOMIC 1/2" Brushless Impact Wrench|3256812923809963
+DeWALT 100% Original Battery 20V/ 6000mAh|3256812287467245
+DEWALT 20V MAX XR Brushless Compact Hammer Drill|3256812462804751
+SEESII 3/8" Cordless Electric Wrench 55Nm|3256812859877105
+TaskStar 12 Inch Brushless Chain Saw Cordless Pruning Saw|3256812897791631
+Original Dewalt 20V Battery, 5AH 6AH Battery|3256812411634616
+New 100% Original Dewalt 9.0Ah 20V/60V Power Tool Battery|3256812420450326
+DeWalt DCF850 20V Brushless Impact Driver, 1/4" Hex 3-Speed|3256812408175337
+Galax Pro 20V Cordless Mini Circular Saw 2.0Ah Compact|3256812867675718
+Mini Electric Drill USB Powered Handheld Rotary Tool|3256812686879380
+SEESII 6-1/2" Cordless Circular Saw 5200 RPM|3256812815736279
+SEESII 6" Handheld Electric Chain Saw Cordless Mini|3256812962384873
+New 100% Original Dewalt 6Ah 20V Power Tool Battery DCB206|3256812519380401`;
+const costs=[111.23,85.44,36.81,49.55,18.22,39.65,70.21,46.91,62.47,27.03,37.50,44.51,51.16,46.12,73.66,61.74,50.41,61.39,24.47,39.37,41.61,29.20,35.75,21.71,44.76,23.68,66.50,55.69,59.25,50.32,17.66,50.23,48.34,48.71,22.08,23.36,38.66,42.99,5.69,96.60,28.55,33.94];
+const items=raw.split('\n').map((row,i)=>{const [name,id]=row.split('|');return {name,id,cost:costs[i],category:/battery/i.test(name)?'Batteries':'Tools'}});
+let currentFilter='all';
+function renderPreview(){const q=document.querySelector('#preview-search').value.trim().toLowerCase();const shown=items.filter(x=>(currentFilter==='all'||x.category===currentFilter)&&x.name.toLowerCase().includes(q));const grid=document.querySelector('#preview-grid');grid.replaceChildren(...shown.map(x=>{const article=document.createElement('article');article.className='card';const photo=document.createElement('div');photo.className='catalog-preview-photo';photo.innerHTML='<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="8" width="38" height="32" rx="3"/><circle cx="19" cy="20" r="4"/><path d="m7 36 11-10 7 6 7-8 10 12"/></svg>Product image pending';const body=document.createElement('div');body.className='body';const badge=document.createElement('div');badge.className='stock neutral';badge.textContent=x.category;const title=document.createElement('h3');title.textContent=x.name;const price=document.createElement('div');price.className='catalog-preview-price';price.textContent='$'+(Math.round(x.cost*1.3*100)/100).toFixed(2);const draft=document.createElement('div');draft.className='catalog-preview-draft';draft.textContent='Estimated price · final quote confirmed';const source=document.createElement('a');source.className='catalog-preview-source';source.href='https://www.aliexpress.us/item/'+x.id+'.html';source.target='_blank';source.rel='noopener noreferrer';source.textContent='Review supplier listing →';const add=document.createElement('button');add.className='add-project';add.type='button';add.textContent='Add to Project Cart';add.addEventListener('click',()=>addItem(x.name));body.append(badge,title,price,draft,add,source);article.append(photo,body);return article}));document.querySelector('#preview-count').textContent=shown.length+' of '+items.length+' unique products';}
+document.addEventListener('DOMContentLoaded',()=>{const p=PAGES.tools;document.body.innerHTML=header()+'<div class="catalog-preview-bar"><div class="wrap">Tools catalog · 42 unique listings · More photos coming soon</div></div><main><section class="category-hero" style="--hero-image:url(\''+p.hero+'\')"><div class="wrap"><div class="eyebrow">Tools &amp; Power Accessories</div><h1>Find the right tools for the job.</h1><h2>Everything under the roof.</h2><p>Browse professional tools and power accessories for your next project.</p></div></section><section class="section alt"><div class="wrap catalog"><aside class="filters"><h3>Browse Products</h3><p>Tools and batteries from Sofia’s AliExpress list.</p><p class="filter-note">Supplier prices, product identity, photos, shipping, and availability are confirmed before an order is accepted.</p></aside><div><div class="catalog-head"><div><h2>Tools &amp; Power Accessories</h2><p class="lead">Browse the draft collection. Final product details will be confirmed before ordering.</p></div></div><div class="catalog-preview-note"><strong>Estimated pricing</strong>These estimates use the currently listed supplier costs plus markup. Final pricing, shipping, availability, and product details are confirmed before an order is accepted. Product photos are being added.</div><div class="catalog-preview-filter"><button class="active" data-filter="all">All products</button><button data-filter="Tools">Tools</button><button data-filter="Batteries">Batteries</button><input id="preview-search" type="search" aria-label="Search products" placeholder="Search products"></div><p class="catalog-preview-count" id="preview-count"></p><div class="products catalog-preview-products" id="preview-grid"></div><p class="catalog-preview-footer-note">Product links open the supplier listing for review. Add items to your Project Cart to request a final quote.</p></div></div></section></main>'+footer();document.querySelector('.brand-logo').outerHTML='<img class="brand-logo" src="/assets/niks-remodeling-logo-approved.png" alt="Nik’s Remodeling NR logo">';document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{currentFilter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderPreview()}));document.querySelector('#preview-search').addEventListener('input',renderPreview);renderPreview();updateCartCount()});
+</script></body></html>
