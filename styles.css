@@ -111,3 +111,6 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 @media(max-width:850px){.shop-guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.shop-guide-grid{grid-template-columns:1fr}.shop-guide-grid article{padding:16px}}
 @media(max-width:900px){.nav .wrap{flex-wrap:nowrap}}
+
+/* Optional services on shopping cards */
+.service-picker{display:flex;flex-wrap:wrap;align-items:end;gap:.5rem;margin-top:.75rem;padding-top:.7rem;border-top:1px solid #e7e1d9}.service-picker label{display:grid;gap:.3rem;flex:1 1 160px;font-size:.85rem}.service-picker select{width:100%;min-height:2.5rem;padding:.4rem;border:1px solid #bdb3a7;border-radius:.35rem;background:#fff;color:inherit}.service-picker .btn{min-height:2.5rem;padding:.45rem .75rem;white-space:nowrap}
