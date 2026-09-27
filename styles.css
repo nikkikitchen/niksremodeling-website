@@ -97,3 +97,17 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .nav-menu.open .nav-dropdown{display:block}
 @media(hover:hover){.nav-menu:hover .nav-dropdown{display:block}}
 @media(max-width:900px){.nav .wrap{overflow-x:auto;overflow-y:visible;flex-wrap:nowrap}.nav-menu .nav-dropdown{position:fixed;top:auto;left:12px;right:12px;min-width:0;max-height:60vh}}
+
+.nav .wrap{flex-wrap:wrap;gap:8px 16px}
+.category-tabs a{border:1px solid var(--line);background:#fff;border-radius:7px;padding:11px 14px;font-weight:800;white-space:nowrap;color:var(--blue2);text-decoration:none}
+.category-tabs a:hover,.category-tabs a:focus-visible{background:#e8f1fa;border-color:var(--blue)}
+.shop-guide{padding-top:28px}
+.shop-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.shop-guide-grid article{scroll-margin-top:100px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:20px;box-shadow:var(--shadow)}
+.shop-guide-grid article:target{outline:3px solid var(--blue);background:#eef6fc}
+.shop-guide-grid h3{margin:0 0 8px;color:var(--blue2)}
+.shop-guide-grid p{margin:0;color:var(--muted);line-height:1.45}
+.shop-guide-grid a{display:inline-block;margin-top:10px;font-weight:800;color:var(--blue2)}
+@media(max-width:850px){.shop-guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.shop-guide-grid{grid-template-columns:1fr}.shop-guide-grid article{padding:16px}}
+@media(max-width:900px){.nav .wrap{flex-wrap:nowrap}}
