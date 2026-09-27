@@ -50,3 +50,5 @@
 
 /* Homepage product tiles match Shop by Project */
 .product-tile-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.product-tile{min-height:245px;border:1px solid rgba(16,34,49,.12);transition:transform .18s ease,box-shadow .18s ease}.product-tile:hover,.product-tile:focus-visible{transform:translateY(-3px);box-shadow:var(--shadow)}.product-tile:after{background:linear-gradient(180deg,rgba(4,18,31,.03) 25%,rgba(4,18,31,.86) 100%)}.product-tile span{left:20px;right:20px;bottom:19px;font-size:24px;text-shadow:0 1px 3px rgba(0,0,0,.4)}.product-tile small{display:block;margin-top:5px;font-family:Inter,Arial,sans-serif;font-size:14px;line-height:1.35;font-weight:600}@media(max-width:850px){.product-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.product-tile-grid{grid-template-columns:1fr}.product-tile{min-height:225px}}
+
+.card .body > .material-calc-trigger{display:block;width:100%;margin:10px 0 14px;border:1px solid var(--blue);color:var(--blue2);background:#fff;text-align:center}
