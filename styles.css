@@ -68,3 +68,10 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .material-detail-help h3{margin-top:0}
 @media(max-width:850px){.material-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.material-detail-grid{grid-template-columns:1fr}}
+
+.material-detail-grid .material-option-card{padding:0;overflow:hidden}
+.material-option-card .pic{height:190px}
+.material-option-card .body{display:flex;flex-direction:column;min-height:192px}
+.material-option-card .body p{flex:1;margin:0 0 16px}
+.material-option-card .card-actions{display:flex;gap:8px}
+.material-option-card .card-actions .btn,.material-option-card .card-actions button{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-size:14px;line-height:1.2}
