@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
 const files = ['index.html', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
   'furniture.html', 'appliances.html', 'cabinets.html', 'installation.html',
-  'calculators.html', 'project-cart.html', 'styles.css', 'app.js',
+  'calculators.html', 'project-cart.html', 'material-flooring.html', 'material-tile-stone.html', 'material-drywall.html', 'material-lumber.html', 'material-trim-molding.html', 'material-paint-finishes.html', 'material-insulation.html', 'material-roofing.html', 'material-siding-exterior.html', 'material-doors-windows.html', 'material-concrete-masonry.html', 'styles.css', 'app.js',
   '_headers', '.nojekyll'];
 mkdirSync(output, { recursive: true });
 cpSync(new URL('../assets/', import.meta.url), new URL('assets/', output), { recursive: true });
