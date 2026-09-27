@@ -57,3 +57,14 @@
 body[data-page="materials"] .category-tabs{flex-wrap:wrap;overflow:visible}
 .material-category-note{font-size:14px;color:var(--muted);padding-bottom:12px}
 .material-category-note a{color:var(--blue2);font-weight:800}
+
+body[data-page="materials"] .category-tabs a{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;border-radius:7px;padding:11px 14px;font-weight:800;white-space:nowrap;color:var(--blue2);text-decoration:none}
+body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .category-tabs a:focus-visible{background:#e8f1fa;border-color:var(--blue)}
+.material-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:26px 0 34px}
+.material-detail-grid article{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px;box-shadow:var(--shadow)}
+.material-detail-grid h3{margin:0 0 9px;color:var(--blue2);font-size:20px}
+.material-detail-grid p{margin:0;color:var(--muted);line-height:1.5}
+.material-detail-help{background:var(--soft);border-radius:12px;padding:28px}
+.material-detail-help h3{margin-top:0}
+@media(max-width:850px){.material-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.material-detail-grid{grid-template-columns:1fr}}
