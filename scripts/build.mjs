@@ -11,14 +11,19 @@ const files = ['index.html', 'project.html', 'materials.html', 'supplies.html', 
   '_headers', '.nojekyll'];
 mkdirSync(output, { recursive: true });
 cpSync(new URL('../assets/', import.meta.url), new URL('assets/', output), { recursive: true });
+const commit = process.env.CF_PAGES_COMMIT_SHA ||
+  execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
 const hashes = {};
 for (const file of files) {
   const source = new URL('../' + file, import.meta.url);
-  copyFileSync(source, new URL(file, output));
-  hashes[file] = createHash('sha256').update(readFileSync(source)).digest('hex');
+  const target = new URL(file, output);
+  copyFileSync(source, target);
+  if (file.endsWith('.html')) {
+    const html = readFileSync(target, 'utf8').replace(/\/(app\.js|styles\.css)\?v=[^"']+/g, (_, asset) => '/' + asset + '?v=' + commit.slice(0, 12));
+    writeFileSync(target, html);
+  }
+  hashes[file] = createHash('sha256').update(readFileSync(target)).digest('hex');
 }
-const commit = process.env.CF_PAGES_COMMIT_SHA ||
-  execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
 writeFileSync(new URL('release.json', output), JSON.stringify({
   commit, restoredSiteSource: '9ad1084', files: hashes
 }, null, 2) + '\n');
