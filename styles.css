@@ -126,3 +126,5 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .service-picker .service-dropdown{flex:1 1 100%;width:100%}.service-picker .service-dropdown-options{position:static;box-shadow:none;border-top:0;border-radius:0 0 .35rem .35rem}.service-picker .service-dropdown[open] summary{border-radius:.35rem .35rem 0 0}.service-picker .service-dropdown + .service-add{width:100%}
 
 .flooring-choice-card .pic{height:125px}.flooring-choice-card .pic img{height:100%;width:100%;object-fit:cover}.flooring-choice-card .body{padding:12px}.flooring-choice-card h3{margin:0 0 9px;font-size:1.05rem}.flooring-choice-card .btn{padding:.45rem .65rem;font-size:.85rem;min-height:2.35rem}
+
+.shop-guide-grid .shop-guide-card{display:block;height:100%;margin:0;color:inherit;text-decoration:none}.shop-guide-grid .shop-guide-card:hover h3,.shop-guide-grid .shop-guide-card:focus-visible h3{color:var(--blue)}.shop-guide-grid article:has(.shop-guide-card):hover{box-shadow:0 8px 22px rgba(20,35,50,.14)}.shop-guide-grid .shop-guide-card:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
