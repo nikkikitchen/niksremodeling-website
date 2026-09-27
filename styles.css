@@ -75,3 +75,13 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .material-option-card .body p{flex:1;margin:0 0 16px}
 .material-option-card .card-actions{display:flex;gap:8px}
 .material-option-card .card-actions .btn,.material-option-card .card-actions button{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-size:14px;line-height:1.2}
+
+/* Compact material choice cards */
+.material-detail-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.material-option-card .pic{height:140px}
+.material-option-card .body{min-height:150px;padding:12px}
+.material-option-card .body h3{font-size:16px;margin:0 0 6px}
+.material-option-card .body p{font-size:12px;line-height:1.35;margin:0 0 10px}
+.material-option-card .card-actions .btn,.material-option-card .card-actions button{font-size:12px;padding:8px 5px;min-height:36px}
+@media(max-width:850px){.material-detail-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.material-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.material-option-card .pic{height:110px}.material-option-card .body{min-height:155px}}
