@@ -85,3 +85,14 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .material-option-card .card-actions .btn,.material-option-card .card-actions button{font-size:12px;padding:8px 5px;min-height:36px}
 @media(max-width:850px){.material-detail-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.material-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.material-option-card .pic{height:110px}.material-option-card .body{min-height:155px}}
+
+/* Project and materials navigation menus */
+.nav .wrap{overflow:visible}
+.nav-menu{position:relative;display:flex;align-items:center;flex:0 0 auto}
+.nav-menu .nav-main{padding-right:3px}
+.nav-toggle{border:0;background:transparent;color:var(--blue2);font-size:17px;padding:10px 7px;cursor:pointer;line-height:1}
+.nav-dropdown{display:none;position:absolute;top:100%;left:0;min-width:235px;max-height:min(65vh,560px);overflow-y:auto;background:#fff;border:1px solid var(--line);border-radius:0 0 10px 10px;box-shadow:var(--shadow);padding:8px;z-index:40}
+.nav-dropdown a{display:block;padding:9px 12px;white-space:normal;border-radius:6px;font-size:13px}
+.nav-dropdown a:hover,.nav-dropdown a:focus-visible{background:#e8f1fa;color:var(--blue2)}
+.nav-menu:hover .nav-dropdown,.nav-menu:focus-within .nav-dropdown,.nav-menu.open .nav-dropdown{display:block}
+@media(max-width:900px){.nav .wrap{overflow-x:auto;overflow-y:visible;flex-wrap:nowrap}.nav-menu .nav-dropdown{position:fixed;top:auto;left:12px;right:12px;min-width:0;max-height:60vh}}
