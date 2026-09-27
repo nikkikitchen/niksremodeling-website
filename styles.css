@@ -53,3 +53,7 @@
 
 .card .card-actions > button{flex:1 1 0;min-width:0;border:1px solid var(--blue)}
 .card .card-actions .material-calc-trigger{color:var(--blue2);background:#fff}
+
+body[data-page="materials"] .category-tabs{flex-wrap:wrap;overflow:visible}
+.material-category-note{font-size:14px;color:var(--muted);padding-bottom:12px}
+.material-category-note a{color:var(--blue2);font-weight:800}
