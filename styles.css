@@ -183,3 +183,8 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
  .nav .wrap{overflow-x:auto}
  .nav-menu .nav-dropdown{position:fixed;top:auto;left:12px;right:12px;min-width:0;max-height:60vh}
 }
+
+/* Separate the main banner actions from shopping categories */
+.nav .wrap>a[href="/"],
+.nav .wrap>a[href="/calculators.html"],
+.nav .wrap>a[href="/installation.html"]{margin-right:0.65em}
