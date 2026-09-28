@@ -134,8 +134,9 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .project-options legend{font-size:1.1rem;margin-bottom:10px}
 .project-options label{display:flex;min-height:48px;gap:10px;padding:12px 14px;border:1px solid #d8e0e7;border-radius:8px;background:#f7fafc;font-weight:650;cursor:pointer}
 .project-options label:has(input:checked){border-color:var(--blue2);background:#edf5fc}
-.project-options label:has(input:disabled){cursor:default}
 .project-options label:has(input[name="project-select-all"]){grid-column:1/-1;background:#e9f0f7}
 .project-options input{flex:none;accent-color:var(--blue2)}
 .project-options-note{margin-bottom:18px}
 @media(max-width:600px){.project-options{grid-template-columns:1fr}}
+
+.no-materials > .field:has(#material-type),.no-materials > .material-fields,.no-materials > #exact-product-fields{display:none}
