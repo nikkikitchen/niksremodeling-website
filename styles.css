@@ -167,3 +167,5 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 @media(max-width:600px){.room-questions{padding:12px}.project-summary-actions>.btn{width:100%}.guided-planner .material-result{flex-wrap:wrap}}
 
 .floor-kind-field[hidden],.no-materials>.floor-kind-field{display:none}
+
+.nav-dropdown .nav-group-label{display:block;padding:10px 16px 5px;border-top:1px solid var(--line);margin-top:5px;font-weight:700;color:var(--blue2)}
