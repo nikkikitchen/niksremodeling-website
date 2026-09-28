@@ -242,7 +242,6 @@
         const room=item.roomName||item.title;
         const add=(name,type)=>cart.push({name:room+': '+name,type,qty:1,source:'project-calculator',roomId:item.roomId});
         if(item.type!=='plan')add(item.result+' — '+item.title,'Material estimate');
-        (item.suggestedSupplies||[]).filter(x=>x.selected).forEach(x=>add(x.name+' — quantity to confirm','Supply request'));
         (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>add(x.service+' — '+x.quantity+' '+x.unit,'Labor'));
         if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
         if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
