@@ -188,3 +188,10 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .nav .wrap>a[href="/"],
 .nav .wrap>a[href="/calculators.html"],
 .nav .wrap>a[href="/installation.html"]{margin-right:0.65em}
+
+/* Shop-by categories form one visual group between standalone actions. */
+.nav .nav-shop-group{display:flex;align-items:center;gap:8px;flex:0 0 auto;background:#f0f5fa;border-radius:6px;padding:0 10px;margin:4px 0}
+.nav .nav-shop-group>a{font-size:13px}
+.nav .nav-shop-group .nav-shop-label{margin-right:0.35em!important;color:var(--blue2)}
+.nav .nav-shop-group>a,.nav .nav-shop-group .nav-main{padding-top:10px;padding-bottom:10px}
+.nav .wrap>a[href="/calculators.html"]{margin-right:0}
