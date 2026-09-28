@@ -9,7 +9,6 @@
     const legend = labor.querySelector('legend');
     if (legend) legend.textContent = 'What do you need for this project?';
 
-    const existing = [...labor.querySelectorAll('label')];
     const makeBox = (label, name = 'project-option', value = label) => {
       const el = document.createElement('label');
       const box = document.createElement('input');
@@ -23,13 +22,17 @@
     labor.prepend(makeBox('Tools'));
     labor.prepend(makeBox('Supplies'));
     labor.prepend(makeBox('Materials'));
-    labor.append(makeBox('Delivery', 'labor-service', 'Delivery'));
+    const materials = labor.querySelector('[value="Materials"]');
+    materials.checked = true;
+    materials.disabled = true;
+    materials.parentElement.append(document.createTextNode(' (measured below)'));
+    labor.append(makeBox('Delivery'));
 
     const selectAll = makeBox('Select All', 'project-select-all', 'all');
     const selectAllBox = selectAll.querySelector('input');
     labor.append(selectAll);
 
-    const choices = () => [...labor.querySelectorAll('input[type="checkbox"]')].filter(box => box !== selectAllBox);
+    const choices = () => [...labor.querySelectorAll('input[type="checkbox"]')].filter(box => box !== selectAllBox && !box.disabled);
     selectAllBox.addEventListener('change', () => choices().forEach(box => { box.checked = selectAllBox.checked; }));
     labor.addEventListener('change', event => {
       if (event.target === selectAllBox) return;
@@ -39,7 +42,7 @@
 
     const note = document.createElement('p');
     note.className = 'calc-note project-options-note';
-    note.textContent = 'Click all that apply. Enter your project measurements below and the Project Calculator will calculate the selected parts of your project.';
+    note.textContent = 'Select what your project needs, then enter measurements. Material quantities are calculated below; supplies, tools, labor and delivery can be added or reviewed separately.';
     labor.insertAdjacentElement('afterend', note);
 
     const form = labor.closest('form') || labor.parentElement;
