@@ -51,8 +51,8 @@
     const selectAllBox = selectAll.querySelector('input');
     const allChoices = () => [...choicesPanel.querySelectorAll('input[type="checkbox"]'), ...deliveryDetails.querySelectorAll('input')].filter(box => box !== selectAllBox);
     const update = () => {
-      panel.classList.toggle('no-materials', !materials.checked);
-      panel.querySelector('button[onclick="calcMaterial()"]').textContent = materials.checked ? 'Add Calculation' : 'Save Project Needs';
+      panel.classList.remove('no-materials');
+      panel.querySelector('button[onclick="calcMaterial()"]').textContent = 'Calculate Quote';
       deliveryDetails.hidden = !delivery.checked;
       if (!delivery.checked) deliveryDetails.querySelectorAll('input').forEach(box => { box.checked = false; });
       const boxes = allChoices();
