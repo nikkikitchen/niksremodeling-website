@@ -229,17 +229,8 @@ function calcMaterial(){
  try{
   const deliveryTypes=selectedDeliveryTypes();
   const materials=document.querySelector('[name="project-option"][value="Materials"]');
-  if(materials&&!materials.checked){
-   const projectOptions=selectedProjectOptions();
-   const chosenServices=[...document.querySelectorAll('[name="labor-service"]:checked')].map(box=>box.value);
-   if(!projectOptions.length&&!chosenServices.length)throw Error('Select at least one project need.');
-   const name=document.getElementById('material-name').value.trim();
-   const labor=chosenServices.map(service=>({service,scope:name||'Project',quantity:1,unit:'project'}));
-   materialEstimates.push({type:'plan',title:name||'Project needs',result:[...projectOptions,...chosenServices].join(', '),detail:'No material quantities calculated.',measurements:{},labor,projectOptions,deliveryTypes});
-   if(materialEstimates.length>50)materialEstimates.shift();saveMaterialEstimates();renderMaterialEstimates();
-   if(window.parent!==window)window.parent.postMessage({type:'material-estimate-saved'},location.origin);
-   return;
-  }
+  const chosenServices=[...document.querySelectorAll('[name="labor-service"]:checked')].map(box=>box.value);
+  if(!materials?.checked && !chosenServices.length)throw Error('Select Installation, Removal, Prep, or another project need.');
   let result='',detail='';
   if(type==='flooring'){
    const area=materialPositive('floor-length')*materialPositive('floor-width'),waste=materialNumber('floor-waste'),needed=area*(1+waste),box=document.getElementById('floor-box').value.trim();
