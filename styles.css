@@ -171,3 +171,15 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .nav-dropdown .nav-group-label{display:block;padding:10px 16px 5px;border-top:1px solid var(--line);margin-top:5px;font-weight:700;color:var(--blue2)}
 
 .topline-cart{display:flex;align-items:center;gap:18px}.topline-cart a{color:#fff;text-decoration:none;font-weight:700}.topline-cart .cart-count,.cart-pill .cart-count{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;padding:0 5px;border-radius:50%;background:#b3262d;color:#fff;font-size:12px;line-height:1}@media(max-width:600px){.topline-cart{gap:8px;font-size:11px}.topline-cart>span{display:none}}
+
+/* Compact, single-line main banner */
+.nav .wrap{flex-wrap:nowrap;gap:clamp(6px,1vw,12px)}
+.nav .wrap>a,.nav-menu .nav-main{font-size:13px}
+.nav .wrap>a,.nav-shop-label{flex:0 0 auto}
+.nav .nav-shop-label{font-size:13px;font-weight:700}
+.nav-menu .nav-main{padding-right:0}
+.nav-toggle{padding-left:3px;padding-right:3px}
+@media(max-width:1100px){
+ .nav .wrap{overflow-x:auto}
+ .nav-menu .nav-dropdown{position:fixed;top:auto;left:12px;right:12px;min-width:0;max-height:60vh}
+}
