@@ -28,10 +28,9 @@
     const debrisChoice = makeBox('Debris Removal', 'project-option', 'Debris Removal');
     debrisChoice.querySelector('input').checked = removalSelected;
     const deliveryChoice = makeBox('Delivery', 'project-option', 'Delivery');
-    const selectAll = makeBox('Select All', 'project-select-all', 'all');
     const misc = makeBox('Miscellaneous labor — $75/hr','labor-hourly','Miscellaneous labor');
     misc.querySelector('input').dataset.hours='1';
-    choicesPanel.replaceChildren(legend, materialsChoice, toolsChoice, debrisChoice, deliveryChoice, installation, misc, selectAll);
+    choicesPanel.replaceChildren(legend, materialsChoice, toolsChoice, debrisChoice, deliveryChoice, installation, misc);
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
@@ -50,18 +49,13 @@
     panel.insertBefore(choicesPanel, firstField);
     choicesPanel.insertAdjacentElement('afterend', deliveryDetails);
     deliveryDetails.insertAdjacentElement('afterend', note);
-    const selectAllBox = selectAll.querySelector('input');
-    const allChoices = () => [...choicesPanel.querySelectorAll('input[type="checkbox"]'), ...deliveryDetails.querySelectorAll('input')].filter(box => box !== selectAllBox);
+    const allChoices = () => [...choicesPanel.querySelectorAll('input[type="checkbox"]'), ...deliveryDetails.querySelectorAll('input')];
     const update = () => {
       panel.classList.remove('no-materials');
       panel.querySelector('button[onclick="calcMaterial()"]').textContent = 'Calculate Quote';
       deliveryDetails.hidden = !delivery.checked;
       if (!delivery.checked) deliveryDetails.querySelectorAll('input').forEach(box => { box.checked = false; });
-      const boxes = allChoices();
-      selectAllBox.checked = boxes.every(box => box.checked);
-      selectAllBox.indeterminate = !selectAllBox.checked && boxes.some(box => box.checked);
     };
-    selectAllBox.addEventListener('change', () => allChoices().forEach(box => { box.checked = selectAllBox.checked; }));
     choicesPanel.addEventListener('change', update);
     deliveryDetails.addEventListener('change', update);
     update();
