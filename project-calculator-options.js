@@ -237,17 +237,27 @@
       panel.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('material-name').focus({preventScroll:true});
     }
     function addProjectToCart() {
-      const cart=getCart().filter(x=>x.source!=='project-calculator');
-      materialEstimates.forEach(item=>{
-        const room=item.roomName||item.title;
-        const add=(name,type)=>cart.push({name:room+': '+name,type,qty:1,source:'project-calculator',roomId:item.roomId});
-        if(item.type!=='plan')add(item.result+' — '+item.title,'Material estimate');
-        (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>add(x.service+' — '+x.quantity+' '+x.unit,'Labor'));
-        if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
-        if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
-        if(item.projectOptions?.includes('Delivery'))(item.deliveryTypes?.length?item.deliveryTypes:['Delivery']).forEach(x=>add(x,'Service'));
-      });
-      saveCart(cart);document.getElementById('project-cart-status').textContent='Project added. Review your cart when you’re ready.';
+      const status=document.getElementById('project-cart-status');
+      try {
+        const cart=getCart().filter(x=>x.source!=='project-calculator');
+        materialEstimates.filter(Boolean).forEach(item=>{
+          const room=item.roomName||item.title||'Project area';
+          const add=(name,type,extra={})=>cart.push({name:room+': '+name,type,qty:1,source:'project-calculator',roomId:item.roomId,...extra});
+          if(item.type!=='plan')add(item.result+' — '+item.title,'Material estimate');
+          (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
+            const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
+            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit+' — $'+quote.amount:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:{}); 
+          });
+          if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
+          if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
+          if(item.projectOptions?.includes('Delivery'))(item.deliveryTypes?.length?item.deliveryTypes:['Delivery']).forEach(x=>add(x,'Service'));
+        });
+        saveCart(cart);
+        if(status)status.textContent='Project added. Review your cart when you’re ready.';
+      } catch(error) {
+        if(status)status.textContent='Could not add the project yet. Please try again.';
+        console.error(error);
+      }
     }
     window.renderMaterialEstimates=function() {
       originalRender();side.hidden=materialEstimates.length===0;
