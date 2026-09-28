@@ -19,7 +19,7 @@ for (const file of files) {
   const target = new URL(file, output);
   copyFileSync(source, target);
   if (file.endsWith('.html')) {
-    const html = readFileSync(target, 'utf8').replace(/\/(app\.js|styles\.css)\?v=[^"']+/g, (_, asset) => '/' + asset + '?v=' + commit.slice(0, 12));
+    const html = readFileSync(target, 'utf8').replace(/\/(app\.js|styles\.css|project-calculator-options\.js)\?v=[^"']+/g, (_, asset) => '/' + asset + '?v=' + commit.slice(0, 12));
     writeFileSync(target, html);
   }
   hashes[file] = createHash('sha256').update(readFileSync(target)).digest('hex');
