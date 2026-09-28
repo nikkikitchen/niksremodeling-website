@@ -29,10 +29,9 @@
     debrisChoice.querySelector('input').checked = removalSelected;
     const deliveryChoice = makeBox('Delivery', 'project-option', 'Delivery');
     const selectAll = makeBox('Select All', 'project-select-all', 'all');
-    const hourlyChoices = [['Furniture moving','Furniture moving',1],['Subfloor damage repair','Subfloor damage repair',2],['Removal / demo','Removal / demo',2],['Jobsite preparation','Jobsite preparation',1]].map(([label,value,hours])=>{const el=makeBox(label,'labor-hourly',value);el.querySelector('input').dataset.hours=hours;return el;});
     const misc = makeBox('Miscellaneous labor — $75/hr','labor-hourly','Miscellaneous labor');
     misc.querySelector('input').dataset.hours='1';
-    choicesPanel.replaceChildren(legend, materialsChoice, toolsChoice, debrisChoice, deliveryChoice, installation, prep, ...hourlyChoices, misc, selectAll);
+    choicesPanel.replaceChildren(legend, materialsChoice, toolsChoice, debrisChoice, deliveryChoice, installation, prep, misc, selectAll);
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
