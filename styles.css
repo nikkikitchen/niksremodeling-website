@@ -128,3 +128,14 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .flooring-choice-card .pic{height:125px}.flooring-choice-card .pic img{height:100%;width:100%;object-fit:cover}.flooring-choice-card .body{padding:12px}.flooring-choice-card h3{margin:0 0 9px;font-size:1.05rem}.flooring-choice-card .btn{padding:.45rem .65rem;font-size:.85rem;min-height:2.35rem}
 
 .shop-guide-grid .shop-guide-card{display:block;height:100%;margin:0;color:inherit;text-decoration:none}.shop-guide-grid .shop-guide-card:hover h3,.shop-guide-grid .shop-guide-card:focus-visible h3{color:var(--blue)}.shop-guide-grid article:has(.shop-guide-card):hover{box-shadow:0 8px 22px rgba(20,35,50,.14)}.shop-guide-grid .shop-guide-card:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+
+/* Project Calculator choices */
+.project-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;border:0;padding:0;margin:18px 0 8px}
+.project-options legend{font-size:1.1rem;margin-bottom:10px}
+.project-options label{display:flex;min-height:48px;gap:10px;padding:12px 14px;border:1px solid #d8e0e7;border-radius:8px;background:#f7fafc;font-weight:650;cursor:pointer}
+.project-options label:has(input:checked){border-color:var(--blue2);background:#edf5fc}
+.project-options label:has(input:disabled){cursor:default}
+.project-options label:has(input[name="project-select-all"]){grid-column:1/-1;background:#e9f0f7}
+.project-options input{flex:none;accent-color:var(--blue2)}
+.project-options-note{margin-bottom:18px}
+@media(max-width:600px){.project-options{grid-template-columns:1fr}}
