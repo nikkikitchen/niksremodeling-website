@@ -229,8 +229,7 @@ function calcMaterial(){
  try{
   const deliveryTypes=selectedDeliveryTypes();
   const materials=document.querySelector('[name="project-option"][value="Materials"]');
-  const chosenServices=[...document.querySelectorAll('[name="labor-service"]:checked')].map(box=>box.value);
-  if(!materials?.checked && !chosenServices.length)throw Error('Select Installation, Removal, Prep, or another project need.');
+  if(!materials?.checked && !document.querySelector('[name="labor-service"]:checked'))throw Error('Select Installation, Removal, Prep, or another project need.');
   let result='',detail='';
   if(type==='flooring'){
    const area=materialPositive('floor-length')*materialPositive('floor-width'),waste=materialNumber('floor-waste'),needed=area*(1+waste),box=document.getElementById('floor-box').value.trim();
