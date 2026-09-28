@@ -24,12 +24,30 @@
       el.append(box, text); return el;
     };
     const materialsChoice = makeBox('Materials / Supplies', 'project-option', 'Materials');
-    const toolsChoice = makeBox('Tools (if needed)', 'project-option', 'Tools');
+    const toolsChoice = makeBox('Tools', 'project-option', 'Tools');
     const debrisChoice = makeBox('Debris Removal', 'project-option', 'Debris Removal');
     debrisChoice.querySelector('input').checked = removalSelected;
     const deliveryChoice = makeBox('Delivery', 'project-option', 'Delivery');
     const misc = makeBox('Miscellaneous labor — $75/hr','labor-hourly','Miscellaneous labor');
-    misc.querySelector('input').dataset.hours='1';
+    const miscBox = misc.querySelector('input');
+    const miscDetails = document.createElement('div');
+    miscDetails.className = 'field';
+    const hoursLabel = document.createElement('label');
+    hoursLabel.htmlFor = 'misc-hours';
+    hoursLabel.textContent = 'Estimated misc. hours';
+    const hoursInput = document.createElement('input');
+    hoursInput.id = 'misc-hours'; hoursInput.type = 'number';
+    hoursInput.min = '0'; hoursInput.step = 'any'; hoursInput.placeholder = 'Enter hours';
+    const miscTotal = document.createElement('p');
+    miscTotal.className = 'calc-note'; miscTotal.setAttribute('aria-live', 'polite');
+    const updateMisc = () => {
+      miscDetails.hidden = !miscBox.checked;
+      hoursInput.disabled = !miscBox.checked;
+      const hours = Number(hoursInput.value);
+      miscTotal.textContent = 'Misc. labor total: ' + ((miscBox.checked && Number.isFinite(hours) && hours > 0 ? hours * 75 : 0).toLocaleString('en-US', {style:'currency', currency:'USD'}));
+    };
+    hoursInput.addEventListener('input', updateMisc);
+    miscDetails.append(hoursLabel, hoursInput, miscTotal);
     choicesPanel.replaceChildren(legend, materialsChoice, toolsChoice, debrisChoice, deliveryChoice, installation, misc);
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
@@ -47,10 +65,12 @@
     note.textContent = 'Choose what you need. Materials / Supplies opens measurements and a suggested supply list. Debris Removal means hauling away project waste.';
     const firstField = panel.querySelector('.field');
     panel.insertBefore(choicesPanel, firstField);
-    choicesPanel.insertAdjacentElement('afterend', deliveryDetails);
+    choicesPanel.insertAdjacentElement('afterend', miscDetails);
+    miscDetails.insertAdjacentElement('afterend', deliveryDetails);
     deliveryDetails.insertAdjacentElement('afterend', note);
     const allChoices = () => [...choicesPanel.querySelectorAll('input[type="checkbox"]'), ...deliveryDetails.querySelectorAll('input')];
     const update = () => {
+      updateMisc();
       panel.classList.remove('no-materials');
       panel.querySelector('button[onclick="calcMaterial()"]').textContent = 'Calculate Quote';
       deliveryDetails.hidden = !delivery.checked;
@@ -225,6 +245,7 @@
       editingId=null;history.replaceState(null,'',location.pathname);
       panel.querySelectorAll('input[type="checkbox"]').forEach(el=>{el.checked=false;el.indeterminate=false});
       document.getElementById('material-name').value='';
+      document.getElementById('misc-hours').value='';
       measurementIds.forEach(id=>{document.getElementById(id).value=''});
       ['exact-brand','exact-model','exact-color','exact-identifier','floor-box'].forEach(id=>{document.getElementById(id).value=''});
       document.getElementById('exact-product-fields').hidden=true;
