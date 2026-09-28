@@ -243,7 +243,7 @@
         materialEstimates.filter(Boolean).forEach(item=>{
           const room=item.roomName||item.title||'Project area';
           const add=(name,type,extra={})=>cart.push({name:room+': '+name,type,qty:1,source:'project-calculator',roomId:item.roomId,...extra});
-          if(item.type!=='plan')add(item.result+' — '+item.title,'Material estimate');
+          if(item.type!=='plan' && item.projectOptions?.includes('Materials'))add(item.result+' — '+item.title,'Material estimate');
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
             add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit+' — $'+quote.amount:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:{}); 
