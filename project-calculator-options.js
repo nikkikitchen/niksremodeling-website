@@ -44,10 +44,13 @@
       miscDetails.hidden = !miscBox.checked;
       hoursInput.disabled = !miscBox.checked;
       const hours = Number(hoursInput.value);
-      miscTotal.textContent = 'Misc. labor total: ' + ((miscBox.checked && Number.isFinite(hours) && hours > 0 ? hours * 75 : 0).toLocaleString('en-US', {style:'currency', currency:'USD'}));
+      miscTotal.textContent = 'Misc. labor subtotal: ' + ((miscBox.checked && Number.isFinite(hours) && hours > 0 ? hours * 75 : 0).toLocaleString('en-US', {style:'currency', currency:'USD'}));
     };
     hoursInput.addEventListener('input', updateMisc);
-    miscDetails.append(hoursLabel, hoursInput, miscTotal);
+    const minimumNote = document.createElement('p');
+    minimumNote.className = 'calc-note';
+    minimumNote.textContent = '$150 minimum per service visit.';
+    miscDetails.append(hoursLabel, hoursInput, miscTotal, minimumNote);
     choicesPanel.replaceChildren(legend, materialsChoice, toolsChoice, debrisChoice, deliveryChoice, installation, misc);
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
@@ -60,14 +63,10 @@
     deliveryDetails.append(deliveryLegend,
       makeBox('Store Pickup & Delivery', 'delivery-type', 'Store Pickup & Delivery', 'We pick up materials, supplies, or tools from a local store and bring them to your jobsite.'),
       makeBox('Furniture & Appliance Delivery', 'delivery-type', 'Furniture & Appliance Delivery', 'Furniture or appliances brought to your home. Setup and installation are quoted separately.'));
-    const note = document.createElement('p');
-    note.className = 'calc-note project-options-note';
-    note.textContent = 'Choose what you need. Materials / Supplies opens measurements and a suggested supply list. Debris Removal means hauling away project waste.';
     const firstField = panel.querySelector('.field');
     panel.insertBefore(choicesPanel, firstField);
     choicesPanel.insertAdjacentElement('afterend', miscDetails);
     miscDetails.insertAdjacentElement('afterend', deliveryDetails);
-    deliveryDetails.insertAdjacentElement('afterend', note);
     const allChoices = () => [...choicesPanel.querySelectorAll('input[type="checkbox"]'), ...deliveryDetails.querySelectorAll('input')];
     const update = () => {
       updateMisc();
@@ -297,6 +296,14 @@
           info.append(checklist);
         }
       });
+      summary.querySelector('.service-estimate')?.remove();
+      const serviceItems=materialEstimates.flatMap(item=>{
+        const labor=(Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).map(x=>({type:'Labor',qty:1,price:flooringLaborEstimate(item,x.service)?.amount??x.price}));
+        if(item.projectOptions?.includes('Debris Removal'))labor.push({type:'Service'});
+        if(item.projectOptions?.includes('Delivery'))labor.push({type:'Service'});
+        return labor;
+      });
+      summary.insertAdjacentHTML('beforeend',serviceEstimateMarkup(serviceItems));
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add Project to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
       another.type=cartButton.type='button';another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';status.id='project-cart-status';status.setAttribute('role','status');
