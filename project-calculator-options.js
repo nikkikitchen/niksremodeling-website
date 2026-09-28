@@ -33,7 +33,7 @@
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
-    materials.checked = true;
+    materials.checked = false;
     const deliveryDetails = document.createElement('fieldset');
     deliveryDetails.className = 'delivery-choices project-options';
     const deliveryLegend = document.createElement('legend');
