@@ -249,7 +249,7 @@
           if(item.type!=='plan' && item.projectOptions?.includes('Materials'))add(item.result+' — '+item.title,'Material estimate');
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
-            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:{}); 
+            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price}:{}); 
           });
           if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
           if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
