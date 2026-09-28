@@ -154,7 +154,7 @@ const PRODUCTS={
  ]
 };
 
-function getCart(){try{return JSON.parse(localStorage.getItem('nr-cart')||'[]')}catch{return[]}}
+function getCart(){try{const cart=JSON.parse(localStorage.getItem('nr-cart')||'[]');const cleaned=Array.isArray(cart)?cart.filter(item=>item&&item.type!=='Supply request'):[];if(cleaned.length!==cart.length)localStorage.setItem('nr-cart',JSON.stringify(cleaned));return cleaned}catch{return[]}}
 function saveCart(c){localStorage.setItem('nr-cart',JSON.stringify(c));if(c.length)localStorage.setItem('nr-cart-updated-at',String(Date.now()));else{localStorage.removeItem('nr-cart-updated-at');localStorage.removeItem('nr-cart-reminder-dismissed-until')}updateCartCount()}
 function updateCartCount(){const n=getCart().reduce((s,x)=>s+(x.qty||1),0);document.querySelectorAll('.cart-count').forEach(e=>e.textContent=n)}
 function addItem(name){const c=getCart();const found=c.find(x=>x.name===name);if(found)found.qty=(found.qty||1)+1;else c.push({name,qty:1,type:'Project'});saveCart(c);alert(`${name} added to your Project Cart.`)}
