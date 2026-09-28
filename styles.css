@@ -140,3 +140,5 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 @media(max-width:600px){.project-options{grid-template-columns:1fr}}
 
 .no-materials > .field:has(#material-type),.no-materials > .material-fields,.no-materials > #exact-product-fields{display:none}
+.calc-workspace .project-options input[type="checkbox"]{width:18px;height:18px;flex:0 0 18px;margin:0}
+.project-options label{align-items:center;min-width:0;line-height:1.25}
