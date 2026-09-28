@@ -146,3 +146,24 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .delivery-choices[hidden]{display:none}
 .delivery-choices{grid-template-columns:1fr;padding:14px;border:1px solid var(--line);border-radius:8px}
 .delivery-choices small{display:block;margin-top:5px;font-size:13px;font-weight:400;color:var(--muted);line-height:1.45}
+
+/* Guided room planner */
+.calc-workspace.guided-planner{display:block;max-width:900px}
+.guided-planner>.calc-side{margin-top:24px}
+.guided-planner>.calc-side[hidden],.no-materials>.room-questions{display:none}
+.room-questions{margin:22px 0;padding:18px;background:#f4f8fc;border-radius:10px}
+.room-questions h3{margin-top:0}
+.room-edit-status{color:var(--blue2);font-weight:600}
+.room-edit-status:empty{display:none}
+#room-planner,#project-summary{scroll-margin-top:75px}
+.room-supply-list{margin-top:16px}
+.room-supply-choice{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
+.room-supply-choice input[type="checkbox"]{width:18px;height:18px;flex:0 0 18px;margin:3px 0 0;accent-color:var(--blue2)}
+.room-supply-choice small{display:block;color:var(--muted);font-size:13px;line-height:1.4;margin-top:4px}
+.project-summary-actions{display:flex;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line);padding-top:20px;margin-top:20px}
+.project-summary-actions p{width:100%;margin:0}
+.guided-planner .material-result>div{min-width:0;flex:1}
+.guided-planner .material-result .btn{margin-top:10px}
+@media(max-width:600px){.room-questions{padding:12px}.project-summary-actions>.btn{width:100%}.guided-planner .material-result{flex-wrap:wrap}}
+
+.floor-kind-field[hidden],.no-materials>.floor-kind-field{display:none}
