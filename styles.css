@@ -197,3 +197,7 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .nav .wrap>.nav-shop-label{font-weight:800;color:var(--blue2);margin-right:0.35em!important}
 .nav .nav-menu .nav-main,.nav .wrap>a[href="/installation.html"]{font-weight:500}
 .nav .wrap>a[href="/installation.html"]{margin-right:0.65em}
+
+/* Consistent centered tile labels and descriptions */
+.tile span{left:14px;right:14px;bottom:16px;text-align:center;line-height:1.15}
+.tile span small{display:block;margin-top:6px;font-family:Inter,Arial,sans-serif;font-size:13px;line-height:1.35;font-weight:500;text-align:center}
