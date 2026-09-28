@@ -142,3 +142,7 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .no-materials > .field:has(#material-type),.no-materials > .material-fields,.no-materials > #exact-product-fields{display:none}
 .calc-workspace .project-options input[type="checkbox"]{width:18px;height:18px;flex:0 0 18px;margin:0}
 .project-options label{align-items:center;min-width:0;line-height:1.25}
+
+.delivery-choices[hidden]{display:none}
+.delivery-choices{grid-template-columns:1fr;padding:14px;border:1px solid var(--line);border-radius:8px}
+.delivery-choices small{display:block;margin-top:5px;font-size:13px;font-weight:400;color:var(--muted);line-height:1.45}
