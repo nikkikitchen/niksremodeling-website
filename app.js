@@ -393,6 +393,7 @@ const PROJECT_SUPPLIES={
 };
 function projectQuantityUnit(projectId,name){
  const n=name.toLowerCase();
+ if(/edge trim|transition|perimeter trim|baseboard|shoe molding|molding|handrail|threshold|trim board/.test(n))return 'linear ft.';
  if(projectId==='concrete'||/concrete|gravel|reinforcement|vapor barrier|curing|joint sealant/.test(n))return 'cu. yd. / sq. ft.';
  if(projectId==='murals'||projectId==='accents'||/paint|primer|patching|sandpaper|drop cloth|wallpaper|adhesive|caulk|sealant/.test(n))return /paint|primer/.test(n)?'gallons':'pieces';
  if(projectId==='tile'||projectId==='bathrooms'||projectId==='flooring'||/tile|stone|veneer|backer board|waterproofing|underlayment|wall panel/.test(n))return 'sq. ft.';
