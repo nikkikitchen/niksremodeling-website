@@ -230,6 +230,15 @@ function calcMaterial(){
   const deliveryTypes=selectedDeliveryTypes();
   const materials=document.querySelector('[name="project-option"][value="Materials"]');
   if(!materials?.checked && !document.querySelector('[name="labor-service"]:checked, [name="labor-hourly"]:checked'))throw Error('Select Materials / Supplies, Installation, or Miscellaneous labor.');
+  if(!materials?.checked && !document.querySelector('[name="labor-service"]:checked')) {
+   const rawHours=document.getElementById('misc-hours').value.trim(),hours=Number(rawHours);
+   if(!rawHours || !Number.isFinite(hours) || hours<=0)throw Error('Enter estimated misc. hours greater than zero.');
+   const areaName=document.getElementById('material-name').value.trim();
+   materialEstimates.push({type:'plan',title:areaName||'Miscellaneous labor',result:`${hours} hours of miscellaneous labor`,detail:'Estimated at $75 per hour.',measurements:{},labor:[{service:'Miscellaneous labor',scope:areaName||'Project',quantity:hours,unit:'hours',hourlyRate:75,price:hours*75}],projectOptions:selectedProjectOptions(),deliveryTypes});
+   if(materialEstimates.length>50)materialEstimates.shift();saveMaterialEstimates();renderMaterialEstimates();
+   if(window.parent!==window)window.parent.postMessage({type:'material-estimate-saved'},location.origin);
+   return;
+  }
   let result='',detail='';
   if(type==='flooring'){
    const area=materialPositive('floor-length')*materialPositive('floor-width'),waste=materialNumber('floor-waste'),needed=area*(1+waste),box=document.getElementById('floor-box').value.trim();
