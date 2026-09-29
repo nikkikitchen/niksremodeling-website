@@ -81,6 +81,7 @@
     initPlanner(panel, update);
   };
   function initPlanner(panel, updateChoices) {
+    const productStyle=document.createElement('style');productStyle.textContent='.calc-workspace [hidden]{display:none!important}\n.area-product{border-bottom:1px solid var(--line);padding:4px 0 10px}\n.area-product .room-supply-choice{border-top:0;margin:0;align-items:center}\n.calc-workspace .area-product input[type="checkbox"]{width:18px;height:18px;flex:0 0 18px;margin:0;accent-color:var(--blue2)}\n.area-product-settings{padding-left:28px}\n#material-products{border:0;padding:0;margin:12px 0}\n#material-products legend{font-weight:700}\n';document.head.append(productStyle);
     const workspace = panel.closest('.calc-workspace');
     workspace.classList.add('guided-planner');
     panel.id = 'room-planner';
@@ -94,36 +95,97 @@
     document.querySelector('label[for="material-name"]').textContent = 'Which room or area?';
     document.querySelector('label[for="material-type"]').textContent = 'What are you working on?';
     const locationField=document.createElement('div');locationField.className='field';
-    locationField.innerHTML='<label for="project-location">Interior or exterior?</label><select id="project-location"><option value="interior">Interior</option><option value="exterior">Exterior</option></select>';
+    locationField.innerHTML='<label for="project-location">Interior or exterior?</label><select id="project-location"><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select>';
     document.getElementById('material-name').closest('.field').after(locationField);
     const projectLocation=document.getElementById('project-location');
     const choices=panel.querySelector('.labor-choices');
     const calculateButton=panel.querySelector('button[onclick="calcMaterial()"]');
     for(const el of [choices,document.getElementById('misc-hours').parentElement,panel.querySelector('.delivery-choices')])calculateButton.before(el);
-    choices.querySelector('legend').textContent='What help do you need?';
+    choices.hidden=true;
+    const workServices=document.createElement('div');workServices.className='field project-options';workServices.id='work-services';
+    workServices.append(choices.querySelector('[value="Installation"]').closest('label'));
+    document.getElementById('material-type').closest('.field').after(workServices);
+    workServices.addEventListener('change',()=>{updateChoices();updateQuantityFields();document.dispatchEvent(new Event('work-options-change'));});
+    const savedRooms=document.createElement('datalist');savedRooms.id='saved-room-names';
+    [...new Set(materialEstimates.map(item=>item.roomName).filter(Boolean))].forEach(name=>{const option=document.createElement('option');option.value=name;savedRooms.append(option)});
+    document.getElementById('material-name').setAttribute('list',savedRooms.id);panel.append(savedRooms);
     const materialDetails = document.createElement('div');
     materialDetails.className = 'field';
-    materialDetails.innerHTML = '<label for="material-choice">What material?</label><select id="material-choice"></select><label for="material-description">Material details (optional)</label><input id="material-description" placeholder="Size, color, or product name"><label for="quantity-method">How much do you need?</label><select id="quantity-method"><option value="measure">Calculate from measurements</option><option value="known">Enter quantity</option></select><div id="known-quantity-fields" hidden><label for="known-quantity">Quantity needed</label><input id="known-quantity" type="number" min="0" step="any" placeholder="Enter quantity"><label for="known-unit">Unit</label><select id="known-unit">'+['Bags','Boxes','Cubic yards','Gallons','Linear feet','Pieces','Rolls','Sheets','Square feet'].map(x=>'<option>'+x+'</option>').join('')+'</select></div>';
+    materialDetails.innerHTML = '<select id="material-choice" hidden aria-hidden="true" tabindex="-1"></select><fieldset class="field" id="material-products"><legend>Materials — choose all you need</legend><p class="calc-note">One work area. Each selected product uses those measurements.</p><div id="material-product-list"></div></fieldset><label for="material-description">Material details (optional)</label><input id="material-description" placeholder="Size, color, or product name"><label for="quantity-method">How much do you need?</label><select id="quantity-method"><option value="measure">Calculate from measurements</option><option value="known">Enter quantity</option></select><div id="known-quantity-fields" hidden><label for="known-quantity">Quantity needed</label><input id="known-quantity" type="number" min="0" step="any" placeholder="Enter quantity"><label for="known-unit">Unit</label><select id="known-unit">'+['Bags','Boxes','Cubic yards','Gallons','Linear feet','Pieces','Rolls','Sheets','Square feet'].map(x=>'<option>'+x+'</option>').join('')+'</select></div>';
     document.getElementById('material-type').closest('.field').after(materialDetails);
     const materialChoice = document.getElementById('material-choice');
     const quantityMethod = document.getElementById('quantity-method');
     const materialCategories = {flooring:'flooring',tile:'tile-stone',paint:'paint-finishes',lumber:'lumber',trim:'trim-molding',drywall:'drywall',concrete:'concrete-masonry','doors-windows':'doors-windows',insulation:'insulation',roofing:'roofing','siding-exterior':'siding-exterior'};
+    function syncMaterialChoice() {
+      const selected=[...document.querySelectorAll('[name="area-product"]:checked')];
+      materialChoice.value=selected[0]?.value||'';
+      if(selected.length)panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
+      document.querySelectorAll('.area-product').forEach(row=>{row.querySelector('.area-product-settings').hidden=!row.querySelector('[name="area-product"]').checked});
+    }
     function updateMaterialChoices() {
+      const currentType=document.getElementById('material-type').value;
+      if(!currentType||['prep','misc','debris','delivery'].includes(currentType)){document.getElementById('material-product-list').replaceChildren();materialChoice.replaceChildren();return;}
       const category = materialCategories[document.getElementById('material-type').value];
       let names = category ? MATERIAL_DETAIL_PAGES[category].items.slice() : ['Other material'];
+      if(currentType==='refinish')names=['Bonding Primer','Cabinet / Trim Paint','Stain','Clear Finish','Other material'];
       if(category==='paint-finishes')names=[projectLocation.value==='exterior'?'Exterior Paint':'Interior Paint','Primer','Stains','Sealers','Specialty Coatings','Other material'];
       else if(!names.includes('Other material'))names.push('Other material');
+      if(category==='flooring'||category==='tile-stone')names=[...new Set([...names.filter(x=>x!=='Other material'),'Underlayment','Backer Board','Other material'])];
       materialChoice.replaceChildren(...names.map(name=>{const option=document.createElement('option');option.value=option.textContent=name;return option}));
       const empty=document.createElement('option');empty.value='';empty.textContent='Choose material';materialChoice.prepend(empty);materialChoice.value=category==='paint-finishes'?names[0]:'';
       const product=new URLSearchParams(location.search).get('product');
       if(product){const option=document.createElement('option');option.value=option.textContent=product;materialChoice.append(option);materialChoice.value=product;}
+      const requested=(new URLSearchParams(location.search).get('materials')||'').split('|').filter(Boolean);
+      const work=new URLSearchParams(location.search).get('work');
+      const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
+      names=[...new Set([...workChoices,...names,...requested])];
+      if(product&&!names.includes(product))names.unshift(product);
+      const list=document.getElementById('material-product-list');list.replaceChildren();
+      names.forEach((name,index)=>{
+        const row=document.createElement('div');row.className='area-product';
+        const label=document.createElement('label');label.className='room-supply-choice';
+        const box=document.createElement('input');box.type='checkbox';box.name='area-product';box.value=name;box.id='area-product-'+index;
+        box.checked=requested.includes(name)||(product?name===product:false);
+        label.append(box,document.createTextNode(name));row.append(label);
+        const settings=document.createElement('div');settings.className='area-product-settings calc-fields';
+        const field=(key,title,value,placeholder='')=>{const wrap=document.createElement('div');wrap.className='field';const text=document.createElement('label');const input=document.createElement('input');input.type='number';input.min=key==='waste'?'0':'0.01';input.step='any';input.id='product-'+index+'-'+key;input.dataset.productSetting=key;input.value=value;text.htmlFor=input.id;text.textContent=title;input.placeholder=placeholder;wrap.append(text,input);settings.append(wrap)};
+        if(/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
+          row.dataset.measure='paint';field('coats','Coats',/primer/i.test(name)?'1':'2');field('coverage','Coverage (sq. ft. per gallon)',/primer/i.test(name)?'300':'350');
+        }else if(/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
+          row.dataset.measure='area';field('waste','Waste allowance (%)','10');field('coverage','Coverage per package (sq. ft., optional)','','From product label');
+        }else{
+          row.dataset.measure='manual';field('quantity','Quantity needed','','Enter quantity');
+          const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.textContent='Unit';const unit=document.createElement('select');unit.id='product-'+index+'-unit';unit.dataset.productSetting='unit';label.htmlFor=unit.id;
+          ['Pieces','Bags','Boxes','Gallons','Linear feet','Rolls','Sheets','Square feet','Cubic yards'].forEach(name=>{const option=document.createElement('option');option.textContent=name;unit.append(option)});wrap.append(label,unit);settings.append(wrap);
+        }
+        settings.hidden=!box.checked;row.append(settings);list.append(row);
+        box.addEventListener('change',()=>{syncMaterialChoice();if(box.checked&&(category==='flooring'||category==='tile-stone')&&!['Underlayment','Backer Board','Other material'].includes(name)){floorKind.value=/Tile|Stone/.test(name)?'tile':name==='Hardwood'?'nail':name==='Carpet'||name==='Linoleum'?'glue':'floating';floorKind.dispatchEvent(new Event('change'));}});
+      });
+      syncMaterialChoice();
     }
     function updateQuantityFields() {
+      const type=document.getElementById('material-type').value;
+      const service=['prep','misc','debris','delivery'].includes(type);
+      const shared=['paint','refinish','flooring','tile'].includes(type);
+      materialDetails.hidden=!type||service;
+      workServices.hidden=!type||service;
+      document.getElementById('misc-hours').parentElement.hidden=!['prep','misc'].includes(type);
+      document.getElementById('misc-hours').disabled=!['prep','misc'].includes(type);
+      panel.querySelector('[name="labor-hourly"]').checked=['prep','misc'].includes(type);
+      panel.querySelector('.delivery-choices').hidden=type!=='delivery';
+      panel.querySelector('[name="project-option"][value="Delivery"]').checked=type==='delivery';
+      panel.querySelector('[name="project-option"][value="Debris Removal"]').checked=type==='debris';
+      if(service){panel.querySelector('[name="project-option"][value="Materials"]').checked=false;panel.querySelector('[name="labor-service"]').checked=false;}
+      const installation=panel.querySelector('[name="labor-service"]:checked');
+      quantityMethod.value=shared||installation?'measure':'known';
+      quantityMethod.hidden=true;document.querySelector('label[for="quantity-method"]').hidden=true;
+      if(!shared){document.getElementById('known-quantity').value='1';document.getElementById('known-unit').value='Pieces';}
       const known=quantityMethod.value==='known';
-      document.getElementById('known-quantity-fields').hidden=!known;
-      questionBox.hidden=known;
+      document.getElementById('known-quantity-fields').hidden=true;
+      questionBox.hidden=known||!type||service;
       showMaterialFields();
-      if(known)document.querySelectorAll('.material-fields').forEach(el=>el.hidden=true);
+      if(known||!type||service)document.querySelectorAll('.material-fields').forEach(el=>el.hidden=true);
+      floorField.hidden=type!=='flooring';
     }
     const questionBox = document.createElement('section');
     questionBox.className = 'room-questions';
@@ -131,6 +193,15 @@
     const measurementIds = ['floor-length','floor-width','paint-length','paint-height','paint-ceiling-length','paint-ceiling-width','paint-trim-length','paint-trim-width','paint-other-area','wood-length','wood-height','dry-length','dry-height','concrete-length','concrete-width','concrete-depth'];
     measurementIds.forEach(id => { document.getElementById(id).value = ''; });
     const types = document.getElementById('material-type');
+    const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select one';types.prepend(placeholder);
+    [['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
+    const initialParams=new URLSearchParams(location.search);
+    if(!initialParams.has('material')&&!initialParams.has('product'))types.value='';
+    else if(['prep','misc','delivery','debris','refinish'].includes(initialParams.get('material')))types.value=initialParams.get('material');
+    if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
+    const hoursField=document.getElementById('misc-hours').parentElement;
+    workServices.after(hoursField);
+    document.querySelector('label[for="misc-hours"]').textContent='Estimated hours — $75/hr';
     const floorKind = document.getElementById('floor-kind');
     const floorField = floorKind.closest('.field');
     floorField.classList.add('floor-kind-field');
@@ -198,9 +269,10 @@
     }
     types.addEventListener('change',()=>{updateMaterialChoices();renderQuestions();updateQuantityFields();});
     quantityMethod.addEventListener('change',updateQuantityFields);
+    choices.addEventListener('change',updateQuantityFields);
     projectLocation.addEventListener('change',()=>{
-      const old=materialChoice.value;updateMaterialChoices();
-      if([...materialChoice.options].some(x=>x.value===old))materialChoice.value=old;
+      const old=[...document.querySelectorAll('[name="area-product"]:checked')].map(x=>x.value);updateMaterialChoices();
+      document.querySelectorAll('[name="area-product"]').forEach(box=>{box.checked=old.includes(box.value)||(/^(Interior|Exterior) Paint$/.test(box.value)&&old.some(x=>/^(Interior|Exterior) Paint$/.test(x)))});syncMaterialChoice();
       const wallLabel=document.getElementById('paint-surface-walls')?.parentElement;
       if(wallLabel)wallLabel.lastChild.textContent=projectLocation.value==='exterior'?' Walls / Siding':' Walls';
     });
@@ -214,7 +286,15 @@
       }
     });
     questionBox.addEventListener('change',adjustLabels);
-    renderQuestions();
+    renderQuestions();updateQuantityFields();
+    const work=initialParams.get('work');
+    if(['ceiling','walls','floor'].includes(work)&&types.value==='paint'){
+      const box=document.getElementById('paint-surface-'+(work==='floor'?'other':work));if(box)box.checked=true;
+      if(work==='floor')document.getElementById('paint-other-description').value='Floor';showPaintSurfaceFields();
+    }
+    document.getElementById('floor-waste').closest('.field').hidden=true;
+    document.getElementById('floor-box').closest('.field').hidden=true;
+    document.getElementById('paint-coats').closest('.calc-fields').hidden=true;
     let editingId = null;
     const roomStatus=create('p','','room-edit-status'); panel.querySelector('h2').after(roomStatus);
     const snapshot = () => [...panel.querySelectorAll('input,select')].map(el=>({id:el.id,name:el.name,value:el.value,checked:el.checked,type:el.type}));
@@ -243,7 +323,9 @@
     const originalCalc=window.calcMaterial;
     const originalRender=window.renderMaterialEstimates;
     window.calcMaterial=function() {
-      const error=document.getElementById('mat-error');
+      const error=document.getElementById('mat-error');error.hidden=true;
+      if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}
+      if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
       const answers={};
       if(panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
         for(const input of questionBox.querySelectorAll('select')) {
@@ -251,26 +333,45 @@
           answers[input.dataset.question]=input.value;
         }
       }
+      let productPlans=[];
+      try{productPlans=readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
       const form=snapshot(), last=materialEstimates[materialEstimates.length-1], sourceQuery=location.search;
-      originalCalc();
+      if(['prep','misc','debris','delivery'].includes(types.value)){
+        try{
+          const hourly=['prep','misc'].includes(types.value),hours=hourly?materialPositive('misc-hours'):0;
+          const label=types.selectedOptions[0].textContent;
+          const deliveryTypes=types.value==='delivery'?selectedDeliveryTypes():[];
+          materialEstimates.push({type:'plan',title:label,result:hourly?hours+' hours':label+' requested',detail:hourly?'$75 per hour.':'Scope and price to be confirmed.',measurements:{},labor:hourly?[{service:label,scope:label,quantity:hours,unit:'hours',hourlyRate:75,price:hours*75}]:[],projectOptions:selectedProjectOptions(),deliveryTypes});
+        }catch(e){error.hidden=false;error.textContent=e.message;return;}
+      }else originalCalc();
       const item=materialEstimates[materialEstimates.length-1];
       if(!item||item===last)return;
       const oldIndex=editingId?materialEstimates.findIndex(x=>x.roomId===editingId):-1;
       item.roomId=editingId||'room-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
       item.projectLocation=projectLocation.value;
+      item.workLabel=new URLSearchParams(location.search).get('workLabel')||types.selectedOptions[0].textContent;
+      if(productPlans.length){
+        item.products=calculateAreaProducts(item,productPlans);
+        const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
+        item.products.forEach(product=>{const old=previous?.products?.find(x=>x.name===product.name);if(old?.includeSupplies){product.includeSupplies=true;product.supplies=old.supplies;}});
+        item.title=(projectLocation.value==='exterior'?'Exterior':'Interior')+' '+types.selectedOptions[0].textContent;
+        item.result=item.products.map(x=>x.name+': '+x.quantity+' '+x.unit).join(' · ');
+        item.detail=item.products.map(x=>x.detail).filter(Boolean).join(' · ');
+      }
       item.roomName=document.getElementById('material-name').value.trim()||'Room / Area '+(oldIndex>=0?oldIndex+1:materialEstimates.length);
       item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
-      item.suggestedSupplies=item.type==='plan'?[]:suggestedSupplies(item,answers);
+      item.suggestedSupplies=item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
-      editingId=null;roomStatus.textContent='Item saved. Add another item or review your project.';
+      editingId=null;roomStatus.textContent='Area saved with all selected materials.';
       saveMaterialEstimates();window.renderMaterialEstimates();
+      if(![...savedRooms.options].some(x=>x.value===item.roomName)){const option=document.createElement('option');option.value=item.roomName;savedRooms.append(option)}
       summary.scrollIntoView({behavior:'smooth',block:'start'});
     };
     function editRoom(item) {
       editingId=item.roomId||(item.roomId='room-'+Date.now());
       history.replaceState(null,'',location.pathname+(item.sourceQuery||''));
       if(item.form) {
-        restore(item.form);updateMaterialChoices();showMaterialFields();renderQuestions(item.answers);restore(item.form);
+        restore(item.form);updateMaterialChoices();showMaterialFields();renderQuestions(item.answers);restore(item.form);syncMaterialChoice();
       }else{
         types.value=item.type==='plan'?'flooring':item.type||'flooring';
         if(item.floorKind)floorKind.value=item.floorKind;
@@ -294,19 +395,18 @@
       ['exact-brand','exact-model','exact-color','exact-identifier','floor-box'].forEach(id=>{document.getElementById(id).value=''});
       document.getElementById('exact-product-fields').hidden=true;
       document.getElementById('mat-error').hidden=true;
+      types.value='';projectLocation.value='';
       roomStatus.textContent='New room / area';quantityMethod.value='measure';document.getElementById('known-quantity').value='';document.getElementById('material-description').value='';document.getElementById('paint-other-description').value='';updateMaterialChoices();renderQuestions();updateChoices();updateQuantityFields();showPaintSurfaceFields();
       panel.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('material-name').focus({preventScroll:true});
     }
-    function newItem() {
-      const room=document.getElementById('material-name').value;
-      const location=projectLocation.value;
-      newRoom();
-      document.getElementById('material-name').value=room;
-      projectLocation.value=location;
-      panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
-      updateChoices();
-      roomStatus.textContent='Add another item'+(room?' for '+room:'')+'. Your saved items stay in the project.';
-      types.focus({preventScroll:true});
+    function addWork(item){
+      const room=item.roomName,location=item.projectLocation,form=item.form||[];
+      newRoom();document.getElementById('material-name').value=room;projectLocation.value=location;
+      form.filter(x=>measurementIds.includes(x.id)).forEach(saved=>{if(saved.value)document.getElementById(saved.id).value=saved.value});
+      const length=document.getElementById('floor-length').value,width=document.getElementById('floor-width').value;
+      if(length&&width){document.getElementById('paint-ceiling-length').value=length;document.getElementById('paint-ceiling-width').value=width;}
+      roomStatus.textContent='Add more work to '+room+'. Saved work stays in your project.';
+      types.focus();document.dispatchEvent(new Event('work-options-change'));
     }
     function addProjectToCart() {
       const status=document.getElementById('project-cart-status');
@@ -315,11 +415,12 @@
         materialEstimates.filter(Boolean).forEach(item=>{
           const room=item.roomName||item.title||'Project area';
           const add=(name,type,extra={})=>cart.push({name:room+': '+name,type,qty:1,source:'project-calculator',roomId:item.roomId,...extra});
-          if(item.type!=='plan' && item.projectOptions?.includes('Materials'))add(item.result+' — '+item.title,'Material estimate');
+          if(item.type!=='plan' && item.projectOptions?.includes('Materials')){if(item.products)item.products.forEach(product=>add(product.name+' — '+product.quantity+' '+product.unit,'Material estimate',{materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel}));else add(item.result+' — '+item.title,'Material estimate');}
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
             add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price}:{}); 
           });
+          if(item.products)item.products.filter(x=>x.includeSupplies).forEach(product=>add(product.name+' — needed supplies','Supplies request',{supplyList:product.supplies,forMaterial:product.name,workLabel:item.workLabel}));
           if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
           if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
           if(item.projectOptions?.includes('Delivery'))(item.deliveryTypes?.length?item.deliveryTypes:['Delivery']).forEach(x=>add(x,'Service'));
@@ -337,9 +438,16 @@
       [...document.querySelectorAll('#material-results > .material-result')].forEach((row,index)=>{
         const item=materialEstimates[index], info=row.firstElementChild;
         if(item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+(item.type==='plan'?'Project needs':item.title.split(' — ')[0]);
+        if(item.workLabel&&item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+item.workLabel;
+        if(item.products){
+          const amount=info.children[1];amount.replaceChildren();
+          item.products.forEach(product=>{const line=create('p');const name=create('strong',product.name+': ');line.append(name,document.createTextNode(product.quantity+' '+product.unit));
+            const supplyButton=create('button',product.includeSupplies?'Supplies Included':'Add Needed Supplies','btn outline');supplyButton.type='button';supplyButton.onclick=()=>{product.includeSupplies=!product.includeSupplies;product.supplies=window.materialSupplyList?.(product.name)||[];saveMaterialEstimates();window.renderMaterialEstimates()};line.append(document.createTextNode(' '),supplyButton);amount.append(line)});
+        }
+        const more=create('button','Add Work to This Room','btn outline');more.type='button';more.onclick=()=>addWork(item);info.append(more);
         const edit=create('button',item.form?'Edit Item':'Edit / Recalculate','btn outline');edit.type='button';edit.onclick=()=>editRoom(item);info.append(edit);
-        if(item.suggestedSupplies){
-          info.querySelectorAll('a[href*="supplies.html"],button').forEach(el=>{if(el!==edit)el.remove()});
+        if(item.suggestedSupplies?.length){
+          info.querySelectorAll('a[href*="supplies.html"],button').forEach(el=>{if(el!==edit&&el!==more)el.remove()});
           const checklist=create('div','','room-supply-list');
           if(item.suggestedSupplies.length){checklist.append(create('h3','Suggested supplies'),create('p','Uncheck anything you already have. Product coverage and compatibility determine final quantities.','calc-note'));
             item.suggestedSupplies.forEach(supply=>{
@@ -361,8 +469,8 @@
       });
       summary.insertAdjacentHTML('beforeend',serviceEstimateMarkup(serviceItems));
       summary.querySelector('.project-summary-actions')?.remove();
-      const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Another Item','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add Project to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
-      anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=newItem;another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';status.id='project-cart-status';status.setAttribute('role','status');
+      const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Work to This Room','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add Project to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
+      anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=()=>addWork(materialEstimates[materialEstimates.length-1]);another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';status.id='project-cart-status';status.setAttribute('role','status');
       actions.append(anotherItem,another,cartButton,review,status,create('p','Planning list for a quote. Adding it again updates these items in your cart.','calc-note'));summary.append(actions);
     };
     window.renderMaterialEstimates();

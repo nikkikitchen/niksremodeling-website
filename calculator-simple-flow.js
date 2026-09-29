@@ -22,7 +22,7 @@
     const oldTools = choices.querySelector('[name="project-option"][value="Tools"]')?.closest('label');
     if (oldTools) oldTools.remove();
 
-    const installation = choices.querySelector('[value="Installation"]');
+    const installation = document.querySelector('[value="Installation"]');
     const panel = choices.closest('.panel');
     if (!installation || !panel || document.getElementById('recommended-tools')) return;
 
@@ -45,7 +45,7 @@
     function updateTools() {
       const tools = currentGuide();
       const diy = !installation.checked;
-      toolBox.hidden = !(diy && tools.length);
+      toolBox.hidden = !(diy && tools.length && document.getElementById('project-location')?.value && type?.value);
       list.replaceChildren(...tools.map(name => {
         const li = document.createElement('li');
         li.textContent = name;
@@ -53,6 +53,9 @@
       }));
     }
 
+    document.addEventListener('work-options-change',updateTools);
+    document.getElementById('project-location')?.addEventListener('change',updateTools);
+    installation.addEventListener('change',updateTools);
     choices.addEventListener('change', updateTools);
     type?.addEventListener('change', updateTools);
     floorKind?.addEventListener('change', updateTools);
