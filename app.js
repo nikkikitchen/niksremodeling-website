@@ -514,7 +514,7 @@ function alphabetizeSiteLists() {
   reorder(parent,items,el=>el.querySelector('input[type="checkbox"]')?.value||label(el),false);
  });
  document.querySelectorAll('select').forEach(select=>{
-  const sequential=!!select.closest('.calc-workspace');
+  const sequential=!!select.closest('.calc-workspace')&&select.id!=='material-type';
   const value=select.value;
   reorder(select,[...select.children].filter(el=>el.tagName==='OPTION' && el.value!==''),el=>el.textContent.trim(),!sequential);
   select.value=value;
