@@ -485,11 +485,17 @@ function renderMaterialDetail(){
 function initNavMenus(){document.querySelectorAll('.nav-toggle').forEach(button=>button.addEventListener('click',()=>{const menu=button.closest('.nav-menu'),open=!menu.classList.contains('open');document.querySelectorAll('.nav-menu.open').forEach(other=>{other.classList.remove('open');other.querySelector('.nav-toggle').setAttribute('aria-expanded','false')});menu.classList.toggle('open',open);button.setAttribute('aria-expanded',String(open))}));document.addEventListener('click',event=>{if(event.target.closest('.nav-menu'))return;document.querySelectorAll('.nav-menu.open').forEach(menu=>{menu.classList.remove('open');menu.querySelector('.nav-toggle').setAttribute('aria-expanded','false')})});document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.nav-menu.open').forEach(menu=>{menu.classList.remove('open');menu.querySelector('.nav-toggle').setAttribute('aria-expanded','false')})})}
 document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();initNavMenus()});
 // Keep category lists and menus in the same order without separating photos from cards.
+function choicePosition(text){
+ const label=String(text).trim();
+ if(/^(select (one|an?\b)|choose (one|an?\b|material\b)|all\b)/i.test(label))return -1;
+ if(/^(other\b|not sure\b|unsure\b|something else\b|none of (these|the above)\b)/i.test(label))return 1;
+ return 0;
+}
 function alphabetizeSiteLists() {
  const collator=new Intl.Collator('en',{numeric:true,sensitivity:'base'});
- const label=el=>{const copy=(el.querySelector('h2,h3,h4')||el.querySelector('span')||el).cloneNode(true);copy.querySelectorAll('small,input,button').forEach(x=>x.remove());return copy.textContent.trim()};
- const reorder=(parent,items,key=label)=>{
-  const sorted=items.slice().sort((a,b)=>collator.compare(key(a),key(b)));
+ const label=el=>{const copy=(el.querySelector('h2,h3,h4,summary')||el.querySelector('span')||el).cloneNode(true);copy.querySelectorAll('small,input,button').forEach(x=>x.remove());return copy.textContent.trim()};
+ const reorder=(parent,items,key=label,alphabetical=true)=>{
+  const sorted=items.slice().sort((a,b)=>choicePosition(key(a))-choicePosition(key(b))||(alphabetical?collator.compare(key(a),key(b)):0));
   if(items.every((item,i)=>item===sorted[i]))return;
   const slots=items.map(item=>{const marker=document.createComment('sort');item.before(marker);return marker});
   sorted.forEach((item,i)=>slots[i].replaceWith(item));
@@ -503,10 +509,14 @@ function alphabetizeSiteLists() {
   if(parent.closest('.calc-workspace'))return;
   reorder(parent,[...parent.children].filter(el=>el.matches('a,article,label,button,li,.panel')));
  });
+ document.querySelectorAll('#material-product-list,.paint-surfaces').forEach(parent=>{
+  const items=[...parent.children].filter(el=>el.matches('.area-product,label'));
+  reorder(parent,items,el=>el.querySelector('input[type="checkbox"]')?.value||label(el),false);
+ });
  document.querySelectorAll('select').forEach(select=>{
-  if(select.closest('.calc-workspace'))return;
+  const sequential=!!select.closest('.calc-workspace');
   const value=select.value;
-  reorder(select,[...select.children].filter(el=>el.tagName==='OPTION' && el.value!==''),el=>el.textContent.trim());
+  reorder(select,[...select.children].filter(el=>el.tagName==='OPTION' && el.value!==''),el=>el.textContent.trim(),!sequential);
   select.value=value;
  });
 }
