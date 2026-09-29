@@ -16,7 +16,7 @@
     const supplies = choices.querySelector('[name="project-option"][value="Materials"]');
     if (supplies) {
       const span = supplies.closest('label')?.querySelector('span');
-      if (span) span.firstChild.textContent = 'Supplies';
+      if (span) span.firstChild.textContent = 'Materials / Supplies';
     }
 
     const oldTools = choices.querySelector('[name="project-option"][value="Tools"]')?.closest('label');

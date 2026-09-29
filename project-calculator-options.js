@@ -55,7 +55,7 @@
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
-    materials.checked = false;
+    materials.checked = params.has('material') || params.has('product');
     const deliveryDetails = document.createElement('fieldset');
     deliveryDetails.className = 'delivery-choices project-options';
     const deliveryLegend = document.createElement('legend');
@@ -92,11 +92,33 @@
     summary.querySelector('h2').textContent = 'Materials / Supplies';
     summary.querySelectorAll(':scope > p').forEach(el => el.remove());
     document.querySelector('label[for="material-name"]').textContent = 'Which room or area?';
-    document.querySelector('label[for="material-type"]').textContent = 'What are you working on?';
+    document.querySelector('label[for="material-type"]').textContent = 'Material category';
+    const materialDetails = document.createElement('div');
+    materialDetails.className = 'field';
+    materialDetails.innerHTML = '<label for="material-choice">What material?</label><select id="material-choice"></select><label for="material-description">Material details (optional)</label><input id="material-description" placeholder="Size, color, or product name"><label for="quantity-method">How much do you need?</label><select id="quantity-method"><option value="measure">Calculate from measurements</option><option value="known">Enter quantity</option></select><div id="known-quantity-fields" hidden><label for="known-quantity">Quantity needed</label><input id="known-quantity" type="number" min="0" step="any" placeholder="Enter quantity"><label for="known-unit">Unit</label><select id="known-unit">'+['Bags','Boxes','Cubic yards','Gallons','Linear feet','Pieces','Rolls','Sheets','Square feet'].map(x=>'<option>'+x+'</option>').join('')+'</select></div>';
+    document.getElementById('material-type').closest('.field').after(materialDetails);
+    const materialChoice = document.getElementById('material-choice');
+    const quantityMethod = document.getElementById('quantity-method');
+    const materialCategories = {flooring:'flooring',tile:'tile-stone',paint:'paint-finishes',lumber:'lumber',trim:'trim-molding',drywall:'drywall',concrete:'concrete-masonry','doors-windows':'doors-windows',insulation:'insulation',roofing:'roofing','siding-exterior':'siding-exterior'};
+    function updateMaterialChoices() {
+      const category = materialCategories[document.getElementById('material-type').value];
+      const names = category ? MATERIAL_DETAIL_PAGES[category].items : ['Other material'];
+      materialChoice.replaceChildren(...names.slice().sort((a,b)=>a.localeCompare(b)).map(name=>{const option=document.createElement('option');option.value=option.textContent=name;return option}));
+      const empty=document.createElement('option');empty.value='';empty.textContent='Choose material';materialChoice.prepend(empty);materialChoice.value='';
+      const product=new URLSearchParams(location.search).get('product');
+      if(product){const option=document.createElement('option');option.value=option.textContent=product;materialChoice.append(option);materialChoice.value=product;}
+    }
+    function updateQuantityFields() {
+      const known=quantityMethod.value==='known';
+      document.getElementById('known-quantity-fields').hidden=!known;
+      questionBox.hidden=known;
+      showMaterialFields();
+      if(known)document.querySelectorAll('.material-fields').forEach(el=>el.hidden=true);
+    }
     const questionBox = document.createElement('section');
     questionBox.className = 'room-questions';
-    document.getElementById('material-type').closest('.field').insertAdjacentElement('afterend', questionBox);
-    const measurementIds = ['floor-length','floor-width','paint-length','paint-height','wood-length','wood-height','dry-length','dry-height','concrete-length','concrete-width','concrete-depth'];
+    materialDetails.after(questionBox);
+    const measurementIds = ['floor-length','floor-width','paint-length','paint-height','paint-ceiling-length','paint-ceiling-width','paint-trim-length','paint-trim-width','wood-length','wood-height','dry-length','dry-height','concrete-length','concrete-width','concrete-depth'];
     measurementIds.forEach(id => { document.getElementById(id).value = ''; });
     const types = document.getElementById('material-type');
     const floorKind = document.getElementById('floor-kind');
@@ -121,7 +143,6 @@
         ['trim','Do you need new trim around the edges?',[['yes','Yes'],['no','Keep the existing trim'],unsure]]
       ],
       paint: [
-        ['surface','What are you painting?',[['walls','Walls'],['ceiling','Ceiling'],unsure]],
         ['condition','What shape is the surface in?',[['good','Good — just a new color'],['new','New or bare surface'],['repair','Needs patching'],unsure]]
       ],
       drywall: [
@@ -137,7 +158,7 @@
         ['base','Is the ground prepared?',[['ready','Yes'],['prep','Needs preparation'],unsure]]
       ]
     };
-    const key = () => types.value === 'flooring' ? (floorKind.value === 'tile' ? 'tile' : floorKind.value === 'floating' ? 'floating' : 'flooring') : types.value;
+    const key = () => types.value === 'tile' ? 'tile' : types.value === 'flooring' ? (floorKind.value === 'tile' ? 'tile' : floorKind.value === 'floating' ? 'floating' : 'flooring') : types.value;
     const create = (tag, text, className) => { const el=document.createElement(tag); if(text)el.textContent=text; if(className)el.className=className; return el; };
     function renderQuestions(saved = {}) {
       questionBox.replaceChildren();
@@ -158,17 +179,22 @@
     }
     function adjustLabels() {
       const surface = document.getElementById('question-surface')?.value;
-      if(types.value==='paint') {
-        document.querySelector('label[for="paint-length"]').textContent=surface==='ceiling'?'Ceiling length (ft)':'Total length of the walls (ft)';
-        document.querySelector('label[for="paint-height"]').textContent=surface==='ceiling'?'Ceiling width (ft)':'Wall height (ft)';
-      }
       if(types.value==='drywall') {
         document.querySelector('label[for="dry-length"]').textContent=surface==='ceiling'?'Ceiling length (ft)':'Total length of the walls (ft)';
         document.querySelector('label[for="dry-height"]').textContent=surface==='ceiling'?'Ceiling width (ft)':'Wall height (ft)';
       }
     }
-    types.addEventListener('change',()=>renderQuestions());
+    types.addEventListener('change',()=>{updateMaterialChoices();renderQuestions();updateQuantityFields();});
+    quantityMethod.addEventListener('change',updateQuantityFields);
+    updateMaterialChoices();
     floorKind.addEventListener('change',()=>renderQuestions());
+    materialChoice.addEventListener('change',()=>{
+      if(types.value==='flooring'){
+        const name=materialChoice.value;
+        floorKind.value=name==='Floor Tile'?'tile':name==='Hardwood'?'nail':name==='Carpet'||name==='Linoleum'?'glue':'floating';
+        floorKind.dispatchEvent(new Event('change'));
+      }
+    });
     questionBox.addEventListener('change',adjustLabels);
     renderQuestions();
     let editingId = null;
@@ -201,7 +227,7 @@
     window.calcMaterial=function() {
       const error=document.getElementById('mat-error');
       const answers={};
-      if(panel.querySelector('[name="project-option"][value="Materials"]').checked) {
+      if(panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
         for(const input of questionBox.querySelectorAll('select')) {
           if(!input.value){error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';input.focus();return;}
           answers[input.dataset.question]=input.value;
@@ -225,7 +251,7 @@
       editingId=item.roomId||(item.roomId='room-'+Date.now());
       history.replaceState(null,'',location.pathname+(item.sourceQuery||''));
       if(item.form) {
-        restore(item.form);showMaterialFields();renderQuestions(item.answers);restore(item.form);
+        restore(item.form);updateMaterialChoices();showMaterialFields();renderQuestions(item.answers);restore(item.form);
       }else{
         types.value=item.type==='plan'?'flooring':item.type||'flooring';
         if(item.floorKind)floorKind.value=item.floorKind;
@@ -235,7 +261,7 @@
         showMaterialFields();renderQuestions();
       }
       document.getElementById('exact-product-fields').hidden=!new URLSearchParams(location.search).has('product');
-      updateChoices();adjustLabels();
+      updateChoices();adjustLabels();updateQuantityFields();showPaintSurfaceFields();
       panel.querySelector('button[onclick="calcMaterial()"]').textContent='Save Changes';
       roomStatus.textContent='Editing '+(item.roomName||item.title)+'. Your saved room stays unchanged until you save.';
       panel.scrollIntoView({behavior:'smooth',block:'start'});
@@ -249,7 +275,7 @@
       ['exact-brand','exact-model','exact-color','exact-identifier','floor-box'].forEach(id=>{document.getElementById(id).value=''});
       document.getElementById('exact-product-fields').hidden=true;
       document.getElementById('mat-error').hidden=true;
-      roomStatus.textContent='New room / area';renderQuestions();updateChoices();
+      roomStatus.textContent='New room / area';quantityMethod.value='measure';document.getElementById('known-quantity').value='';document.getElementById('material-description').value='';updateMaterialChoices();renderQuestions();updateChoices();updateQuantityFields();showPaintSurfaceFields();
       panel.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('material-name').focus({preventScroll:true});
     }
     function addProjectToCart() {
