@@ -11,7 +11,7 @@
   function initSimpleFlow() {
     if (document.body.dataset.page !== 'calculators') return;
     const choices = document.querySelector('.labor-choices');
-    if (!choices) return setTimeout(initSimpleFlow, 50);
+    if (!choices || choices.dataset.projectOptions !== '1') return setTimeout(initSimpleFlow, 50);
 
     const supplies = choices.querySelector('[name="project-option"][value="Materials"]');
     if (supplies) {
