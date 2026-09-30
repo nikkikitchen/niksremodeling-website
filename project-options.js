@@ -8,14 +8,14 @@
     shower:work('Shower','tile',['Porcelain Tile','Backer Board','Waterproofing Membrane','Shower Base','Shower Valve / Head','Shower Glass']),
     'tub-shower':work('Tub / Shower Combination','tile',['Bathtub','Tub / Shower Surround','Porcelain Tile','Backer Board','Waterproofing Membrane','Tub / Shower Valve']),
     toilet:work('Toilet','custom',['Toilet','Toilet Seat','Toilet Supply Line']),
-    vanity:work('Vanity / Vanities','custom',['Single Vanity','Double Vanity','Vanity Top','Sink','Faucet','Cabinet Hardware']),
+    vanity:work('Vanity / Vanities','custom',['Single Vanity','Double Vanity','Vanity Top','Sink','Faucet','Knobs','Pulls','Hinges']),
     mirror:work('Mirror / Mirrors','custom',['Mirror','Medicine Cabinet']),
     lighting:work('Lighting','custom',['Vanity Light','Ceiling Light','Recessed Light','Dimmer / Switch']),
     accents:work('Accents & Accessories','custom',['Towel Bars','Shelves','Grab Bars','Trim','Decorative Wall Panels']),
-    refinish:work('Cabinet / Vanity Refinishing','refinish',['Bonding Primer','Cabinet / Trim Paint','Stain','Clear Finish','Cabinet Hardware']),
+    refinish:work('Cabinet / Vanity Refinishing','refinish',CABINET_MATERIALS.filter(name=>name!=='Other material')),
     prep:work('Prep / Repairs','prep',[]),
     ventilation:work('Ventilation','custom',['Exhaust Fan','Vent Duct','Exterior Vent Cap']),
-    cabinets:work('Cabinets','custom',['Base Cabinets','Wall Cabinets','Pantry Cabinets','Cabinet Hardware']),
+    cabinets:work('Cabinets','custom',['Base Cabinets','Wall Cabinets','Pantry Cabinets','Knobs','Pulls','Hinges']),
     countertops:work('Countertops','custom',['Countertop Surface','Backsplash','Sink']),
     backsplash:work('Backsplash','tile',['Porcelain Tile','Mosaic Tile','Backer Board']),
     appliances:work('Appliances','custom',['Refrigerator','Range','Dishwasher','Microwave','Range Hood']),
@@ -42,6 +42,7 @@
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
   window.materialSupplyList=(name)=>{
+    if(/knob|pull|hinge|hardware/i.test(name))return ['Correct-size mounting screws','Compatible mounting plates if required','Hole repair / filler supplies if required'];
     if(/backer|drywall|wall panels?/i.test(name))return ['Compatible board fasteners','Joint / seam tape','Compatible joint or seam compound','Surface protection'];
     if(/waterproof|membrane/i.test(name))return ['System-compatible seam tape and corners','Specified sealant','Drain / penetration accessories as required'];
     if(/underlayment/i.test(name))return ['Compatible seam tape','Moisture barrier if required by the flooring system'];
@@ -63,13 +64,14 @@
     const draftKey='niks-project-options-'+id;
     let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
     if(draft.room)document.getElementById('scope-room').value=draft.room;
-    const saveDraft=()=>{const selected={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll('input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({room:document.getElementById('scope-room').value,selected}))}catch{}};
+    const saveDraft=()=>{const selected={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll(':scope > label input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({room:document.getElementById('scope-room').value,selected}))}catch{}};
     document.getElementById('scope-room').addEventListener('input',saveDraft);
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');heading.textContent=item.title;card.append(heading);
-      const selected=()=>[...card.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
+      const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
       item.materials.forEach(name=>{const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(name));card.append(label)});
+      if(['cabinets','vanity','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
       const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='Add / Plan This Work';
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|')});location.href='/calculators.html?'+params.toString();};
@@ -79,6 +81,6 @@
         const cart=getCart();names.forEach(name=>{const key=id+'|'+area+'|'+item.title+'|'+name;const entry={source:'project-supplies',scopeKey:key,name:area+' — '+item.title+': '+name+' supplies',type:'Supplies request',qty:1,forMaterial:name,supplyList:window.materialSupplyList(name)};const existing=cart.findIndex(x=>x.scopeKey===key);if(existing>=0)cart[existing]=entry;else cart.push(entry);});saveCart(cart);status.textContent='Supplies added for '+names.join(', ')+'.';};card.append(supplies);}
       card.append(status);grid.append(card);
     });
-    const style=document.createElement('style');style.textContent='.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}';document.head.append(style);updateCartCount();
+    const style=document.createElement('style');style.textContent='.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
   };
 })();
