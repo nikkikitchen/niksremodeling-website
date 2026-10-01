@@ -128,14 +128,14 @@
       const category = materialCategories[document.getElementById('material-type').value];
       let names = workMaterialNames(currentType);
       if(currentType==='refinish')names=CABINET_MATERIALS.slice();
-      if(category==='paint-finishes')names=[projectLocation.value==='exterior'?'Exterior Paint':'Interior Paint','Primer','Stains','Sealers','Specialty Coatings','Other material'];
+      if(category==='paint-finishes')names=workMaterialNames('paint');
       else if(!names.includes('Other material'))names.push('Other material');
       if(category==='flooring'||category==='tile-stone')names=[...new Set([...names.filter(x=>x!=='Other material'),'Underlayment','Backer Board','Other material'])];
       materialChoice.replaceChildren(...names.map(name=>{const option=document.createElement('option');option.value=option.textContent=name;return option}));
       const empty=document.createElement('option');empty.value='';empty.textContent='Choose material';materialChoice.prepend(empty);materialChoice.value=category==='paint-finishes'?names[0]:'';
       const product=new URLSearchParams(location.search).get('product');
       if(product){const option=document.createElement('option');option.value=option.textContent=product;materialChoice.append(option);materialChoice.value=product;}
-      const requested=(new URLSearchParams(location.search).get('materials')||'').split('|').filter(Boolean);
+      const requested=(new URLSearchParams(location.search).get('materials')||'').split('|').filter(Boolean).map(name=>['Knobs','Pulls','Hinges','Cabinet Hardware'].includes(name)?'Hardware':name);
       const work=new URLSearchParams(location.search).get('work');
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
@@ -204,7 +204,7 @@
     [['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
     const initialParams=new URLSearchParams(location.search);
     if(!initialParams.has('material')&&!initialParams.has('product'))types.value='';
-    else if(['prep','misc','delivery','debris','refinish'].includes(initialParams.get('material')))types.value=initialParams.get('material');
+    else if(['prep','misc','delivery','debris','refinish','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
     if(initialParams.has('cabinetItem')){const note=document.createElement('p');note.className='calc-note';note.textContent='Cabinet work for: '+initialParams.get('cabinetItem');cabinetFields.prepend(note);}
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
@@ -308,8 +308,24 @@
     const roomStatus=create('p','','room-edit-status'); panel.querySelector('h2').after(roomStatus);
     const snapshot = () => [...panel.querySelectorAll('input,select')].map(el=>({id:el.id,name:el.name,value:el.value,checked:el.checked,type:el.type}));
     function restore(data) {
+      if(!data.some(x=>x.id==='cabinet-hardware-count')){
+        const old=data.filter(x=>['cabinet-knobs','cabinet-pulls','cabinet-hinges'].includes(x.id));
+        if(old.length)document.getElementById('cabinet-hardware-count').value=old.reduce((sum,x)=>sum+(Number(x.value)||0),0);
+      }
+      const normalized=value=>['Knobs','Pulls','Hinges','Cabinet Hardware'].includes(value)?'Hardware':value;
+      panel.querySelectorAll('[name="area-product"]').forEach(input=>input.checked=false);
       data.forEach(saved=>{
-        const el=saved.id?document.getElementById(saved.id):[...panel.querySelectorAll('input')].find(input=>input.name===saved.name&&input.value===saved.value);
+        let el;
+        if(saved.name==='area-product'){
+          el=[...panel.querySelectorAll('[name="area-product"]')].find(input=>input.value===normalized(saved.value));
+          if(el&&saved.checked)el.checked=true;return;
+        }
+        const setting=saved.id?.match(/^product-(\d+)-(.+)$/);
+        if(setting){
+          const old=data.find(input=>input.id==='area-product-'+setting[1]);
+          const box=[...panel.querySelectorAll('[name="area-product"]')].find(input=>input.value===normalized(old?.value));
+          el=box?.closest('.area-product').querySelector('[data-product-setting="'+setting[2]+'"]');
+        }else el=saved.id?document.getElementById(saved.id):[...panel.querySelectorAll('input')].find(input=>input.name===saved.name&&input.value===saved.value);
         if(!el)return;if(el.type==='checkbox')el.checked=!!saved.checked;else el.value=saved.value;
       });
     }

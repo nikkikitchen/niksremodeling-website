@@ -8,14 +8,14 @@
     shower:work('Shower','tile',['Porcelain Tile','Backer Board','Waterproofing Membrane','Shower Base','Shower Valve / Head','Shower Glass']),
     'tub-shower':work('Tub / Shower Combination','tile',['Bathtub','Tub / Shower Surround','Porcelain Tile','Backer Board','Waterproofing Membrane','Tub / Shower Valve']),
     toilet:work('Toilet','custom',['Toilet','Toilet Seat','Toilet Supply Line']),
-    vanity:work('Vanity / Vanities','custom',['Single Vanity','Double Vanity','Vanity Top','Sink','Faucet','Knobs','Pulls','Hinges']),
+    vanity:work('Vanity / Vanities','custom',['Single Vanity','Double Vanity','Vanity Top','Sink','Faucet','Hardware']),
     mirror:work('Mirror / Mirrors','custom',['Mirror','Medicine Cabinet']),
     lighting:work('Lighting','custom',['Vanity Light','Ceiling Light','Recessed Light','Dimmer / Switch']),
     accents:work('Accents & Accessories','custom',['Towel Bars','Shelves','Grab Bars','Trim','Decorative Wall Panels']),
     refinish:work('Cabinet / Vanity Refinishing','refinish',CABINET_MATERIALS.filter(name=>name!=='Other material')),
     prep:work('Prep / Repairs','prep',[]),
     ventilation:work('Ventilation','custom',['Exhaust Fan','Vent Duct','Exterior Vent Cap']),
-    cabinets:work('Cabinets','custom',['Base Cabinets','Wall Cabinets','Pantry Cabinets','Knobs','Pulls','Hinges']),
+    cabinets:work('Cabinets','custom',['Base Cabinets','Wall Cabinets','Pantry Cabinets','Hardware']),
     countertops:work('Countertops','custom',['Countertop Surface','Backsplash','Sink']),
     backsplash:work('Backsplash','tile',['Porcelain Tile','Mosaic Tile','Backer Board']),
     appliances:work('Appliances','custom',['Refrigerator','Range','Dishwasher','Microwave','Range Hood']),
@@ -29,6 +29,15 @@
     fireplace:work('Fireplace Surround & Mantel','custom',['Stone Veneer','Hearth Surface','Mantel','Suitable Backer Material']),
     other:work('Other Work','custom',['Other material'])
   };
+  // The catalog, project cards and calculator read the same material lists.
+  const shared=window.WORK_MATERIAL_OPTIONS={};
+  for(const [kind,slug] of Object.entries(WORK_MATERIAL_CATEGORIES))shared[kind]=[...MATERIAL_DETAIL_PAGES[slug].items];
+  shared.refinish=CABINET_MATERIALS.slice();
+  Object.values(options).forEach(option=>{
+    if(shared[option.kind])shared[option.kind]=[...new Set([...shared[option.kind],...option.materials])];
+  });
+  ['flooring','tile'].forEach(kind=>{shared[kind]=[...new Set([...shared[kind],'Underlayment','Backer Board'])]});
+  Object.values(options).forEach(option=>{if(shared[option.kind])option.materials=shared[option.kind].filter(name=>name!=='Other material')});
   const scopes={
     'bath-remodel':['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','refinish','mirror','lighting','ventilation','accents','prep','other'],
     bathrooms:['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','refinish','mirror','lighting','ventilation','accents','prep','other'],
