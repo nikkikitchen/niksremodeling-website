@@ -1,0 +1,78 @@
+// Run with Playwright installed; set CHROMIUM_EXECUTABLE for an external browser binary.
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const {chromium}=createRequire(import.meta.url)('playwright');
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const server=http.createServer((req,res)=>{try{const file=path.join(root,new URL(req.url,'http://localhost').pathname);res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.html')?'text/html':'application/octet-stream');res.end(fs.readFileSync(file));}catch{res.statusCode=404;res.end();}});
+await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--disable-gpu']});
+process.on('exit',()=>server.close());
+const page=await browser.newPage({viewport:{width:390,height:844}});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.route('https://**/*',r=>r.abort());
+const base='http://127.0.0.1:'+server.address().port;
+for(const path of ['/appliances.html','/installation.html','/project.html?project=bath-remodel','/calculators.html?material=flooring','/project-cart.html']){
+ await page.goto(base+path);await page.waitForTimeout(350);
+ console.log(path,await page.title(),await page.locator('body').evaluate(b=>({width:b.scrollWidth,viewport:innerWidth,text:b.innerText.slice(0,90)})));
+}
+await page.goto(base+'/appliances.html');
+await page.evaluate(()=>openProjectItem({name:'Dishwasher',material:true}));
+await page.locator('#project-item-editor input[type=text]').first().fill('Kitchen');
+await page.locator('[data-task-id="appliance-dishwasher-replace"]').check();
+await page.getByRole('button',{name:'Save to Project Cart',exact:true}).click();
+await page.getByRole('button',{name:'Save to Project Cart',exact:true}).click();
+console.log('CART',await page.evaluate(()=>getCart()));
+await page.goto(base+'/installation.html');
+console.log('LABOR rows',await page.locator('.labor-line').count());
+await page.goto(base+'/calculators.html?material=flooring&room=Kitchen&labor=1');await page.waitForTimeout(300);
+await page.locator('#project-location').selectOption('interior');
+await page.locator('[name="area-product"][value="Luxury Vinyl Plank (LVP)"]').check();
+await page.locator('#floor-length').fill('12');await page.locator('#floor-width').fill('10');
+await page.evaluate(()=>calcMaterial());
+console.log('CALC error',await page.locator('#mat-error').textContent());
+let cart=await page.evaluate(()=>getCart());console.log('CALCULATED CART',cart);
+assert(cart.some(x=>x.source==='project-calculator'&&x.price===575));
+const count=cart.length;await page.evaluate(()=>calcMaterial());assert.equal((await page.evaluate(()=>getCart())).length,count);
+await page.locator('#floor-length').fill('20');await page.evaluate(()=>calcMaterial());
+cart=await page.evaluate(()=>getCart());assert(cart.some(x=>x.source==='project-calculator'&&x.price===800));assert.equal(cart.length,count);
+assert(!cart.some(x=>x.type==='Supplies request'));
+await page.goto(base+'/project-cart.html');
+assert((await page.locator('.service-estimate').innerText()).includes('1,400'));
+await page.getByRole('button',{name:'Edit saved work'}).first().click();
+const frame=page.frameLocator('#material-calc-frame');await frame.locator('#floor-length').waitFor();await page.waitForTimeout(400);
+assert.equal(await frame.locator('#floor-length').inputValue(),'20');
+await frame.locator('#floor-length').fill('12');await frame.locator('button[onclick="calcMaterial()"]').click();
+await page.getByRole('button',{name:'Done · Continue Shopping'}).click();
+await page.reload();assert((await page.locator('.service-estimate').innerText()).includes('1,175'));
+await page.getByRole('button',{name:'Remove saved work',exact:true}).first().click();
+assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('niks-material-estimates-v1')).length),0);
+await page.goto(base+'/installation.html');
+const toilet=page.locator('.labor-line').filter({has:page.getByText('Install standard toilet',{exact:true})});
+await page.locator('#labor-room').fill('Bathroom');await toilet.getByRole('button').click();
+assert((await page.evaluate(()=>getCart())).some(x=>x.taskId==='toilet-install'&&x.draftPrice===480&&x.price===undefined));
+await page.setViewportSize({width:1440,height:1000});
+await page.goto(base+'/project.html?project=bath-remodel');
+const toiletCard=page.locator('[data-work-key="toilet"]');await toiletCard.locator('summary').click();await toiletCard.getByLabel('Toilet',{exact:true}).check();await toiletCard.getByRole('button',{name:'Add / Plan This Work'}).click();
+assert(await page.locator('#project-item-editor').isVisible());assert(await page.locator('[data-task-id="toilet-repair-1"]').count());
+await page.setViewportSize({width:390,height:844});await page.locator('#project-item-editor').evaluate(d=>d.scrollTop=0);
+assert.deepEqual(errors,[]);
+// A concrete volume remains numeric through calculation and cart; no default supplies.
+await page.goto(base+'/calculators.html?material=concrete&room=Patio');await page.waitForTimeout(300);
+await page.locator('#project-location').selectOption('exterior');
+await page.locator('[name="area-product"][value="Concrete Mix"]').check();
+await page.locator('#concrete-length').fill('12');await page.locator('#concrete-width').fill('10');await page.locator('#concrete-depth').fill('4');await page.evaluate(()=>calcMaterial());
+assert((await page.evaluate(()=>getCart())).some(x=>x.room==='Patio'&&x.materialUnit==='cubic yards'&&x.materialQuantity===1.56));
+// Labor-only flooring needs no purchased materials, and removal remains removal.
+await page.goto(base+'/calculators.html?material=flooring&room=Hall&labor=1&services=Removal');await page.waitForTimeout(300);
+await page.locator('#project-location').selectOption('interior');await page.locator('#floor-length').fill('10');await page.locator('#floor-width').fill('4');await page.evaluate(()=>calcMaterial());
+const hall=(await page.evaluate(()=>getCart())).filter(x=>x.room==='Hall');assert.equal(hall.length,1);assert(hall[0].name.includes('Removal'));assert(!hall[0].name.includes('Debris'));
+// Minimum is applied once, not per task.
+assert.deepEqual(await page.evaluate(()=>serviceEstimateSummary([{type:'Labor',price:75,qty:1},{type:'Labor',price:25,qty:1}])),{hasServices:true,subtotal:100,adjustment:50,total:150,pending:false});
+console.log('PASS: browser workflows, quantity/volume, repeat save, edits, removal, drafts, minimum, mobile widths');
+console.log('ERRORS',errors);
+await browser.close();
+server.close();
