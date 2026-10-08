@@ -82,14 +82,26 @@
       item.materials.forEach(name=>{const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(name));card.append(label)});
       if(['cabinets','vanity','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
-      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='Add / Plan This Work';
-      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|')});location.href='/calculators.html?'+params.toString();};
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='Calculate Materials & Supplies';
+      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
-      if(item.materials.length){const supplies=document.createElement('button');supplies.type='button';supplies.className='btn outline';supplies.textContent='Add Needed Supplies';supplies.onclick=()=>{
-        const names=selected(),area=document.getElementById('scope-room').value.trim();if(!names.length){status.textContent='Choose one or more materials first.';return;}if(!area){status.textContent='Name the room or area first.';return;}
-        const cart=getCart();names.forEach(name=>{const key=id+'|'+area+'|'+item.title+'|'+name;const entry={source:'project-supplies',scopeKey:key,name:area+' — '+item.title+': '+name+' supplies',type:'Supplies request',qty:1,forMaterial:name,supplyList:window.materialSupplyList(name)};const existing=cart.findIndex(x=>x.scopeKey===key);if(existing>=0)cart[existing]=entry;else cart.push(entry);});saveCart(cart);status.textContent='Supplies added for '+names.join(', ')+'.';};card.append(supplies);}
+      status.textContent='Enter measurements, package coverage and waste allowance. Choose supplies after calculating.';
       card.append(status);grid.append(card);
     });
     const style=document.createElement('style');style.textContent='.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
+  };
+  window.openProjectMeasurements=url=>{
+    let dialog=document.getElementById('project-measurements-dialog');
+    if(!dialog){dialog=document.createElement('dialog');dialog.id='project-measurements-dialog';dialog.className='material-calc-dialog';dialog.setAttribute('aria-label','Calculate materials and supplies');dialog.innerHTML='<div class="material-calc-dialog-head"><strong>Materials & Supplies</strong><button class="btn outline" type="button">Done · Back to Project</button></div><p role="status" class="calc-note" id="project-measurements-status">Save your measurements to update this project’s cart.</p><iframe title="Material and supply calculator"></iframe>';dialog.querySelector('button').onclick=()=>{dialog.close();updateCartCount()};document.body.append(dialog);}
+    dialog.querySelector('iframe').src=url;dialog.showModal();
+  };
+  window.addEventListener('message',event=>{if(event.origin!==location.origin||event.data?.type!=='project-cart-saved')return;updateCartCount();const status=document.getElementById('project-measurements-status');if(status)status.textContent='Saved to your Project Cart. You can keep adding work to this room.';});
+  // Reuse the calculator's supply rules and coverage assumptions for this saved work.
+  window.projectSupplyChoices=item=>{
+    const group=estimateSupplyGroup(item),guide=SUPPLY_GUIDE[group];
+    const entries=guide?.items||[...new Set((item.products||[]).flatMap(p=>materialSupplyList(p.name)))].map(name=>[name,'Confirm compatibility and package coverage.']);
+    const primary=item.products?.find(p=>Number.isFinite(p.waste)&&Number.isFinite(p.area));
+    const measured=primary?{...item,measurements:{...item.measurements,coverage:Number((primary.area*(1+primary.waste/100)).toFixed(8))}}:item;
+    return entries.map(([name,note])=>{const estimate=group?supplyStartingQuantity(group,name,[measured]):null;return {name,note,quantity:estimate?.quantity??null,unit:estimate?.unit||'quantity / packaging to confirm',selected:false};});
   };
 })();

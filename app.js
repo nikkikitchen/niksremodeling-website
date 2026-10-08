@@ -573,6 +573,8 @@ function readAreaProducts(){
 function calculateAreaProducts(item,plans){
  return plans.map(plan=>{
   const area=item.measurements.area;
+  if(plan.mode==='volume')return {name:plan.name,quantity:item.purchase.quantity,unit:'cubic yards',area,detail:item.detail};
+  if(plan.mode==='studs')return {name:plan.name,quantity:item.measurements.studs,unit:'studs',detail:item.detail};
   if(plan.mode==='paint'){
    const surfaces=item.measurements.surfaces||[{area}];
    const quantity=surfaces.reduce((sum,surface)=>sum+Math.ceil(surface.area*plan.coats/plan.coverage),0);
