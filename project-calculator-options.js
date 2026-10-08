@@ -378,6 +378,7 @@
       const oldIndex=editingId?materialEstimates.findIndex(x=>x.roomId===editingId):-1;
       item.roomId=editingId||'room-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);
       item.projectLocation=projectLocation.value;
+      item.laborMaterial=new URLSearchParams(location.search).get('laborMaterial')||document.getElementById('material-choice').value;
       item.workLabel=new URLSearchParams(location.search).get('workLabel')||types.selectedOptions[0].textContent;
       if(productPlans.length){
         item.products=calculateAreaProducts(item,productPlans);

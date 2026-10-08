@@ -51,9 +51,9 @@ await page.reload();assert((await page.locator('.service-estimate').innerText())
 await page.getByRole('button',{name:'Remove saved work',exact:true}).first().click();
 assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('niks-material-estimates-v1')).length),0);
 await page.goto(base+'/installation.html');
-const toilet=page.locator('.labor-line').filter({has:page.getByText('Replace standard toilet',{exact:true})});
+const toilet=page.locator('.labor-line').filter({has:page.getByText('Install standard toilet',{exact:true})});
 await page.locator('#labor-room').fill('Bathroom');await toilet.getByRole('button').click();
-assert((await page.evaluate(()=>getCart())).some(x=>x.taskId==='toilet-replace'&&x.draftPrice===480&&x.price===undefined));
+assert((await page.evaluate(()=>getCart())).some(x=>x.taskId==='toilet-install'&&x.draftPrice===480&&x.price===undefined));
 await page.setViewportSize({width:1440,height:1000});
 await page.goto(base+'/project.html?project=bath-remodel');
 const toiletCard=page.locator('[data-work-key="toilet"]');await toiletCard.locator('summary').click();await toiletCard.getByLabel('Toilet',{exact:true}).check();await toiletCard.getByRole('button',{name:'Add / Plan This Work'}).click();

@@ -328,8 +328,8 @@ function saveMaterialEstimates(){try{localStorage.setItem(MATERIAL_ESTIMATES_KEY
 function flooringLaborEstimate(item, service){
  if(service!=='Installation'||item.type!=='flooring')return null;
  const area=Number(item.measurements?.area);if(!Number.isFinite(area)||area<=0)return null;
- const kind=item.floorKind==='tile'?'Tile':item.floorKind==='floating'?'LVP':item.floorKind==='glue'?'Glue-down':'Hardwood';
- const rates={LVP:[350,575,800],Laminate:[300,500,700],'Glue-down':[400,650,900],Hardwood:[500,900,1300],Tile:[650,1000,1500]};
+ const requested=item.laborMaterial||item.title||'';const kind=/laminate/i.test(requested)?'Laminate':item.floorKind==='tile'?'Tile':item.floorKind==='floating'?'LVP':item.floorKind==='glue'?'Glue-down':'Hardwood';
+ const rates=window.FLOORING_LABOR_RATES;
  const key=kind==='LVP'?'LVP':kind; const tier=area<=40?0:area<=144?1:2; const base=rates[key][tier]; const amount=key==='LVP'&&area>250?Math.ceil(4250*(area/1200)):area<=250?base:Math.ceil(base+((area-250)*(rates[key][2]-rates[key][1])/(250-144))); const sizeLabel=area>250?'Large project':tier===0?'Small':tier===1?'Average':'Large';
  return {amount,tier:sizeLabel,label:key,includes:key==='Tile'?'Includes grout and perimeter trim.':'Includes perimeter trim.'};
 }

@@ -14,9 +14,10 @@ test('approved appliance amounts retain their specific scopes',()=>{
 });
 test('repair quotes and draft bath proposals do not become approved prices',()=>{
  for(const t of tasks.filter(t=>t.id.startsWith('toilet-repair-')))assert.equal(t.price,null);
- assert.equal(tasks.find(t=>t.id==='toilet-replace').status,'draft');
- assert.equal(tasks.find(t=>t.id==='toilet-install').price,null);
- assert.equal(tasks.find(t=>t.id==='smart-toilet-install').price,null);
+ assert.equal(tasks.find(t=>t.id==='toilet-replace').price,null);
+ assert.equal(tasks.find(t=>t.id==='toilet-install').price,480);
+ assert.equal(tasks.find(t=>t.id==='toilet-install').status,'draft');
+ assert.equal(tasks.find(t=>t.id==='smart-toilet-install').price,600);
  assert.equal(tasks.find(t=>t.id==='misc-hour').price,75);
 });
 test('same room and catalog task update across shopping and labor paths',()=>{

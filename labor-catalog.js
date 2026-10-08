@@ -1,3 +1,4 @@
+window.FLOORING_LABOR_RATES={Laminate:[300,500,700],LVP:[350,575,800],'Glue-down':[400,650,900],Hardwood:[500,900,1300],Tile:[650,1000,1500]};
 window.LABOR_CATALOG = (()=>{
  const task=(id,label,price=null,note='',status='pending',unit='each')=>({id,label,price,note,status,unit});
  const group=(id,label,actions)=>({id,label,actions});
@@ -32,3 +33,29 @@ window.LABOR_CATALOG = (()=>{
  {id:'other',label:'Other labor & delivery',intro:'Hourly help, assembly and project support.',groups:[group('misc','Miscellaneous labor',{Labor:[task('misc-hour','Miscellaneous labor',75,'$150 minimum per visit, shared with other services.','approved','hours')]}),standard('assembly','Furniture assembly',['Repair / tighten furniture']),group('delivery','Delivery & debris',{Delivery:[task('store-pickup','Store pickup & delivery'),task('furniture-delivery','Furniture / appliance delivery')],Remove:[task('haul-debris','Haul away project debris')]})]}
  ];
 })();
+// Display the established calculator rates with the matching installation scopes.
+const flooring=window.LABOR_CATALOG.find(c=>c.id==='flooring');
+flooring.groups[0].actions={Install:Object.entries(window.FLOORING_LABOR_RATES).map(([name,rates])=>({
+ id:'flooring-'+name.toLowerCase(),label:'Install '+name,unit:'room',status:'calculator',
+ priceText:'Up to 40 sq. ft.: $'+rates[0].toLocaleString()+'\n41–144 sq. ft.: $'+rates[1].toLocaleString()+'\n145–250 sq. ft.: $'+rates[2].toLocaleString(),
+ note:'Per room. Includes perimeter trim'+(name==='Tile'?' and grout':'')+'. Removal and preparation separate.'+(name==='LVP'?' Larger projects use the existing $4,250 / 1,200 sq. ft. reference.':''),
+ calculatorUrl:'/calculators.html?material=flooring&labor=1&floorKind='+({Laminate:'floating',LVP:'floating','Glue-down':'glue',Hardwood:'nail',Tile:'tile'}[name])+'&laborMaterial='+encodeURIComponent(name)
+}))};
+// The bathroom proposal follows the original fixture scopes; removal is not assumed included.
+const bath=window.LABOR_CATALOG.find(c=>c.id==='bathroom');
+const toilets=bath.groups.find(g=>g.id==='toilet');
+toilets.actions.Install[0].price=480;
+toilets.actions.Install[1].price=600;
+for(const t of toilets.actions.Replace){t.price=null;t.status='pending';}
+for(const [id,label,note] of [
+ ['faucet','Install bathroom sink faucet','Existing compatible connections; fixture extra.'],
+ ['vanity','Install premade vanity','Plumbing changes, separate faucet, removal and wall/floor repairs are extra.'],
+ ['fan','Install vent fan with new outside vent','Fixture and materials extra; new electrical work and surface repairs separate.']
+]){
+ const g=bath.groups.find(g=>g.id===id),proposal=g.actions.Replace[0];
+ Object.assign(g.actions.Install[0],{label,note,price:proposal.price,status:'draft'});
+ proposal.price=null;proposal.status='pending';
+}
+const glass=bath.groups.find(g=>g.id==='glass');
+glass.actions.Install=glass.actions.Replace.map(t=>({...t,id:t.id+'-install',label:t.label.replace('Replace','Install'),note:'Glass-door installation only; removal, tile and waterproofing separate.'}));
+glass.actions.Replace=[{id:'glass-replace',label:'Replace shower door',price:null,note:'Removal and replacement scope to confirm.',status:'pending',unit:'each'}];
