@@ -523,12 +523,13 @@ function alphabetizeSiteLists() {
   const slots=items.map(item=>{const marker=document.createComment('sort');item.before(marker);return marker});
   sorted.forEach((item,i)=>slots[i].replaceWith(item));
  };
+ document.querySelectorAll('.path-grid').forEach(parent=>reorder(parent,[...parent.querySelectorAll(':scope > .path-card')],card=>card.querySelector('.path-number').textContent.trim()));
  document.querySelectorAll('.nav > .wrap').forEach(parent=>reorder(parent,[...parent.children].filter(el=>el.matches('.nav-menu')),el=>el.querySelector('.nav-main').textContent));
  document.querySelectorAll('.nav-dropdown').forEach(menu=>{
   let group=[];const flush=()=>{reorder(menu,group);group=[]};
   [...menu.children].forEach(el=>{if(el.matches('a'))group.push(el);else flush()});flush();
  });
- document.querySelectorAll('.project-grid,.product-tile-grid,.shop-guide-grid,.category-tabs,.material-detail-grid,.products,.project-supply-grid,.labor-choices,.delivery-choices,.service-dropdown-options,.room-supply-list,.supply-grid,.path-grid,#recommended-tools ul').forEach(parent=>{
+ document.querySelectorAll('.project-grid,.product-tile-grid,.shop-guide-grid,.category-tabs,.material-detail-grid,.products,.project-supply-grid,.labor-choices,.delivery-choices,.service-dropdown-options,.room-supply-list,.supply-grid,#recommended-tools ul').forEach(parent=>{
   if(parent.closest('.calc-workspace'))return;
   reorder(parent,[...parent.children].filter(el=>el.matches('a,article,label,button,li,.panel')));
  });
