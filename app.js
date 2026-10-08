@@ -529,7 +529,8 @@ function alphabetizeSiteLists() {
   let group=[];const flush=()=>{reorder(menu,group);group=[]};
   [...menu.children].forEach(el=>{if(el.matches('a'))group.push(el);else flush()});flush();
  });
- document.querySelectorAll('.project-grid,.product-tile-grid,.shop-guide-grid,.category-tabs,.material-detail-grid,.products,.project-supply-grid,.labor-choices,.delivery-choices,.service-dropdown-options,.room-supply-list,.supply-grid,.path-grid,#recommended-tools ul').forEach(parent=>{
+ // Numbered homepage path cards keep their authored 1–4 order.
+ document.querySelectorAll('.project-grid,.product-tile-grid,.shop-guide-grid,.category-tabs,.material-detail-grid,.products,.project-supply-grid,.labor-choices,.delivery-choices,.service-dropdown-options,.room-supply-list,.supply-grid,#recommended-tools ul').forEach(parent=>{
   if(parent.closest('.calc-workspace'))return;
   reorder(parent,[...parent.children].filter(el=>el.matches('a,article,label,button,li,.panel')));
  });
