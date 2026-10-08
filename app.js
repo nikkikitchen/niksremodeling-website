@@ -524,6 +524,7 @@ function alphabetizeSiteLists() {
   const slots=items.map(item=>{const marker=document.createComment('sort');item.before(marker);return marker});
   sorted.forEach((item,i)=>slots[i].replaceWith(item));
  };
+ document.querySelectorAll('.path-grid').forEach(parent=>reorder(parent,[...parent.querySelectorAll(':scope > .path-card')],card=>card.querySelector('.path-number').textContent.trim()));
  document.querySelectorAll('.nav > .wrap').forEach(parent=>reorder(parent,[...parent.children].filter(el=>el.matches('.nav-menu')),el=>el.querySelector('.nav-main').textContent));
  document.querySelectorAll('.nav-dropdown').forEach(menu=>{
   let group=[];const flush=()=>{reorder(menu,group);group=[]};
