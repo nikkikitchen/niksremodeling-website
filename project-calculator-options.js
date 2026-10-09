@@ -216,8 +216,8 @@
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
     if(initialParams.has('cabinetItem')){const note=document.createElement('p');note.className='calc-note';note.textContent='Cabinet work for: '+initialParams.get('cabinetItem');cabinetFields.prepend(note);}
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
-    const prefill={length:'floor-length',width:'floor-width',height:'paint-height'};
-    for(const [param,id] of Object.entries(prefill)){const value=initialParams.get(param),field=document.getElementById(id);if(value&&field)field.value=value;}
+    const prefill={length:['floor-length','paint-length','paint-ceiling-length','paint-trim-length','wood-length','dry-length','concrete-length'],width:['floor-width','paint-ceiling-width','concrete-width'],height:['paint-height','wood-height','dry-height']};
+    for(const [param,ids] of Object.entries(prefill)){const value=initialParams.get(param);if(value)ids.forEach(id=>{const field=document.getElementById(id);if(field)field.value=value;});}
     if(initialParams.has('location'))projectLocation.value=initialParams.get('location');
     const hoursField=document.getElementById('misc-hours').parentElement;
     workServices.after(hoursField);
