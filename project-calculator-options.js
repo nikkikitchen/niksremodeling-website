@@ -141,6 +141,7 @@
       const work=new URLSearchParams(location.search).get('work');
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
+      if(work?.startsWith('accent-'))names=workChoices.slice();
       if(product&&!names.includes(product))names.unshift(product);
       const list=document.getElementById('material-product-list');list.replaceChildren();
       names.forEach((name,index)=>{
@@ -156,13 +157,14 @@
         else if(currentType==='refinish'){row.dataset.measure='cabinet';const note=document.createElement('p');note.className='calc-note';note.textContent='Material quantity confirmed from cabinet sizes and finish.';settings.append(note);}
         else if(/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
           row.dataset.measure='paint';field('coats','Coats',/primer/i.test(name)?'1':'2');field('coverage','Coverage (sq. ft. per gallon)',/primer/i.test(name)?'300':'350');
-        }else if(/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
+        }else if(!work?.startsWith('accent-')&&/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
           row.dataset.measure='area';field('waste','Waste allowance (%)','10');field('coverage','Coverage per package (sq. ft., optional)','','From product label');
         }else{
           row.dataset.measure='manual';field('quantity','Quantity needed','1','Enter quantity');
           const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.textContent='Unit';const unit=document.createElement('select');unit.id='product-'+index+'-unit';unit.dataset.productSetting='unit';label.htmlFor=unit.id;
           ['Pieces','Bags','Boxes','Gallons','Linear feet','Rolls','Sheets','Square feet','Cubic yards'].forEach(name=>{const option=document.createElement('option');option.textContent=name;unit.append(option)});wrap.append(label,unit);settings.append(wrap);
           const quantity=settings.querySelector('[data-product-setting=quantity]');
+          if(work?.startsWith('accent-')){const params=new URLSearchParams(location.search);const length=Number(params.get('length')),height=Number(params.get('height'));unit.value='Square feet';quantity.value=length>0&&height>0?String(length*height):'';quantity.placeholder='Wall area';}
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
         settings.hidden=!box.checked;row.append(settings);list.append(row);
