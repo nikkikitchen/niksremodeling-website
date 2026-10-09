@@ -79,6 +79,7 @@
     const workGrid=document.getElementById('project-work-grid');
     const workNote=workGrid.nextElementSibling;
     const cartLink=workNote.nextElementSibling;
+    cartLink.textContent='Next: Review Project';cartLink.className='btn primary';cartLink.style.marginLeft='10px';
     workNote.textContent='Choose a section to continue.';
     const steps=document.createElement('nav');steps.setAttribute('aria-label','Project steps');
     steps.style.cssText='display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px';
