@@ -246,7 +246,7 @@ function paintMeasurementPlan(){
  return {area:surfaces.reduce((sum,x)=>sum+x.area,0),gallons:surfaces.reduce((sum,x)=>sum+x.gallons,0),surfaces,coats,coverage};
 }
 function materialNumber(id){const input=document.getElementById(id),n=Number(input.value);if(input.value.trim()===''||!Number.isFinite(n)||n<0)throw Error('Enter valid, nonnegative numbers for the selected material.');return n}
-function materialPositive(id){const n=materialNumber(id);if(n<=0)throw Error('Lengths, coverage, depth and counts must be greater than zero.');return n}
+function materialPositive(id){const n=materialNumber(id);if(n<=0){const field=document.getElementById(id);field?.focus();const question={'paint-height':'How tall is the wall?','dry-height':'How tall is the wall?','paint-length':'How long is the wall?','dry-length':'How long is the wall?','floor-length':'What is the length?','floor-width':'What is the width?'}[id];const label=document.querySelector('label[for=\"'+id+'\"]')?.textContent||'this measurement';throw Error(question||'Enter '+label+' to continue.');}return n}
 function selectedProjectOptions(){
  const selected=[...document.querySelectorAll('[name="project-option"]:checked')].map(box=>box.value);
  if(selected.includes('Materials'))selected.push('Supplies');
