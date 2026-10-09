@@ -1,6 +1,11 @@
 (() => {
   const work = (title, kind, materials) => ({title, kind, materials});
   const options = window.PROJECT_WORK_OPTIONS = {
+    'accent-stone':work('Stacked Stone & Brick','custom',['Stacked Stone','Natural Stone Veneer','Manufactured Stone Veneer','Thin Brick','Faux Stone Panels']),
+    'accent-wood':work('Wood Walls','custom',['Shiplap','Wood Veneer','Tongue & Groove','Reclaimed Wood','Wood Slat Panels','Fluted Wood Panels','Board & Batten','Beadboard','Wainscoting','Geometric Wood Panels']),
+    'accent-tile':work('Decorative Tile & Slabs','custom',['Ceramic Wall Tile','Porcelain Wall Tile','Mosaic Wall Tile','Large Format Wall Tile','Porcelain Slabs','Stone Slabs']),
+    'accent-texture':work('Decorative Finishes','custom',['Venetian Plaster','Limewash','Textured Plaster','Concrete Look Finish','Metallic Finish','Decorative 3D Wall Panels']),
+    'accent-design':work('Custom Wall Designs','custom',['Waterfall Effect','Custom Wall Design']),
     ceiling:work('Ceiling','paint',['Interior Paint','Primer','Drywall Panels']),
     walls:work('Walls','paint',['Interior Paint','Primer','Drywall Panels','Wall Panels','Porcelain Tile','Backer Board']),
     floor:work('Floor','flooring',['Luxury Vinyl Plank (LVP)','Floor Tile','Underlayment','Backer Board']),
@@ -47,7 +52,7 @@
     murals:['ceiling','walls','refinish','trim','prep','other'],wallpaper:['wallpaper','walls','trim','prep','other'],
     fireplaces:['fireplace','walls','trim','prep','other'],concrete:['concrete','floor','prep','other'],
     flooring:['floor','trim','prep','other'],entryways:['doors','floor','stairs','trim','lighting','prep','other'],
-    accents:['walls','wallpaper','trim','lighting','prep','other'],lighting:['lighting','ventilation','prep','other'],
+    accents:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','prep','other'],lighting:['lighting','ventilation','prep','other'],
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
   window.materialSupplyList=(name)=>{
@@ -93,7 +98,7 @@
     ['scope-room','scope-location','scope-length','scope-width','scope-height'].forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
-      const heading=document.createElement('summary');heading.textContent=item.title;card.append(heading);
+      const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
       item.materials.forEach(name=>{const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(name));card.append(label)});
       if(['cabinets','vanity','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
