@@ -567,6 +567,7 @@ function readAreaProducts(){
    if(!input.value.trim()||!Number.isFinite(value)||(key==='waste'?value<0:value<=0)||(key==='coats'&&!Number.isInteger(value)))throw Error('Enter valid '+key+' for '+name+'.');
    result[key]=value;
   });
+  if(result.mode==='manual'&&['Pieces','Bags','Boxes','Rolls','Sheets'].includes(result.unit)&&!Number.isSafeInteger(result.quantity))throw Error('Enter a whole number for '+name+'.');
   return result;
  });
 }

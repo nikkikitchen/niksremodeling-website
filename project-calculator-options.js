@@ -118,7 +118,9 @@
     const materialCategories = WORK_MATERIAL_CATEGORIES;
     function syncMaterialChoice() {
       const selected=[...document.querySelectorAll('[name="area-product"]:checked')];
-      materialChoice.value=selected[0]?.value||'';
+      const selectedName=selected[0]?.value||'';
+      if(selectedName&&![...materialChoice.options].some(option=>option.value===selectedName)){const option=document.createElement('option');option.value=option.textContent=selectedName;materialChoice.append(option);}
+      materialChoice.value=selectedName;
       if(selected.length)panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
       document.querySelectorAll('.area-product').forEach(row=>{row.querySelector('.area-product-settings').hidden=!row.querySelector('[name="area-product"]').checked});
     }
@@ -157,9 +159,11 @@
         }else if(/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
           row.dataset.measure='area';field('waste','Waste allowance (%)','10');field('coverage','Coverage per package (sq. ft., optional)','','From product label');
         }else{
-          row.dataset.measure='manual';field('quantity','Quantity needed','','Enter quantity');
+          row.dataset.measure='manual';field('quantity','Quantity needed','1','Enter quantity');
           const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.textContent='Unit';const unit=document.createElement('select');unit.id='product-'+index+'-unit';unit.dataset.productSetting='unit';label.htmlFor=unit.id;
           ['Pieces','Bags','Boxes','Gallons','Linear feet','Rolls','Sheets','Square feet','Cubic yards'].forEach(name=>{const option=document.createElement('option');option.textContent=name;unit.append(option)});wrap.append(label,unit);settings.append(wrap);
+          const quantity=settings.querySelector('[data-product-setting=quantity]');
+          const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
         settings.hidden=!box.checked;row.append(settings);list.append(row);
         box.addEventListener('change',()=>{syncMaterialChoice();if(box.checked&&(category==='flooring'||category==='tile-stone')&&!['Underlayment','Backer Board','Other material'].includes(name)){floorKind.value=/Tile|Stone/.test(name)?'tile':name==='Hardwood'?'nail':name==='Carpet'||name==='Linoleum'?'glue':'floating';floorKind.dispatchEvent(new Event('change'));}});
@@ -180,7 +184,7 @@
       panel.querySelector('[name="project-option"][value="Debris Removal"]').checked=type==='debris';
       if(service){panel.querySelector('[name="project-option"][value="Materials"]').checked=false;panel.querySelector('[name="labor-service"]').checked=false;}
       const installation=panel.querySelector('[name="labor-service"]:checked');
-      quantityMethod.value=shared||installation?'measure':'known';
+      quantityMethod.value=shared?'measure':'known';
       quantityMethod.hidden=true;document.querySelector('label[for="quantity-method"]').hidden=true;
       if(!shared){document.getElementById('known-quantity').value='1';document.getElementById('known-unit').value='Pieces';}
       const known=quantityMethod.value==='known';
@@ -200,7 +204,9 @@
     materialDetails.after(cabinetFields);
     cabinetFields.addEventListener('change',updateQuantityFields);
     const measurementIds = ['floor-length','floor-width','paint-length','paint-height','paint-ceiling-length','paint-ceiling-width','paint-trim-length','paint-trim-width','paint-other-area','wood-length','wood-height','dry-length','dry-height','concrete-length','concrete-width','concrete-depth'];
-    measurementIds.forEach(id => { document.getElementById(id).value = ''; });
+    const roundedMeasurements=[...measurementIds,'wood-spacing','paint-openings','dry-openings','paint-trim-width'];
+    measurementIds.forEach(id=>{document.getElementById(id).value='';});
+    roundedMeasurements.forEach(id=>{const input=document.getElementById(id);if(!input)return;input.step='1';input.min='0';input.placeholder='Whole number';const label=document.querySelector('label[for="'+id+'"]');if(label)label.append(document.createTextNode(' — round to the nearest unit shown'));});
     const types = document.getElementById('material-type');
     const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select one';types.prepend(placeholder);
     [['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
@@ -356,6 +362,7 @@
       const error=document.getElementById('mat-error');error.hidden=true;
       if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}
       if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
+      for(const id of roundedMeasurements){const input=document.getElementById(id);if(input&&input.value.trim()&&!Number.isInteger(Number(input.value))&&!input.closest('[hidden]')){error.hidden=false;error.textContent='Round measurements to the nearest whole unit shown.';input.focus();return;}}
       const answers={};
       if(panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
         for(const input of questionBox.querySelectorAll('select')) {
@@ -375,6 +382,11 @@
           const deliveryTypes=types.value==='delivery'?selectedDeliveryTypes():[];
           materialEstimates.push({type:'plan',title:label,result:hourly?hours+' hours':label+' requested',detail:hourly?'$75 per hour.':'Scope and price to be confirmed.',measurements:{},labor:hourly?[{service:label,scope:label,quantity:hours,unit:'hours',hourlyRate:75,price:hours*75}]:[],projectOptions:selectedProjectOptions(),deliveryTypes});
         }catch(e){error.hidden=false;error.textContent=e.message;return;}
+      }else if(productPlans.length&&productPlans.every(product=>product.mode==='manual')){
+        const labor=[];
+        const services=[...panel.querySelectorAll('[name="labor-service"]:checked')].map(box=>box.value);
+        for(const product of productPlans)for(const service of services)labor.push({service,scope:product.name,quantity:product.quantity,unit:product.unit});
+        materialEstimates.push({type:'custom',title:materialChoice.value,result:'',detail:'',measurements:{},labor,projectOptions:selectedProjectOptions(),deliveryTypes:selectedDeliveryTypes()});
       }else originalCalc();
       const item=materialEstimates[materialEstimates.length-1];
       if(!item||item===last)return;
@@ -395,7 +407,7 @@
       const sourceParams=new URLSearchParams(sourceQuery);
       if(sourceParams.has('project')&&sourceParams.has('work'))item.projectScopeKey=sourceParams.get('project')+'|'+item.roomName.toLowerCase()+'|'+sourceParams.get('work');
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
-      item.supplyChoices=window.projectSupplyChoices(item).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...s,selected:!!old?.selected,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
+      item.supplyChoices=window.projectSupplyChoices(item).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
@@ -489,14 +501,14 @@
         const more=create('button','Add Work to This Room','btn outline');more.type='button';more.onclick=()=>addWork(item);info.append(more);
         const edit=create('button',item.form?'Edit Item':'Edit / Recalculate','btn outline');edit.type='button';edit.onclick=()=>editRoom(item);info.append(edit);
         if(item.supplyChoices?.length){
-          const supplies=create('section','','room-supply-list');supplies.append(create('h3','Optional supplies'),create('p','Select only what you need. Quantities use the assumptions below; adjust for the actual product and coverage.','calc-note'));
+          const supplies=create('section','','room-supply-list');supplies.append(create('h3','Included supplies'),create('p','Supplies are added automatically. Quantities and compatibility are confirmed for your selected products.','calc-note'));
           item.supplyChoices.forEach(supply=>{
             const label=create('label','','room-supply-choice'),box=create('input'),copy=create('span',supply.name),note=create('small',supply.note+' '+supply.unit),qty=create('input');
             box.type='checkbox';box.checked=supply.selected;box.setAttribute('aria-label','Include '+supply.name);
             qty.type='number';qty.min='0.01';qty.step='any';qty.value=supply.quantity??'';qty.placeholder='Confirm quantity';qty.setAttribute('aria-label',supply.name+' quantity');qty.style.maxWidth='130px';
             box.onchange=()=>{supply.selected=box.checked;saveMaterialEstimates();addProjectToCart();};
             qty.onchange=()=>{if(qty.value!==''&&(!Number.isFinite(Number(qty.value))||Number(qty.value)<=0)){qty.setCustomValidity('Enter a quantity greater than zero.');qty.reportValidity();return;}qty.setCustomValidity('');supply.quantity=qty.value===''?null:Number(qty.value);supply.manualQuantity=true;saveMaterialEstimates();addProjectToCart();};
-            copy.append(note);label.append(box,copy,qty);supplies.append(label);
+            copy.append(note);label.append(copy,qty);supplies.append(label);
           });info.append(supplies);
         }
         if(!item.supplyChoices&&item.suggestedSupplies?.length){
