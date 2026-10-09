@@ -79,13 +79,13 @@
     const workGrid=document.getElementById('project-work-grid');
     const workNote=workGrid.nextElementSibling;
     const cartLink=workNote.nextElementSibling;
-    cartLink.textContent='Next: Review Project';cartLink.className='btn primary';cartLink.style.marginLeft='10px';
+    cartLink.textContent='Next';cartLink.className='btn primary';cartLink.style.marginLeft='10px';
     workNote.textContent='Choose a section to continue.';
     const steps=document.createElement('nav');steps.setAttribute('aria-label','Project steps');
     steps.style.cssText='display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px';
     measurementPanel.before(steps);
-    const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next: Choose your work';measurementPanel.append(next);
-    const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back: Measurements';cartLink.before(back);
+    const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next';measurementPanel.append(next);
+    const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';cartLink.before(back);
     const stepButtons=[];
     const setStep=step=>{measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=back.hidden=step!==1;cartLink.hidden=step!==1;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
     ['1. Measurements','2. Materials & Labor','3. Review Project'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
