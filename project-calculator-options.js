@@ -410,6 +410,8 @@
       if(sourceParams.has('project')&&sourceParams.has('work'))item.projectScopeKey=sourceParams.get('project')+'|'+item.roomName.toLowerCase()+'|'+sourceParams.get('work');
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
       item.supplyChoices=window.projectSupplyChoices(item).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
+      item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
+      if(item.customerProvidesMaterials)item.projectOptions=(item.projectOptions||[]).filter(x=>x!=='Materials');
       item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
@@ -419,6 +421,7 @@
       summary.scrollIntoView({behavior:'smooth',block:'start'});
     };
     function editRoom(item) {
+      const own=document.getElementById('customer-provides-materials');if(own)own.checked=!!item.customerProvidesMaterials;
       editingId=item.roomId||(item.roomId='room-'+Date.now());
       history.replaceState(null,'',location.pathname+(item.sourceQuery||''));
       if(item.form) {
@@ -438,6 +441,7 @@
       panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function newRoom() {
+      const own=document.getElementById('customer-provides-materials');if(own)own.checked=false;
       editingId=null;history.replaceState(null,'',location.pathname);
       panel.querySelectorAll('input[type="checkbox"]').forEach(el=>{el.checked=false;el.indeterminate=false});
       document.getElementById('material-name').value='';
