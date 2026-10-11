@@ -23,7 +23,7 @@
       }
       el.append(box, text); return el;
     };
-    const materialsChoice = makeBox('Materials / Supplies', 'project-option', 'Materials');
+    const materialsChoice = makeBox('Materials', 'project-option', 'Materials');
     const toolsChoice = makeBox('Tools', 'project-option', 'Tools');
     const debrisChoice = makeBox('Debris Removal', 'project-option', 'Debris Removal');
     debrisChoice.querySelector('input').checked = removalSelected;
@@ -409,7 +409,7 @@
       const sourceParams=new URLSearchParams(sourceQuery);
       if(sourceParams.has('project')&&sourceParams.has('work'))item.projectScopeKey=sourceParams.get('project')+'|'+item.roomName.toLowerCase()+'|'+sourceParams.get('work');
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
-      item.supplyChoices=window.projectSupplyChoices(item).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
+      item.supplyChoices=window.projectSupplyChoices(item).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
@@ -472,8 +472,8 @@
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
             add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price}:{}); 
           });
-          if(item.supplyChoices){const selected=item.supplyChoices.filter(x=>x.selected);if(selected.length)add('Selected supplies','Supplies request',{supplyList:selected.map(x=>x.name+' — '+(x.quantity==null?'quantity to confirm':x.quantity+' '+x.unit)),supplyQuantities:selected});}
-          else if(item.products)item.products.filter(x=>x.includeSupplies).forEach(product=>add(product.name+' — needed supplies','Supplies request',{supplyList:product.supplies,forMaterial:product.name,workLabel:item.workLabel}));
+          const included=item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
+          if(included.length&&(item.projectOptions?.includes('Materials')||(item.labor?.length||item.labor?.service)))add('Included project costs','Included project costs',includedProjectCosts(included));
           if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
           if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
           if(item.projectOptions?.includes('Delivery'))(item.deliveryTypes?.length?item.deliveryTypes:['Delivery']).forEach(x=>add(x,'Service'));
@@ -502,30 +502,7 @@
         }
         const more=create('button','Add Work to This Room','btn outline');more.type='button';more.onclick=()=>addWork(item);info.append(more);
         const edit=create('button',item.form?'Edit Item':'Edit / Recalculate','btn outline');edit.type='button';edit.onclick=()=>editRoom(item);info.append(edit);
-        if(item.supplyChoices?.length){
-          const supplies=create('section','','room-supply-list');supplies.append(create('h3','Included supplies'),create('p','Supplies are added automatically. Quantities and compatibility are confirmed for your selected products.','calc-note'));
-          item.supplyChoices.forEach(supply=>{
-            const label=create('label','','room-supply-choice'),box=create('input'),copy=create('span',supply.name),note=create('small',supply.note+' '+supply.unit),qty=create('input');
-            box.type='checkbox';box.checked=supply.selected;box.setAttribute('aria-label','Include '+supply.name);
-            qty.type='number';qty.min='0.01';qty.step='any';qty.value=supply.quantity??'';qty.placeholder='Confirm quantity';qty.setAttribute('aria-label',supply.name+' quantity');qty.style.maxWidth='130px';
-            box.onchange=()=>{supply.selected=box.checked;saveMaterialEstimates();addProjectToCart();};
-            qty.onchange=()=>{if(qty.value!==''&&(!Number.isFinite(Number(qty.value))||Number(qty.value)<=0)){qty.setCustomValidity('Enter a quantity greater than zero.');qty.reportValidity();return;}qty.setCustomValidity('');supply.quantity=qty.value===''?null:Number(qty.value);supply.manualQuantity=true;saveMaterialEstimates();addProjectToCart();};
-            copy.append(note);label.append(copy,qty);supplies.append(label);
-          });info.append(supplies);
-        }
-        if(!item.supplyChoices&&item.suggestedSupplies?.length){
-          info.querySelectorAll('a[href*="supplies.html"],button').forEach(el=>{if(el!==edit&&el!==more)el.remove()});
-          const checklist=create('div','','room-supply-list');
-          if(item.suggestedSupplies.length){checklist.append(create('h3','Suggested supplies'),create('p','Uncheck anything you already have. Product coverage and compatibility determine final quantities.','calc-note'));
-            item.suggestedSupplies.forEach(supply=>{
-              const label=create('label','','room-supply-choice'),box=create('input'),copy=create('span',supply.name),small=create('small',supply.note);
-              box.type='checkbox';box.checked=supply.selected;box.addEventListener('change',()=>{supply.selected=box.checked;saveMaterialEstimates()});copy.append(small);label.append(box,copy);checklist.append(label);
-            });
-          }
-          const unknown=Object.values(item.answers||{}).includes('unsure');
-          if(unknown)checklist.append(create('p','Some details need a quick review because you chose “Not sure.”','calc-note'));
-          info.append(checklist);
-        }
+
       });
       summary.querySelector('.service-estimate')?.remove();
       const serviceItems=materialEstimates.flatMap(item=>{
@@ -534,7 +511,8 @@
         if(item.projectOptions?.includes('Delivery'))labor.push({type:'Service'});
         return labor;
       });
-      summary.insertAdjacentHTML('beforeend',serviceEstimateMarkup(serviceItems));
+      materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials'))serviceItems.push({type:'Material estimate'});if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
+      summary.insertAdjacentHTML('beforeend',projectEstimateMarkup(serviceItems));
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Work to This Room','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add Project to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
       anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=()=>addWork(materialEstimates[materialEstimates.length-1]);another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';status.id='project-cart-status';status.setAttribute('role','status');
