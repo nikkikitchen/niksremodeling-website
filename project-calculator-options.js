@@ -524,9 +524,12 @@
       materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials'))serviceItems.push({type:'Material estimate'});if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
       summary.insertAdjacentHTML('beforeend',projectEstimateMarkup(serviceItems));
       summary.querySelector('.project-summary-actions')?.remove();
-      const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Work to This Room','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add Project to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
+      const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Work to This Room','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
       anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=()=>addWork(materialEstimates[materialEstimates.length-1]);another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';review.target='_top';status.id='project-cart-status';status.setAttribute('role','status');
-      actions.append(anotherItem,another,cartButton,review,status,create('p','Planning list for a quote. Adding it again updates these items in your cart.','calc-note'));summary.append(actions);
+      const keepShopping=create('a','Keep Shopping','btn outline');keepShopping.href='/#projects';keepShopping.target='_top';
+      actions.append(cartButton,review,keepShopping,status,anotherItem,another);
+      summary.querySelector('h2').after(actions);
+      const price=summary.querySelector('.service-estimate');if(price)actions.before(price);
     };
     window.renderMaterialEstimates();
     const requestedSource=location.search,requestedParams=new URLSearchParams(requestedSource),editId=requestedParams.get('editRoom');
