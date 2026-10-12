@@ -152,7 +152,14 @@
         label.append(box,document.createTextNode(name));row.append(label);
         const settings=document.createElement('div');settings.className='area-product-settings calc-fields';
         const field=(key,title,value,placeholder='')=>{const wrap=document.createElement('div');wrap.className='field';const text=document.createElement('label');const input=document.createElement('input');input.type='number';input.min=key==='waste'?'0':'0.01';input.step='any';input.id='product-'+index+'-'+key;input.dataset.productSetting=key;input.value=value;text.htmlFor=input.id;text.textContent=title;input.placeholder=placeholder;wrap.append(text,input);settings.append(wrap)};
-        if(currentType==='bathroom'){row.dataset.measure='manual';field('quantity','How many?','1');const q=settings.querySelector('input');q.min='1';q.step='1';const u=document.createElement('input');u.type='hidden';u.dataset.productSetting='unit';u.value='Pieces';settings.append(u);const n=document.createElement('p');n.className='calc-note';n.textContent=window.bathroomPackageByLabel(name).note;settings.append(n);}
+        if(currentType==='bathroom'){row.dataset.measure='manual';field('quantity','How many?','1');const q=settings.querySelector('input');q.min='1';q.step='1';const u=document.createElement('input');u.type='hidden';u.dataset.productSetting='unit';u.value='Pieces';settings.append(u);const n=document.createElement('p');n.className='calc-note';n.textContent=window.bathroomPackageByLabel(name).note;settings.append(n);
+          const packageId=window.bathroomPackageByLabel(name).id;
+          if(['toilet-install','smart-toilet-install'].includes(packageId)){
+            const choice=(key,title,choices)=>{const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');const select=document.createElement('select');select.id='product-'+index+'-'+key;select.dataset.toiletOption=key;label.htmlFor=select.id;label.textContent=title;[['','Choose one'],...choices.map(v=>[v,v])].forEach(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option)});wrap.append(label,select);settings.append(wrap)};
+            choice('shape','Bowl shape',['Round','Elongated (oblong)','Help me choose']);
+            choice('height','Toilet height',['Standard height','Tall / comfort height','Help me choose']);
+            const note=document.createElement('p');note.className='calc-note';note.textContent='Estimate includes the standard fixture allowance. We will confirm the selected model and any price difference before ordering.';settings.append(note);
+          }}
         else if(currentType==='concrete'&&/concrete mix/i.test(name)){row.dataset.measure='volume';const note=document.createElement('p');note.className='calc-note';note.textContent='Calculated from slab length, width, depth and extra allowance. Bag count requires product yield.';settings.append(note);}
         else if(currentType==='lumber'&&/framing lumber/i.test(name)){row.dataset.measure='studs';const note=document.createElement('p');note.className='calc-note';note.textContent='Stud count uses wall length and spacing; openings, corners and blocking may need additional pieces.';settings.append(note);}
         else if(currentType==='refinish'){row.dataset.measure='cabinet';const note=document.createElement('p');note.className='calc-note';note.textContent='Material quantity confirmed from cabinet sizes and finish.';settings.append(note);}
@@ -375,12 +382,22 @@
       }
       let productPlans=[];
       try{productPlans=types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
+      const toiletSelections={};
+      if(types.value==='bathroom'){
+        for(const row of document.querySelectorAll('.area-product')){
+          const box=row.querySelector('[name="area-product"]');if(!box.checked)continue;
+          const choices=[...row.querySelectorAll('[data-toilet-option]')];
+          const missing=choices.find(input=>!input.value);
+          if(missing){error.hidden=false;error.textContent='Choose the toilet bowl shape and height, or select Help me choose.';missing.focus();return;}
+          if(choices.length)toiletSelections[box.value]=choices.map(input=>input.value).join(', ');
+        }
+      }
       const form=snapshot(), last=materialEstimates[materialEstimates.length-1], sourceQuery=location.search;
       if(types.value==='bathroom'){
         if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
         const own=!!document.getElementById('customer-provides-materials')?.checked;
-        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label,quantity:x.quantity,unit:'each',price:window.bathroomPackageTotal(p,own)*x.quantity,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
-        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Standard fixture allowances included where applicable.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:[],deliveryTypes:[]});productPlans=[];
+        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(toiletSelections[x.name]?' — '+toiletSelections[x.name]:''),quantity:x.quantity,unit:'each',price:window.bathroomPackageTotal(p,own)*x.quantity,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
+        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(toiletSelections[x.name]?' — '+toiletSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Standard fixture allowances included where applicable.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:[],deliveryTypes:[]});productPlans=[];
       }else if(types.value==='refinish'){
         try{materialEstimates.push(cabinetRefinishingEstimate());}catch(e){error.hidden=false;error.textContent=e.message;return;}
       }else if(['prep','misc','debris','delivery'].includes(types.value)){
