@@ -141,7 +141,7 @@
       const work=new URLSearchParams(location.search).get('work');
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
-      if(work?.startsWith('accent-'))names=workChoices.slice();
+      if(work?.startsWith('accent-'))names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
       if(product&&!names.includes(product))names.unshift(product);
       const list=document.getElementById('material-product-list');list.replaceChildren();
       names.forEach((name,index)=>{
@@ -152,7 +152,8 @@
         label.append(box,document.createTextNode(name));row.append(label);
         const settings=document.createElement('div');settings.className='area-product-settings calc-fields';
         const field=(key,title,value,placeholder='')=>{const wrap=document.createElement('div');wrap.className='field';const text=document.createElement('label');const input=document.createElement('input');input.type='number';input.min=key==='waste'?'0':'0.01';input.step='any';input.id='product-'+index+'-'+key;input.dataset.productSetting=key;input.value=value;text.htmlFor=input.id;text.textContent=title;input.placeholder=placeholder;wrap.append(text,input);settings.append(wrap)};
-        if(currentType==='concrete'&&/concrete mix/i.test(name)){row.dataset.measure='volume';const note=document.createElement('p');note.className='calc-note';note.textContent='Calculated from slab length, width, depth and extra allowance. Bag count requires product yield.';settings.append(note);}
+        if(currentType==='bathroom'){row.dataset.measure='manual';field('quantity','How many?','1');const q=settings.querySelector('input');q.min='1';q.step='1';const u=document.createElement('input');u.type='hidden';u.dataset.productSetting='unit';u.value='Pieces';settings.append(u);const n=document.createElement('p');n.className='calc-note';n.textContent=window.bathroomPackageByLabel(name).note;settings.append(n);}
+        else if(currentType==='concrete'&&/concrete mix/i.test(name)){row.dataset.measure='volume';const note=document.createElement('p');note.className='calc-note';note.textContent='Calculated from slab length, width, depth and extra allowance. Bag count requires product yield.';settings.append(note);}
         else if(currentType==='lumber'&&/framing lumber/i.test(name)){row.dataset.measure='studs';const note=document.createElement('p');note.className='calc-note';note.textContent='Stud count uses wall length and spacing; openings, corners and blocking may need additional pieces.';settings.append(note);}
         else if(currentType==='refinish'){row.dataset.measure='cabinet';const note=document.createElement('p');note.className='calc-note';note.textContent='Material quantity confirmed from cabinet sizes and finish.';settings.append(note);}
         else if(/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
@@ -177,7 +178,7 @@
       const service=['prep','misc','debris','delivery'].includes(type);
       const shared=['paint','refinish','flooring','tile','concrete','drywall','lumber'].includes(type);
       materialDetails.hidden=!type||service;
-      workServices.hidden=!type||service||type==='refinish';
+      workServices.hidden=!type||service||type==='refinish'||type==='bathroom';
       document.getElementById('misc-hours').parentElement.hidden=!['prep','misc'].includes(type);
       document.getElementById('misc-hours').disabled=!['prep','misc'].includes(type);
       panel.querySelector('[name="labor-hourly"]').checked=['prep','misc'].includes(type);
@@ -211,10 +212,10 @@
     roundedMeasurements.forEach(id=>{const input=document.getElementById(id);if(!input)return;input.step='1';input.min='0';input.placeholder='Whole number';const label=document.querySelector('label[for="'+id+'"]');if(label)label.append(document.createTextNode(' — round to the nearest unit shown'));});
     const types = document.getElementById('material-type');
     const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select one';types.prepend(placeholder);
-    [['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
+    [['bathroom','Bathroom Work'],['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
     const initialParams=new URLSearchParams(location.search);
     if(!initialParams.has('material')&&!initialParams.has('product'))types.value='';
-    else if(['prep','misc','delivery','debris','refinish','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
+    else if(['bathroom','prep','misc','delivery','debris','refinish','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
     if(initialParams.has('cabinetItem')){const note=document.createElement('p');note.className='calc-note';note.textContent='Cabinet work for: '+initialParams.get('cabinetItem');cabinetFields.prepend(note);}
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
@@ -375,7 +376,12 @@
       let productPlans=[];
       try{productPlans=types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
       const form=snapshot(), last=materialEstimates[materialEstimates.length-1], sourceQuery=location.search;
-      if(types.value==='refinish'){
+      if(types.value==='bathroom'){
+        if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
+        const own=!!document.getElementById('customer-provides-materials')?.checked;
+        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label,quantity:x.quantity,unit:'each',price:window.bathroomPackageTotal(p,own)*x.quantity,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
+        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Standard fixture allowances included where applicable.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:[],deliveryTypes:[]});productPlans=[];
+      }else if(types.value==='refinish'){
         try{materialEstimates.push(cabinetRefinishingEstimate());}catch(e){error.hidden=false;error.textContent=e.message;return;}
       }else if(['prep','misc','debris','delivery'].includes(types.value)){
         try{
@@ -409,14 +415,14 @@
       const sourceParams=new URLSearchParams(sourceQuery);
       if(sourceParams.has('project')&&sourceParams.has('work'))item.projectScopeKey=sourceParams.get('project')+'|'+item.roomName.toLowerCase()+'|'+sourceParams.get('work');
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
-      item.supplyChoices=window.projectSupplyChoices(item).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
+      item.supplyChoices=(item.type==='bathroom'?[]:window.projectSupplyChoices(item)).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
       if(item.customerProvidesMaterials)item.projectOptions=(item.projectOptions||[]).filter(x=>x!=='Materials');
       item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
-      item.suggestedSupplies=item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
+      item.suggestedSupplies=item.type==='bathroom'?[]:item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
-      editingId=item.roomId;roomStatus.textContent='Saved to your project. Changes update this work; choose Add Work or Add Another Room for another item.';
-      saveMaterialEstimates();window.renderMaterialEstimates();addProjectToCart();
+      editingId=item.roomId;roomStatus.textContent='Estimate ready. Choose Add Project to Cart to save these prices to your cart.';
+      saveMaterialEstimates();window.renderMaterialEstimates();
       if(![...savedRooms.options].some(x=>x.value===item.roomName)){const option=document.createElement('option');option.value=item.roomName;savedRooms.append(option)}
       summary.scrollIntoView({behavior:'smooth',block:'start'});
     };
@@ -474,7 +480,7 @@
           if(item.type!=='plan' && item.projectOptions?.includes('Materials')){if(item.products)item.products.forEach(product=>add(product.name+' — '+(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit),'Material estimate',{materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel}));else add(item.result+' — '+item.title,'Material estimate');}
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
-            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:x.service+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price}:{}); 
+            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:(x.scope||x.service)+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageNote:x.packageNote,internalCosts:x.internalCosts}:{}); 
           });
           const included=item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
           if(included.length&&(item.projectOptions?.includes('Materials')||(item.labor?.length||item.labor?.service)))add('Included project costs','Included project costs',includedProjectCosts(included));
@@ -496,7 +502,7 @@
       [...document.querySelectorAll('#material-results > .material-result')].forEach((row,index)=>{
         const item=materialEstimates[index], info=row.firstElementChild;
         info.querySelectorAll('button').forEach(button=>button.remove());
-        row.querySelector('.remove-material').onclick=()=>{materialEstimates.splice(index,1);saveMaterialEstimates();addProjectToCart();window.renderMaterialEstimates();};
+        row.querySelector('.remove-material').onclick=()=>{materialEstimates.splice(index,1);saveMaterialEstimates();saveCart(getCart().filter(x=>x.roomId!==item.roomId));window.renderMaterialEstimates();};
         if(item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+(item.type==='plan'?'Project needs':item.title.split(' — ')[0]);
         if(item.workLabel&&item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+item.workLabel;
         if(item.products){
@@ -519,7 +525,7 @@
       summary.insertAdjacentHTML('beforeend',projectEstimateMarkup(serviceItems));
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Work to This Room','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add Project to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
-      anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=()=>addWork(materialEstimates[materialEstimates.length-1]);another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';status.id='project-cart-status';status.setAttribute('role','status');
+      anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=()=>addWork(materialEstimates[materialEstimates.length-1]);another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';review.target='_top';status.id='project-cart-status';status.setAttribute('role','status');
       actions.append(anotherItem,another,cartButton,review,status,create('p','Planning list for a quote. Adding it again updates these items in your cart.','calc-note'));summary.append(actions);
     };
     window.renderMaterialEstimates();
@@ -535,3 +541,4 @@
     observer.observe(document.documentElement, {childList: true, subtree: true});
   }
 })();
+

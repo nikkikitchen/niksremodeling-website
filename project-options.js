@@ -44,6 +44,12 @@
   });
   ['flooring','tile'].forEach(kind=>{shared[kind]=[...new Set([...shared[kind],'Underlayment','Backer Board'])]});
   Object.values(options).forEach(option=>{if(shared[option.kind])option.materials=shared[option.kind].filter(name=>name!=='Other material')});
+  shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
+  const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));
+  options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-remove']);
+  options.vanity=bathWork('Vanity, Sink & Faucet',['vanity-install','vanity-remove','faucet-replace']);
+  options.tub=bathWork('Bathtub & Surround',['tub-resurface','tub-replace','bath-drywall-repair']);
+  options['bath-shower-valve']=bathWork('Shower Faucet / Mixing Valve',['shower-valve-install']);
   const scopes={
     'bath-remodel':['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','refinish','mirror','lighting','ventilation','accents','prep','other'],
     bathrooms:['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','refinish','mirror','lighting','ventilation','accents','prep','other'],
@@ -56,7 +62,7 @@
     accents:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','prep','other'],lighting:['lighting','ventilation','prep','other'],
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
-  Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});
+  Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];
   window.materialSupplyList=(name)=>{
     if(/knob|pull|hinge|hardware/i.test(name))return ['Correct-size mounting screws','Compatible mounting plates if required','Hole repair / filler supplies if required'];
     if(/backer|drywall|wall panels?/i.test(name))return ['Compatible board fasteners','Joint / seam tape','Compatible joint or seam compound','Surface protection'];
@@ -90,9 +96,9 @@
     const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next';measurementPanel.append(next);
     const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';cartLink.before(back);
     const stepButtons=[];
-    const setStep=step=>{measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=back.hidden=step!==1;cartLink.hidden=step!==1;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
-    ['1. Measurements','2. Materials & Labor','3. Review Project'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
-    next.onclick=()=>setStep(1);back.onclick=()=>setStep(0);setStep(0);
+    const setStep=step=>{measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=back.hidden=step!==1;cartLink.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
+    ['1. Room / Area','2. Choose Work','Review Cart Anytime'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
+    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>setStep(0);setStep(0);
     const grid=document.getElementById('project-work-grid');
     const draftKey='niks-project-options-'+id;
     let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
@@ -105,9 +111,9 @@
       const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
       item.materials.forEach(name=>{const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(name));card.append(label)});
-      if(['cabinets','vanity','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
+      if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
-      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='Next: Materials & Labor';
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='Calculate & Add Options';
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
@@ -119,8 +125,9 @@
   window.openProjectMeasurements=url=>{
     try{const dims=JSON.parse(localStorage.getItem('nr-project-dimensions')||'{}'),target=new URL(url,location.origin);for(const [key,value] of Object.entries(dims))if(value&&!target.searchParams.has(key))target.searchParams.set(key,value);url=target.pathname+target.search; }catch{}
     let dialog=document.getElementById('project-measurements-dialog');
-    if(!dialog){dialog=document.createElement('dialog');dialog.id='project-measurements-dialog';dialog.className='material-calc-dialog';dialog.setAttribute('aria-label','Project Calculator');dialog.innerHTML='<div class="material-calc-dialog-head"><strong>Project Calculator</strong><button class="btn outline" type="button">Done · Back to Project</button></div><p role="status" class="calc-note" id="project-measurements-status">Save your measurements to update this project’s cart.</p><iframe title="Project Calculator"></iframe>';dialog.querySelector('button').onclick=()=>{dialog.close();updateCartCount()};document.body.append(dialog);}
-    dialog.querySelector('iframe').src=url;dialog.showModal();
+    if(!dialog){dialog=document.createElement('section');dialog.id='project-measurements-dialog';dialog.className='wrap panel';dialog.innerHTML='<div class="material-calc-dialog-head"><strong>Project Options & Estimate</strong><button class="btn outline" type="button">Keep Adding Work</button><a class="btn primary" href="/project-cart.html">Review Cart / Request Quote</a></div><p role="status" id="project-measurements-status">Calculate your work, then add it to the cart.</p><iframe title="Project options and estimate" style="width:100%;height:900px;border:0"></iframe>';dialog.querySelector('button').onclick=()=>{dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});updateCartCount()};document.querySelector('main').append(dialog);}
+    dialog.hidden=false;dialog.querySelector('iframe').src=url;dialog.scrollIntoView({behavior:'smooth',block:'start'});
+
   };
   window.addEventListener('message',event=>{if(event.origin!==location.origin||event.data?.type!=='project-cart-saved')return;updateCartCount();const status=document.getElementById('project-measurements-status');if(status)status.textContent='Saved to your Project Cart. You can keep adding work to this room.';});
   // Reuse the calculator's supply rules and coverage assumptions for this saved work.
@@ -132,3 +139,4 @@
     return entries.map(([name,note])=>{const estimate=group?supplyStartingQuantity(group,name,[measured]):null;return {name,note,quantity:estimate?.quantity??null,unit:estimate?.unit||'quantity / packaging to confirm',selected:false};});
   };
 })();
+

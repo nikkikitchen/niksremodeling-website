@@ -14,3 +14,6 @@ Object.entries(mergedRoomAliases).forEach(([oldId,id])=>{
  if(window.ROOM_PROJECT_SCOPES[id])window.ROOM_PROJECT_SCOPES[oldId]=window.ROOM_PROJECT_SCOPES[id];
 });
 document.addEventListener('DOMContentLoaded',()=>{const nav=[...document.querySelectorAll('.nav-menu')].find(m=>m.querySelector('.nav-main')?.getAttribute('href')==='/#projects');if(nav){const menu=nav.querySelector('.nav-dropdown');menu.replaceChildren();const all=document.createElement('a');all.href='/#projects';all.textContent='All Projects';menu.append(all);Object.entries(PROJECT_CATALOG).sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{const a=document.createElement('a');a.href='/project.html?project='+id;a.textContent=p.title;menu.append(a);});}updateCartCount();});
+
+
+PROJECT_CATALOG.other={title:'Other',image:'/assets/custom-projects-card.jpg',intro:'Tell us about other products, materials or work you need.',materials:[],exterior:false};
