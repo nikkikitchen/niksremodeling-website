@@ -201,3 +201,9 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 /* Consistent centered tile labels and descriptions */
 .tile span{left:14px;right:14px;bottom:16px;text-align:center;line-height:1.15}
 .tile span small{display:block;margin-top:6px;font-family:Inter,Arial,sans-serif;font-size:13px;line-height:1.35;font-weight:500;text-align:center}
+
+/* Keep cart prices beside their item on phones as well as desktop. */
+.cart-item{grid-template-columns:minmax(0,1fr) auto auto}.cart-item>div:first-child{min-width:0;overflow-wrap:anywhere}.cart-current{text-align:right;font-weight:800}
+@media(max-width:620px){.cart-item{grid-template-columns:minmax(0,1fr) auto;gap:12px}.cart-current{grid-column:2;grid-row:1;max-width:130px}.cart-item>.btn{grid-column:1 / -1;justify-self:end}}
+
+.cart-price-scope{display:block;font-size:12px;font-weight:400;margin-top:5px;max-width:155px}
