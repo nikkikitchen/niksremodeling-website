@@ -451,7 +451,7 @@
       item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.type==='bathroom'?[]:item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
-      editingId=item.roomId;roomStatus.textContent='Estimate ready. Choose Add Project to Cart to save these prices to your cart.';
+      editingId=item.roomId;roomStatus.textContent='Estimate ready. Review the price, then add to cart.';
       saveMaterialEstimates();window.renderMaterialEstimates();
       if(![...savedRooms.options].some(x=>x.value===item.roomName)){const option=document.createElement('option');option.value=item.roomName;savedRooms.append(option)}
       summary.scrollIntoView({behavior:'smooth',block:'start'});
@@ -512,7 +512,7 @@
           if(item.type!=='plan' && item.projectOptions?.includes('Materials')){if(item.products)item.products.forEach(product=>add(product.name+(itemOptionSummary(product.options)?' ('+itemOptionSummary(product.options)+')':'')+' — '+(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit),'Material estimate',{options:product.options,materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel}));else add(item.result+' — '+item.title,'Material estimate');}
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
-            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:(x.scope||x.service)+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageNote:x.packageNote,internalCosts:x.internalCosts}:{}); 
+            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:(x.scope||x.service)+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageNote:x.packageNote,internalCosts:x.internalCosts}:{});
           });
           const included=item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
           if(included.length&&(item.projectOptions?.includes('Materials')||(item.labor?.length||item.labor?.service)))add('Included project costs','Included project costs',includedProjectCosts(included));
@@ -523,18 +523,20 @@
         saveCart(cart);
         if(window.parent!==window)window.parent.postMessage({type:'project-cart-saved'},location.origin);
         if(status){status.textContent='Added to your cart. Choose Review Project Cart or keep shopping.';status.scrollIntoView({behavior:'smooth',block:'nearest'});}
-        if(event?.currentTarget)event.currentTarget.textContent='Added to Cart ✓';
+        document.dispatchEvent(new CustomEvent('project-saved-to-cart'));
       } catch(error) {
         if(status)status.textContent='Could not add the project yet. Please try again.';
         console.error(error);
       }
     }
+    window.addProjectToCart=addProjectToCart;
+    window.startMoreProjectWork=()=>{const last=materialEstimates[materialEstimates.length-1];if(last)addWork(last);else newRoom();};
     window.renderMaterialEstimates=function() {
       originalRender();side.hidden=materialEstimates.length===0;
-      if(!materialEstimates.length)return;
+      if(!materialEstimates.length){document.dispatchEvent(new CustomEvent('estimate-rendered'));return;}
       [...document.querySelectorAll('#material-results > .material-result')].forEach((row,index)=>{
         const item=materialEstimates[index], info=row.firstElementChild;
-        info.querySelectorAll('button').forEach(button=>button.remove());
+        info.querySelectorAll('button,a').forEach(button=>button.remove());
         row.querySelector('.remove-material').onclick=()=>{materialEstimates.splice(index,1);saveMaterialEstimates();saveCart(getCart().filter(x=>x.roomId!==item.roomId));window.renderMaterialEstimates();};
         if(item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+(item.type==='plan'?'Project needs':item.title.split(' — ')[0]);
         if(item.workLabel&&item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+item.workLabel;
@@ -543,7 +545,7 @@
           item.products.forEach(product=>{const line=create('p');const name=create('strong',product.name+': ');line.append(name,document.createTextNode(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit));
             amount.append(line)});
         }
-        const more=create('button','Add Work to This Room','btn outline');more.type='button';more.onclick=()=>addWork(item);info.append(more);
+
         const edit=create('button',item.form?'Edit Item':'Edit / Recalculate','btn outline');edit.type='button';edit.onclick=()=>editRoom(item);info.append(edit);
 
       });
@@ -557,12 +559,10 @@
       materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials'))serviceItems.push({type:'Material estimate'});if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
       summary.insertAdjacentHTML('beforeend',projectEstimateMarkup(serviceItems));
       summary.querySelector('.project-summary-actions')?.remove();
-      const actions=create('div','','project-summary-actions'),anotherItem=create('button','Add Work to This Room','btn primary'),another=create('button','Add Another Room / Area','btn outline'),cartButton=create('button','Add to Cart','btn primary'),review=create('a','Review Project Cart →','btn outline'),status=create('p','','calc-note');
-      cartButton.dataset.addProjectCart='1';anotherItem.type=another.type=cartButton.type='button';anotherItem.onclick=()=>addWork(materialEstimates[materialEstimates.length-1]);another.onclick=newRoom;cartButton.onclick=addProjectToCart;review.href='/project-cart.html';review.target='_top';status.id='project-cart-status';status.setAttribute('role','status');
-      const keepShopping=create('a','Keep Shopping','btn outline');keepShopping.href='/#projects';keepShopping.target='_top';
-      actions.append(cartButton,review,keepShopping,status,anotherItem,another);
-      summary.querySelector('h2').after(actions);
-      const price=summary.querySelector('.service-estimate');if(price)actions.before(price);
+      const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
+      status.id='project-cart-status';status.setAttribute('role','status');actions.append(status);summary.append(actions);
+      document.dispatchEvent(new CustomEvent('estimate-rendered'));
+
     };
     window.renderMaterialEstimates();
     const requestedSource=location.search,requestedParams=new URLSearchParams(requestedSource),editId=requestedParams.get('editRoom');
