@@ -161,7 +161,11 @@ const PRODUCTS={
 function getCart(){try{const cart=JSON.parse(localStorage.getItem('nr-cart')||'[]');const cleaned=Array.isArray(cart)?cart.filter(Boolean).map(item=>/^(Supply request|Supplies request|Supplies)$/.test(item.type)?{...item,hiddenFromCustomer:true,pricingPending:item.price==null}:item):[];if(cleaned.length!==cart.length)localStorage.setItem('nr-cart',JSON.stringify(cleaned));return cleaned}catch{return[]}}
 function saveCart(c){localStorage.setItem('nr-cart',JSON.stringify(c));if(c.length)localStorage.setItem('nr-cart-updated-at',String(Date.now()));else{localStorage.removeItem('nr-cart-updated-at');localStorage.removeItem('nr-cart-reminder-dismissed-until')}updateCartCount()}
 function updateCartCount(){const n=getCart().filter(x=>!x.hiddenFromCustomer).reduce((s,x)=>s+(x.qty||1),0);document.querySelectorAll('.cart-count').forEach(e=>e.textContent=n)}
-function addItem(name){const c=getCart();const found=c.find(x=>x.name===name);if(found)found.qty=(found.qty||1)+1;else c.push({name,qty:1,type:'Project'});saveCart(c);alert(`${name} added to your Review Cart.`)}
+function addItem(name){
+ const card=[...document.querySelectorAll('article')].find(el=>el.querySelector('h3')?.textContent===name);
+ const url=card?.querySelector('[data-calc-url]')?.dataset.calcUrl||'/calculators.html?material=custom&product='+encodeURIComponent(name);
+ if(typeof openMaterialCalculator==='function'&&document.getElementById('material-calc-dialog'))openMaterialCalculator(url);else location.href=url;
+}
 const CABINET_MATERIALS=['Bonding Primer','Cabinet / Trim Paint','Stain','Clear Finish','Hardware','Other material'];
 const CABINET_WORK_OPTIONS=[
  {key:'installation',label:'Install cabinets / vanities',fields:[['units','Cabinets / vanities','Install cabinets / vanities','units']]},
@@ -633,3 +637,37 @@ function cabinetRefinishingEstimate(){
  return {type:'custom',title:'Cabinet / Vanity Work',result:labor.length?labor.map(x=>x.quantity+' '+x.unit).join(' · '):'Cabinet materials requested',detail:'Frames included with door and drawer-front refinishing. Interiors, hardware and hole prep are separate options. Labor pricing to be confirmed.',measurements,labor,products,projectOptions:products.length?['Materials']:[],deliveryTypes:[]};
 }
 
+
+// Shared by shopping and the project calculator; choices appear only for selected items.
+function itemOptionFields(name){
+ const rules=[
+ [/toilet/i,[['Bowl shape','Round','Elongated (oblong)'],['Toilet height','Standard height','Tall / comfort height']]],
+ [/tile|mosaic|stone|slab/i,[['Material','Ceramic','Porcelain','Natural stone','Manufactured stone'],['Format','Individual tiles','Mosaic sheets','Large format','Slab / panel'],['Location','Floor','Wall','Backsplash','Shower / wet area','Exterior']]],
+ [/hardwood/i,[['Construction','Solid hardwood','Engineered hardwood'],['Installation','Nail / staple','Glue down','Floating']]],
+ [/vinyl|\blvp\b|linoleum|laminate|carpet|flooring/i,[['Flooring type','Luxury vinyl plank (LVP)','Laminate','Hardwood','Tile','Sheet vinyl / linoleum','Carpet'],['Installation','Floating','Glue down','Nail / staple']]],
+ [/vanity/i,[['Size','Single sink','Double sink'],['Mounting','Freestanding','Wall mounted'],['Top','With top and sink','Cabinet only']]],
+ [/faucet|mixing valve/i,[['Mounting','Single hole','Centerset','Widespread','Wall mounted'],['Finish','Chrome','Brushed nickel','Matte black','Bronze']]],
+ [/sink/i,[['Sink type','Single bowl','Double bowl','Vessel'],['Mounting','Drop in','Undermount','Wall mounted']]],
+ [/bathtub|tub replace|tub surround/i,[['Tub style','Alcove','Freestanding','Drop in'],['Material','Acrylic / fiberglass','Steel','Cast iron']]],
+ [/shower (base|glass|surround)/i,[['Style','Prefabricated','Custom sized'],['Size','Standard opening','Custom opening']]],
+ [/cabinet/i,[['Construction','Ready to assemble','Assembled stock','Custom'],['Finish','Painted','Stained','Unfinished']]],
+ [/countertop/i,[['Surface','Laminate','Butcher block','Quartz','Granite','Solid surface']]],
+ [/range|stove|cooktop|dryer/i,[['Power','Electric','Gas'],['Fit','Freestanding','Built in / slide in']]],
+ [/refrigerator/i,[['Style','Top freezer','Bottom freezer','Side by side','French door'],['Depth','Standard depth','Counter depth'],['Water connection','Needed','Already connected','No water / ice dispenser']]],
+ [/dishwasher/i,[['Width','18 inch','24 inch'],['Power connection','Plug in','Hardwired']]],
+ [/microwave/i,[['Placement','Countertop','Over range','Built in']]],
+ [/door/i,[['Door type','Interior','Exterior','Sliding','French / double'],['Package','Slab only','Prehung'],['Material','Wood','Steel','Fiberglass','Composite']]],
+ [/window/i,[['Style','Single hung','Double hung','Sliding','Casement','Fixed'],['Frame','Vinyl','Wood','Aluminum','Fiberglass']]],
+ [/paint|stain|finish|sealer/i,[['Finish','Flat / matte','Eggshell','Satin','Semi gloss','Gloss'],['Color change','Same / similar color','New color','Multiple colors']]],
+ [/wallpaper/i,[['Type','Peel and stick','Pasted','Unpasted'],['Pattern','Solid / texture','Repeating pattern','Mural']]],
+ [/light|fan/i,[['Mounting','Existing fixture location','New location'],['Style','Flush mount','Pendant / hanging','Recessed','Wall mounted']]],
+ [/sofa|sectional|chair|bed|table|desk|dresser|furniture/i,[['Size','Small','Standard','Large / oversized'],['Assembly','Assembly needed','Already assembled']]],
+ [/drill|saw|sander|tool/i,[['Power','Cordless','Corded','Manual'],['Package','Tool only','Kit with accessories']]],
+ [/trim|molding|baseboard|casing/i,[['Material','Wood','MDF','PVC'],['Finish','Painted','Stained','Unfinished']]],
+ [/drywall/i,[['Panel type','Standard','Moisture resistant','Fire rated'],['Thickness','1/2 inch','5/8 inch']]],
+ [/lumber|plywood/i,[['Use','Interior','Exterior / treated'],['Grade','Standard construction','Appearance / finish grade']]]
+ ];
+ if(/repair|resurface|tank parts|supply line|seat|underlayment|backer|adhesive|grout|primer|membrane|removal|haul off/i.test(name))return [];
+ return (rules.find(([pattern])=>pattern.test(name))?.[1]||[]).map(([label,...values])=>({label,values:[...values,'Help me choose']}));
+}
+function itemOptionSummary(options){return Object.entries(options||{}).map(([label,value])=>label+': '+value).join('; ');}
