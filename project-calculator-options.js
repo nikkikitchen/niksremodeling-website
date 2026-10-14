@@ -451,7 +451,7 @@
       item.supplyChoices=(item.type==='bathroom'?[]:window.projectSupplyChoices(item)).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
       if(item.customerProvidesMaterials)item.projectOptions=(item.projectOptions||[]).filter(x=>x!=='Materials');
-      item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
+      item.preparation=(sourceParams.get('preparation')||'').split('|').filter(Boolean);if(item.preparation.length){item.detail+=(item.detail?' · ':'')+'Requested: '+item.preparation.join(' and ');item.labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];item.preparation.forEach(service=>item.labor.push({service,scope:service+' for '+item.workLabel,quantity:1,unit:'scope to review'}));}item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.type==='bathroom'?[]:item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
       editingId=item.roomId;roomStatus.textContent='Estimate ready. Review the price, then add to cart.';
