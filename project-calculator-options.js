@@ -95,7 +95,7 @@
     document.querySelector('label[for="material-name"]').textContent = 'Which room or area?';
     document.querySelector('label[for="material-type"]').textContent = 'What are you working on?';
     const locationField=document.createElement('div');locationField.className='field';
-    locationField.innerHTML='<label for="project-location">Interior or exterior?</label><select id="project-location"><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select>';
+    locationField.innerHTML='<label for="project-location">Location</label><select id="project-location"><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select>';
     document.getElementById('material-name').closest('.field').after(locationField);
     const projectLocation=document.getElementById('project-location');
     const choices=panel.querySelector('.labor-choices');
@@ -144,13 +144,14 @@
       if(work?.startsWith('accent-'))names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
       if(product&&!names.includes(product))names.unshift(product);
       names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior\b/i.test(name):projectLocation.value==='exterior'?!/^Interior\b/i.test(name):true);
+      if(new URLSearchParams(location.search).get('project')==='accents')names=names.filter(name=>! /primer|painting prep|backer board/i.test(name));
       const list=document.getElementById('material-product-list');list.replaceChildren();
       names.forEach((name,index)=>{
         const row=document.createElement('div');row.className='area-product';
         const label=document.createElement('label');label.className='room-supply-choice';
         const box=document.createElement('input');box.type='checkbox';box.name='area-product';box.value=name;box.id='area-product-'+index;
         box.checked=requested.includes(name)||(product?name===product:false);
-        label.append(box,document.createTextNode(name));row.append(label);
+        label.append(box,document.createTextNode(/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));row.append(label);
         const settings=document.createElement('div');settings.className='area-product-settings calc-fields';
         const field=(key,title,value,placeholder='')=>{const wrap=document.createElement('div');wrap.className='field';const text=document.createElement('label');const input=document.createElement('input');input.type='number';input.min=key==='waste'?'0':'0.01';input.step='any';input.id='product-'+index+'-'+key;input.dataset.productSetting=key;input.value=value;text.htmlFor=input.id;text.textContent=title;input.placeholder=placeholder;wrap.append(text,input);settings.append(wrap)};
         if(currentType==='bathroom'){row.dataset.measure='manual';field('quantity','How many?','1');const q=settings.querySelector('input');q.min='1';q.step='1';const u=document.createElement('input');u.type='hidden';u.dataset.productSetting='unit';u.value='Pieces';settings.append(u);const n=document.createElement('p');n.className='calc-note';n.textContent=window.bathroomPackageByLabel(name).note;settings.append(n);
@@ -172,6 +173,7 @@
         }
         itemOptionFields(name).forEach(({label:title,values},optionIndex)=>{
           const wrap=document.createElement('div');wrap.className='field';
+          if(title==='Color change'){const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.id='product-'+index+'-option-'+optionIndex;box.dataset.itemOption=title;box.value='Yes';label.append(box,document.createTextNode(' Color change'));wrap.append(label);settings.append(wrap);return;}
           const label=document.createElement('label'),select=document.createElement('select');
           select.id='product-'+index+'-option-'+optionIndex;select.dataset.itemOption=title;label.htmlFor=select.id;label.textContent=title;
           ['',...values].forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value||'Choose one';select.append(option)});
@@ -181,7 +183,10 @@
         box.addEventListener('change',()=>{syncMaterialChoice();if(box.checked&&(category==='flooring'||category==='tile-stone')&&!['Underlayment','Backer Board','Other material'].includes(name)){floorKind.value=/Tile|Stone/.test(name)?'tile':name==='Hardwood'?'nail':name==='Carpet'||name==='Linoleum'?'glue':'floating';floorKind.dispatchEvent(new Event('change'));}});
       });
       syncMaterialChoice();
+      syncPaintOptions();
     }
+    function syncPaintOptions(){const supplying=!!panel.querySelector('[name="project-option"][value="Materials"]:checked')&&!document.getElementById('customer-provides-materials')?.checked;panel.querySelectorAll('.area-product').forEach(row=>{const name=row.querySelector('[name="area-product"]')?.value||'';if(!/paint|stain|sealer|finish/i.test(name))return;const finish=row.querySelector('[data-item-option="Finish"]');if(finish){finish.disabled=!supplying;finish.closest('.field').hidden=!supplying;}});}
+    document.addEventListener('change',syncPaintOptions);
     function updateQuantityFields() {
       const type=document.getElementById('material-type').value;
       const service=['prep','misc','debris','delivery'].includes(type);
@@ -195,6 +200,8 @@
       panel.querySelector('[name="project-option"][value="Delivery"]').checked=type==='delivery';
       panel.querySelector('[name="project-option"][value="Debris Removal"]').checked=type==='debris';
       if(service){panel.querySelector('[name="project-option"][value="Materials"]').checked=false;panel.querySelector('[name="labor-service"]').checked=false;}
+      const defaultInstallation=panel.querySelector('[name="labor-service"][value="Installation"]');if(defaultInstallation){defaultInstallation.checked=!!type&&!service&&!['refinish','bathroom'].includes(type);defaultInstallation.closest('label').hidden=true;}
+      syncPaintOptions();
       const installation=panel.querySelector('[name="labor-service"]:checked');
       quantityMethod.value=shared?'measure':'known';
       quantityMethod.hidden=true;document.querySelector('label[for="quantity-method"]').hidden=true;
@@ -391,10 +398,11 @@
       const itemSelections={},selectionDetails={};
       for(const row of document.querySelectorAll('.area-product')){
         const box=row.querySelector('[name="area-product"]');if(!box.checked)continue;
-        const choices=[...row.querySelectorAll('[data-item-option]')];
+        const choices=[...row.querySelectorAll('[data-item-option]')].filter(input=>!input.disabled&&input.type!=='checkbox');
         const missing=choices.find(input=>!input.value);
         if(missing){error.hidden=false;error.textContent='Choose '+missing.dataset.itemOption.toLowerCase()+' for '+box.value+', or select Help me choose.';missing.focus();return;}
         selectionDetails[box.value]=Object.fromEntries(choices.map(input=>[input.dataset.itemOption,input.value]));
+        row.querySelectorAll('[data-item-option][type="checkbox"]:checked').forEach(input=>selectionDetails[box.value][input.dataset.itemOption]='Yes');
         itemSelections[box.value]=itemOptionSummary(selectionDetails[box.value]);
       }
       if(['flooring','tile'].includes(types.value)){
