@@ -143,6 +143,7 @@
       names=[...new Set([...workChoices,...names,...requested])];
       if(work?.startsWith('accent-'))names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
       if(product&&!names.includes(product))names.unshift(product);
+      names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior\b/i.test(name):projectLocation.value==='exterior'?!/^Interior\b/i.test(name):true);
       const list=document.getElementById('material-product-list');list.replaceChildren();
       names.forEach((name,index)=>{
         const row=document.createElement('div');row.className='area-product';
@@ -229,7 +230,7 @@
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
     const prefill={length:['floor-length','paint-length','paint-ceiling-length','paint-trim-length','wood-length','dry-length','concrete-length'],width:['floor-width','paint-ceiling-width','concrete-width'],height:['paint-height','wood-height','dry-height']};
     for(const [param,ids] of Object.entries(prefill)){const value=initialParams.get(param);if(value)ids.forEach(id=>{const field=document.getElementById(id);if(field)field.value=value;});}
-    if(initialParams.has('location'))projectLocation.value=initialParams.get('location');
+    if(['interior','exterior'].includes(initialParams.get('location'))){projectLocation.value=initialParams.get('location');locationField.hidden=true;}
     const hoursField=document.getElementById('misc-hours').parentElement;
     workServices.after(hoursField);
     document.querySelector('label[for="misc-hours"]').textContent='Estimated hours — $75/hr';
