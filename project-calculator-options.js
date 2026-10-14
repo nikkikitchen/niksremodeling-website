@@ -385,11 +385,11 @@
       const error=document.getElementById('mat-error');error.hidden=true;
       if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}
       if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
-      for(const id of roundedMeasurements){const input=document.getElementById(id);if(input&&input.value.trim()&&!Number.isInteger(Number(input.value))&&!input.closest('[hidden]')){error.hidden=false;error.textContent='Round measurements to the nearest whole unit shown.';input.focus();return;}}
+      for(const id of roundedMeasurements){const input=document.getElementById(id);if(input&&input.value.trim()&&!Number.isInteger(Number(input.value))&&!input.closest('[hidden]')){error.hidden=false;error.textContent='Round measurements to the nearest whole unit shown.';window.highlightMissingField(input);return;}}
       const answers={};
       if(panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
         for(const input of questionBox.querySelectorAll('select')) {
-          if(!input.value){error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';input.focus();return;}
+          if(!input.value){error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';window.highlightMissingField(input);return;}
           answers[input.dataset.question]=input.value;
         }
       }
@@ -400,7 +400,7 @@
         const box=row.querySelector('[name="area-product"]');if(!box.checked)continue;
         const choices=[...row.querySelectorAll('[data-item-option]')].filter(input=>!input.disabled&&input.type!=='checkbox');
         const missing=choices.find(input=>!input.value);
-        if(missing){error.hidden=false;error.textContent='Choose '+missing.dataset.itemOption.toLowerCase()+' for '+box.value+', or select Help me choose.';missing.focus();return;}
+        if(missing){error.hidden=false;error.textContent='Choose '+missing.dataset.itemOption.toLowerCase()+' for '+box.value.replace(/^(Interior|Exterior) /,'')+', or select Help me choose.';window.highlightMissingField(missing);return;}
         selectionDetails[box.value]=Object.fromEntries(choices.map(input=>[input.dataset.itemOption,input.value]));
         row.querySelectorAll('[data-item-option][type="checkbox"]:checked').forEach(input=>selectionDetails[box.value][input.dataset.itemOption]='Yes');
         itemSelections[box.value]=itemOptionSummary(selectionDetails[box.value]);
@@ -569,7 +569,15 @@
         return labor;
       });
       materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials'))serviceItems.push({type:'Material estimate'});if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
-      summary.insertAdjacentHTML('beforeend',projectEstimateMarkup(serviceItems));
+      const services=serviceEstimateSummary(serviceItems),others=serviceItems.filter(x=>!['Labor','Service'].includes(x.type));
+      const known=x=>x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price))&&Number(x.price)>=0;
+      const pending=services.pending||others.some(x=>!known(x)||x.pricingPending);
+      const total=services.total+others.filter(known).reduce((n,x)=>n+Number(x.price)*(Number(x.qty)||1),0);
+      let price=summary.querySelector('.project-total-price');if(!price){price=create('strong','','project-total-price');price.setAttribute('role','status');summary.querySelector('h2').after(price);}
+      price.textContent=pending?'Price pending':total.toLocaleString('en-US',{style:'currency',currency:'USD'});
+      price.style.cssText='margin-left:auto;font-size:1.8rem;white-space:nowrap;color:var(--ink)';summary.querySelector('h2').parentElement.style.cssText='display:flex;align-items:center;gap:16px;flex-wrap:wrap';
+      let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
+      let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}note.textContent=pending?'We need to confirm the remaining costs before showing your complete project price.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       status.id='project-cart-status';status.setAttribute('role','status');actions.append(status);summary.append(actions);
