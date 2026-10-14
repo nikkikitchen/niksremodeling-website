@@ -1,0 +1,13 @@
+{
+  "checked_date": "2026-10-14",
+  "scope": "Flat natural stacked-stone wall material and installation supplies allowance; labor separate",
+  "selection": "Highest verified square-foot price in the retailer catalogs checked; not a claim of the highest price across every retailer",
+  "reference_product": "AquaBlu Oak Mountain 6 x 24 quartzite ledger panel",
+  "source_url": "https://www.aquablumosaics.com/products/oak-mountain-6-x-24-ledger-panel-stacked-natural-stone",
+  "retail_per_square_foot": 29.67,
+  "user_authorized_markup_percent": 100,
+  "material_allowance_per_square_foot": 59.34,
+  "rounding": "Round the marked-up rate to cents, then multiply by required square feet",
+  "applies_to": ["Stacked Stone", "Natural Stone Veneer"],
+  "not_included": ["Labor", "Corners", "Shipping", "Sales tax"]
+}

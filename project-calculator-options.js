@@ -464,6 +464,8 @@
       const wallSurfaces=item.measurements?.surfaces||[];
       const standardAccentPaint=item.type==='paint'&&sourceParams.get('project')==='accents'&&wallSurfaces.length===1&&wallSurfaces[0].surface==='walls'&&wallSurfaces[0].area>0&&wallSurfaces[0].area<=96&&item.products?.length===1&&/^(Interior|Exterior) Paint$/.test(item.products[0].name)&&item.products[0].coats===2&&item.projectLocation==='interior';
       if(standardAccentPaint){item.paintPackage={labor:175,perGallon:50,includesSupplies:true};item.products[0].price=item.products[0].quantity*50;item.supplyChoices=[];item.suggestedSupplies=[];(Array.isArray(item.labor)?item.labor:[]).filter(x=>x.service==='Installation').forEach(x=>{x.price=175;x.fixedPackage=true;x.quantity=1;x.unit='wall';x.scope='Two-coat accent wall painting';x.packageNote='Standard two-coat wall painting up to 96 sq. ft. Repairs and additional preparation separate.';});}
+      if(sourceParams.get('project')==='accents'&&sourceParams.get('work')==='accent-stone')for(const product of item.products||[]){if(['Stacked Stone','Natural Stone Veneer'].includes(product.name)&&['Square feet','sq. ft.'].includes(product.unit)){product.unitPrice=59.34;product.price=Math.round(product.quantity*5934)/100;product.includesSupplies=true;product.detail+=' Stone and installation supplies: $59.34 per sq. ft.';}}
+      if(item.products?.length&&item.products.every(p=>p.includesSupplies)&&!item.customerProvidesMaterials){item.stoneMaterialPackage=true;item.supplyChoices=[];item.suggestedSupplies=[];}
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
       editingId=item.roomId;roomStatus.textContent='Estimate ready. Review the price, then add to cart.';
       saveMaterialEstimates();window.renderMaterialEstimates();
@@ -524,12 +526,12 @@
         materialEstimates.filter(Boolean).forEach(item=>{
           const room=item.roomName||item.title||'Project area';
           const add=(name,type,extra={})=>cart.push({name:room+': '+name,type,qty:1,source:'project-calculator',roomId:item.roomId,room,measurements:item.measurements,workLabel:item.workLabel,exact:item.exact,purchase:item.purchase,...extra});
-          if(item.type!=='plan' && item.projectOptions?.includes('Materials')){if(item.products)item.products.forEach(product=>add(product.name+(itemOptionSummary(product.options)?' ('+itemOptionSummary(product.options)+')':'')+' — '+(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit),'Material estimate',{options:product.options,materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel,...(item.paintPackage?{price:product.price,includesSupplies:true}:{})}));else add(item.result+' — '+item.title,'Material estimate');}
+          if(item.type!=='plan' && item.projectOptions?.includes('Materials')){if(item.products)item.products.forEach(product=>add(product.name+(itemOptionSummary(product.options)?' ('+itemOptionSummary(product.options)+')':'')+' — '+(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit),'Material estimate',{options:product.options,materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel,...(Number.isFinite(product.price)?{price:product.price}:{}),...(item.paintPackage||product.includesSupplies?{includesSupplies:true}:{})}));else add(item.result+' — '+item.title,'Material estimate');}
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
             add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:(x.scope||x.service)+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageNote:x.packageNote,internalCosts:x.internalCosts}:{});
           });
-          const included=item.paintPackage?[]:item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
+          const included=item.paintPackage||item.stoneMaterialPackage?[]:item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
           if(included.length&&(item.projectOptions?.includes('Materials')||(item.labor?.length||item.labor?.service)))add('Included project costs','Included project costs',includedProjectCosts(included));
           if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
           if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
@@ -557,7 +559,7 @@
         if(item.workLabel&&item.roomName)info.querySelector('strong').textContent=item.roomName+' — '+item.workLabel;
         if(item.products){
           const amount=info.children[1];amount.replaceChildren();
-          item.products.forEach(product=>{const line=create('p');const name=create('strong',product.name+': ');line.append(name,document.createTextNode(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit));
+          item.products.forEach(product=>{const line=create('p');const name=create('strong',product.name+': ');line.append(name,document.createTextNode(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit+(Number.isFinite(product.unitPrice)?' at $'+product.unitPrice.toFixed(2)+' per sq. ft. — $'+product.price.toFixed(2):'')));
             amount.append(line)});
         }
 
@@ -571,7 +573,7 @@
         if(item.projectOptions?.includes('Delivery'))labor.push({type:'Service'});
         return labor;
       });
-      materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials')){if(item.paintPackage)item.products.forEach(product=>serviceItems.push({type:'Material estimate',price:product.price,qty:1}));else serviceItems.push({type:'Material estimate'});}if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
+      materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials')){if(item.products?.length)item.products.forEach(product=>serviceItems.push({type:'Material estimate',price:product.price,qty:1}));else serviceItems.push({type:'Material estimate'});}if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
       const services=serviceEstimateSummary(serviceItems),others=serviceItems.filter(x=>!['Labor','Service'].includes(x.type));
       const known=x=>x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price))&&Number(x.price)>=0;
       const pending=services.pending||others.some(x=>!known(x)||x.pricingPending);
