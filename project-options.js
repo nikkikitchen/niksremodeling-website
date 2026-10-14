@@ -97,9 +97,9 @@
     const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next';measurementPanel.append(next);
     const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';workNote.after(back);
     const stepButtons=[];
-    const setStep=step=>{if(step===1&&!document.getElementById('scope-location').value){document.getElementById('scope-location').reportValidity();return;}if(step===1)filterLocationMaterials();measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=back.hidden=step!==1;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
+    const setStep=step=>{if(step===1&&!document.getElementById('scope-location').value){document.getElementById('scope-location').reportValidity();return;}if(step===1)filterLocationMaterials();measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=step!==1;back.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
     ['1. Room / Area','2. Choose Work','Review Cart Anytime'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
-    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>setStep(0);setStep(0);
+    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};setStep(0);
     const grid=document.getElementById('project-work-grid');
     const draftKey='niks-project-options-'+id;
     let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
@@ -133,7 +133,7 @@
     dialog.hidden=false;dialog.querySelector('iframe').src=url;dialog.scrollIntoView({behavior:'smooth',block:'start'});
 
   };
-  window.addEventListener('message',event=>{if(event.origin!==location.origin||event.data?.type!=='project-cart-saved')return;updateCartCount();const status=document.getElementById('project-measurements-status');if(status)status.textContent='Saved to your Project Cart. You can keep adding work to this room.';});
+  window.addEventListener('message',event=>{if(event.origin===location.origin&&event.data?.type==='project-calculator-back'){const dialog=document.getElementById('project-measurements-dialog');if(event.source!==dialog?.querySelector('iframe')?.contentWindow)return;dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});return;}if(event.origin!==location.origin||event.data?.type!=='project-cart-saved')return;updateCartCount();const status=document.getElementById('project-measurements-status');if(status)status.textContent='Saved to your Project Cart. You can keep adding work to this room.';});
   // Reuse the calculator's supply rules and coverage assumptions for this saved work.
   window.projectSupplyChoices=item=>{
     const group=estimateSupplyGroup(item),guide=SUPPLY_GUIDE[group];
