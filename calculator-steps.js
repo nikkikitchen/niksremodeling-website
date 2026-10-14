@@ -15,7 +15,7 @@
   const back=controls.firstElementChild,next=controls.lastElementChild;
   const review=document.createElement('a');review.href='/project-cart.html';review.target='_top';review.className='btn primary';review.textContent='Review Cart';review.hidden=true;controls.append(review);
   let current=1,saved=false;
-  document.addEventListener('project-saved-to-cart',()=>{saved=true;next.hidden=true;back.hidden=false;back.textContent='Add More Work';review.hidden=false;});
+  document.addEventListener('project-saved-to-cart',()=>{saved=true;next.hidden=true;back.hidden=false;back.textContent='Keep shopping';review.hidden=false;});
   const error=document.getElementById('mat-error');error.setAttribute('role','alert');
   function show(step){current=step;saved=false;review.hidden=true;back.textContent=step===3?'Edit Options':'Back';workspace.dataset.step=step;progress.querySelectorAll('span').forEach((el,i)=>{if(i+1===step)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});panel.classList.toggle('wizard-hidden',step===3);side.classList.toggle('wizard-hidden',step!==3);if(step===3)side.hidden=false;
    [...panel.children].forEach(el=>{if(el===title||el===error)return;el.classList.toggle('wizard-hidden',el===calculate||(step===1?!first.has(el):first.has(el)));});

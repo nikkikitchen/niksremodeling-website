@@ -159,9 +159,10 @@ const PRODUCTS={
 };
 
 function getCart(){try{const cart=JSON.parse(localStorage.getItem('nr-cart')||'[]');const cleaned=Array.isArray(cart)?cart.filter(Boolean).map(item=>/^(Supply request|Supplies request|Supplies)$/.test(item.type)?{...item,hiddenFromCustomer:true,pricingPending:item.price==null}:item):[];if(cleaned.length!==cart.length)localStorage.setItem('nr-cart',JSON.stringify(cleaned));return cleaned}catch{return[]}}
-function saveCart(c){localStorage.setItem('nr-cart',JSON.stringify(c));if(c.length)localStorage.setItem('nr-cart-updated-at',String(Date.now()));else{localStorage.removeItem('nr-cart-updated-at');localStorage.removeItem('nr-cart-reminder-dismissed-until')}updateCartCount()}
+function saveCart(c){const previous=getCart();if(c.length>previous.length||c.some((x,i)=>JSON.stringify(x)!==JSON.stringify(previous[i]))&&c.length>=previous.length){setTimeout(()=>{let note=document.getElementById('cart-added-confirmation');if(!note){note=document.createElement('div');note.id='cart-added-confirmation';note.className='wrap panel';note.setAttribute('role','status');document.querySelector('main')?.append(note);}note.innerHTML='Added to cart. <a class="btn outline" target="_top" href="/#projects">Keep shopping</a>';},0);}localStorage.setItem('nr-cart',JSON.stringify(c));if(c.length)localStorage.setItem('nr-cart-updated-at',String(Date.now()));else{localStorage.removeItem('nr-cart-updated-at');localStorage.removeItem('nr-cart-reminder-dismissed-until')}updateCartCount()}
 function updateCartCount(){const n=getCart().filter(x=>!x.hiddenFromCustomer).reduce((s,x)=>s+(x.qty||1),0);document.querySelectorAll('.cart-count').forEach(e=>e.textContent=n)}
 function addItem(name){
+ if(isCustomLabel(name)){showCustomQuote(name);return;}
  const card=[...document.querySelectorAll('article')].find(el=>el.querySelector('h3')?.textContent===name);
  const url=card?.querySelector('[data-calc-url]')?.dataset.calcUrl||'/calculators.html?material=custom&product='+encodeURIComponent(name);
  if(typeof openMaterialCalculator==='function'&&document.getElementById('material-calc-dialog'))openMaterialCalculator(url);else location.href=url;
@@ -218,7 +219,7 @@ const SHOP_GUIDE_CATEGORIES={
  tools:{'Power Tools':['Power Tools','Drilling','Sawing'],'Hand Tools':['Measuring'],'Specialty Tools':['Jobsite'],'Drills & Impacts':['Drilling'],'Saws & Cutting':['Sawing'],'Measuring & Layout':['Measuring']}
 };
 function applyShopGuideFilter(page){const category=new URLSearchParams(location.search).get('category');if(!category)return;const match=SHOP_GUIDE_CATEGORIES[page]?.[category];if(!match)return;let count=0;document.querySelectorAll('.products .card').forEach(card=>{let visible=match.includes(card.dataset.category);if(page==='appliances'&&['Gas Ranges','Electric Ranges','Gas Dryers','Washers & Electric Dryers'].includes(category)){const name=card.querySelector('h3')?.textContent||'';visible=visible&&(category.startsWith('Gas')?/gas/i.test(name):category==='Electric Ranges'?/electric|induction/i.test(name):/washer|electric dryer/i.test(name))}card.hidden=!visible;if(visible)count++});const head=document.querySelector('.catalog-head');if(head){const note=document.createElement('p');note.className='calc-note';note.textContent=count?'Showing '+category+' listings. ':'No current listings for '+category+'. ';const clear=document.createElement('a');clear.href='/'+page+'.html#catalog-products';clear.textContent='See all '+page;note.append(clear);head.append(note)}}
-function openMaterialCalculator(url){const dialog=document.getElementById('material-calc-dialog'),frame=document.getElementById('material-calc-frame');if(!dialog||!url)return;document.getElementById('material-calc-status').textContent='';frame.src=url+'&embedded=1';dialog.showModal()}
+function openMaterialCalculator(url){if(customUrl(url)){showCustomQuote();return;}const dialog=document.getElementById('material-calc-dialog'),frame=document.getElementById('material-calc-frame');if(!dialog||!url)return;document.getElementById('material-calc-status').textContent='';frame.src=url+'&embedded=1';dialog.showModal()}
 function closeMaterialCalculator(){const dialog=document.getElementById('material-calc-dialog');dialog.close();document.getElementById('material-calc-frame').src='about:blank'}
 window.addEventListener('message',event=>{if(event.origin!==location.origin||event.data?.type!=='material-estimate-saved')return;const status=document.getElementById('material-calc-status');if(status){status.textContent='Estimate saved. Continue shopping or review your cart. ';const link=document.createElement('a');link.href='/project-cart.html';link.textContent='Review Cart →';status.append(link)}});
 const MATERIAL_ESTIMATES_KEY='niks-material-estimates-v1';
@@ -422,6 +423,7 @@ function cartSuggestions(cart){const names=cart.map(item=>item.name);const hasAp
  if(!names.some(name=>/Installation|Labor/.test(name)))suggestions.push({title:'Installation help',description:'Get the scope reviewed if you want help with installation.',url:'/installation.html',action:'Explore Labor'});
  return suggestions.slice(0,3)}
 function serviceEstimateSummary(items){
+ items=items.filter(x=>!customEstimate(x));
  const services=items.filter(x=>['Labor','Service'].includes(x.type));
  const priced=services.filter(x=>x.price!==null && x.price!==undefined && x.price!=='' && Number.isFinite(Number(x.price)) && Number(x.price)>=0);
  const subtotal=priced.reduce((sum,x)=>sum+Number(x.price)*(Number(x.qty)||1),0);
@@ -436,6 +438,8 @@ function includedProjectCosts(supplies){
  return {hiddenFromCustomer:true,supplyQuantities:list,supplyList:list.map(s=>s.name+' — '+(s.quantity==null?'quantity to confirm':s.quantity+' '+s.unit)),price:priced.reduce((a,b)=>a+b,0),pricingPending:priced.length<list.length};
 }
 function projectEstimateMarkup(items){
+ items=items.filter(x=>!customEstimate(x));
+ if(!items.length)return '<p>In-person quote required before pricing custom work.</p>';
  const services=serviceEstimateSummary(items);
  const others=items.filter(x=>!['Labor','Service'].includes(x.type));
  const known=x=>x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price))&&Number(x.price)>=0;
@@ -504,6 +508,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
+ if(customEstimate(x))return 'In-person quote required';
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
  const costs=x.internalCosts;
  const scope=costs?(costs.fixture>0?'Item + supplies + labor':'Labor + supplies'):['Labor','Service'].includes(x.type)?'Labor only':/material|suppl/i.test(x.type||'')?'Materials only':'Item only';
@@ -671,3 +676,14 @@ function itemOptionFields(name){
  return (rules.find(([pattern])=>pattern.test(name))?.[1]||[]).map(([label,...values])=>({label,values:[...values,'Help me choose']}));
 }
 function itemOptionSummary(options){return Object.entries(options||{}).map(([label,value])=>label+': '+value).join('; ');}
+
+// Match customer-facing names and choices, never the internal generic "custom" material type.
+function isCustomLabel(value){return /\bcustom\b/i.test(String(value||''));}
+function customUrl(url){const p=new URL(url,location.origin).searchParams;return ['product','workLabel'].some(k=>isCustomLabel(p.get(k)))||isCustomLabel(PROJECT_CATALOG[p.get('project')]?.title);}
+function customEstimate(item){return !!item&&(item.inPersonQuoteRequired||[item.name,item.title,item.workLabel,...Object.values(item.options||{}),...Object.values(item.itemOptions||{}).flatMap(x=>Object.values(x||{})),...(item.products||[]).flatMap(x=>[x.name,...Object.values(x.options||{})])].some(isCustomLabel)||(item.sourceQuery&&customUrl('/calculators.html'+item.sourceQuery)));}
+function customSelection(){return customUrl(location.href)||[...document.querySelectorAll('select')].some(s=>!s.disabled&&!s.closest('[hidden]')&&(!s.closest('.area-product')||s.closest('.area-product').querySelector('input:checked'))&&isCustomLabel(s.selectedOptions[0]?.textContent))||[...document.querySelectorAll('input:checked')].some(i=>isCustomLabel(i.value));}
+function customQuoteMarkup(name){return '<h2>In-person quote required</h2><p>'+escapeCartText(name||'Custom work')+' requires an in-person visit before pricing.</p><a class="btn primary" href="sms:'+SITE.text.replaceAll('-','')+'?body='+encodeURIComponent('I would like to arrange an in-person quote for '+(name||'custom work')+'.')+'">Request in-person quote</a> <a class="btn outline" href="tel:'+SITE.phone.replaceAll('-','')+'">Call to schedule</a>';}
+function renderCustomQuotePage(name){document.body.innerHTML=header()+'<main class="wrap section">'+customQuoteMarkup(name)+'</main>'+footer();updateCartCount();}
+function showCustomQuote(name){let box=document.getElementById('custom-quote-request');if(!box){box=document.createElement('section');box.id='custom-quote-request';box.className='wrap panel';document.querySelector('main').prepend(box);}box.innerHTML=customQuoteMarkup(name);box.scrollIntoView({behavior:'smooth'});}
+document.addEventListener('click',event=>{const control=event.target.closest('button,a');if(!control)return;const url=control.dataset.calcUrl||control.getAttribute('href');const card=control.closest('.card,.project-work-card');const name=card?.querySelector('h2,h3,summary')?.textContent;if((url&&/calculators.html/.test(url)&&customUrl(url))||(isCustomLabel(name)&&/calculate|add|next|options/i.test(control.textContent))){event.preventDefault();event.stopImmediatePropagation();showCustomQuote(name);}},true);
+document.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.page==='calculators'&&customUrl(location.href))renderCustomQuotePage(new URLSearchParams(location.search).get('workLabel')||'Custom work');});

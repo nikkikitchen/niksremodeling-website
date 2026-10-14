@@ -372,6 +372,7 @@
     const originalCalc=window.calcMaterial;
     const originalRender=window.renderMaterialEstimates;
     window.calcMaterial=function() {
+      if(customSelection()){const error=document.getElementById("mat-error");error.hidden=false;error.textContent="In-person quote required before pricing custom work.";showCustomQuote();return;}
       const error=document.getElementById('mat-error');error.hidden=true;
       if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}
       if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
@@ -503,6 +504,7 @@
     function addProjectToCart(event) {
       const status=document.getElementById('project-cart-status');
       try {
+        if(materialEstimates.some(customEstimate)){showCustomQuote();return;}
         if(!materialEstimates.filter(Boolean).length){if(status)status.textContent='Calculate your estimate first.';return;}
         const savedRooms=new Set(materialEstimates.filter(Boolean).map(item=>item.roomId).filter(Boolean));
         const cart=getCart().filter(x=>x.source!=='project-calculator'||!savedRooms.has(x.roomId));

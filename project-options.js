@@ -80,6 +80,7 @@
     return ['Product-compatible fasteners / connections','Surface protection','Installation accessories to confirm with the selected product'];
   };
   window.renderProjectOptions=(id,project)=>{
+    if(isCustomLabel(project.title)){renderCustomQuotePage(project.title);return;}
     const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;
     document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>One update or the whole room. Choose the parts you want to work on.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Room measurements</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><input id="scope-room" value="${room}" placeholder="e.g. Main bathroom"></div><div class="field"><label for="scope-location">Interior or exterior?</label><select id="scope-location"><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" placeholder="12"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" placeholder="10"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" placeholder="8"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
     document.getElementById('scope-location').value=project.exterior?'exterior':'interior';
@@ -88,15 +89,15 @@
     const workGrid=document.getElementById('project-work-grid');
     const workNote=workGrid.nextElementSibling;
     const cartLink=workNote.nextElementSibling;
-    cartLink.textContent='Next';cartLink.className='btn primary';cartLink.style.marginLeft='10px';
+    cartLink.remove();
     workNote.textContent='Choose a section to continue.';
     const steps=document.createElement('nav');steps.setAttribute('aria-label','Project steps');
     steps.style.cssText='display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px';
     measurementPanel.before(steps);
     const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next';measurementPanel.append(next);
-    const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';cartLink.before(back);
+    const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';workNote.after(back);
     const stepButtons=[];
-    const setStep=step=>{measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=back.hidden=step!==1;cartLink.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
+    const setStep=step=>{measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=back.hidden=step!==1;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
     ['1. Room / Area','2. Choose Work','Review Cart Anytime'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
     next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>setStep(0);setStep(0);
     const grid=document.getElementById('project-work-grid');
@@ -123,6 +124,7 @@
     const style=document.createElement('style');style.textContent='.project-measurement-start{margin-bottom:26px}.project-measurement-grid{display:grid;grid-template-columns:2fr 1.3fr repeat(3,1fr);gap:12px}.project-measurement-grid input,.project-measurement-grid select{width:100%;box-sizing:border-box;padding:10px}.project-section-title{margin:26px 0 10px}.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}@media(max-width:700px){.project-measurement-grid{grid-template-columns:1fr 1fr}.project-measurement-grid .field:first-child{grid-column:1/-1}}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
   };
   window.openProjectMeasurements=url=>{
+    if(customUrl(url)){showCustomQuote();return;}
     try{const dims=JSON.parse(localStorage.getItem('nr-project-dimensions')||'{}'),target=new URL(url,location.origin);for(const [key,value] of Object.entries(dims))if(value&&!target.searchParams.has(key))target.searchParams.set(key,value);url=target.pathname+target.search; }catch{}
     let dialog=document.getElementById('project-measurements-dialog');
     if(!dialog){dialog=document.createElement('section');dialog.id='project-measurements-dialog';dialog.className='wrap panel';dialog.innerHTML='<div class="material-calc-dialog-head"><strong>Project Options & Estimate</strong><button class="btn outline" type="button">Keep Adding Work</button><a class="btn primary" href="/project-cart.html">Review Cart / Request Quote</a></div><p role="status" id="project-measurements-status">Calculate your work, then add it to the cart.</p><iframe title="Project options and estimate" style="width:100%;height:900px;border:0"></iframe>';dialog.querySelector('button').onclick=()=>{dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});updateCartCount()};document.querySelector('main').append(dialog);}
