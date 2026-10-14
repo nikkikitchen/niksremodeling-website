@@ -276,7 +276,8 @@
     function renderQuestions(saved = {}) {
       questionBox.replaceChildren();
       floorField.hidden = types.value !== 'flooring';
-      const group = questions[key()] || [];
+      const group = [...(questions[key()] || [])];
+      if(new URLSearchParams(location.search).get('project')==='accents'&&!group.some(q=>q[0]==='condition'))group.push(['condition','Does this surface need prep or repairs?',[['good','Ready for installation'],['repair','Needs prep / repairs'],unsure]]);
       if(!group.length) { questionBox.append(create('p','Tell us the measured quantity below. We’ll help confirm the supplies for this item.','calc-note')); return; }
       questionBox.append(create('h3','Project details'));
       const grid = create('div', '', 'calc-fields');
@@ -285,7 +286,7 @@
         select.id='question-'+id; select.dataset.question=id; title.htmlFor=select.id;
         const placeholder=create('option','Choose one'); placeholder.value=''; select.append(placeholder);
         options.forEach(([value,text])=>{const option=create('option',text);option.value=value;select.append(option)});
-        select.value=saved[id]||'unsure';field.append(title,select);grid.append(field);
+        select.value=saved[id]||'';field.append(title,select);grid.append(field);
       });
       questionBox.append(grid,create('p','Adjust these if you know. Otherwise, we’ll confirm them with you.','calc-note'));
       adjustLabels();

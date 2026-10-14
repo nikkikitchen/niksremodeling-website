@@ -62,7 +62,7 @@
     accents:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','prep','other'],lighting:['lighting','ventilation','prep','other'],
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
-  Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];
+  Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];scopes.accents=scopes.accents.filter(key=>key!=='prep');
   window.materialSupplyList=(name)=>{
     if(/knob|pull|hinge|hardware/i.test(name))return ['Correct-size mounting screws','Compatible mounting plates if required','Hole repair / filler supplies if required'];
     if(/backer|drywall|wall panels?/i.test(name))return ['Compatible board fasteners','Joint / seam tape','Compatible joint or seam compound','Surface protection'];
@@ -112,7 +112,7 @@
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
-      item.materials.forEach(name=>{const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(name));card.append(label)});
+      item.materials.forEach(name=>{const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':name));card.append(label)});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
       const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='See Price & Add to Cart';
