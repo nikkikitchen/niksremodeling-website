@@ -280,7 +280,6 @@
         ['condition','Is this new work or a repair?',[['new','New drywall'],['repair','Replacing damaged drywall'],unsure]]
       ],
       lumber: [
-        ['location','Is the framing inside or outside?',[['inside','Inside'],['outside','Outside'],unsure]],
         ['openings','Are there doors or windows in this wall?',[['yes','Yes'],['no','No'],unsure]]
       ],
       concrete: [
@@ -396,7 +395,7 @@
       if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}
       if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
       for(const id of roundedMeasurements){const input=document.getElementById(id);if(input&&input.value.trim()&&!Number.isInteger(Number(input.value))&&!input.closest('[hidden]')){error.hidden=false;error.textContent='Round measurements to the nearest whole unit shown.';window.highlightMissingField(input);return;}}
-      const answers={};
+      const answers={location:projectLocation.value==='exterior'?'outside':'inside'};
       if(panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
         for(const input of questionBox.querySelectorAll('select')) {
           if(!input.value){error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';window.highlightMissingField(input);return;}
@@ -486,6 +485,7 @@
       const own=document.getElementById('customer-provides-materials');if(own)own.checked=!!item.customerProvidesMaterials;
       editingId=item.roomId||(item.roomId='room-'+Date.now());
       history.replaceState(null,'',location.pathname+(item.sourceQuery||''));
+      locationField.hidden=!!item.projectLocation;projectLocation.value=item.projectLocation||'';
       if(item.form) {
         restore(item.form);updateMaterialChoices();showMaterialFields();renderQuestions(item.answers);restore(item.form);syncMaterialChoice();
       }else{
@@ -513,13 +513,13 @@
       ['exact-brand','exact-model','exact-color','exact-identifier','floor-box'].forEach(id=>{document.getElementById(id).value=''});
       document.getElementById('exact-product-fields').hidden=true;
       document.getElementById('mat-error').hidden=true;
-      types.value='';projectLocation.value='';
+      types.value='';projectLocation.value='';locationField.hidden=false;
       roomStatus.textContent='New room / area';quantityMethod.value='measure';document.getElementById('known-quantity').value='';document.getElementById('material-description').value='';document.getElementById('paint-other-description').value='';updateMaterialChoices();renderQuestions();updateChoices();updateQuantityFields();showPaintSurfaceFields();
       panel.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('material-name').focus({preventScroll:true});
     }
     function addWork(item){
       const room=item.roomName,location=item.projectLocation,form=item.form||[];
-      newRoom();document.getElementById('material-name').value=room;projectLocation.value=location;
+      newRoom();document.getElementById('material-name').value=room;projectLocation.value=location;locationField.hidden=!!location;
       form.filter(x=>measurementIds.includes(x.id)).forEach(saved=>{if(saved.value)document.getElementById(saved.id).value=saved.value});
       const length=document.getElementById('floor-length').value,width=document.getElementById('floor-width').value;
       if(length&&width){document.getElementById('paint-ceiling-length').value=length;document.getElementById('paint-ceiling-width').value=width;}
@@ -589,10 +589,11 @@
       const pending=services.pending||others.some(x=>!known(x)||x.pricingPending);
       const total=services.total+others.filter(known).reduce((n,x)=>n+Number(x.price)*(Number(x.qty)||1),0);
       let price=summary.querySelector('.project-total-price');if(!price){price=create('strong','','project-total-price');price.setAttribute('role','status');summary.querySelector('h2').after(price);}
-      price.textContent=pending?'Price pending':total.toLocaleString('en-US',{style:'currency',currency:'USD'});
-      price.style.cssText='margin-left:auto;font-size:1.8rem;white-space:nowrap;color:var(--ink)';summary.querySelector('h2').parentElement.style.cssText='display:flex;align-items:center;gap:16px;flex-wrap:wrap';
+      const hasPricedItems=serviceItems.some(x=>known(x)&&(!x.pricingPending||Number(x.price)>0));
+      price.textContent=hasPricedItems?total.toLocaleString('en-US',{style:'currency',currency:'USD'})+(pending?' + pending costs':''):'Price needs confirmation';
+      price.style.cssText='margin-left:auto;font-size:1.8rem;white-space:normal;overflow-wrap:anywhere;color:var(--ink)';summary.querySelector('h2').parentElement.style.cssText='display:flex;align-items:center;gap:16px;flex-wrap:wrap';
       let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
-      let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}note.textContent=pending?'We need to confirm the remaining costs before showing your complete project price.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
+      let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.type==='Material estimate'?'materials':x.type==='Included project costs'?'installation supplies':x.type==='Labor'?'labor':'hauling / delivery'))];note.textContent=pending?(hasPricedItems?'Priced subtotal, not the complete total. ':'')+'Still to confirm: '+missingCosts.join(', ')+'.'+(services.adjustment&&hasPricedItems?' Includes the $150 minimum service charge.':''):'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       const add=create('button','Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
