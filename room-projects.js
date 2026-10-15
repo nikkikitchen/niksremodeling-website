@@ -25,6 +25,8 @@ Object.assign(window.ROOM_WORK_OPTIONS,{"pet-care": {"title": "Pet Features", "k
 window.ROOM_PROJECT_SCOPES['home-theater'].unshift('theater-setting');
 window.ROOM_PROJECT_SCOPES['home-theater'].push('outdoor-media','snack-station');
 window.ROOM_PROJECT_SCOPES['kitchen-pantry'].push('snack-station','beverage');
+const TOPIC_PHOTOS={"pet-room": "/assets/idea-pet-room.jpg", "outdoor-kitchen": "/assets/idea-outdoor-kitchen.jpg", "mechanic-shop": "/assets/idea-mechanic-shop.jpg", "car-wash": "/assets/idea-car-wash.jpg", "recycling-scrap": "/assets/idea-recycling-scrap.jpg", "vault-safe-room": "/assets/idea-vault-safe-room.jpg", "snack-beverage": "/assets/idea-snack-beverage.jpg", "pools": "/assets/idea-pools.jpg", "bus-stop": "/assets/idea-bus-stop.jpg", "mailboxes": "/assets/idea-mailboxes.jpg", "outdoor-sound": "/assets/idea-outdoor-sound.jpg", "garden-greenhouse": "/assets/idea-garden-greenhouse.jpg", "fitness-wellness": "/assets/idea-fitness-wellness.jpg", "games-hobbies": "/assets/idea-games-hobbies.jpg", "accessibility": "/assets/idea-accessibility.jpg", "backyard-retreat": "/assets/idea-backyard-retreat.jpg"};
+Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=image;});
 document.addEventListener('DOMContentLoaded',()=>{
  const grid=document.querySelector('#projects .project-grid')||document.querySelector('#projects .tiles');
  if(!grid)return;
@@ -32,7 +34,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(grid.querySelector('a[href="/project.html?project='+id+'"]'))continue;
   const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
   const img=document.createElement('img');img.src=p.image;img.alt=p.title+' project ideas';img.loading='lazy';
-  const span=document.createElement('span');span.textContent=p.title;const small=document.createElement('small');small.textContent=p.intro;span.append(small);a.append(img,span);grid.append(a);
+  const span=document.createElement('span');span.textContent=p.title;const small=document.createElement('small');small.textContent=p.intro;span.append(small);a.append(img,span);if(TOPIC_PHOTOS[id]){const badge=document.createElement('b');badge.className='photo-source';badge.textContent='Inspiration';a.append(badge);}grid.append(a);
  }
  [...grid.children].sort((a,b)=>a.textContent.localeCompare(b.textContent)).forEach(a=>grid.append(a));
 });
