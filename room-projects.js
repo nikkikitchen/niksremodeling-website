@@ -13,7 +13,7 @@ Object.entries(mergedRoomAliases).forEach(([oldId,id])=>{
  Object.defineProperty(PROJECT_CATALOG,oldId,{value:PROJECT_CATALOG[id],enumerable:false,configurable:true,writable:true});
  if(window.ROOM_PROJECT_SCOPES[id])window.ROOM_PROJECT_SCOPES[oldId]=window.ROOM_PROJECT_SCOPES[id];
 });
-document.addEventListener('DOMContentLoaded',()=>{const nav=[...document.querySelectorAll('.nav-menu')].find(m=>m.querySelector('.nav-main')?.getAttribute('href')==='/#projects');if(nav){const menu=nav.querySelector('.nav-dropdown');menu.replaceChildren();const all=document.createElement('a');all.href='/#projects';all.textContent='All Projects';menu.append(all);Object.entries(PROJECT_CATALOG).sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{const a=document.createElement('a');a.href='/project.html?project='+id;a.textContent=p.title;menu.append(a);});}updateCartCount();});
+document.addEventListener('DOMContentLoaded',()=>{const nav=[...document.querySelectorAll('.nav-menu')].find(m=>m.querySelector('.nav-main')?.getAttribute('href')==='/#projects');if(nav){const menu=nav.querySelector('.nav-dropdown');menu.replaceChildren();const all=document.createElement('a');all.href='/#projects';all.textContent='All Projects';menu.append(all);Object.entries(PROJECT_CATALOG).filter(([id,p])=>!p.exterior||id==='concrete').sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{const a=document.createElement('a');a.href='/project.html?project='+id;a.textContent=p.title;menu.append(a);});}updateCartCount();});
 
 
 PROJECT_CATALOG.other={title:'Other',image:'/assets/custom-projects-card.jpg',intro:'Tell us about other products, materials or work you need.',materials:[],exterior:false};
@@ -30,7 +30,9 @@ Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=im
 document.addEventListener('DOMContentLoaded',()=>{
  const grid=document.querySelector('#projects .project-grid')||document.querySelector('#projects .tiles');
  if(!grid)return;
+ grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');if(PROJECT_CATALOG[id]?.exterior&&id!=='concrete')a.remove();});
  for(const [id,p] of Object.entries(PROJECT_CATALOG)){
+  if(p.exterior&&id!=='concrete')continue;
   if(grid.querySelector('a[href="/project.html?project='+id+'"]'))continue;
   const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
   const img=document.createElement('img');img.src=p.image;img.alt=p.title+' project ideas';img.loading='lazy';
@@ -38,3 +40,20 @@ document.addEventListener('DOMContentLoaded',()=>{
  }
  [...grid.children].sort((a,b)=>a.textContent.localeCompare(b.textContent)).forEach(a=>grid.append(a));
 });
+
+// Outdoor Projects is the front door to all exterior ideas.
+PROJECT_CATALOG.concrete.intro='Explore outdoor kitchens, pools, decks, gardens, car wash areas & more.';
+window.renderOutdoorProjects=()=>{
+ document.body.innerHTML=header()+'<main class="wrap section"><a class="project-back" href="/#projects">← All Projects</a><h1>Outdoor Projects</h1><p class="lead">Choose an outdoor area to explore ideas and plan your work.</p><div class="tile-grid project-grid" id="outdoor-project-grid"></div></main>'+footer();
+ const choices=Object.entries(PROJECT_CATALOG).filter(([id,p])=>p.exterior&&id!=='concrete');
+ choices.push(['concrete&outdoorWork=1',{...PROJECT_CATALOG.concrete,title:'Patios, Walkways & Concrete',intro:'Concrete, paving, walkways, porches & outdoor surfaces.'}]);
+ const grid=document.getElementById('outdoor-project-grid');
+ choices.sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{
+  const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
+  const img=document.createElement('img');img.src=p.image;img.alt=p.title;img.loading='lazy';
+  const text=document.createElement('span');text.textContent=p.title;const small=document.createElement('small');small.textContent=p.intro;text.append(small);a.append(img,text);
+  if(TOPIC_PHOTOS[id]){const badge=document.createElement('b');badge.className='photo-source';badge.textContent='Inspiration';a.append(badge);}
+  grid.append(a);
+ });
+ updateCartCount();
+};
