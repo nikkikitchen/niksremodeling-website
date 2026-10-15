@@ -96,6 +96,8 @@
       selectedRoom.closest('.field').style.display='none';
     }
     document.getElementById('scope-location').value=chosenRoom?(project.exterior?'exterior':'interior'):'';
+    const fixedLocation=project.exterior||['bathrooms','bath-remodel','bedroom-guest-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies'].includes(id);
+    if(fixedLocation)document.getElementById('scope-location').closest('.field').hidden=true;
     const measurementPanel=document.querySelector('.project-measurement-start');
     const workTitle=document.querySelector('.project-section-title');
     const workGrid=document.getElementById('project-work-grid');
@@ -110,7 +112,7 @@
     const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';workNote.after(back);
     const stepButtons=[];
     const setStep=step=>{if(step===1&&!document.getElementById('scope-location').value){document.getElementById('scope-location').reportValidity();return;}if(step===1)filterLocationMaterials();measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=step!==1;back.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
-    ['1. Room / Area','2. Choose Work','Review Cart Anytime'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
+    ['Room / Area','Choose Work','Review Cart'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
     next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};setStep(0);
     const grid=document.getElementById('project-work-grid');
     const draftKey='niks-project-options-'+id;
@@ -132,9 +134,13 @@
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
-      status.textContent='Enter measurements, package coverage and waste allowance. Required project items are handled automatically.';
+      status.textContent='Choose what you need. Sizes and options come next.';
       card.append(status);grid.append(card);
     });
+    if(fixedLocation){
+      stepButtons[0].hidden=true;setStep(1);
+      back.onclick=()=>{location.href=project.exterior?'/project.html?project=concrete':'/#projects';};
+    }
     const style=document.createElement('style');style.textContent='.project-measurement-start{margin-bottom:26px}.project-measurement-grid{display:grid;grid-template-columns:2fr 1.3fr repeat(3,1fr);gap:12px}.project-measurement-grid input,.project-measurement-grid select{width:100%;box-sizing:border-box;padding:10px}.project-section-title{margin:26px 0 10px}.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}@media(max-width:700px){.project-measurement-grid{grid-template-columns:1fr 1fr}.project-measurement-grid .field:first-child{grid-column:1/-1}}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
   };
   window.openProjectMeasurements=url=>{

@@ -30,6 +30,7 @@ Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=im
 document.addEventListener('DOMContentLoaded',()=>{
  const grid=document.querySelector('#projects .project-grid')||document.querySelector('#projects .tiles');
  if(!grid)return;
+ const outdoorLink=grid.querySelector('a[href="/project.html?project=concrete"]');if(outdoorLink?.querySelector('small'))outdoorLink.querySelector('small').textContent=PROJECT_CATALOG.concrete.intro;
  grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');if(PROJECT_CATALOG[id]?.exterior&&id!=='concrete')a.remove();});
  for(const [id,p] of Object.entries(PROJECT_CATALOG)){
   if(p.exterior&&id!=='concrete')continue;

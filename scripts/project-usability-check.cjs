@@ -1,0 +1,12 @@
+const {JSDOM}=require('jsdom');const fs=require('node:fs');const assert=require('node:assert/strict');
+async function load(file,query='') { let html=fs.readFileSync(file,'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(all,src)=>{const path=src.split('?')[0].replace(/^\//,'');return fs.existsSync(path)?'<script>'+fs.readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':''});const dom=new JSDOM(html,{url:'https://niksremodeling.com/'+file+query,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};w.alert=()=>{};}});await new Promise(r=>setTimeout(r,80));return dom;}
+
+(async()=>{
+const home=await load('index.html');const catalog=home.window.eval('PROJECT_CATALOG');const entries=Object.entries(catalog).map(([id,p])=>[id,p.exterior]);home.window.close();let checked=0;
+for(const [id,exterior] of entries){const d=await load('project.html','?project='+id);const doc=d.window.document;
+if(id==='concrete'){assert(doc.querySelectorAll('#outdoor-project-grid .tile').length>=12);assert(!doc.querySelector('#scope-location'));}
+else if(doc.querySelector('#project-work-grid')){assert(doc.querySelectorAll('.project-work-card').length>0,id+' no work');if(exterior){assert.equal(doc.querySelector('#scope-location').value,'exterior');assert(doc.querySelector('#scope-location').closest('.field').hidden);assert(!doc.querySelector('#project-work-grid').hidden);}
+for(const card of doc.querySelectorAll('.project-work-card')){const inputs=[...card.querySelectorAll(':scope > label input')].filter(x=>!x.closest('[hidden]'));if(inputs.length)inputs[0].checked=true;let target='';d.window.openProjectMeasurements=url=>target=url;card.querySelector('button').click();assert(target||/Choose|Name/.test(card.textContent),id+' work navigation');if(target){const params=new URL(target,'https://niksremodeling.com').searchParams;assert(params.get('room'));assert(params.get('location'));}}}
+checked++;d.window.close();}
+const patio=await load('project.html','?project=concrete&outdoorWork=1');assert(!patio.window.document.querySelector('#project-work-grid').hidden);patio.window.close();console.log(checked+' project pages checked; outdoor tiles, location defaults, work links and concrete path passed.');
+})().catch(e=>{console.error(e);process.exit(1)});

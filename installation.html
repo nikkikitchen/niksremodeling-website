@@ -75,7 +75,7 @@ const glass=bath.groups.find(g=>g.id==='glass');
 glass.actions.Install=glass.actions.Replace.map(t=>({...t,id:t.id+'-install',label:t.label.replace('Replace','Install'),note:'Glass-door installation only; removal, tile and waterproofing separate.'}));
 glass.actions.Replace=[{id:'glass-replace',label:'Replace shower door',price:null,note:'Removal and replacement scope to confirm.',status:'pending',unit:'each'}];
 
-</script><script src="/app.js?v=calculator-cards-20260927"></script>
+</script><script src="/app.js?v=outdoor-flow-20261015b"></script>
 <script>
 // Bathroom packages share the project calculator's approved pricing.
 const bathCategory=LABOR_CATALOG.find(c=>c.groups.some(g=>g.id==='toilet'));
@@ -95,6 +95,6 @@ document.addEventListener('DOMContentLoaded',()=>{
  price.append(make('strong',typeof task.price==='number'?money(task.price)+' / '+task.unit:'Price to set'));if(task.status==='draft')price.append(make('small','Draft · needs review'));const control=make('div',undefined,'labor-line-controls'),label=make('label','Qty'),quantity=make('input');quantity.type='number';quantity.min=task.unit==='hours'?'0.25':'1';quantity.step=task.unit==='hours'?'0.25':'1';quantity.value='1';quantity.setAttribute('aria-label',task.label+' quantity');label.append(quantity);const button=make('button',task.status==='approved'?'Add to Cart':'Add for Quote','btn primary');button.type='button';const status=make('div','','labor-line-status');status.setAttribute('role','status');const state={row,quantity,button,editing:null};rows.set(task.id,state);button.onclick=()=>{const room=byId('labor-room').value.trim(),qty=Number(quantity.value);if(!room){status.textContent='Enter the room / area above.';byId('labor-room').focus();return;}if(!Number.isFinite(qty)||qty<=0||(task.unit!=='hours'&&!Number.isInteger(qty))){status.textContent='Enter a valid quantity.';quantity.focus();return;}let cart=getCart();if(state.editing)cart=cart.filter(x=>x.lineId!==state.editing);const lineId=room+'|'+task.id,entry={source:'labor-catalog',lineId,categoryId:category.id,groupId:group.id,fixture:group.label,room,mode,taskId:task.id,taskLabel:task.label,unit:task.unit,name:room+': '+task.label,type:task.status==='approved'?'Labor':'Service',qty,...(task.status==='approved'?{price:task.price}:{}),...(task.status==='draft'?{draftPrice:task.price}:{})};const existing=cart.findIndex(x=>x.source==='labor-catalog'&&x.lineId===lineId);if(existing>=0)cart[existing]=entry;else cart.push(entry);saveCart(cart);state.editing=null;button.textContent=task.status==='approved'?'Add to Cart':'Add for Quote';status.textContent=task.status==='approved'?'Added to cart.':'Added for a labor quote.';renderReview()};control.append(label,button);row.append(copy,price,control,status);section.append(row);}));});list.append(section);});renderReview();updateCartCount();initNavMenus();
 });
 </script>
-<script src="/shopping-flow.js?v=simple-shopping-1"></script></body>
+<script src="/shopping-flow.js?v=outdoor-flow-20261015b"></script></body>
 </html>
 
