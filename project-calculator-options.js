@@ -141,7 +141,7 @@
       const empty=document.createElement('option');empty.value='';empty.textContent='Choose material';materialChoice.prepend(empty);materialChoice.value=category==='paint-finishes'?names[0]:'';
       const product=new URLSearchParams(location.search).get('product');
       if(product){const option=document.createElement('option');option.value=option.textContent=product;materialChoice.append(option);materialChoice.value=product;}
-      const requested=(new URLSearchParams(location.search).get('materials')||'').split('|').filter(Boolean).map(name=>['Knobs','Pulls','Hinges','Cabinet Hardware'].includes(name)?'Hardware':name);
+      const requested=(new URLSearchParams(location.search).get('materials')||'').split('|').filter(Boolean).map(name=>window.bathroomPackageByLabel(name)?.label||(['Knobs','Pulls','Hinges','Cabinet Hardware'].includes(name)?'Hardware':name));
       const work=new URLSearchParams(location.search).get('work');
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
@@ -424,7 +424,7 @@
       if(types.value==='bathroom'){
         if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
         const own=!!document.getElementById('customer-provides-materials')?.checked;
-        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:window.bathroomPackageTotal(p,own)*x.quantity,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
+        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:p.quoteRequired?null:window.bathroomPackageTotal(p,own)*x.quantity,flatService:!!p.flatService,quoteRequired:!!p.quoteRequired,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
         materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(itemSelections[x.name]?' — '+itemSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Standard fixture allowances included where applicable.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:selectedProjectOptions().filter(x=>['Delivery','Debris Removal'].includes(x)),deliveryTypes:selectedDeliveryTypes()});productPlans=[];
       }else if(types.value==='refinish'){
         try{materialEstimates.push(cabinetRefinishingEstimate());}catch(e){error.hidden=false;error.textContent=e.message;return;}
@@ -550,6 +550,7 @@
           if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
           if(item.projectOptions?.includes('Delivery'))(item.deliveryTypes?.length?item.deliveryTypes:['Delivery']).forEach(x=>add(x,'Service'));
         });
+        cart.forEach(entry=>{if(requiresInPersonQuote(entry))entry.quoteRequired=true;});
         saveCart(cart);
         if(window.parent!==window)window.parent.postMessage({type:'project-cart-saved'},location.origin);
         if(status){status.textContent='Added to your cart. Choose Review Project Cart or keep shopping.';status.scrollIntoView({behavior:'smooth',block:'nearest'});}
@@ -582,7 +583,7 @@
       summary.querySelector('.service-estimate')?.remove();
       const namedCost=(item,label)=>[item.roomName||item.title,label].filter(Boolean).join(' — ');
       const serviceItems=materialEstimates.flatMap(item=>{
-        const labor=(Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).map(x=>({type:'Labor',name:namedCost(item,[x.service,x.scope].filter(Boolean).join(': ')),qty:1,price:flooringLaborEstimate(item,x.service)?.amount??x.price}));
+        const labor=(Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).map(x=>({type:'Labor',name:namedCost(item,[x.service,x.scope].filter(Boolean).join(': ')),qty:1,packageId:x.packageId,flatService:x.flatService,price:flooringLaborEstimate(item,x.service)?.amount??x.price}));
         if(item.projectOptions?.includes('Debris Removal'))labor.push({type:'Service',name:namedCost(item,'Debris removal / haul-off')});
         if(item.projectOptions?.includes('Delivery'))labor.push({type:'Service',name:namedCost(item,(item.deliveryTypes||[]).join(', ')||'Delivery')});
         return labor;
@@ -600,15 +601,15 @@
       const total=services.total+others.filter(known).reduce((n,x)=>n+Number(x.price)*(Number(x.qty)||1),0);
       let price=summary.querySelector('.project-total-price');if(!price){price=create('strong','','project-total-price');price.setAttribute('role','status');summary.querySelector('h2').after(price);}
       const hasPricedItems=serviceItems.some(x=>known(x)&&(!x.pricingPending||Number(x.price)>0));
-      price.textContent=hasPricedItems?total.toLocaleString('en-US',{style:'currency',currency:'USD'})+(pending?' +':''):'Price needs confirmation';
+      price.textContent=hasPricedItems?total.toLocaleString('en-US',{style:'currency',currency:'USD'})+(pending?' +':''):'In-person quote required';
       price.style.cssText='margin-left:auto;font-size:1.8rem;white-space:normal;overflow-wrap:anywhere;color:var(--ink)';summary.querySelector('h2').parentElement.style.cssText='display:flex;align-items:center;gap:16px;flex-wrap:wrap';
       let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
       let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}
       const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.name))];
-      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'Price needed for: '+missingCosts.join('; ')+'. Use Edit Item to change or remove a selection. If the selection is correct, Nik’s Remodeling must confirm its price.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
+      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
-      const add=create('button','Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
+      const add=create('button',pending?'Add for In-person Quote':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
       status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);summary.append(actions);
       document.dispatchEvent(new CustomEvent('estimate-rendered'));
 

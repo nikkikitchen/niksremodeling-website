@@ -48,7 +48,9 @@
   ['ceiling','walls'].forEach(key=>options[key].materials=['Interior Paint','Exterior Paint','Wallpaper','Wall Panels','Specialty Coatings']);
   shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
   const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));
-  options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-remove']);
+  options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-wax-ring','toilet-flange','toilet-remove']);
+  options['faucet-service']=bathWork('Sink Faucet Replacement',['faucet-replace']);
+  options.plumbing=work('Sink & Plumbing','custom',['Sink','Disposal']);
   options.vanity=bathWork('Vanity, Sink & Faucet',['vanity-install','vanity-remove','faucet-replace']);
   options.tub=bathWork('Bathtub & Surround',['tub-resurface','tub-replace','bath-drywall-repair']);
   options['bath-shower-valve']=bathWork('Shower Faucet / Mixing Valve',['shower-valve-install']);
@@ -65,6 +67,7 @@
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
   Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];scopes.accents=scopes.accents.filter(key=>key!=='prep');
+  Object.values(scopes).forEach(keys=>{if(keys.includes('plumbing')&&!keys.includes('faucet-service'))keys.push('faucet-service');});
   window.materialSupplyList=(name)=>{
     if(/knob|pull|hinge|hardware/i.test(name))return ['Correct-size mounting screws','Compatible mounting plates if required','Hole repair / filler supplies if required'];
     if(/backer|drywall|wall panels?/i.test(name))return ['Compatible board fasteners','Joint / seam tape','Compatible joint or seam compound','Surface protection'];
@@ -82,6 +85,7 @@
     return ['Product-compatible fasteners / connections','Surface protection','Installation accessories to confirm with the selected product'];
   };
   window.renderProjectOptions=(id,project)=>{
+    if(id==='custom'&&!new URLSearchParams(location.search).has('customWork')){window.renderCustomProjects();return;}
     if(id==='themed-rooms'){window.renderThemedRooms();return;}
     if(id==='concrete'&&!new URLSearchParams(location.search).has('outdoorWork')){window.renderOutdoorProjects();return;}
     if(isCustomLabel(project.title)){renderCustomQuotePage(project.title);return;}
@@ -89,6 +93,7 @@
     document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>One update or the whole room. Choose the parts you want to work on.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Room measurements</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><select id="scope-room" required><option value="">Select one</option><option>Bathroom</option><option>Bedroom</option><option>Closet / Storage</option><option>Dining Room</option><option>Entry / Mudroom</option><option>Hallway</option><option>Home Office</option><option>Kitchen</option><option>Laundry / Utility</option><option>Living / Family Room</option><option>Outdoor Area</option><option>Other Room / Area</option></select></div><div class="field"><label for="scope-location">Location</label><select id="scope-location" required><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" value="0"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
     if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
     if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
+    if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
     const selectedRoom=document.getElementById('scope-room');
     const roomNames={'bathrooms':'Bathroom','bath-remodel':'Bathroom','bedroom-guest-room':'Bedroom','kitchen-pantry':'Kitchen','kitchen-remodel':'Kitchen','closets-storage':'Closet / Storage','dining-room':'Dining Room','entry-mudroom':'Entry / Mudroom','home-office':'Home Office','home-theater':'Home Theater','music-creative-studio':'Music / Creative Studio','entryways':'Entry / Mudroom','laundry-utility':'Laundry / Utility','living-family-room':'Living / Family Room'};
     const chosenRoom=roomNames[id]||(project.exterior?'Outdoor Area':project.title);
