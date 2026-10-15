@@ -145,10 +145,10 @@
       const work=new URLSearchParams(location.search).get('work');
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
-      if(work?.startsWith('accent-'))names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
+      if(workChoices.length)names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
       if(product&&!names.includes(product))names.unshift(product);
       names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(name):projectLocation.value==='exterior'?!/^Interior (Paint|Stain|Primer|Finish)\b/i.test(name):true);
-      if(new URLSearchParams(location.search).get('project')==='accents')names=names.filter(name=>! /primer|painting prep|backer board/i.test(name));
+      if((currentType==='paint'&&work)||new URLSearchParams(location.search).get('project')==='accents')names=names.filter(name=>! /primer|painting prep|backer board/i.test(name));
       const list=document.getElementById('material-product-list');list.replaceChildren();
       names.forEach((name,index)=>{
         const row=document.createElement('div');row.className='area-product';
@@ -473,6 +473,9 @@
       const wallSurfaces=item.measurements?.surfaces||[];
       const standardAccentPaint=item.type==='paint'&&sourceParams.get('project')==='accents'&&wallSurfaces.length===1&&wallSurfaces[0].surface==='walls'&&wallSurfaces[0].area>0&&wallSurfaces[0].area<=96&&item.products?.length===1&&/^(Interior|Exterior) Paint$/.test(item.products[0].name)&&item.products[0].coats===2&&item.projectLocation==='interior';
       if(standardAccentPaint){item.paintPackage={labor:175,perGallon:50,includesSupplies:true};item.products[0].price=item.products[0].quantity*50;item.supplyChoices=[];item.suggestedSupplies=[];(Array.isArray(item.labor)?item.labor:[]).filter(x=>x.service==='Installation').forEach(x=>{x.price=175;x.fixedPackage=true;x.quantity=1;x.unit='wall';x.scope='Two-coat accent wall painting';x.packageNote='Standard two-coat wall painting up to 96 sq. ft. Repairs and additional preparation separate.';});}
+      const paintProducts=(item.products||[]).filter(p=>/^(Interior Paint|Exterior Paint|Paint)$/.test(p.name));
+      for(const product of paintProducts){product.price=product.quantity*50;product.includesSupplies=true;product.detail+=' Paint: $50 per gallon, supplies included.';}
+      if(paintProducts.length && paintProducts.length===item.products.length){item.paintPackage={...(item.paintPackage||{}),perGallon:50,includesSupplies:true};item.supplyChoices=[];item.suggestedSupplies=[];}
       if(sourceParams.get('project')==='accents'&&sourceParams.get('work')==='accent-stone')for(const product of item.products||[]){if(['Stacked Stone','Natural Stone Veneer'].includes(product.name)&&['Square feet','sq. ft.'].includes(product.unit)){product.unitPrice=59.34;product.price=Math.round(product.quantity*5934)/100;product.includesSupplies=true;product.detail+=' Stone and installation supplies: $59.34 per sq. ft.';}}
       if(item.products?.length&&item.products.every(p=>p.includesSupplies)&&!item.customerProvidesMaterials){item.stoneMaterialPackage=true;item.supplyChoices=[];item.suggestedSupplies=[];}
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}

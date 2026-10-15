@@ -1,0 +1,11 @@
+const {JSDOM}=require('jsdom');const fs=require('node:fs');const assert=require('node:assert/strict');
+async function load(file,query='') { let html=fs.readFileSync(file,'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(all,src)=>{const path=src.split('?')[0].replace(/^\//,'');return fs.existsSync(path)?'<script>'+fs.readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':''});const dom=new JSDOM(html,{url:'https://niksremodeling.com/'+file+query,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};w.alert=()=>{};}});await new Promise(r=>setTimeout(r,80));return dom;}
+
+(async()=>{
+const home=await load('index.html');const tiles=home.window.document.querySelectorAll('#projects .tile');assert(tiles.length>=40);home.window.close();
+const room=await load('project.html','?project=dining-room');const wall=room.window.document.querySelector('[data-work-key="walls"]');assert(wall);assert(!/Primer|Backer Board|Interior Paint/.test(wall.textContent));assert.match(wall.textContent,/50/);room.window.close();
+const d=await load('calculators.html','?project=dining-room&work=walls&room=Dining+Room&location=interior&material=paint&materials=Interior+Paint');const w=d.window,doc=w.document;const box=doc.querySelector('#paint-surface-walls');box.checked=true;box.dispatchEvent(new w.Event('change',{bubbles:true}));
+for(const input of doc.querySelectorAll('#room-planner input[type=number]'))if(!input.closest('[hidden]')&&!input.disabled)input.value='12';
+for(const select of doc.querySelectorAll('#room-planner select'))if(!select.value&&!select.disabled&&!select.closest('[hidden]')){const o=[...select.options].find(x=>x.value);if(o){select.value=o.value;select.dispatchEvent(new w.Event('change',{bubbles:true}));}}
+w.calcMaterial();assert(doc.querySelector('#mat-error').hidden,doc.querySelector('#mat-error').textContent);const item=w.eval('materialEstimates').at(-1);assert.equal(item.products[0].price,item.products[0].quantity*50);assert.equal(item.supplyChoices.length,0);w.addProjectToCart();assert(w.eval('getCart()').some(x=>x.includesSupplies&&x.price===item.products[0].price));w.close();console.log('New tiles, dining-room finish choices, $50/gallon and included supplies passed.');
+})().catch(e=>{console.error(e);process.exit(1)});
