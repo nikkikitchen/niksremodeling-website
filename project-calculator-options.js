@@ -577,23 +577,32 @@
 
       });
       summary.querySelector('.service-estimate')?.remove();
+      const namedCost=(item,label)=>[item.roomName||item.title,label].filter(Boolean).join(' — ');
       const serviceItems=materialEstimates.flatMap(item=>{
-        const labor=(Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).map(x=>({type:'Labor',qty:1,price:flooringLaborEstimate(item,x.service)?.amount??x.price}));
-        if(item.projectOptions?.includes('Debris Removal'))labor.push({type:'Service'});
-        if(item.projectOptions?.includes('Delivery'))labor.push({type:'Service'});
+        const labor=(Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).map(x=>({type:'Labor',name:namedCost(item,[x.service,x.scope].filter(Boolean).join(': ')),qty:1,price:flooringLaborEstimate(item,x.service)?.amount??x.price}));
+        if(item.projectOptions?.includes('Debris Removal'))labor.push({type:'Service',name:namedCost(item,'Debris removal / haul-off')});
+        if(item.projectOptions?.includes('Delivery'))labor.push({type:'Service',name:namedCost(item,(item.deliveryTypes||[]).join(', ')||'Delivery')});
         return labor;
       });
-      materialEstimates.forEach(item=>{if(item.projectOptions?.includes('Materials')){if(item.products?.length)item.products.forEach(product=>serviceItems.push({type:'Material estimate',price:product.price,qty:1}));else serviceItems.push({type:'Material estimate'});}if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))serviceItems.push({type:'Included project costs',...includedProjectCosts(item.supplyChoices)});});
+      materialEstimates.forEach(item=>{
+        if(item.projectOptions?.includes('Materials')){
+          if(item.products?.length)item.products.forEach(product=>serviceItems.push({type:'Material estimate',name:namedCost(item,product.name),price:product.price,qty:1}));
+          else serviceItems.push({type:'Material estimate',name:namedCost(item,item.workLabel||'Selected material')});
+        }
+        if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))item.supplyChoices.forEach(supply=>serviceItems.push({type:'Included project costs',name:namedCost(item,supply.name),...includedProjectCosts([supply])}));
+      });
       const services=serviceEstimateSummary(serviceItems),others=serviceItems.filter(x=>!['Labor','Service'].includes(x.type));
       const known=x=>x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price))&&Number(x.price)>=0;
       const pending=services.pending||others.some(x=>!known(x)||x.pricingPending);
       const total=services.total+others.filter(known).reduce((n,x)=>n+Number(x.price)*(Number(x.qty)||1),0);
       let price=summary.querySelector('.project-total-price');if(!price){price=create('strong','','project-total-price');price.setAttribute('role','status');summary.querySelector('h2').after(price);}
       const hasPricedItems=serviceItems.some(x=>known(x)&&(!x.pricingPending||Number(x.price)>0));
-      price.textContent=hasPricedItems?total.toLocaleString('en-US',{style:'currency',currency:'USD'})+(pending?' + pending costs':''):'Price needs confirmation';
+      price.textContent=hasPricedItems?total.toLocaleString('en-US',{style:'currency',currency:'USD'})+(pending?' +':''):'Price needs confirmation';
       price.style.cssText='margin-left:auto;font-size:1.8rem;white-space:normal;overflow-wrap:anywhere;color:var(--ink)';summary.querySelector('h2').parentElement.style.cssText='display:flex;align-items:center;gap:16px;flex-wrap:wrap';
       let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
-      let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.type==='Material estimate'?'materials':x.type==='Included project costs'?'installation supplies':x.type==='Labor'?'labor':'hauling / delivery'))];note.textContent=pending?(hasPricedItems?'Priced subtotal, not the complete total. ':'')+'Still to confirm: '+missingCosts.join(', ')+'.'+(services.adjustment&&hasPricedItems?' Includes the $150 minimum service charge.':''):'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
+      let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}
+      const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.name))];
+      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'Price needed for: '+missingCosts.join('; ')+'. Use Edit Item to change or remove a selection. If the selection is correct, Nik’s Remodeling must confirm its price.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       const add=create('button','Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
