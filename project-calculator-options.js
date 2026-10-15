@@ -104,6 +104,10 @@
     choices.hidden=true;
     const workServices=document.createElement('div');workServices.className='field project-options';workServices.id='work-services';
     workServices.append(choices.querySelector('[value="Installation"]').closest('label'));
+    const removal=document.createElement('label');removal.innerHTML='<input type="checkbox" name="labor-service" value="Removal"> Remove existing material / item';workServices.append(removal);
+    const extras=document.createElement('details');extras.id='project-extras';extras.className='project-options';extras.innerHTML='<summary>Hauling & delivery</summary>';
+    for(const value of ['Debris Removal','Delivery'])extras.append(choices.querySelector('[value="'+value+'"]').closest('label'));
+    calculateButton.before(extras);extras.addEventListener('change',()=>{updateChoices();updateQuantityFields();});
     document.getElementById('material-type').closest('.field').after(workServices);
     workServices.addEventListener('change',()=>{updateChoices();updateQuantityFields();document.dispatchEvent(new Event('work-options-change'));});
     const savedRooms=document.createElement('datalist');savedRooms.id='saved-room-names';
@@ -143,7 +147,7 @@
       names=[...new Set([...workChoices,...names,...requested])];
       if(work?.startsWith('accent-'))names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
       if(product&&!names.includes(product))names.unshift(product);
-      names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior\b/i.test(name):projectLocation.value==='exterior'?!/^Interior\b/i.test(name):true);
+      names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(name):projectLocation.value==='exterior'?!/^Interior (Paint|Stain|Primer|Finish)\b/i.test(name):true);
       if(new URLSearchParams(location.search).get('project')==='accents')names=names.filter(name=>! /primer|painting prep|backer board/i.test(name));
       const list=document.getElementById('material-product-list');list.replaceChildren();
       names.forEach((name,index)=>{
@@ -159,15 +163,19 @@
         else if(currentType==='concrete'&&/concrete mix/i.test(name)){row.dataset.measure='volume';const note=document.createElement('p');note.className='calc-note';note.textContent='Calculated from slab length, width, depth and extra allowance. Bag count requires product yield.';settings.append(note);}
         else if(currentType==='lumber'&&/framing lumber/i.test(name)){row.dataset.measure='studs';const note=document.createElement('p');note.className='calc-note';note.textContent='Stud count uses wall length and spacing; openings, corners and blocking may need additional pieces.';settings.append(note);}
         else if(currentType==='refinish'){row.dataset.measure='cabinet';const note=document.createElement('p');note.className='calc-note';note.textContent='Material quantity confirmed from cabinet sizes and finish.';settings.append(note);}
-        else if(/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
+        else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
           row.dataset.measure='paint';field('coats','Coats',/primer/i.test(name)?'1':'2');field('coverage','Coverage (sq. ft. per gallon)',/primer/i.test(name)?'300':'350');
-        }else if(!work?.startsWith('accent-')&&/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
+        }else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&! /trim|bullnose|schluter/i.test(name)&&!work?.startsWith('accent-')&&/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
           row.dataset.measure='area';field('waste','Waste allowance (%)','10');field('coverage','Coverage per package (sq. ft., optional)','','From product label');
         }else{
           row.dataset.measure='manual';field('quantity','Quantity needed','1','Enter quantity');
           const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.textContent='Unit';const unit=document.createElement('select');unit.id='product-'+index+'-unit';unit.dataset.productSetting='unit';label.htmlFor=unit.id;
           ['Pieces','Bags','Boxes','Gallons','Linear feet','Rolls','Sheets','Square feet','Cubic yards'].forEach(name=>{const option=document.createElement('option');option.textContent=name;unit.append(option)});wrap.append(label,unit);settings.append(wrap);
           const quantity=settings.querySelector('[data-product-setting=quantity]');
+          if(/trim|molding|baseboard|casing|bullnose|schluter|handrail/i.test(name))unit.value='Linear feet';
+          else if(/paint|primer|stain|sealer|finish/i.test(name))unit.value='Gallons';
+          else if(/wallpaper/i.test(name))unit.value='Rolls';
+          else if(/stone|veneer|wall panel|backer|siding|tile|slab/i.test(name))unit.value='Square feet';
           if(work?.startsWith('accent-')){const params=new URLSearchParams(location.search);const length=Number(params.get('length')),height=Number(params.get('height'));unit.value='Square feet';quantity.value=length>0&&height>0?String(length*height):'';quantity.placeholder='Wall area';}
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
@@ -196,10 +204,12 @@
       document.getElementById('misc-hours').parentElement.hidden=!['prep','misc'].includes(type);
       document.getElementById('misc-hours').disabled=!['prep','misc'].includes(type);
       panel.querySelector('[name="labor-hourly"]').checked=['prep','misc'].includes(type);
-      panel.querySelector('.delivery-choices').hidden=type!=='delivery';
-      panel.querySelector('[name="project-option"][value="Delivery"]').checked=type==='delivery';
-      panel.querySelector('[name="project-option"][value="Debris Removal"]').checked=type==='debris';
-      if(service){panel.querySelector('[name="project-option"][value="Materials"]').checked=false;panel.querySelector('[name="labor-service"]').checked=false;}
+      if(type==='delivery')panel.querySelector('[name="project-option"][value="Delivery"]').checked=true;
+      if(type==='debris')panel.querySelector('[name="project-option"][value="Debris Removal"]').checked=true;
+      panel.querySelector('.delivery-choices').hidden=!panel.querySelector('[name="project-option"][value="Delivery"]').checked;
+      extras.hidden=service;
+      if(service){panel.querySelector('[name="project-option"][value="Materials"]').checked=false;}
+      if(service||['refinish','bathroom'].includes(type))panel.querySelectorAll('[name="labor-service"]').forEach(box=>box.checked=false);
       const defaultInstallation=panel.querySelector('[name="labor-service"][value="Installation"]');if(defaultInstallation){defaultInstallation.checked=!!type&&!service&&!['refinish','bathroom'].includes(type);defaultInstallation.closest('label').hidden=true;}
       syncPaintOptions();
       const installation=panel.querySelector('[name="labor-service"]:checked');
@@ -307,7 +317,7 @@
         document.querySelector('label[for="dry-height"]').textContent=surface==='ceiling'?'Ceiling width (ft)':'Wall height (ft)';
       }
     }
-    types.addEventListener('change',()=>{updateMaterialChoices();renderQuestions();updateQuantityFields();});
+    types.addEventListener('change',()=>{extras.querySelectorAll('input').forEach(box=>box.checked=false);updateMaterialChoices();renderQuestions();updateQuantityFields();});
     quantityMethod.addEventListener('change',updateQuantityFields);
     choices.addEventListener('change',updateQuantityFields);
     projectLocation.addEventListener('change',()=>{
@@ -394,7 +404,7 @@
         }
       }
       let productPlans=[];
-      try{productPlans=types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
+      try{selectedDeliveryTypes();productPlans=types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
       const itemSelections={},selectionDetails={};
       for(const row of document.querySelectorAll('.area-product')){
         const box=row.querySelector('[name="area-product"]');if(!box.checked)continue;
@@ -416,7 +426,7 @@
         if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
         const own=!!document.getElementById('customer-provides-materials')?.checked;
         const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:window.bathroomPackageTotal(p,own)*x.quantity,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
-        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(itemSelections[x.name]?' — '+itemSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Standard fixture allowances included where applicable.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:[],deliveryTypes:[]});productPlans=[];
+        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(itemSelections[x.name]?' — '+itemSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Standard fixture allowances included where applicable.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:selectedProjectOptions().filter(x=>['Delivery','Debris Removal'].includes(x)),deliveryTypes:selectedDeliveryTypes()});productPlans=[];
       }else if(types.value==='refinish'){
         try{materialEstimates.push(cabinetRefinishingEstimate());}catch(e){error.hidden=false;error.textContent=e.message;return;}
       }else if(['prep','misc','debris','delivery'].includes(types.value)){
@@ -585,7 +595,8 @@
       let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}note.textContent=pending?'We need to confirm the remaining costs before showing your complete project price.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
-      status.id='project-cart-status';status.setAttribute('role','status');actions.append(status);summary.append(actions);
+      const add=create('button','Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
+      status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);summary.append(actions);
       document.dispatchEvent(new CustomEvent('estimate-rendered'));
 
     };

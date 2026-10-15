@@ -336,7 +336,8 @@ function saveMaterialEstimates(){try{localStorage.setItem(MATERIAL_ESTIMATES_KEY
 function flooringLaborEstimate(item, service){
  if(service!=='Installation'||item.type!=='flooring')return null;
  const area=Number(item.measurements?.area);if(!Number.isFinite(area)||area<=0)return null;
- const kind=item.floorKind==='tile'?'Tile':item.floorKind==='floating'?'LVP':item.floorKind==='glue'?'Glue-down':'Hardwood';
+ const primary=(item.products||[]).find(p=>! /underlayment|backer|trim/i.test(p.name));
+ const kind=/laminate/i.test(primary?.name||item.materialChoice||'')?'Laminate':item.floorKind==='tile'?'Tile':item.floorKind==='floating'?'LVP':item.floorKind==='glue'?'Glue-down':'Hardwood';
  const rates={LVP:[350,575,800],Laminate:[300,500,700],'Glue-down':[400,650,900],Hardwood:[500,900,1300],Tile:[650,1000,1500]};
  const key=kind==='LVP'?'LVP':kind; const tier=area<=40?0:area<=144?1:2; const base=rates[key][tier]; const amount=key==='LVP'&&area>250?Math.ceil(4250*(area/1200)):area<=250?base:Math.ceil(base+((area-250)*(rates[key][2]-rates[key][1])/(250-144))); const sizeLabel=area>250?'Large project':tier===0?'Small':tier===1?'Average':'Large';
  return {amount,tier:sizeLabel,label:key,includes:key==='Tile'?'Includes grout and perimeter trim.':'Includes perimeter trim.'};
@@ -646,6 +647,18 @@ function cabinetRefinishingEstimate(){
 // Shared by shopping and the project calculator; choices appear only for selected items.
 function itemOptionFields(name){
  const rules=[
+ [/laminate/i,[['Installation','Floating'],['Water resistance','Standard','Water resistant'],['Padding','Attached pad','Separate underlayment']]],
+ [/luxury vinyl|\blvp\b|vinyl plank/i,[['Installation','Floating','Glue down'],['Padding','Attached pad','Separate underlayment']]],
+ [/linoleum|sheet vinyl/i,[['Material','Sheet vinyl','Linoleum'],['Installation','Glue down','Loose lay']]],
+ [/carpet/i,[['Style','Carpet roll','Carpet tiles'],['Installation','Stretch in with pad','Glue down']]],
+ [/shower.*(valve|faucet|head)|mixing valve/i,[['Valve type','Pressure balance','Thermostatic','Help identify existing valve'],['Work needed','New installation','Replace existing valve / trim'],['Finish','Chrome','Brushed nickel','Matte black','Bronze']]],
+ [/exhaust fan/i,[['Fan type','Fan only','Fan with light','Fan with heater'],['Venting','Existing outdoor duct','New duct needed','Not sure'],['Room size','Small bathroom','Large bathroom','Other room']]],
+ [/washer|washing machine/i,[['Style','Top load','Front load','Stackable'],['Connections','Existing connections','New connections needed']]],
+ [/range hood/i,[['Venting','Ducted outdoors','Recirculating','Not sure'],['Mounting','Under cabinet','Wall mount','Island']]],
+ [/stone veneer|stacked stone|thin brick|faux stone/i,[['Format','Individual pieces','Panels','Sheets'],['Location','Interior wall','Fireplace surround','Exterior wall'],['Surface condition','Ready for installation','Prep / repairs needed','Not sure']]],
+ [/shiplap|tongue.*groove|reclaimed wood|wood slat|fluted wood|board.*batten|beadboard|wainscoting|geometric wood/i,[['Material','Solid wood','MDF','PVC / composite'],['Finish','Painted','Stained','Unfinished'],['Layout','Horizontal','Vertical','Patterned']]],
+ [/acoustic/i,[['Style','Fabric panels','Wood slat panels','Acoustic foam'],['Mounting','Walls','Ceiling','Both']]],
+ [/vent duct|vent cap/i,[['Duct size','4 inch','6 inch','Other size'],['Work needed','New installation','Replace existing']]],
  [/toilet/i,[['Bowl shape','Round','Elongated (oblong)'],['Toilet height','Standard height','Tall / comfort height']]],
  [/tile|mosaic|stone|slab/i,[['Material','Ceramic','Porcelain','Natural stone','Manufactured stone'],['Format','Individual tiles','Mosaic sheets','Large format','Slab / panel'],['Location','Floor','Wall','Backsplash','Shower / wet area','Exterior']]],
  [/hardwood/i,[['Construction','Solid hardwood','Engineered hardwood'],['Installation','Nail / staple','Glue down','Floating']]],
@@ -672,6 +685,7 @@ function itemOptionFields(name){
  [/drywall/i,[['Panel type','Standard','Moisture resistant','Fire rated'],['Thickness','1/2 inch','5/8 inch']]],
  [/lumber|plywood/i,[['Use','Interior','Exterior / treated'],['Grade','Standard construction','Appearance / finish grade']]]
  ];
+ if(/toilet tank parts/i.test(name))return [{label:'Parts needed',values:['Fill valve','Flush valve / flapper','Both fill and flush parts','Help me choose']}];
  if(/repair|resurface|tank parts|supply line|seat|underlayment|backer|adhesive|grout|primer|membrane|removal|haul off/i.test(name))return [];
  return (rules.find(([pattern])=>pattern.test(name))?.[1]||[]).map(([label,...values])=>({label,values:[...values,'Help me choose']}));
 }
