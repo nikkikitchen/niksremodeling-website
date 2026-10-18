@@ -52,11 +52,12 @@
   options['faucet-service']=bathWork('Sink Faucet Replacement',['faucet-replace']);
   options.plumbing=work('Sink & Plumbing','custom',['Sink','Disposal']);
   options.vanity=bathWork('Vanity, Sink & Faucet',['vanity-install','vanity-remove','faucet-replace']);
+  options['vanity-light']=bathWork('Vanity Light — Install / Replace',['vanity-light-install','vanity-light-replace']);
   options.tub=bathWork('Bathtub & Surround',['tub-resurface','tub-replace','bath-drywall-repair']);
   options['bath-shower-valve']=bathWork('Shower Faucet / Mixing Valve',['shower-valve-install']);
   const scopes={
-    'bath-remodel':['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','refinish','mirror','lighting','ventilation','accents','prep','other'],
-    bathrooms:['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','refinish','mirror','lighting','ventilation','accents','prep','other'],
+    'bath-remodel':['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','vanity-light','refinish','mirror','lighting','ventilation','accents','prep','other'],
+    bathrooms:['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','vanity-light','refinish','mirror','lighting','ventilation','accents','prep','other'],
     'kitchen-remodel':['ceiling','walls','floor','cabinets','refinish','countertops','backsplash','appliances','plumbing','lighting','trim','prep','other'],
     tile:['floor','walls','backsplash','shower','prep','other'],
     arches:['framing','trim','walls','prep','other'],stairs:['stairs','trim','refinish','prep','other'],
@@ -95,7 +96,7 @@
     if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
     if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
     const selectedRoom=document.getElementById('scope-room');
-    const roomNames={'bathrooms':'Bathroom','bath-remodel':'Bathroom','bedroom-guest-room':'Bedroom','kitchen-pantry':'Kitchen','kitchen-remodel':'Kitchen','closets-storage':'Closet / Storage','dining-room':'Dining Room','entry-mudroom':'Entry / Mudroom','home-office':'Home Office','home-theater':'Home Theater','music-creative-studio':'Music / Creative Studio','entryways':'Entry / Mudroom','laundry-utility':'Laundry / Utility','living-family-room':'Living / Family Room'};
+    const roomNames={'bathrooms':'Bathroom','bath-remodel':'Bathroom','bedroom-guest-room':'Bedroom','kids-room':"Kids' Room",'kitchen-pantry':'Kitchen','kitchen-remodel':'Kitchen','closets-storage':'Closet / Storage','dining-room':'Dining Room','entry-mudroom':'Entry / Mudroom','home-office':'Home Office','home-theater':'Home Theater','music-creative-studio':'Music / Creative Studio','entryways':'Entry / Mudroom','laundry-utility':'Laundry / Utility','living-family-room':'Living / Family Room'};
     const chosenRoom=roomNames[id]||(project.exterior?'Outdoor Area':project.title);
     if(chosenRoom){
       if(![...selectedRoom.options].some(option=>option.value===chosenRoom))selectedRoom.add(new Option(chosenRoom,chosenRoom));
@@ -103,7 +104,7 @@
       selectedRoom.closest('.field').style.display='none';
     }
     document.getElementById('scope-location').value=chosenRoom?(project.exterior?'exterior':'interior'):'';
-    const fixedLocation=project.exterior||['bathrooms','bath-remodel','bedroom-guest-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies'].includes(id);
+    const fixedLocation=project.exterior||['bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies'].includes(id);
     if(fixedLocation)document.getElementById('scope-location').closest('.field').hidden=true;
     const measurementPanel=document.querySelector('.project-measurement-start');
     const workTitle=document.querySelector('.project-section-title');
