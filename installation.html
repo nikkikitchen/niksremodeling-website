@@ -90,6 +90,7 @@ if(bathCategory){
  toilets.actions={Install:['toilet-install','smart-toilet-install'].map(packageTask),Repair:['toilet-tank-repair','toilet-wax-ring','toilet-flange'].map(packageTask),Remove:[packageTask('toilet-remove')]};
  bathCategory.groups.find(g=>g.id==='faucet').actions={Replace:[packageTask('faucet-replace')]};
  bathCategory.groups.find(g=>g.id==='vanity').actions={Install:[packageTask('vanity-install')],Remove:[packageTask('vanity-remove')]};
+ bathCategory.groups.splice(bathCategory.groups.findIndex(g=>g.id==='vanity')+1,0,{id:'vanity-lights',label:'Vanity lights',actions:{Install:[packageTask('vanity-light-install')],Replace:[packageTask('vanity-light-replace')]}});
  bathCategory.groups.find(g=>g.id==='tub').actions={Replace:[packageTask('tub-replace')],Repair:[packageTask('tub-resurface'),packageTask('bath-drywall-repair')]};
  bathCategory.groups.find(g=>g.id==='shower').actions.Install=[packageTask('shower-valve-install')];
 }
