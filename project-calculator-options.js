@@ -241,7 +241,7 @@
     [['bathroom','Bathroom Work'],['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
     const initialParams=new URLSearchParams(location.search);
     if(!initialParams.has('material')&&!initialParams.has('product'))types.value='';
-    else if(['bathroom','prep','misc','delivery','debris','refinish','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
+    else if(['bathroom','prep','misc','delivery','debris','refinish','custom','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
     if(initialParams.has('cabinetItem')){const note=document.createElement('p');note.className='calc-note';note.textContent='Cabinet work for: '+initialParams.get('cabinetItem');cabinetFields.prepend(note);}
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
