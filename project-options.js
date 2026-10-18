@@ -15,7 +15,7 @@
     toilet:work('Toilet','custom',['Toilet','Toilet Seat','Toilet Supply Line']),
     vanity:work('Vanity / Vanities','custom',['Single Vanity','Double Vanity','Vanity Top','Sink','Faucet','Hardware']),
     mirror:work('Mirror / Mirrors','custom',['Mirror','Medicine Cabinet']),
-    lighting:work('Lighting','custom',['Vanity Light','Ceiling Light','Recessed Light','Dimmer / Switch']),
+    lighting:work('Lighting','custom',['Ceiling Light','Pendant Light','Recessed Light','Track Light','Wall Sconce','Dimmer / Switch']),
     accents:work('Accents & Accessories','custom',['Towel Bars','Shelves','Grab Bars','Trim','Decorative Wall Panels']),
     refinish:work('Cabinet / Vanity Refinishing','refinish',CABINET_MATERIALS.filter(name=>name!=='Other material')),
     prep:work('Prep / Repairs','prep',[]),
