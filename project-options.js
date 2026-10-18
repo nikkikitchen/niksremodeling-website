@@ -46,6 +46,11 @@
   Object.values(options).forEach(option=>{if(shared[option.kind])option.materials=shared[option.kind].filter(name=>name!=='Other material')});
   // Finish selections stay separate from structural and preparation products.
   ['ceiling','walls'].forEach(key=>options[key].materials=['Interior Paint','Exterior Paint','Wallpaper','Wall Panels','Specialty Coatings']);
+  // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
+  // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
+  options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
+  options.shower.materials=['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile','Shower Base','Shower Valve / Head','Shower Glass'];
+  options.backsplash.materials=['Backsplash Tile','Ceramic Tile','Glass Tile','Mosaic Tile','Natural Stone','Porcelain Tile'];
   shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
   const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));
   options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-wax-ring','toilet-flange','toilet-remove']);
