@@ -1,5 +1,41 @@
 # Labor pricing review — October 18, 2026
 
+## October 18 recovery of October 17 owner-approved walkthrough (current)
+
+The earlier snapshot below was NOT a complete record of the October 17 conversation. The user and assistant reviewed around one hundred tasks covering priced labor and jobs deliberately marked **priced upon viewing**. Do not ask to reapprove approved rates. In particular, a previous assistant's snapshot omitted the kitchen labor category and additional cabinet prices and incorrectly showed $525 for exterior prehung door installation. These were corrected on the production main branch, and the live site was checked October 18.
+
+**Cabinet tasks recovered and published:**
+- Cabinet-box installation $150/box; removal and haul-off $125/box (subject to $150 visit minimum).
+- Paint cabinet door and frame $125/door.
+- Paint drawer fronts $125/drawer front.
+- Paint cabinet interiors **$126/cabinet box** (unusual amount expressly confirmed; DO NOT change to $125).
+- Install hardware $15/piece.
+- Prep/repair old hardware holes $75/hour.
+- Install cabinet crown molding $2.75/linear foot (not the separate general room crown molding at $3.75/linear foot).
+- Install cabinet toe-kick $1.25/linear foot.
+- Install filler strip $10/strip; install cabinet end panel $75/panel.
+- Cabinet lighting priced upon viewing; unspecific finishing, adjustment/repair can remain quote-required.
+
+**Kitchen tasks recovered and published:**
+- Sink installation $225/each; faucet replacement $175/each; garbage disposal installation $275/each.
+- Sink removal and haul-off $75/each, subject to $150 service minimum.
+- Disposal removal without replacement $175/each.
+- Countertop removal and haul-off $75/hour; backsplash removal $75/hour, both subject to $150 minimum.
+- Install backsplash, laminate/butcher-block/granite/quartz countertops: priced upon viewing.
+- Dishwasher installation $225 and removal/haul-off $150 already in Appliances; no change needed.
+
+**Additional corrections/limits:**
+- Exterior prehung door installation **$475/each**, corrected from mistaken $525. Other door, drywall, electrical, appliance and trim rates from the October 17 review remain in the labor catalog unless separately superseded.
+- Original bathroom owner-approved *labor* rates and the fixture-plus-supplies installed estimates are different numbers; the live labor page now labels both. Bathroom removal/haul-off $150 and tub-related drywall repair $225 include ordinary job supplies and should not acquire extra hidden supply charges.
+- Bathroom vanity lighting installed on existing suitable wiring is a separate service from vanity cabinetry; $150 labor and $300 installed estimate with standard fixture and supplies.
+- Haul-away project debris **per load** was never assigned a final fixed price; keep as in-person quote.
+- Product sales checkout is *not* implemented; the cart requests a quote rather than taking payment.
+- October 18 live-site browser validation confirmed all eight recovered cabinet options; 2 painted drawer fronts ($125 each) plus 1 cabinet interior ($126) produced $376. This is a sample calculator test, not evidence of completed checkout.
+
+**Where rates live:** `installation.html` is the labor catalog, `app.js` contains cabinet estimator rates and bathroom package components, and `scripts/service-pricing-check.cjs` includes regression assertions. Future edits must keep matching prices in labor and project calculator.
+
+---
+
 Source: production repository at 236a10af1fc839739a0f6c8d5ed3f5048c2ac3fc. This is a snapshot of current code, not a new approval of its prices.
 
 74 directly priced tasks; 17 calculator-linked tasks; 165 tasks requiring an in-person quote.
