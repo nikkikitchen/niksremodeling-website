@@ -677,17 +677,18 @@ function itemOptionFields(name){
  [/refrigerator/i,[['Style','Top freezer','Bottom freezer','Side by side','French door'],['Depth','Standard depth','Counter depth'],['Water connection','Needed','Already connected','No water / ice dispenser']]],
  [/dishwasher/i,[['Width','18 inch','24 inch'],['Power connection','Plug in','Hardwired']]],
  [/microwave/i,[['Placement','Countertop','Over range','Built in']]],
- [/door/i,[['Door type','Interior','Exterior','Sliding','French / double'],['Package','Slab only','Prehung'],['Material','Wood','Steel','Fiberglass','Composite']]],
+ [/\b(?:doors?|doorways?)\b/i,[['Door type','Interior','Exterior','Sliding','French / double'],['Package','Slab only','Prehung'],['Material','Wood','Steel','Fiberglass','Composite']]],
  [/window/i,[['Style','Single hung','Double hung','Sliding','Casement','Fixed'],['Frame','Vinyl','Wood','Aluminum','Fiberglass']]],
  [/paint|stain|finish|sealer/i,[['Finish','Flat / matte','Eggshell','Satin','Semi gloss','Gloss'],['Color change','Same / similar color','New color','Multiple colors']]],
  [/wallpaper/i,[['Type','Peel and stick','Pasted','Unpasted'],['Pattern','Solid / texture','Repeating pattern','Mural']]],
  [/light|fan/i,[['Mounting','Existing fixture location','New location'],['Style','Flush mount','Pendant / hanging','Recessed','Wall mounted']]],
- [/sofa|sectional|chair|bed|table|desk|dresser|furniture/i,[['Size','Small','Standard','Large / oversized'],['Assembly','Assembly needed','Already assembled']]],
+ [/\b(?:sofas?|sectionals?|chairs?|beds?|tables?|desks?|dressers?|furniture)\b/i,[['Size','Small','Standard','Large / oversized'],['Assembly','Assembly needed','Already assembled']]],
  [/drill|saw|sander|tool/i,[['Power','Cordless','Corded','Manual'],['Package','Tool only','Kit with accessories']]],
  [/trim|molding|baseboard|casing/i,[['Material','Wood','MDF','PVC'],['Finish','Painted','Stained','Unfinished']]],
  [/drywall/i,[['Panel type','Standard','Moisture resistant','Fire rated'],['Thickness','1/2 inch','5/8 inch']]],
  [/lumber|plywood/i,[['Use','Interior','Exterior / treated'],['Grade','Standard construction','Appearance / finish grade']]]
  ];
+ if(/\b(?:garden|flower|planting|raised)\s+beds?\b/i.test(name))return [];
  if(/toilet tank parts|wax ring|toilet flange/i.test(name))return [];
  if(/repair|resurface|tank parts|supply line|seat|underlayment|backer|adhesive|grout|primer|membrane|removal|haul off/i.test(name))return [];
  return (rules.find(([pattern])=>pattern.test(name))?.[1]||[]).map(([label,...values])=>({label,values:[...values,'Help me choose']}));
