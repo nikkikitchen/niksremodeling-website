@@ -173,12 +173,17 @@ const CABINET_WORK_OPTIONS=[
  {key:'removal',label:'Remove cabinet boxes — haul-off included',fields:[['remove-units','Number of cabinet boxes to remove','Remove cabinet box and haul off','boxes']]},
  {key:'refinishing',label:'Other refinishing / staining — quote required',fields:[]},
  {key:'door-paint',label:'Paint cabinet doors and frames — $125 per door, labor only',fields:[['paint-doors','Number of cabinet doors to paint','Paint cabinet door and matching frame','doors']]},
- {key:'interiors',label:'Paint cabinet interiors',fields:[['interior-count','Cabinet interiors','Paint cabinet interiors','cabinet interiors']]},
- {key:'hardware',label:'Hardware',fields:[['hardware-count','Number of hardware pieces','Install / replace hardware','pieces']]},
- {key:'hole-prep',label:'Prep hardware screw holes',fields:[['fill-holes','Old holes to fill','Fill old hardware holes','holes'],['drill-holes','New holes to drill','Drill new hardware holes','holes'],['repair-holes','Stripped screw holes to repair','Repair stripped hardware holes','holes']]}
+ {key:'interiors',label:'Paint cabinet interiors — $126 per box, labor only',fields:[['interior-count','Cabinet interiors','Paint cabinet interiors','cabinet interiors']]},
+ {key:'drawer-paint',label:'Paint drawer fronts — $125 each, labor only',fields:[['paint-drawers','Drawer fronts to paint','Paint cabinet drawer front','drawer fronts']]},
+ {key:'cabinet-crown',label:'Install cabinet crown molding — $2.75 per linear foot',fields:[['crown-feet','Cabinet crown molding length (feet)','Install cabinet crown molding','linear foot']]},
+ {key:'toe-kick',label:'Install cabinet toe-kick — $1.25 per linear foot',fields:[['toe-feet','Cabinet toe-kick length (feet)','Install cabinet toe-kick','linear foot']]},
+ {key:'filler',label:'Install cabinet filler strips — $10 each',fields:[['filler-count','Filler strips','Install cabinet filler strip','strips']]},
+ {key:'end-panel',label:'Install cabinet end panels — $75 each',fields:[['panel-count','End panels','Install cabinet end panel','panels']]},
+ {key:'hardware',label:'Install cabinet hardware — $15 per piece, labor only',fields:[['hardware-count','Number of hardware pieces','Install cabinet hardware','pieces']]},
+ {key:'hole-prep',label:'Prep / repair old hardware screw holes — $75 per hour',fields:[['prep-hours','Estimated hours for screw-hole preparation','Prep and repair old hardware holes','hours']]}
 ];
 function cabinetScopeForm(){
- return '<h3>Cabinet / Vanity Work</h3><p class="calc-note">Refinishing includes frames with doors and drawer fronts. Choose only the work you need.</p><div class="calc-fields">'+materialField('cabinet-doors','Doors to refinish or stain — quote required',{step:1,value:0})+materialField('cabinet-drawers','Drawer fronts to refinish',{step:1,value:0})+'</div>'+CABINET_WORK_OPTIONS.filter(x=>x.fields.length).map(option=>'<div class="project-options"><label><input type="checkbox" id="cabinet-'+option.key+'"> '+option.label+'</label></div><div id="cabinet-'+option.key+'-details" hidden><div class="calc-fields">'+option.fields.map(([id,label])=>materialField('cabinet-'+id,label,{step:1,value:0})).join('')+'</div></div>').join('')+'<p class="calc-note">Cabinet labor: installation $150 per box; removal and haul-off $125 per box, subject to the $150 visit minimum. Hardware is separate.</p>';
+ return '<h3>Cabinet / Vanity Work</h3><p class="calc-note">Refinishing includes frames with doors and drawer fronts. Choose only the work you need.</p><div class="calc-fields">'+materialField('cabinet-doors','Doors to refinish or stain — quote required',{step:1,value:0})+materialField('cabinet-drawers','Drawer fronts to refinish',{step:1,value:0})+'</div>'+CABINET_WORK_OPTIONS.filter(x=>x.fields.length).map(option=>'<div class="project-options"><label><input type="checkbox" id="cabinet-'+option.key+'"> '+option.label+'</label></div><div id="cabinet-'+option.key+'-details" hidden><div class="calc-fields">'+option.fields.map(([id,label])=>materialField('cabinet-'+id,label,{step:id==='prep-hours'?0.25:1,value:0})).join('')+'</div></div>').join('')+'<p class="calc-note">Cabinet labor: installation $150 per box; removal and haul-off $125 per box, subject to the $150 visit minimum. Hardware is separate.</p>';
 }
 function cabinetOptionPicker(context=''){
  return '<details class="cabinet-option-picker" data-context="'+escapeCartText(context)+'"><summary>Cabinet / Vanity Options</summary><div class="project-options">'+CABINET_WORK_OPTIONS.map(option=>'<label><input type="checkbox" style="width:18px;height:18px;flex:0 0 18px" data-cabinet-option="'+option.key+'" value="'+option.key+'"> '+option.label+'</label>').join('')+'</div><a class="btn outline cabinet-plan-link" href="/calculators.html?material=refinish">Plan Selected Cabinet Work</a></details>';
@@ -627,10 +632,10 @@ function calculateAreaProducts(item,plans){
 }
 
 function cabinetRefinishingEstimate(){
- const count=id=>{const n=materialNumber('cabinet-'+id);if(!Number.isSafeInteger(n))throw Error('Enter whole counts for cabinet parts and holes.');return n;};
+ const count=id=>{const n=materialNumber('cabinet-'+id);if(id==='prep-hours'){if(!Number.isFinite(n)||n<0||Math.round(n*4)!==n*4)throw Error('Enter prep hours in quarter-hour increments.');return n;}if(!Number.isSafeInteger(n))throw Error('Enter whole counts for cabinet parts.');return n;};
  const doors=count('doors'),drawers=count('drawers'),measurements={doors,drawers};
  const labor=[];
- const add=(service,quantity,unit)=>{const unitPrice=service==='Install cabinet box'?150:service==='Remove cabinet box and haul off'?125:service==='Paint cabinet door and matching frame'?125:null;if(quantity)labor.push({service,scope:'Cabinet / Vanity Work',quantity,unit,...(unitPrice!==null?{price:unitPrice*quantity,unitPrice}: {})});};
+ const add=(service,quantity,unit)=>{const approved={'Install cabinet box':150,'Remove cabinet box and haul off':125,'Paint cabinet door and matching frame':125,'Paint cabinet drawer front':125,'Paint cabinet interiors':126,'Install cabinet hardware':15,'Prep and repair old hardware holes':75,'Install cabinet crown molding':2.75,'Install cabinet toe-kick':1.25,'Install cabinet filler strip':10,'Install cabinet end panel':75};const unitPrice=approved[service]??null;if(quantity)labor.push({service,scope:'Cabinet / Vanity Work',quantity,unit,...(unitPrice!==null?{price:unitPrice*quantity,unitPrice}: {})});};
  add('Refinish doors — frames included',doors,'doors');add('Refinish drawer fronts — frames included',drawers,'drawer fronts');
  CABINET_WORK_OPTIONS.filter(option=>option.fields.length).forEach(option=>{
   if(!document.getElementById('cabinet-'+option.key).checked)return;
@@ -642,7 +647,7 @@ function cabinetRefinishingEstimate(){
   if(!name)throw Error('Enter the other material name.');const quantity=measurements[name==='Hardware'?'hardware-count':name.toLowerCase()]||null;return {name,quantity,unit:quantity?'pieces':'',detail:'Quantity to confirm from cabinet sizes.'};
  });
  if(!labor.length&&!products.length)throw Error('Enter doors or drawer fronts, select cabinet work, or choose materials.');
- return {type:'custom',title:'Cabinet / Vanity Work',result:labor.length?labor.map(x=>x.quantity+' '+x.unit).join(' · '):'Cabinet materials requested',detail:'Frames included with door and drawer-front refinishing. Interiors, hardware and hole prep are separate options. Cabinet installation is $150 labor per box; removal including haul-off is $125 per box with a $150 visit minimum. Hardware is separate; painting a cabinet door and its frame is $125 labor per door (paint extra). Other work requires a separate quote.',measurements,labor,products,projectOptions:products.length?['Materials']:[],deliveryTypes:[]};
+ return {type:'custom',title:'Cabinet / Vanity Work',result:labor.length?labor.map(x=>x.quantity+' '+x.unit).join(' · '):'Cabinet materials requested',detail:'Cabinet installation $150/box, removal and haul-off $125/box, door/frame painting $125/door, drawer-front painting $125/front, interior painting $126/box, hardware installation $15/piece, and hole prep $75/hour. Materials extra; $150 visit minimum applies. Unpriced refinishing requires an in-person quote.',measurements,labor,products,projectOptions:products.length?['Materials']:[],deliveryTypes:[]};
 }
 
 
