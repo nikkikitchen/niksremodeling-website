@@ -665,6 +665,7 @@ function itemOptionFields(name){
  [/tile|mosaic|stone|slab/i,[['Material','Ceramic','Porcelain','Natural stone','Manufactured stone'],['Format','Individual tiles','Mosaic sheets','Large format','Slab / panel'],['Location','Floor','Wall','Backsplash','Shower / wet area','Exterior']]],
  [/hardwood/i,[['Construction','Solid hardwood','Engineered hardwood'],['Installation','Nail / staple','Glue down','Floating']]],
  [/vinyl|\blvp\b|linoleum|laminate|carpet|flooring/i,[['Flooring type','Luxury vinyl plank (LVP)','Laminate','Hardwood','Tile','Sheet vinyl / linoleum','Carpet'],['Installation','Floating','Glue down','Nail / staple']]],
+ [/vanity light/i,[['Fixture style','Light bar','Wall sconce','Multi-light fixture'],['Finish','Chrome','Brushed nickel','Matte black','Bronze','Other']]],
  [/vanity/i,[['Size','Single sink','Double sink'],['Mounting','Freestanding','Wall mounted'],['Top','With top and sink','Cabinet only']]],
  [/faucet|mixing valve/i,[['Mounting','Single hole','Centerset','Widespread','Wall mounted'],['Finish','Chrome','Brushed nickel','Matte black','Bronze']]],
  [/sink/i,[['Sink type','Single bowl','Double bowl','Vessel'],['Mounting','Drop in','Undermount','Wall mounted']]],
