@@ -16,3 +16,7 @@ Appliance and bathroom review applied. Resume next at Cabinets, followed by Carp
 - Existing material allowances retained for installed packages; new flange service is labor only, parts extra. Tub installation uses the existing standard tub/installation material allowances.
 
 Validation: build and dedicated October 19 pricing/catalog/calculator checks pass. Existing npm test assertions pass (9), but suite exits unsuccessfully due to jsdom asynchronous window-close cleanup errors in this runtime.
+
+## Second review: cabinets, trim, doors and windows
+
+Resume at Drywall. Door painting wording: door and box ($125 unchanged). Drawer fronts $50; filler strips $15/strip; fill holes and touch up paint if possible $15/hole; cabinet interior painting $125/box grouped with painting. Cabinet door adjustment $75/hour. Staining $150 each for door interior, door exterior, or box; stripping in-person quote. Crown finishing/painting $1.75/ft; grab bars $250; shoe installation and finish/paint each $1.25/ft; combined door/window casing $3/ft. Repairs, stairs and railings in-person quote. Exterior prehung door install $450 or remove/haul/replace $550; sidelights and French doors extra. Hinge mortising/trimming $75/hour. Window replacement starts $450.
