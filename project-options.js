@@ -54,11 +54,11 @@
   shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
   const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));
   options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-wax-ring','toilet-flange','toilet-remove']);
-  options['faucet-service']=bathWork('Sink Faucet Replacement',['faucet-replace']);
+  options['faucet-service']=bathWork('Vanity Faucet Replacement',['faucet-replace']);
   options.plumbing=work('Sink & Plumbing','custom',['Sink','Disposal']);
   options.vanity=bathWork('Vanity, Sink & Faucet',['vanity-install','vanity-remove','faucet-replace']);
   options['vanity-light']=bathWork('Vanity Light — Install / Replace',['vanity-light-install','vanity-light-replace']);
-  options.tub=bathWork('Bathtub & Surround',['tub-resurface','tub-replace','bath-drywall-repair']);
+  options.tub=bathWork('Bathtub & Surround',['tub-resurface','tub-install','tub-remove','tub-replace','bath-drywall-repair']);
   options['bath-shower-valve']=bathWork('Shower Faucet / Mixing Valve',['shower-valve-install']);
   const scopes={
     'bath-remodel':['ceiling','walls','floor','tub','shower','tub-shower','toilet','vanity','vanity-light','refinish','mirror','lighting','ventilation','accents','prep','other'],
