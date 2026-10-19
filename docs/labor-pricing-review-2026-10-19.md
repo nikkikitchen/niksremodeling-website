@@ -20,3 +20,7 @@ Validation: build and dedicated October 19 pricing/catalog/calculator checks pas
 ## Second review: cabinets, trim, doors and windows
 
 Resume at Drywall. Door painting wording: door and box ($125 unchanged). Drawer fronts $50; filler strips $15/strip; fill holes and touch up paint if possible $15/hole; cabinet interior painting $125/box grouped with painting. Cabinet door adjustment $75/hour. Staining $150 each for door interior, door exterior, or box; stripping in-person quote. Crown finishing/painting $1.75/ft; grab bars $250; shoe installation and finish/paint each $1.25/ft; combined door/window casing $3/ft. Repairs, stairs and railings in-person quote. Exterior prehung door install $450 or remove/haul/replace $550; sidelights and French doors extra. Hinge mortising/trimming $75/hour. Window replacement starts $450.
+
+## Third review: drywall; pause labor review
+
+Small wall/ceiling patch up to 2×2 ft (4 sq ft) $175; medium over 4–16 sq ft, up to 4×4 ft, $275; large over 16–32 sq ft, up to 4×8 ft, $450. Finish drywall seams $5/linear ft (renamed from tape and mud). Removed separate ceiling-patch listing. Resume labor review at Electrical and smart home. User now wants to get a product up for sale.
