@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(!grid)return;
  const customLink=grid.querySelector('a[href="/project.html?project=custom"]');if(customLink?.querySelector('small'))customLink.querySelector('small').textContent=PROJECT_CATALOG.custom.intro;
  const outdoorLink=grid.querySelector('a[href="/project.html?project=concrete"]');if(outdoorLink?.querySelector('small'))outdoorLink.querySelector('small').textContent=PROJECT_CATALOG.concrete.intro;
- grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');if(PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
+ grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');const img=a.querySelector('img');if(img&&PROJECT_CATALOG[id]){img.src=PROJECT_CATALOG[id].image;img.alt=PROJECT_CATALOG[id].title+' project ideas';}if(PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
  for(const [id,p] of Object.entries(PROJECT_CATALOG)){
   if(p.customGroup||(p.themedGroup&&!p.basicRoom)||((p.exterior||p.outdoorGroup)&&id!=='concrete'))continue;
   if(grid.querySelector('a[href="/project.html?project='+id+'"]'))continue;
@@ -63,13 +63,20 @@ CUSTOM_PROJECTS.forEach(id=>PROJECT_CATALOG[id].customGroup=true);
 PROJECT_CATALOG.custom.title='More Ideas';
 PROJECT_CATALOG.custom.intro='Accent walls, murals, wallpaper, carpentry, fireplaces & finishing details.';
 ['kitchen-pantry','bathrooms','living-family-room','dining-room','bedroom-guest-room','laundry-utility','closets-storage'].forEach(id=>PROJECT_CATALOG[id].basicRoom=true);
+
+// Keep project photos consistent and avoid reusing a photo within a tile page.
+Object.assign(PROJECT_CATALOG['kids-room'],{image:'/assets/kids-room.jpg'});
+Object.assign(PROJECT_CATALOG['themed-rooms'],{image:'/assets/kids-room.jpg'});
+Object.assign(PROJECT_CATALOG['entry-mudroom'],{image:'/assets/approved-493d744bf5f7.jpg'});
+Object.assign(PROJECT_CATALOG.lighting,{image:'/assets/pendant-lighting.jpg'});
+
 window.renderCustomProjects=()=>window.renderOutdoorProjects('custom');
 window.renderThemedRooms=()=>window.renderOutdoorProjects(true);
 window.renderOutdoorProjects=(themed=false)=>{
  document.body.innerHTML=header()+'<main class="wrap section"><a class="project-back" href="/#projects">← All Projects</a><h1>'+ (themed==='custom'?'More Ideas':themed?'Themed Rooms':'Outdoor Projects') +'</h1><p class="lead">'+(themed==='custom'?'Choose a finish or feature to make your space your own.':themed?'Choose a room to explore ideas and plan your work.':'Choose an outdoor area to explore ideas and plan your work.')+'</p><div class="tile-grid project-grid" id="outdoor-project-grid"></div></main>'+footer();
  const choices=Object.entries(PROJECT_CATALOG).filter(([id,p])=>themed==='custom'?p.customGroup:themed?p.themedGroup:(p.exterior||p.outdoorGroup)&&id!=='concrete');
  if(themed==='custom')choices.push(['custom&customWork=1',{...PROJECT_CATALOG.custom,title:'Other Custom Ideas',intro:'Tell us about your one-of-a-kind project.'}]);
- if(!themed)choices.push(['concrete&outdoorWork=1',{...PROJECT_CATALOG.concrete,title:'Patios, Walkways & Concrete',intro:'Concrete, paving, walkways, porches & outdoor surfaces.'}]);
+ if(!themed)choices.push(['concrete&outdoorWork=1',{...PROJECT_CATALOG.concrete,title:'Patios, Walkways & Concrete',image:'/assets/patio-concrete.webp',intro:'Concrete, paving, walkways, porches & outdoor surfaces.'}]);
  const grid=document.getElementById('outdoor-project-grid');
  choices.sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{
   const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
