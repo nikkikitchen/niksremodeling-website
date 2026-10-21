@@ -240,7 +240,13 @@
           related.forEach(([label,href,verifiedCatalog])=>{
             const link=document.createElement('a');
             link.className='btn outline project-products-link';
-            link.href=href;
+            if(href.startsWith('/bathroom.html')){
+              const destination=new URL(href,location.origin);
+              destination.searchParams.set('fromProject','1');
+              destination.searchParams.set('project',id);
+              destination.searchParams.set('work',key);
+              link.href=destination.pathname+destination.search;
+            }else link.href=href;
             link.textContent=label;
             box.append(link);
           });
@@ -279,6 +285,19 @@
     if(fixedLocation){
       stepButtons[0].hidden=true;setStep(1);
       back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
+    }
+    const requestedWork=new URLSearchParams(location.search).get('work');
+    if(requestedWork&&/^[a-z0-9-]{1,60}$/.test(requestedWork)){
+      const target=grid.querySelector('[data-work-key="'+requestedWork+'"]');
+      if(target){
+        setStep(1);
+        target.open=true;
+        const note=document.createElement('p');
+        note.className='calc-note';
+        note.textContent='Your products remain in the Project Cart. Select installation or more work below.';
+        target.append(note);
+        requestAnimationFrame(()=>target.scrollIntoView({block:'center'}));
+      }
     }
     const style=document.createElement('style');style.textContent='.project-measurement-start{margin-bottom:26px}.project-measurement-grid{display:grid;grid-template-columns:2fr 1.3fr repeat(3,1fr);gap:12px}.project-measurement-grid input,.project-measurement-grid select{width:100%;box-sizing:border-box;padding:10px}.project-section-title{margin:26px 0 10px}.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}@media(max-width:700px){.project-measurement-grid{grid-template-columns:1fr 1fr}.project-measurement-grid .field:first-child{grid-column:1/-1}}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
   };
