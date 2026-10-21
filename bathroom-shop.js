@@ -72,19 +72,30 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const params=new URLSearchParams(location.search);
  const type=bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
+ const projectId=['bathrooms','bath-remodel'].includes(params.get('project'))?params.get('project'):null;
+ const projectWork=/^[a-z0-9-]{1,60}$/.test(params.get('work')||'')?params.get('work'):null;
+ const fromProject=!!projectId&&params.get('fromProject')==='1';
+ const projectParams=new URLSearchParams({project:projectId||'bathrooms'});
+ if(projectWork)projectParams.set('work',projectWork);
+ const projectReturn='/project.html?'+projectParams.toString();
+ const selectedCategory=bathroomNames[type]||'Bathroom Products';
+ const projectBack='<a class="btn outline" href="'+projectReturn+'">← Back to Bathroom Project / Add Labor</a>';
+ const projectControls=fromProject?'<div class="project-shopping-return">'+projectBack+' <a class="btn outline" href="/project-cart.html">Review Cart</a></div>':'';
  const tabs='<nav class="store-categories photo-store-categories" aria-label="Bathroom fixture categories">'+
    '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
    bathroomTypes.map(([key,label])=>'<a class="photo-category-tile" href="/bathroom.html?type='+key+'"><img src="'+bathroomCategoryPhotos[key]+'" alt="" loading="lazy"><span><strong>'+bathEsc(label)+'</strong></span></a>').join('')+
    '</nav>';
- const base='<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → <a href="/bathroom.html">Bathroom</a></nav><h1>Bathroom Fixtures & Supplies</h1>'+
-   '<p class="lead">Only items independently checked for U.S. warehouse stock and variant pricing are displayed. Manufacturing country is not verified. Shipping and tax extra.</p>'+
-   tabs;
+ const base='<main class="wrap section"><nav aria-label="Breadcrumb">'+
+   (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
+   '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(selectedCategory))+'</h1>'+
+   '<p class="lead">Only items checked for U.S. warehouse stock and variant pricing are shown. Shipping, tax and installation are separate.</p>'+
+   projectControls+(fromProject&&type!=='all'?'':tabs);
  document.body.innerHTML=header()+base+(product?
    '<div id="bath-detail" role="status">Verifying U.S. inventory and current price…</div>':
    '<h2>'+bathEsc(bathroomNames[type]||'Browse Bathroom')+'</h2><div class="store-card-grid" id="bath-products"></div>'+
    '<p id="bath-status" role="status">Checking U.S. warehouse inventory and prices…</p>'+
    '<div id="bath-more"></div>'+
-   '<p>Fixtures are sold separately from installation labor. <a href="/installation.html">View installation & labor</a>. Online payment is not yet available.</p>')+
+   '<p>Fixtures are sold separately from installation labor. <a href="/installation.html">View installation & labor</a>. Online payment is not yet available.</p>'+projectControls)+
    '</main>'+footer();
  updateCartCount();initNavMenus();
  if(product){
@@ -106,7 +117,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     '<form id="bath-delivery"><label>Delivery ZIP <input id="bath-zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label> '+
     '<button class="btn primary" type="submit">Check Delivery</button></form><p id="bath-quote" role="status"></p>'+
     '<p>Installation is separate. <a href="/installation.html">Browse bathroom labor</a>.</p>'+ 
-    '<button type="button" class="btn primary" id="bath-add-cart">Add Selected Product to Project Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a>'+ 
+    '<button type="button" class="btn primary" id="bath-add-cart">Add Selected Product to Project Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a> <a class="btn outline" href="'+projectReturn+'">Continue Bathroom Project & Add Labor</a>'+ 
     '<p id="bath-cart-status" role="status">Product price excludes delivery, tax and installation. Cart is for review, not payment.</p>'+ 
     '<p>Online checkout is currently disabled.</p></div></article>';
    const select=document.getElementById('bath-variant');
@@ -124,11 +135,15 @@ document.addEventListener('DOMContentLoaded',async()=>{
      if(existing){
        existing.qty=Math.min(99,(Number(existing.qty)||1)+1);
        existing.price=variant.priceCents/100;
+       existing.projectId=existing.projectId||projectId||'bathrooms';
+       existing.workKey=existing.workKey||projectWork||null;
      }else{
        cart.push({
          name:detail.name+' — '+(variant.name||variant.sku||'Selected option'),
          type:'Product',
          source:'bathroom-retail',
+         projectId:projectId||'bathrooms',
+         workKey:projectWork,
          productId:product,
          variantId:String(variant.id),
          sku:variant.sku||'',
@@ -189,7 +204,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
     const name=detail.name,image=detail.image||p.image;
     if(seenIds.has(p.id)||seenNames.has(normalized(name))||seenImages.has(image))continue;
     const price=Math.min(...variants.map(v=>v.priceCents));
-    const href='/bathroom.html?type='+encodeURIComponent(kind)+'&product='+encodeURIComponent(p.id);
+    const detailParams=new URLSearchParams({type:kind,product:p.id});
+    if(fromProject){
+      detailParams.set('fromProject','1');
+      detailParams.set('project',projectId);
+      if(projectWork)detailParams.set('work',projectWork);
+    }
+    const href='/bathroom.html?'+detailParams.toString();
     const card=document.createElement('article');card.className='store-card';
     card.innerHTML='<a href="'+href+'"><img loading="lazy" src="'+bathEsc(image)+'" alt="'+bathEsc(name)+'">'+
      '<div class="store-card-copy"><p class="store-card-category">'+bathEsc(bathroomNames[kind])+'</p><h3>'+bathEsc(name)+'</h3>'+
@@ -216,7 +237,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  await fetchBatch(type==='all'?searches.slice(0,4):searches);
  let position=type==='all'?4:0;
  const more=document.getElementById('bath-more'),btn=document.createElement('button');
- btn.className='btn outline';btn.textContent='Load more bathroom items';btn.type='button';
+ btn.className='btn outline';btn.textContent=type==='all'?'Load more bathroom items':'Load more '+selectedCategory;btn.type='button';
  more.appendChild(btn);
  btn.addEventListener('click',async()=>{
   btn.disabled=true;status.textContent='Checking more U.S. warehouse products and prices…';
