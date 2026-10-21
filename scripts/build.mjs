@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
-const files = ['store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'index.html', 'shopping.html', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
-  'furniture.html', 'appliances.html', 'cabinets.html', 'installation.html',
+const files = ['store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'shopping.html', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
+  'furniture.html', 'bathroom.html', 'appliances.html', 'cabinets.html', 'installation.html',
   'calculators.html', 'project-cart.html', 'material-flooring.html', 'material-tile-stone.html', 'material-drywall.html', 'material-lumber.html', 'material-trim-molding.html', 'material-paint-finishes.html', 'material-insulation.html', 'material-roofing.html', 'material-siding-exterior.html', 'material-doors-windows.html', 'material-concrete-masonry.html', 'styles.css', 'app.js', 'project-calculator-options.js', 'calculator-simple-flow.js', 'project-options.js',
   '_headers', '.nojekyll'];
 mkdirSync(output, { recursive: true });
@@ -19,7 +19,7 @@ for (const file of files) {
   const target = new URL(file, output);
   copyFileSync(source, target);
   if (file.endsWith('.html')) {
-    const html = readFileSync(target, 'utf8').replace(/\/(store\.js|store\.css|app\.js|styles\.css|project-calculator-options\.js|calculator-simple-flow\.js|project-options\.js|calculator-steps\.js|shopping-flow\.js|room-projects\.js)\?v=[^"']+/g, (_, asset) => '/' + asset + '?v=' + commit.slice(0, 12));
+    const html = readFileSync(target, 'utf8').replace(/\/(store\.js|store\.css|bathroom-shop\.js|app\.js|styles\.css|project-calculator-options\.js|calculator-simple-flow\.js|project-options\.js|calculator-steps\.js|shopping-flow\.js|room-projects\.js)\?v=[^"']+/g, (_, asset) => '/' + asset + '?v=' + commit.slice(0, 12));
     writeFileSync(target, html);
   }
   hashes[file] = createHash('sha256').update(readFileSync(target)).digest('hex');
