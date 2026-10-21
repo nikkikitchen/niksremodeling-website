@@ -35,6 +35,23 @@
     other:work('Other Work','custom',['Other material'])
   };
   Object.assign(options,window.ROOM_WORK_OPTIONS||{});
+  // Interior and exterior lead to different work lists, not duplicate steps.
+  Object.assign(options,{
+    'fireplace-outdoor':work('Outdoor Fireplaces & Fire Pits','custom',['Outdoor Fireplace Surround','Fire Pit Surround','Outdoor Hearth','Fire-Rated Stone / Masonry','Outdoor Mantel / Shelf']),
+    'access-interior':work('Indoor Accessibility','custom',['Shower Grab Bars','Bathroom Grab Bars','Indoor Handrails','Accessible Door Hardware','Interior Threshold Transition','Doorway Widening Assessment']),
+    'access-exterior':work('Exterior Accessibility','custom',['Entry Ramp Planning','Exterior Handrails','Accessible Walkway Planning','Entry Landing Assessment','Exterior Threshold Transition']),
+    'outdoor-accent':work('Outdoor Accent Walls','custom',['Exterior Stone Veneer','Weather-Resistant Wall Cladding','Exterior Decorative Panels','Exterior-Grade Wood Accents']),
+    'outdoor-floor':work('Outdoor Flooring','custom',['Porch Flooring','Deck Surface Boards','Exterior Floor Tile','Exterior-Grade Floor Finish']),
+    'outdoor-tile':work('Outdoor Tile & Stone','custom',['Exterior Porcelain Tile','Slip-Resistant Outdoor Tile','Stone Pavers','Exterior Stone Veneer']),
+    'outdoor-stairs':work('Outdoor Stairs & Railings','custom',['Exterior Stair Treads','Outdoor Handrails','Deck Stairs','Exterior Balusters','Stair Landing Assessment']),
+    'outdoor-lighting':work('Outdoor Lighting','custom',['Exterior Wall Lights','Security Lighting','Landscape Lighting','Path Lights','Weather-Rated Ceiling Fans']),
+    'outdoor-arches':work('Exterior Arches & Columns','custom',['Outdoor Arch Trim','Exterior Columns','Weather-Resistant Decorative Millwork']),
+    'outdoor-murals':work('Exterior Murals & Finishes','custom',['Exterior Mural','Outdoor Decorative Finish','Weather-Resistant Coating']),
+    'theater-interior':work('Indoor Theater Setup','custom',['Indoor Media Setup','Acoustic Wall Panels','Movie Seating Layout','Indoor Projector Mount']),
+    'theater-exterior':work('Outdoor & Mobile Theater','custom',['Outdoor Projector Screen','Weather-Rated Speakers','Portable Theater Setup','Outdoor TV Mount']),
+    'other-interior':work('Other Indoor Work','custom',['Indoor Repair','Interior Upgrade','Indoor Installation','Other material']),
+    'other-exterior':work('Other Outdoor Work','custom',['Outdoor Repair','Exterior Upgrade','Outdoor Installation','Other material'])
+  });
   // The catalog, project cards and calculator read the same material lists.
   const shared=window.WORK_MATERIAL_OPTIONS={};
   for(const [kind,slug] of Object.entries(WORK_MATERIAL_CATEGORIES))shared[kind]=[...MATERIAL_DETAIL_PAGES[slug].items];
@@ -73,6 +90,20 @@
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
   Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];scopes.accents=scopes.accents.filter(key=>key!=='prep');
+  const locationScopes={
+    fireplaces:{interior:['fireplace','walls','trim','prep','other'],exterior:['fireplace-outdoor','outdoor-tile','concrete','prep','other']},
+    accessibility:{interior:['access-interior','doors','floor','lighting','other'],exterior:['access-exterior','concrete','stairs','lighting','other']},
+    accents:{interior:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','other'],exterior:['outdoor-accent','outdoor-tile','walls','lighting','other']},
+    tile:{interior:['floor','walls','backsplash','shower','prep','other'],exterior:['outdoor-tile','concrete','prep','other']},
+    flooring:{interior:['floor','trim','prep','other'],exterior:['outdoor-floor','concrete','prep','other']},
+    stairs:{interior:['stairs','trim','refinish','prep','other'],exterior:['outdoor-stairs','framing','prep','other']},
+    lighting:{interior:['lighting','ventilation','prep','other'],exterior:['outdoor-lighting','prep','other']},
+    arches:{interior:['framing','trim','walls','prep','other'],exterior:['outdoor-arches','framing','prep','other']},
+    murals:{interior:['ceiling','walls','refinish','trim','prep','other'],exterior:['outdoor-murals','walls','prep','other']},
+    'home-theater':{interior:['theater-interior','walls','floor','acoustics','media-furniture','beverage','lighting','snack-station','other'],exterior:['theater-exterior','outdoor-media','outdoor-furniture','lighting','other']},
+    other:{interior:['other-interior','prep'],exterior:['other-exterior','prep']}
+  };
+  Object.entries(locationScopes).forEach(([project,places])=>{scopes[project]=[...new Set([...places.interior,...places.exterior])];});
   Object.values(scopes).forEach(keys=>{if(keys.includes('plumbing')&&!keys.includes('faucet-service'))keys.push('faucet-service');});
   window.materialSupplyList=(name)=>{
     if(/knob|pull|hinge|hardware/i.test(name))return ['Correct-size mounting screws','Compatible mounting plates if required','Hole repair / filler supplies if required'];
@@ -120,8 +151,9 @@
       selectedRoom.value=chosenRoom;
       selectedRoom.closest('.field').style.display='none';
     }
-    document.getElementById('scope-location').value=chosenRoom?(project.exterior?'exterior':'interior'):'';
-    const fixedLocation=project.exterior||['bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies'].includes(id);
+    const fixedLocation=project.exterior||['bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies','wallpaper'].includes(id);
+    const locationFromLink=new URLSearchParams(location.search).get('location');
+    document.getElementById('scope-location').value=fixedLocation?(project.exterior?'exterior':'interior'):(['interior','exterior'].includes(locationFromLink)?locationFromLink:'');
     if(fixedLocation)document.getElementById('scope-location').closest('.field').hidden=true;
     const measurementPanel=document.querySelector('.project-measurement-start');
     // Ask for dimensions in the selected work calculator, not for the whole room.
@@ -150,7 +182,7 @@
     let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
 
 
-    function filterLocationMaterials(){const location=document.getElementById('scope-location').value;grid.querySelectorAll('.room-supply-choice').forEach(label=>{const input=label.querySelector('input');if(!input)return;const mismatch=location==='interior'?/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(input.value):location==='exterior'?/^Interior (Paint|Stain|Primer|Finish)\b/i.test(input.value):false;label.hidden=mismatch;if(mismatch)input.checked=false;});}
+    function filterLocationMaterials(){const location=document.getElementById('scope-location').value;const allowed=locationScopes[id]?.[location];if(allowed){grid.querySelectorAll('[data-work-key]').forEach(card=>{card.hidden=!allowed.includes(card.dataset.workKey);if(card.hidden){card.open=false;card.querySelectorAll('input[type="checkbox"]:checked').forEach(box=>{box.checked=false;});}});workTitle.textContent=location==='exterior'?'Choose Exterior Work':'Choose Interior Work';}grid.querySelectorAll('.room-supply-choice').forEach(label=>{const input=label.querySelector('input');if(!input)return;const mismatch=location==='interior'?/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(input.value):location==='exterior'?/^Interior (Paint|Stain|Primer|Finish)\b/i.test(input.value):false;label.hidden=mismatch;if(mismatch)input.checked=false;});}
     const saveDraft=()=>{const selected={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll(':scope > label input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({locationChosen:!!document.getElementById('scope-location').value,room:document.getElementById('scope-room').value,selected,...Object.fromEntries(['scope-location','scope-length','scope-width','scope-height'].map(id=>[id,document.getElementById(id).value]))}))}catch{}};
     ['scope-room','scope-location','scope-length','scope-width','scope-height'].forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
     (scopes[id]||scopes.custom).forEach(key=>{
@@ -293,6 +325,7 @@
       back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
     }
     const requestedWork=new URLSearchParams(location.search).get('work');
+    if(requestedWork&&locationScopes[id]&&!document.getElementById('scope-location').value){const places=locationScopes[id];const matches=['interior','exterior'].filter(place=>places[place].includes(requestedWork));if(matches.length===1){document.getElementById('scope-location').value=matches[0];filterLocationMaterials();}}
     if(requestedWork&&/^[a-z0-9-]{1,60}$/.test(requestedWork)){
       const target=grid.querySelector('[data-work-key="'+requestedWork+'"]');
       if(target){
