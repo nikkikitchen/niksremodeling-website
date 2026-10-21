@@ -4,6 +4,7 @@ import {catalog} from '../../store-catalog.js';
 export async function onRequestGet({request,env}){
  const id=request?new URL(request.url).searchParams.get('product')||PRODUCT_ID:PRODUCT_ID;
  if(!/^[\w-]{8,64}$/.test(id||''))return Response.json({error:'Invalid product.'},{status:400});
+ if(["2003348098417340418","2003347794848272385"].includes(id))return Response.json({error:'Product excluded: no verified U.S. warehouse stock.'},{status:404,headers:{'Cache-Control':'no-store'}});
  const item=catalog.find(p=>p.id===id);
  try{
   // countryCode=US restricts returned options, and a SECOND inventory lookup
