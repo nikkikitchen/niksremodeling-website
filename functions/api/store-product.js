@@ -1,13 +1,27 @@
-import {cj,PRODUCT_ID,retailCents,square} from '../_lib/commerce.js';
+import {cj,PRODUCT_ID,retailCents,usVariantStock} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
+
 export async function onRequestGet({request,env}){
  const id=request?new URL(request.url).searchParams.get('product')||PRODUCT_ID:PRODUCT_ID;
- const item=catalog.find(p=>p.id===id);if(!item)return Response.json({error:'Product not found.'},{status:404});
+ if(!/^[\w-]{8,64}$/.test(id||''))return Response.json({error:'Invalid product.'},{status:400});
+ const item=catalog.find(p=>p.id===id);
  try{
- const p=await cj(env,'/product/query?pid='+item.id+'&countryCode=US');
- const variants=(p.variants||[]).filter(v=>Number(v.variantSellPrice)>0).map(v=>({id:v.vid,sku:v.variantSku,name:v.variantKey||v.variantNameEn,image:v.variantImage,priceCents:retailCents(v.variantSellPrice)}));
- let paymentsReady=false,paymentIssue='';
- try{const {location}=await square(env,'/v2/locations/'+encodeURIComponent(env.SQUARE_LOCATION_ID));paymentsReady=location?.status==='ACTIVE'&&location?.currency==='USD'&&location?.capabilities?.includes('CREDIT_CARD_PROCESSING');}catch(e){paymentIssue=e.message;}
- return Response.json({id:item.id,name:item.name,image:p.bigImage||p.productImage,images:p.productImageSet||[],description:p.description||'',variants,paymentsReady,paymentIssue,checkoutEnabled:false},{headers:{'Cache-Control':'no-store'}});
- }catch{return Response.json({error:'Product details temporarily unavailable.'},{status:503});}
+  // countryCode=US restricts returned options, and a SECOND inventory lookup
+  // confirms positive physical CJ US-warehouse stock, not factory stock.
+  const p=await cj(env,'/product/query?pid='+encodeURIComponent(id)+'&countryCode=US');
+  const inventory=await cj(env,'/product/stock/getInventoryByPid?pid='+encodeURIComponent(id));
+  const stock=usVariantStock(inventory);
+  const variants=(p.variants||[]).filter(v=>Number(v.variantSellPrice)>0&&stock.has(String(v.vid))).map(v=>({
+   id:v.vid,sku:v.variantSku,name:v.variantKey||v.variantNameEn,
+   image:v.variantImage,priceCents:retailCents(v.variantSellPrice),usStock:stock.get(String(v.vid))
+  }));
+  return Response.json({
+   id,name:item?.name||p.productNameEn||p.productName||'Furniture item',
+   image:p.bigImage||p.productImage||item?.image,images:p.productImageSet||[],description:p.description||'',
+   variants,warehouseCountry:'US',originVerified:false,inStockUS:variants.length>0,
+   checkoutEnabled:false
+  },{headers:{'Cache-Control':'public, max-age=120'}});
+ }catch{
+  return Response.json({error:'U.S. warehouse price or inventory could not be verified.'},{status:503,headers:{'Cache-Control':'no-store'}});
+ }
 }
