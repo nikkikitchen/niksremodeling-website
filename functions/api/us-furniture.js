@@ -16,7 +16,17 @@ const keywords={
 export async function onRequestGet({request,env}){
  const params=new URL(request.url).searchParams;
  const category=params.get('category')||'bedroom',search=params.get('search');
- const keyword=search==='shelving'?'bookcase':category==='kids-room'&&search==='seating'?'sofa':keywords[category];
+ const bathKeywords={
+  toilets:'toilet',bathtubs:'bathtub',vanities:'bathroom vanity',
+  showers:'shower enclosure',showerBases:'shower base',showerDoors:'shower door',
+  faucets:'bathroom faucet',lighting:'bathroom vanity light',
+  ventilation:'bathroom exhaust fan',accessories:'bathroom mirror'
+ };
+ const bathSearch=category==='bathroom'&&Object.hasOwn(bathKeywords,search||'')?search:'';
+ const keyword=bathSearch?bathKeywords[bathSearch]:
+   search==='shelving'?'bookcase':
+   category==='kids-room'&&search==='seating'?'sofa':
+   keywords[category];
  if(!keyword)return Response.json({error:'Unknown furniture category.'},{status:400});
  const page=Math.max(1,Math.min(100,parseInt(params.get('page')||'1',10)||1));
  try{
@@ -47,7 +57,8 @@ export async function onRequestGet({request,env}){
      warehouseCountry:'UNVERIFIED',originVerified:false,
      }, stockVerified:false};
    }).filter(p=>p.priceCents!==null&&/^https:\/\//.test(p.image));
-  return Response.json({category,search:search==='shelving'?'shelving':search==='seating'&&category==='kids-room'?'seating':null,products,page,totalPages:data.totalPages||null,
+  return Response.json({category,search:bathSearch||(
+    search==='shelving'?'shelving':search==='seating'&&category==='kids-room'?'seating':null),products,page,totalPages:data.totalPages||null,
    note:'Supplier candidates only. U.S. warehouse inventory and retail price must be independently verified before display.'},
    {headers:{'Cache-Control':'public,max-age=300'}});
  }catch{
