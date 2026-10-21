@@ -3,3 +3,7 @@
 .store-categories{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}#store-variant{display:block;max-width:100%;padding:10px;margin:8px 0 20px}
 
 .store-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin:24px 0}.store-card{border:1px solid #dfe5ea;border-radius:10px;overflow:hidden;background:#fff;max-width:420px;transition:box-shadow .2s}.store-card:hover{box-shadow:0 8px 24px #0002}.store-card>a{display:block;height:100%;color:inherit;text-decoration:none}.store-card img{width:100%;height:240px;object-fit:contain;background:#fff;padding:14px}.store-card-copy{padding:18px}.store-card h3{margin:5px 0 12px;font-size:20px}.store-card-category{font-size:12px;color:#687480;margin:0}.store-card-price{font-weight:800;font-size:23px;margin:10px 0}.store-card-note{font-size:12px;color:#687480}.project-work-card .store-card-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.project-work-card .store-card img{height:180px}@media(max-width:520px){.store-card-grid{grid-template-columns:1fr}.store-card{max-width:none}}
+
+.store-card[hidden]{display:none!important}
+#store-more{margin:20px 0 28px}
+#us-load-status{margin:14px 0;font-size:14px}
