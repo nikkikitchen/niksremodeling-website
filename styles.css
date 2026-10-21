@@ -207,3 +207,77 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 @media(max-width:620px){.cart-item{grid-template-columns:minmax(0,1fr) auto;gap:12px}.cart-current{grid-column:2;grid-row:1;max-width:130px}.cart-item>.btn{grid-column:1 / -1;justify-self:end}}
 
 .cart-price-scope{display:block;font-size:12px;font-weight:400;margin-top:5px;max-width:155px}
+
+
+/* Visual category navigation throughout Shopping. Existing project photos retained. */
+.shop-guide-grid.photo-guide-grid{gap:18px}
+.shop-guide-grid.photo-guide-grid article{
+ padding:0;overflow:hidden;border:0;border-radius:12px;position:relative;min-width:0;
+ background:#142330;box-shadow:0 10px 25px rgba(12,28,40,.18)
+}
+.shop-guide-grid.photo-guide-grid article:target{outline:3px solid var(--blue);outline-offset:3px}
+.photo-category-tile{
+ position:relative;display:block;overflow:hidden;isolation:isolate;min-height:224px;
+ border-radius:12px;text-decoration:none;color:white!important;
+ background:#283e50
+}
+.photo-category-tile img{
+ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+ transition:transform .2s ease
+}
+.photo-category-tile::after{
+ content:'';position:absolute;inset:0;z-index:0;
+ background:linear-gradient(180deg,rgba(0,0,0,.03) 15%,rgba(0,0,0,.84) 100%)
+}
+.photo-category-tile span{
+ position:absolute;bottom:0;left:0;right:0;z-index:1;
+ padding:17px 17px 19px;text-shadow:0 2px 5px rgba(0,0,0,.8)
+}
+.photo-category-tile strong{
+ display:block;color:#fff;font-size:20px;line-height:1.25;font-weight:800
+}
+.photo-category-tile small{
+ display:block;margin-top:5px;color:#fff;font-size:13px;line-height:1.35;font-weight:600
+}
+.photo-category-tile:hover img,.photo-category-tile:focus-visible img{transform:scale(1.04)}
+.photo-category-tile:focus-visible{outline:3px solid #2164b5;outline-offset:-3px}
+.shop-guide-grid.photo-guide-grid article a.photo-category-tile{
+ display:block;margin:0;height:100%;color:#fff
+}
+.shop-guide-grid.photo-guide-grid h3,.shop-guide-grid.photo-guide-grid p{color:#fff}
+body[data-page="materials"] .picture-category-tabs{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;
+ overflow:visible;padding:18px 0 26px
+}
+body[data-page="materials"] .picture-category-tabs a.photo-category-tile{
+ display:block;min-height:210px;padding:0;border:none;border-radius:12px;
+ background:#2c4559;color:#fff;white-space:normal;box-shadow:var(--shadow)
+}
+body[data-page="materials"] .picture-category-tabs a.photo-category-tile:hover,
+body[data-page="materials"] .picture-category-tabs a.photo-category-tile:focus-visible{
+ border:none;background:#2c4559;outline:3px solid var(--blue)
+}
+/* Furniture and bathroom subcategories also show photographs. */
+.store-categories.photo-store-categories{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;
+ margin:22px 0;padding:0
+}
+.store-categories.photo-store-categories .photo-category-tile{
+ min-height:164px;border:0;background:#283e50
+}
+.store-categories.photo-store-categories .photo-category-tile strong{font-size:16px}
+@media(max-width:920px){
+ body[data-page="materials"] .picture-category-tabs,
+ .store-categories.photo-store-categories{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+ .shop-guide-grid.photo-guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .photo-category-tile{min-height:165px}
+ .photo-category-tile strong{font-size:17px}
+ .photo-category-tile span{padding:12px}
+ .photo-category-tile small{font-size:12px}
+ body[data-page="materials"] .picture-category-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ body[data-page="materials"] .picture-category-tabs a.photo-category-tile{min-height:155px}
+ .store-categories.photo-store-categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .store-categories.photo-store-categories .photo-category-tile{min-height:138px}
+}
