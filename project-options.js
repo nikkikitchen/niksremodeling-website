@@ -138,6 +138,11 @@
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
+      if(key==='furniture'&&['bedroom-guest-room','kids-room'].includes(id)){
+        const product=document.createElement('a');product.className='shop-guide-card';product.href='/furniture.html?category=bedroom';
+        product.innerHTML='<img src="https://cf.cjdropshipping.com/af0eb536-ff3c-429c-ae33-aa318b19d3c8.jpg" alt="Farmington rustic brown nightstand" loading="lazy" style="width:100%;max-height:240px;object-fit:contain;background:#fff"><strong>Farmington Nightstand</strong><p>Rustic brown · View price &amp; check delivery →</p>';
+        card.append(product);
+      }
       if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);}
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
       item.materials.forEach(name=>{if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint — $50/gallon, supplies included':name));card.append(label)});
