@@ -89,4 +89,4 @@ window.renderOutdoorProjects=(themed=false)=>{
 };
 
 Object.defineProperty(PROJECT_CATALOG,'other',{value:PROJECT_CATALOG.other,enumerable:false,configurable:true,writable:true});
-document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.photo-source,a[href="/project.html?project=other"]').forEach(el=>el.remove());document.querySelectorAll('a[href="/project.html?project=custom"] span').forEach(span=>{if(span.firstChild?.nodeType===3)span.firstChild.textContent='More Ideas';});});
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.photo-source').forEach(el=>el.remove());document.querySelectorAll('a[href="/project.html?project=custom"] span').forEach(span=>{if(span.firstChild?.nodeType===3)span.firstChild.textContent='More Ideas';});});
