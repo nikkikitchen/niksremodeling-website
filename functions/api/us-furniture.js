@@ -23,10 +23,15 @@ export async function onRequestGet({request,env}){
    startWarehouseInventory:'1',page:String(page),size:'20',orderBy:'4',sort:'desc'});
   const data=await cj(env,'/product/listV2?'+qs);
   const list=(data.content||[]).flatMap(group=>group.productList||[]);
-  const unique=new Set();
+  const seenIds=new Set(),seenNames=new Set(),seenImages=new Set();
+  const normalizeName=name=>String(name).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const products=list.filter(p=>p?.id&&p.nameEn&&p.bigImage&&
      Number(p.totalVerifiedInventory)>0&&Number(p.warehouseInventoryNum)>0
-    ).filter(p=>{const id=String(p.id);if(unique.has(id))return false;unique.add(id);return true;})
+    ).filter(p=>{
+      const id=String(p.id),name=normalizeName(p.nameEn),image=String(p.bigImage);
+      if(!name||seenIds.has(id)||seenNames.has(name)||seenImages.has(image))return false;
+      seenIds.add(id);seenNames.add(name);seenImages.add(image);return true;
+    })
    .map(p=>{
     const price=Number.parseFloat(String(p.sellPrice||''));
     return {...{
