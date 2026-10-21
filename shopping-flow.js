@@ -7,7 +7,7 @@
  document.querySelectorAll('.photo-source,a[href="/project.html?project=other"]').forEach(el=>el.remove());
  if(document.querySelector('main')&&!['calculators','project'].includes(document.body.dataset.page)&&!['/','/index.html'].includes(location.pathname)&&!document.getElementById('page-back-button')){const row=document.createElement('div');row.className='wrap';row.style.cssText='padding:20px 0';const back=document.createElement('button');back.id='page-back-button';back.type='button';back.className='btn outline';back.textContent='Back';back.onclick=()=>{if(history.length>1)history.back();else location.href='/#projects';};row.append(back);document.querySelector('main').append(row);}
  if(window.parent!==window)document.querySelectorAll('a[href="/project-cart.html"]').forEach(a=>a.target='_top');
- document.querySelectorAll('a[href="/calculators.html"]').forEach(a=>{a.href='/#projects';a.textContent='Shop by Project';});
+ document.querySelectorAll('a[href="/calculators.html"]').forEach(a=>{a.href='/#projects';a.textContent='Projects';});
 document.querySelectorAll('.search').forEach(form=>form.onsubmit=window.searchProjects);}
   connect();document.addEventListener('DOMContentLoaded',()=>{connect();const term=new URLSearchParams(location.search).get('search');if(term){const form=document.querySelector('.search');if(form){form.querySelector('input').value=term;window.searchProjects({preventDefault(){},target:form});}}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.nav-menu').forEach(m=>{m.classList.remove('open');m.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');});});
