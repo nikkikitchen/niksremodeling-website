@@ -1,4 +1,5 @@
-import {catalog,categories} from './store-catalog.js';
+const assetVersion=new URL(import.meta.url).searchParams.get('v')||'us-warehouse-20261021';
+const {catalog,categories}=await import('./store-catalog.js?v='+encodeURIComponent(assetVersion));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
 export function cardHtml(p){
