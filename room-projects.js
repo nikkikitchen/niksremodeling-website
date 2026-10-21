@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(!grid)return;
  const customLink=grid.querySelector('a[href="/project.html?project=custom"]');if(customLink?.querySelector('small'))customLink.querySelector('small').textContent=PROJECT_CATALOG.custom.intro;
  const outdoorLink=grid.querySelector('a[href="/project.html?project=concrete"]');if(outdoorLink?.querySelector('small'))outdoorLink.querySelector('small').textContent=PROJECT_CATALOG.concrete.intro;
- grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');const img=a.querySelector('img');if(img&&PROJECT_CATALOG[id]){img.src=PROJECT_CATALOG[id].image;img.alt=PROJECT_CATALOG[id].title+' project ideas';}if(id==='tile'||PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
+ grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');const img=a.querySelector('img');if(img&&PROJECT_CATALOG[id]){img.src=PROJECT_CATALOG[id].image;img.alt=PROJECT_CATALOG[id].title+' project ideas';}if(['tile','flooring','lighting'].includes(id)||PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
  for(const [id,p] of Object.entries(PROJECT_CATALOG)){
   if(p.customGroup||(p.themedGroup&&!p.basicRoom)||((p.exterior||p.outdoorGroup)&&id!=='concrete'))continue;
   if(grid.querySelector('a[href="/project.html?project='+id+'"]'))continue;
