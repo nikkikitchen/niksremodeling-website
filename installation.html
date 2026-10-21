@@ -24,7 +24,15 @@ window.LABOR_CATALOG = (()=>{
  standard('sink','Sinks',['Repair drain leak','Replace drain / pop-up stopper','Replace P-trap','Reseal sink','Secure loose sink']),
  standard('vanity','Vanities',['Repair door / drawer','Replace hardware','Secure / level cabinet','Reseal vanity top','Repair cabinet damage']),
  standard('tub','Bathtubs',['Replace tub drain / overflow','Repair faucet / diverter','Replace valve cartridge','Remove and replace caulk','Repair surface chip']),
- standard('shower','Showers',['Repair valve / cartridge','Replace showerhead / hose','Replace shower arm','Repair drain leak','Recaulk shower','Repair shower pan / waterproofing']),
+ group('shower','Stand-up / walk-in showers',{
+  Install:[
+   task('standup-shower-install','Install prefabricated stand-up shower',null,'On-site labor quote required. Assess opening, shower pan, waterproofing, valve, drain and connections. Shower unit/materials quoted separately.','pending'),
+   task('standup-shower-tile-install','Install tiled walk-in / stand-up shower',null,'On-site labor quote required. Include shower pan, waterproofing and tile work; glass, fixtures and plumbing modifications scoped separately.','pending')
+  ],
+  Replace:[task('standup-shower-replace','Remove and replace stand-up shower',null,'On-site quote required for removal/haul-off, new shower, waterproofing and finish work. Not priced as a bathtub replacement.','pending')],
+  Repair:['Repair valve / cartridge','Replace showerhead / hose','Replace shower arm','Repair drain leak','Recaulk shower','Repair shower pan / waterproofing'].map((name,i)=>task('shower-repair-'+i,name)),
+  Remove:[task('standup-shower-remove','Remove existing stand-up shower',null,'On-site demolition and haul-off quote required.','pending')]
+ }),
  standard('glass','Shower doors',['Adjust door alignment','Replace hinges','Replace rollers','Replace seals / sweep','Reseal frame']),
  standard('fan','Vent fans',['Diagnose failed / noisy fan','Replace motor','Replace grille','Repair duct connection']),
  standard('accessory','Mirrors & accessories',['Secure mirror','Repair towel bar mounting','Repair grab bar mounting','Repair shelf mounting']),
