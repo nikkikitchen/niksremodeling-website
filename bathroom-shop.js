@@ -8,6 +8,19 @@ const bathroomTypes=[
  ['accessories','Mirrors & Accessories']
 ];
 const bathroomNames=Object.fromEntries(bathroomTypes);
+const bathroomCategoryPhotos={
+ "all": "/assets/idea-accessibility.jpg",
+ "toilets": "/assets/approved-a908c20ce632.jpg",
+ "bathtubs": "/assets/tile-shower.jpg",
+ "vanities": "/assets/approved-9bfcb89f7800.jpg",
+ "showers": "/assets/showers-card.png",
+ "showerBases": "/assets/project-stone-real.jpg",
+ "showerDoors": "/assets/approved-0ab244a922c8.jpg",
+ "faucets": "/assets/approved-b9cdb9084877.jpg",
+ "lighting": "/assets/pendant-lighting.jpg",
+ "ventilation": "/assets/catalog-8.jpg",
+ "accessories": "/assets/approved-a051ee7e1935.jpg"
+};
 const bathroomRules={
  toilets:/\b(toilets?|commodes?|intelligent toilets?)\b/i,
  bathtubs:/\b(bathtubs?|bath tubs?|soaking tubs?|freestanding tubs?|alcove tubs?|walk.?in tubs?|whirlpool tubs?)\b/i,
@@ -44,8 +57,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const params=new URLSearchParams(location.search);
  const type=bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
- const tabs='<nav class="store-categories" aria-label="Bathroom fixture categories"><a class="btn outline" href="/bathroom.html">All Bathroom</a>'+
-   bathroomTypes.map(([key,label])=>'<a class="btn outline" href="/bathroom.html?type='+key+'">'+bathEsc(label)+'</a>').join('')+'</nav>';
+ const tabs='<nav class="store-categories photo-store-categories" aria-label="Bathroom fixture categories">'+
+   '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
+   bathroomTypes.map(([key,label])=>'<a class="photo-category-tile" href="/bathroom.html?type='+key+'"><img src="'+bathroomCategoryPhotos[key]+'" alt="" loading="lazy"><span><strong>'+bathEsc(label)+'</strong></span></a>').join('')+
+   '</nav>';
  const base='<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → <a href="/bathroom.html">Bathroom</a></nav><h1>Bathroom Fixtures & Supplies</h1>'+
    '<p class="lead">Only items independently checked for U.S. warehouse stock and variant pricing are displayed. Manufacturing country is not verified. Shipping and tax extra.</p>'+
    tabs;
