@@ -105,10 +105,44 @@ document.addEventListener('DOMContentLoaded',async()=>{
     '<p>Verified stock in a U.S. supplier warehouse. Country of manufacture not verified. Shipping and tax extra.</p>'+
     '<form id="bath-delivery"><label>Delivery ZIP <input id="bath-zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label> '+
     '<button class="btn primary" type="submit">Check Delivery</button></form><p id="bath-quote" role="status"></p>'+
-    '<p>Installation is separate. <a href="/installation.html">Browse bathroom labor</a>.</p><p>Online checkout is currently disabled.</p></div></article>';
+    '<p>Installation is separate. <a href="/installation.html">Browse bathroom labor</a>.</p>'+ 
+    '<button type="button" class="btn primary" id="bath-add-cart">Add Selected Product to Project Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a>'+ 
+    '<p id="bath-cart-status" role="status">Product price excludes delivery, tax and installation. Cart is for review, not payment.</p>'+ 
+    '<p>Online checkout is currently disabled.</p></div></article>';
    const select=document.getElementById('bath-variant');
    const price=document.getElementById('bath-price');
    select.addEventListener('change',()=>{price.textContent=bathMoney(variants.find(v=>v.id===select.value).priceCents);document.getElementById('bath-quote').textContent='';});
+   document.getElementById('bath-add-cart').addEventListener('click',()=>{
+     const variant=variants.find(v=>String(v.id)===select.value);
+     const feedback=document.getElementById('bath-cart-status');
+     if(!variant||!Number.isSafeInteger(variant.priceCents)||variant.priceCents<=0||Number(variant.usStock)<=0){
+       feedback.textContent='That option is not available at a verified price right now.';
+       return;
+     }
+     const cart=getCart();
+     const existing=cart.find(x=>x.source==='bathroom-retail'&&x.productId===product&&String(x.variantId)===String(variant.id));
+     if(existing){
+       existing.qty=Math.min(99,(Number(existing.qty)||1)+1);
+       existing.price=variant.priceCents/100;
+     }else{
+       cart.push({
+         name:detail.name+' — '+(variant.name||variant.sku||'Selected option'),
+         type:'Product',
+         source:'bathroom-retail',
+         productId:product,
+         variantId:String(variant.id),
+         sku:variant.sku||'',
+         price:variant.priceCents/100,
+         qty:1,
+         priceVerifiedAt:new Date().toISOString(),
+         shippingAndTaxNotIncluded:true
+       });
+     }
+     saveCart(cart);
+     feedback.textContent='Added '+detail.name+' to Project Cart at '+bathMoney(variant.priceCents)+
+       ' each before delivery, tax and installation. Price and stock are rechecked before purchase.';
+   });
+
    document.getElementById('bath-zip').addEventListener('input',()=>document.getElementById('bath-quote').textContent='');
    document.getElementById('bath-delivery').addEventListener('submit',async event=>{
     event.preventDefault();
