@@ -85,14 +85,14 @@
     const workspace = panel.closest('.calc-workspace');
     workspace.classList.add('guided-planner');
     panel.id = 'room-planner';
-    panel.querySelector('h2').textContent = 'Plan a Room / Area';
+    panel.querySelector('h2').textContent = 'Plan Your Work';
     const side = workspace.querySelector('.calc-side');
     side.querySelectorAll(':scope > .panel').forEach((el, index) => { if (index > 0) el.remove(); });
     const summary = side.querySelector('.panel');
     summary.id = 'project-summary';
     summary.querySelector('h2').textContent = 'Project Items';
     summary.querySelectorAll(':scope > p').forEach(el => el.remove());
-    document.querySelector('label[for="material-name"]').textContent = 'Which room or area?';
+    document.querySelector('label[for="material-name"]').textContent = 'Where will this work be done?';
     document.querySelector('label[for="material-type"]').textContent = 'What are you working on?';
     const locationField=document.createElement('div');locationField.className='field';
     locationField.innerHTML='<label for="project-location">Location</label><select id="project-location"><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select>';
@@ -115,8 +115,14 @@
     document.getElementById('material-name').setAttribute('list',savedRooms.id);panel.append(savedRooms);
     const materialDetails = document.createElement('div');
     materialDetails.className = 'field';
-    materialDetails.innerHTML = '<select id="material-choice" hidden aria-hidden="true" tabindex="-1"></select><fieldset class="field" id="material-products"><legend>Materials — choose all you need</legend><p class="calc-note">One work area. Each selected product uses those measurements.</p><div id="material-product-list"></div></fieldset><label for="material-description">Material details (optional)</label><input id="material-description" placeholder="Size, color, or product name"><label for="quantity-method">How much do you need?</label><select id="quantity-method"><option value="measure">Calculate from measurements</option><option value="known">Enter quantity</option></select><div id="known-quantity-fields" hidden><label for="known-quantity">Quantity needed</label><input id="known-quantity" type="number" min="0" step="any" placeholder="Enter quantity"><label for="known-unit">Unit</label><select id="known-unit">'+['Bags','Boxes','Cubic yards','Gallons','Linear feet','Pieces','Rolls','Sheets','Square feet'].map(x=>'<option>'+x+'</option>').join('')+'</select></div>';
+    materialDetails.innerHTML = '<select id="material-choice" hidden aria-hidden="true" tabindex="-1"></select><fieldset class="field" id="material-products"><legend>Materials — choose all you need</legend><p class="calc-note">Enter the quantity or dimensions for each item you select. Whole-room measurements are not needed.</p><div id="material-product-list"></div></fieldset><label for="material-description">Material details (optional)</label><input id="material-description" placeholder="Size, color, or product name"><label for="quantity-method">How much do you need?</label><select id="quantity-method"><option value="measure">Calculate from measurements</option><option value="known">Enter quantity</option></select><div id="known-quantity-fields" hidden><label for="known-quantity">Quantity needed</label><input id="known-quantity" type="number" min="0" step="any" placeholder="Enter quantity"><label for="known-unit">Unit</label><select id="known-unit">'+['Bags','Boxes','Cubic yards','Gallons','Linear feet','Pieces','Rolls','Sheets','Square feet'].map(x=>'<option>'+x+'</option>').join('')+'</select></div>';
     document.getElementById('material-type').closest('.field').after(materialDetails);
+     const projectKind=new URLSearchParams(location.search).get('project');
+     const measurementHelp={
+       accessibility:'Measure only the feature being updated: number of grab bars, length of a handrail, or ramp and doorway dimensions where applicable. Do not measure the whole room.',
+       fireplaces:'Measure just the fireplace surround, mantel, or hearth that needs work, not the entire room. Enter a count for individual pieces.'
+     }[projectKind];
+     if(measurementHelp){const note=document.createElement('p');note.className='calc-note';note.textContent=measurementHelp;materialDetails.prepend(note);}
     const materialChoice = document.getElementById('material-choice');
     const quantityMethod = document.getElementById('quantity-method');
     const materialCategories = WORK_MATERIAL_CATEGORIES;
@@ -177,6 +183,7 @@
           else if(/wallpaper/i.test(name))unit.value='Rolls';
           else if(/stone|veneer|wall panel|backer|siding|tile|slab/i.test(name))unit.value='Square feet';
           if(work?.startsWith('accent-')){const params=new URLSearchParams(location.search);const length=Number(params.get('length')),height=Number(params.get('height'));unit.value='Square feet';quantity.value=length>0&&height>0?String(length*height):'';quantity.placeholder='Wall area';}
+           else if(['accessibility','fireplaces'].includes(new URLSearchParams(location.search).get('project'))&&['Linear feet','Square feet'].includes(unit.value)){quantity.value='';quantity.placeholder='Size of this item or surface';}
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
         itemOptionFields(name).forEach(({label:title,values},optionIndex)=>{
