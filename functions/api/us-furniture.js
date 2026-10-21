@@ -1,0 +1,45 @@
+import {cj,retailCents} from '../_lib/commerce.js';
+
+const keywords={
+ 'bedroom':'dresser',
+ 'living-room':'sofa',
+ 'dining-room':'dining table',
+ 'home-office':'office desk',
+ 'kids-room':'kids storage',
+ 'storage':'storage cabinet',
+ 'outdoor':'patio furniture',
+ 'bathroom':'bathroom cabinet',
+ 'decor':'wall decor',
+ 'lighting':'table lamp',
+ 'entryway':'entryway bench'
+};
+export async function onRequestGet({request,env}){
+ const params=new URL(request.url).searchParams;
+ const category=params.get('category')||'bedroom',keyword=keywords[category];
+ if(!keyword)return Response.json({error:'Unknown furniture category.'},{status:400});
+ const page=Math.max(1,Math.min(100,parseInt(params.get('page')||'1',10)||1));
+ try{
+  const qs=new URLSearchParams({keyWord:keyword,countryCode:'US',verifiedWarehouse:'1',
+   startWarehouseInventory:'1',page:String(page),size:'20',orderBy:'4',sort:'desc'});
+  const data=await cj(env,'/product/listV2?'+qs);
+  const list=(data.content||[]).flatMap(group=>group.productList||[]);
+  const unique=new Set();
+  const products=list.filter(p=>p?.id&&p.nameEn&&p.bigImage&&
+     Number(p.totalVerifiedInventory)>0&&Number(p.warehouseInventoryNum)>0
+    ).filter(p=>{const id=String(p.id);if(unique.has(id))return false;unique.add(id);return true;})
+   .map(p=>{
+    const price=Number.parseFloat(String(p.sellPrice||''));
+    return {...{
+     id:String(p.id),name:String(p.nameEn).trim().slice(0,130),category,
+     image:String(p.bigImage),priceCents:Number.isFinite(price)&&price>0?retailCents(price):null,
+     warehouseCountry:'US',originVerified:false,
+     }, stockVerified:true};
+   }).filter(p=>p.priceCents!==null&&/^https:\/\//.test(p.image));
+  return Response.json({category,products,page,totalPages:data.totalPages||null,
+   note:'In-stock in a U.S. supplier warehouse. Country of manufacture is not verified. Delivery and tax extra.'},
+   {headers:{'Cache-Control':'public,max-age=300'}});
+ }catch{
+  return Response.json({error:'U.S. warehouse catalog temporarily unavailable.'},
+   {status:503,headers:{'Cache-Control':'no-store'}});
+ }
+}
