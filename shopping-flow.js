@@ -17,9 +17,7 @@ document.querySelectorAll('.search').forEach(form=>form.onsubmit=window.searchPr
   const shoppingProductLinks = [
     ['Appliances', '/appliances.html'],
     ['Bathroom Products', '/bathroom.html'],
-    ['Cabinets', '/cabinets.html'],
     ['Furniture', '/furniture.html'],
-    ['Installation & Labor', '/installation.html'],
     ['Materials', '/materials.html'],
     ['Tools', '/products.html']
   ];
@@ -41,7 +39,7 @@ document.querySelectorAll('.search').forEach(form=>form.onsubmit=window.searchPr
   function syncShoppingMenu() {
     const catalog = typeof PROJECT_CATALOG === 'undefined' ? {} : PROJECT_CATALOG;
     document.querySelectorAll('#shopping-menu').forEach(menu => {
-      if (menu.dataset.unifiedShopping === '20261021') return;
+      if (menu.dataset.unifiedShopping === '20261021-compact') return;
       menu.replaceChildren();
       const heading = label => {
         const el = document.createElement('span');
@@ -57,13 +55,25 @@ document.querySelectorAll('.search').forEach(form=>form.onsubmit=window.searchPr
       };
       heading('Shop Products');
       shoppingProductLinks.sort((a,b) => a[0].localeCompare(b[0])).forEach(([label,href]) => link(label,href));
-      heading('Browse by Project');
+      const groups=document.createElement('details');
+      groups.className='shopping-projects-details';
+      const summary=document.createElement('summary');
+      summary.textContent='Browse Projects';
+      const links=document.createElement('div');
+      links.className='shopping-project-links';
+      groups.append(summary,links);
+      menu.append(groups);
       shoppingProjectIds
         .filter(id => catalog[id])
         .map(id => [shoppingProjectNames[id] || catalog[id].title, '/project.html?project='+encodeURIComponent(id)])
         .sort((a,b) => a[0].localeCompare(b[0]))
-        .forEach(([label,href]) => link(label,href));
-      menu.dataset.unifiedShopping = '20261021';
+        .forEach(([label,href]) => {
+          const a=document.createElement('a');
+          a.textContent=label;
+          a.href=href;
+          links.append(a);
+        });
+      menu.dataset.unifiedShopping = '20261021-compact';
     });
     // Bookmarks to the old All Shopping page still work, but storefront
     // breadcrumbs and "keep shopping" links must not imply it still exists.
@@ -73,7 +83,7 @@ document.querySelectorAll('.search').forEach(form=>form.onsubmit=window.searchPr
     });
   }
   const menuStyle = document.createElement('style');
-  menuStyle.textContent = '.shopping-menu-heading{display:block;font-weight:800;font-size:12px;letter-spacing:.04em;padding:10px 17px;background:#eff3f7;color:#344657}.nav-menu .nav-dropdown{min-width:230px;max-height:min(72vh,560px);overflow-y:auto;overscroll-behavior:contain}';
+  menuStyle.textContent = '.shopping-menu-heading{display:block;font-weight:800;font-size:12px;letter-spacing:.04em;padding:10px 17px;background:#eff3f7;color:#344657}.nav-menu .nav-dropdown{min-width:235px;max-height:min(72vh,560px);overflow-y:auto;overscroll-behavior:contain}.shopping-projects-details{border-top:1px solid #d9e1e8;margin-top:6px;padding-top:3px}.shopping-projects-details>summary{list-style:none;cursor:pointer;font-weight:800;padding:12px 17px;font-size:14px}.shopping-projects-details>summary::-webkit-details-marker{display:none}.shopping-projects-details>summary:after{content:" ▾"}.shopping-projects-details[open]>summary:after{content:" ▴"}.shopping-projects-details>summary:hover,.shopping-projects-details>summary:focus-visible{background:#e8f1fa;color:#073c70}.shopping-project-links{max-height:min(42vh,330px);overflow-y:auto;overscroll-behavior:contain;border-top:1px solid #e4e8ed}.shopping-project-links a{padding-left:22px!important}@media(max-width:620px){.nav-menu .nav-dropdown{max-width:calc(100vw - 24px)}.shopping-project-links{max-height:38vh}}';
   document.head.append(menuStyle);
   syncShoppingMenu();
   document.addEventListener('DOMContentLoaded', syncShoppingMenu);
