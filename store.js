@@ -1,6 +1,7 @@
+const furnitureAssetVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'us-warehouse-20261021';
 document.addEventListener('DOMContentLoaded',async()=>{
- const {catalog,categories}=await import('/store-catalog.js');
- const {cardHtml,priceCards}=await import('/store-cards.js');
+ const {catalog,categories}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
+ const {cardHtml,priceCards}=await import('/store-cards.js?v='+encodeURIComponent(furnitureAssetVersion));
  const params=new URLSearchParams(location.search),category=params.get('category'),productId=params.get('product');
  const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
