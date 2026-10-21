@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  }
  let item=catalog.find(p=>p.id===productId);
  let preloaded=null;
- if(!item&&/^[\\w-]{8,64}$/.test(productId)){
+ if(!item&&/^[\w-]{8,64}$/.test(productId)){
   try{
    const r=await fetch('/api/store-product?product='+encodeURIComponent(productId));
    const data=await r.json();
