@@ -15,7 +15,8 @@ const keywords={
 };
 export async function onRequestGet({request,env}){
  const params=new URL(request.url).searchParams;
- const category=params.get('category')||'bedroom',keyword=keywords[category];
+ const category=params.get('category')||'bedroom',search=params.get('search');
+ const keyword=category==='kids-room'&&search==='seating'?'sofa':keywords[category];
  if(!keyword)return Response.json({error:'Unknown furniture category.'},{status:400});
  const page=Math.max(1,Math.min(100,parseInt(params.get('page')||'1',10)||1));
  try{
@@ -26,7 +27,12 @@ export async function onRequestGet({request,env}){
   const seenIds=new Set(),seenNames=new Set(),seenImages=new Set();
   const normalizeName=name=>String(name).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const blocked=new Set(["2003348098417340418","2003347794848272385"]);
-  const products=list.filter(p=>p?.id&&!blocked.has(String(p.id))&&p.nameEn&&p.bigImage&&
+  // The supplier tags kids' beanbag chairs as sofas, not kids' storage.
+  // Fetch those candidates separately and verify each product's U.S. stock before display.
+  const filteredList=category==='kids-room'&&search==='seating'
+   ? list.filter(p=>/\\b(kids?|children|child|toddler|playroom|nursery)\\b/i.test(String(p.nameEn||'')))
+   : list;
+  const products=filteredList.filter(p=>p?.id&&!blocked.has(String(p.id))&&p.nameEn&&p.bigImage&&
      Number(p.totalVerifiedInventory)>0&&Number(p.warehouseInventoryNum)>0
     ).filter(p=>{
       const id=String(p.id),name=normalizeName(p.nameEn),image=String(p.bigImage);
@@ -41,7 +47,7 @@ export async function onRequestGet({request,env}){
      warehouseCountry:'UNVERIFIED',originVerified:false,
      }, stockVerified:false};
    }).filter(p=>p.priceCents!==null&&/^https:\/\//.test(p.image));
-  return Response.json({category,products,page,totalPages:data.totalPages||null,
+  return Response.json({category,search:search==='seating'&&category==='kids-room'?'seating':null,products,page,totalPages:data.totalPages||null,
    note:'Supplier candidates only. U.S. warehouse inventory and retail price must be independently verified before display.'},
    {headers:{'Cache-Control':'public,max-age=300'}});
  }catch{
