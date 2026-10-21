@@ -1,13 +1,18 @@
-import {cj,PRODUCT_ID,retailCents,square} from '../_lib/commerce.js';
+import {cj,PRODUCT_ID,retailCents,square,usCjWarehouseUnits} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
 export async function onRequestGet({request,env}){
- const params=new URL(request.url).searchParams;const item=catalog.find(p=>p.id===(params.get('product')||PRODUCT_ID));if(!item)return Response.json({error:'Product not found.'},{status:404});
+ const params=new URL(request.url).searchParams;
+ const id=params.get('product')||PRODUCT_ID;
+ if(!/^[\w-]{8,64}$/.test(id))return Response.json({error:'Invalid product.'},{status:400});
+ const catalogItem=catalog.find(p=>p.id===id);
  const zip=params.get('zip');if(!/^\d{5}$/.test(zip||''))return Response.json({error:'Enter a five-digit delivery ZIP code.'},{status:400});
  try{
- const p=await cj(env,'/product/query?pid='+item.id+'&countryCode=US');
+ const p=await cj(env,'/product/query?pid='+encodeURIComponent(id)+'&countryCode=US');
+ const item=catalogItem||{id,name:p.productNameEn||p.productName||'Furniture item'};
  const v=(p.variants||[]).find(v=>v.vid===(params.get('variant')||item.variantId));if(!v)throw new Error('This option is unavailable');
- const inv=await cj(env,'/product/variant/queryByVid?vid='+v.vid+'&features=enable_inventory');
- const stock=(inv.inventories||[]).filter(i=>i.countryCode==='US').reduce((n,i)=>n+Number(i.totalInventory||0),0);if(!Number.isFinite(stock)||stock<1)throw new Error('This item is currently unavailable');
+ const inv=await cj(env,'/product/stock/queryByVid?vid='+encodeURIComponent(v.vid));
+ const stock=usCjWarehouseUnits(inv);
+ if(stock<1)throw new Error('No confirmed U.S. warehouse stock for this option');
  const rates=await cj(env,'/logistic/freightCalculate',{startCountryCode:'US',endCountryCode:'US',zip,products:[{vid:v.vid,quantity:1}]});
  const eligible=(rates||[]).filter(r=>Number.isFinite(Number(r.totalPostageFee??r.logisticPrice))&&Number(r.totalPostageFee??r.logisticPrice)>=0);
  if(!eligible.length)throw new Error('Delivery is unavailable for this ZIP code');
