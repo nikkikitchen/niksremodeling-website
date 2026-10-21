@@ -100,6 +100,18 @@
     if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
     if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
     if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
+    // Kitchens holds cabinet planning plus a route to the actual cabinet catalog.
+    if(id==='kitchen-pantry' || id==='kitchen-remodel'){
+      const title=document.querySelector('.project-section-title');
+      if(title){
+        const shopCabinets=document.createElement('a');
+        shopCabinets.href='/cabinets.html';
+        shopCabinets.className='btn outline';
+        shopCabinets.textContent='Shop Cabinets';
+        shopCabinets.style.cssText='display:inline-flex;margin:0 0 18px';
+        title.after(shopCabinets);
+      }
+    }
     const selectedRoom=document.getElementById('scope-room');
     const roomNames={'bathrooms':'Bathroom','bath-remodel':'Bathroom','bedroom-guest-room':'Bedroom','kids-room':"Kids' Room",'kitchen-pantry':'Kitchen','kitchen-remodel':'Kitchen','closets-storage':'Closet / Storage','dining-room':'Dining Room','entry-mudroom':'Entry / Mudroom','home-office':'Home Office','home-theater':'Home Theater','music-creative-studio':'Music / Creative Studio','entryways':'Entry / Mudroom','laundry-utility':'Laundry / Utility','living-family-room':'Living / Family Room'};
     const chosenRoom=roomNames[id]||(project.exterior?'Outdoor Area':project.title);
