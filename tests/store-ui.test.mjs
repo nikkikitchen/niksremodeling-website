@@ -1,13 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {catalog,categories} from '../store-catalog.js';
+import {catalog,categories,inCategory,relatedCategories} from '../store-catalog.js';
 import {JSDOM} from 'jsdom';
 test('changing ZIP discards a pending delivery quote',async()=>{
  const dom=new JSDOM('<body></body>',{url:'https://niksremodeling.com/furniture.html?category=bedroom&product=1963146233541074945',runScripts:'outside-only'});
  const w=dom.window;w.header=w.footer=()=>'';w.updateCartCount=w.initNavMenus=()=>{};
  let resolveQuote;w.fetch=async url=>url.includes('store-product')?{ok:true,json:async()=>({inStockUS:true,variants:[{id:'1963146233666904066',priceCents:6713,usStock:10}]})}:new Promise(resolve=>{resolveQuote=resolve;});
- w.__catalog={catalog,categories};w.eval(readFileSync(new URL('../store.js',import.meta.url),'utf8').replace("await import('/store-catalog.js')",'window.__catalog').replace("await import('/store-cards.js')",'({})'));
+ w.__catalog={catalog,categories,inCategory,relatedCategories};
+ w.__cards={cardHtml:()=>'',priceCards:async()=>{}};
+ const script=readFileSync(new URL('../store.js',import.meta.url),'utf8')
+   .replace(/await import\('\/store-catalog\.js[^;\n]*/g,'window.__catalog')
+   .replace(/await import\('\/store-cards\.js[^;\n]*/g,'window.__cards');
+ w.eval(script);
  await new Promise(r=>setTimeout(r,10));
  const zip=w.document.getElementById('delivery-zip');zip.value='30117';
  w.document.getElementById('delivery-form').dispatchEvent(new w.Event('submit',{cancelable:true}));
