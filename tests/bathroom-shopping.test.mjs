@@ -4,7 +4,13 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 
 const src=readFileSync(new URL('../bathroom-shop.js',import.meta.url),'utf8');
-const scope={document:{addEventListener(){}},Intl};
+// These unit tests load the storefront helpers without starting its async page
+// renderer. Supply the DOM operations used by its stylesheet initialization.
+const scope={document:{
+ addEventListener(){},
+ createElement(tag){return {tagName:tag.toUpperCase(),textContent:''};},
+ head:{append(){}}
+},Intl};
 runInNewContext(src+'\nglobalThis.audit={match:bathroomMatch,verified:bathVerified,types:bathroomTypes.map(([id])=>id)};',scope);
 const {match,verified,types}=scope.audit;
 
