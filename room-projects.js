@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.ph
 
 // Main project cards for additional home spaces.
 Object.assign(PROJECT_CATALOG,{
- attic:{title:'Attic',image:'/assets/approved-94fe00a25a93.jpg',intro:'Access, storage, framing, walls, flooring & ventilation.',materials:[],exterior:false,basicRoom:true},
- basement:{title:'Basement',image:'/assets/approved-9753e3ad86f9.jpg',intro:'Finishing, flooring, walls, lighting, stairs & storage.',materials:[],exterior:false,basicRoom:true},
+ attic:{title:'Attic',image:'/assets/project-attic.jpg',intro:'Access, storage, framing, walls, flooring & ventilation.',materials:[],exterior:false,basicRoom:true},
+ basement:{title:'Basement',image:'/assets/project-basement.jpg',intro:'Finishing, flooring, walls, lighting, stairs & storage.',materials:[],exterior:false,basicRoom:true},
  garage:{title:'Garage',image:'/assets/idea-mechanic-shop.jpg',intro:'Flooring, storage, workbenches, lighting & garage improvements.',materials:[],exterior:false,basicRoom:true}
 });
 Object.assign(window.ROOM_PROJECT_SCOPES,{
