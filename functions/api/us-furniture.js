@@ -16,7 +16,7 @@ const keywords={
 export async function onRequestGet({request,env}){
  const params=new URL(request.url).searchParams;
  const category=params.get('category')||'bedroom',search=params.get('search');
- const keyword=category==='kids-room'&&search==='seating'?'sofa':keywords[category];
+ const keyword=search==='shelving'?'bookcase':category==='kids-room'&&search==='seating'?'sofa':keywords[category];
  if(!keyword)return Response.json({error:'Unknown furniture category.'},{status:400});
  const page=Math.max(1,Math.min(100,parseInt(params.get('page')||'1',10)||1));
  try{
@@ -47,7 +47,7 @@ export async function onRequestGet({request,env}){
      warehouseCountry:'UNVERIFIED',originVerified:false,
      }, stockVerified:false};
    }).filter(p=>p.priceCents!==null&&/^https:\/\//.test(p.image));
-  return Response.json({category,search:search==='seating'&&category==='kids-room'?'seating':null,products,page,totalPages:data.totalPages||null,
+  return Response.json({category,search:search==='shelving'?'shelving':search==='seating'&&category==='kids-room'?'seating':null,products,page,totalPages:data.totalPages||null,
    note:'Supplier candidates only. U.S. warehouse inventory and retail price must be independently verified before display.'},
    {headers:{'Cache-Control':'public,max-age=300'}});
  }catch{
