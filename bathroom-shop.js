@@ -45,7 +45,22 @@ const bathroomExcludes={
  ventilation:/\b(fan (?:blades?|motors? only|grilles? only|covers? only|remotes?)|range hoods?)\b/i
 };
 function bathroomMatch(name,type){
- return !!bathroomRules[type]?.test(String(name||''))&&!bathroomExcludes[type]?.test(String(name||''));
+ const text=String(name||'').toLowerCase();
+ if(!bathroomRules[type]?.test(text)||bathroomExcludes[type]?.test(text))return false;
+ // Conservative fixture classification. Keyword matches alone routinely confuse
+ // toilet cleaners, pet bathtubs, shower chairs and vanity mirrors with fixtures.
+ if(type==='toilets'){
+  if(/\b(clean(?:er|ing)?|deodor(?:ant|iz(?:er|ing))|tablets?|powder|sprays?|blocks?|rack|storage|shel(?:f|ves)|paper|holder|accessor(?:y|ies)|urinal|pee|bottle|portable|camping|tent|car|travel|potty|brush|plunger|bowl cleaner)\b/i.test(text))return false;
+  return /\b(one[ -]?piece|two[ -]?piece|dual[ -]?flush|single[ -]?flush|flush[ -]?toilet|smart[ -]?toilet|intelligent[ -]?toilet|elongated|round[ -]?front|comfort[ -]?height|ceramic[ -]?toilet|porcelain[ -]?toilet|water[ -]?closet|gravity[ -]?flush|wall[ -]?hung[ -]?toilet|bathroom[ -]?toilet|compact[ -]?toilet)\b/i.test(text);
+ }
+ if(type==='bathtubs'){
+  if(/\b(chairs?|seats?|benches?|transfer|stools?|faucets?|mixers?|taps?|valves?|fillers?|caddies|organizers?|racks?|curtains?|shelves|dogs?|pets?|cats?|ice[ -]?bath|cold[ -]?plunge|plunge[ -]?pools?|shampoos?|showers?[ -]?heads?)\b/i.test(text))return false;
+  return /\b(bathtubs?|bath tubs?|soaking tubs?|freestanding tubs?|alcove tubs?|walk[ -]?in tubs?|whirlpool tubs?)\b/i.test(text);
+ }
+ if(type==='vanities'){
+  if(/\b(mirrors?|lights?|lighting|sconces?|stools?|chairs?|makeup|dressing[ -]?tables?|medicine[ -]?cabinets?)\b/i.test(text))return false;
+ }
+ return true;
 }
 const bathEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const bathMoney=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
