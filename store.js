@@ -1,6 +1,6 @@
 const furnitureAssetVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'us-warehouse-20261021';
 document.addEventListener('DOMContentLoaded',async()=>{
- const {catalog,categories}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
+ const {catalog,categories,inCategory,relatedCategories}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
  const {cardHtml,priceCards}=await import('/store-cards.js?v='+encodeURIComponent(furnitureAssetVersion));
  const params=new URLSearchParams(location.search),category=params.get('category'),productId=params.get('product');
  const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const link=p=>'/furniture.html?category='+p.category+'&product='+p.id;
  const finish=()=>{updateCartCount();initNavMenus();};
  if(!productId){
-  const list=catalog.filter(p=>!categories[category]||p.category===category).sort((a,b)=>a.name.localeCompare(b.name));
+  const list=catalog.filter(p=>inCategory(p,category)).sort((a,b)=>a.name.localeCompare(b.name));
   document.body.innerHTML=header()+`<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → <a href="/furniture.html">Furniture</a>${categories[category]?' → '+esc(categories[category]):''}</nav><h1>${esc(categories[category]||'Furniture & Accessories')}</h1><nav class="store-categories" aria-label="Furniture rooms"><a class="btn outline" href="/furniture.html">All Furniture</a>${Object.entries(categories).map(([key,name])=>`<a class="btn outline" href="/furniture.html?category=${encodeURIComponent(key)}">${esc(name)}</a>`).join('')}</nav><p class="lead">Furniture and accessories confirmed in U.S. supplier warehouses. Product manufacturing origin is not verified. Item prices are shown before shipping and tax.</p><div class="store-card-grid" id="store-list">${list.map(cardHtml).join('')}</div><p id="us-load-status" role="status" aria-live="polite">Checking U.S. warehouse inventory and prices…</p><div id="store-more"></div><p>Online payment is coming soon. Check delivery on any available item.</p></main>`+footer();
   finish();
   const grid=document.getElementById('store-list');
@@ -21,11 +21,30 @@ document.addEventListener('DOMContentLoaded',async()=>{
   // Each supplier result is only a candidate until we independently confirm
   // US warehouse variant stock and a current variant retail price.
   const selectedRoom=categories[category]?category:null;
-  const rooms=selectedRoom
-   ? (selectedRoom==='kids-room'?[{cat:'kids-room',search:''},{cat:'kids-room',search:'seating'}]:[{cat:selectedRoom,search:''}])
-   : [{cat:'living-room',search:''},{cat:'bedroom',search:''},{cat:'dining-room',search:''},
-      {cat:'home-office',search:''},{cat:'outdoor',search:''},
-      {cat:'kids-room',search:''},{cat:'kids-room',search:'seating'}];
+  // Fetch sensible cross-room candidates, and then use the same stock check
+  // and product ID regardless of how many categories show the item.
+  const sourceRooms={
+   'bedroom':['bedroom','living-room','home-office','kids-room'],
+   'kids-room':['kids-room','living-room','bedroom','home-office'],
+   'living-room':['living-room','bedroom','home-office'],
+   'home-office':['home-office','bedroom','storage'],
+   'storage':['storage','bedroom','home-office'],
+   'dining-room':['dining-room','living-room'],
+   'entryway':['entryway','living-room','storage'],
+   'lighting':['lighting','decor'],
+   'decor':['decor','lighting'],
+   'bathroom':['bathroom','storage'],
+   'outdoor':['outdoor']
+  };
+  const wantedSources=selectedRoom?(sourceRooms[selectedRoom]||[selectedRoom]):
+    ['living-room','bedroom','dining-room','home-office','outdoor','kids-room'];
+  const rooms=wantedSources.map(cat=>({cat,search:''}));
+  if(!selectedRoom||['bedroom','kids-room','living-room','home-office','storage'].includes(selectedRoom)){
+   rooms.push({cat:selectedRoom||'home-office',search:'shelving'});
+  }
+  if(!selectedRoom||['bedroom','kids-room','living-room'].includes(selectedRoom)){
+   rooms.push({cat:'kids-room',search:'seating'});
+  }
   const states=new Map();
   let supplierErrors=0,verificationErrors=0;
   const roomKey=room=>room.cat+':'+room.search;
@@ -54,7 +73,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
      state.exhausted=state.page>state.totalPages;
     }catch{supplierErrors++;return 0;}
    }
-   const batch=state.pending.splice(0,selectedRoom?10:4);
+   const batch=state.pending.splice(0,selectedRoom?4:3);
    let added=0;
    for(const p of batch){
     if(seen.has(p.id)||seenNames.has(normalizeName(p.name))||seenImages.has(p.image))continue;
@@ -69,10 +88,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
      const name=detail.name||p.name;
      const normalized=normalizeName(name);
      const image=detail.image||p.image;
-     const isKids=/\b(kids?|children|child|toddler|nursery|playroom)\b/i.test(name);
-     const displayCategory=isKids?'kids-room':room.cat;
-     // Do not show kids' beanbag chairs in Living Room or unrelated categories.
-     if(selectedRoom&&displayCategory!==selectedRoom)continue;
+     const related=relatedCategories({name,category:room.cat});
+     // One product can appear in several relevant rooms, never twice on a page.
+     if(selectedRoom&&!related.includes(selectedRoom))continue;
+     const displayCategory=selectedRoom||(/\b(kids?|children|child|toddler|nursery|playroom)\b/i.test(name)?'kids-room':room.cat);
      if(!normalized||seenNames.has(normalized)||seenImages.has(image))continue;
      const currentPrice=Math.min(...variants.map(v=>v.priceCents));
      const approved={id:p.id,name,category:displayCategory,image,priceCents:currentPrice,stockVerified:true};
@@ -103,6 +122,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   return;
  }
  let item=catalog.find(p=>p.id===productId);
+ if(item&&categories[category]&&inCategory(item,category))item={...item,category};
  let preloaded=null;
  if(!item&&/^[\w-]{8,64}$/.test(productId)){
   try{
