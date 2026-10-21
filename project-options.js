@@ -150,6 +150,29 @@
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
+      // A work choice should lead to actual products when there is a
+      // corresponding verified retail catalog, not only to a labor estimate.
+      const bathroomShopping = {
+        toilet:['Browse Toilets & Prices','toilets'],
+        tub:['Browse Bathtubs & Prices','bathtubs'],
+        shower:['Browse Showers & Prices','showers'],
+        'tub-shower':['Browse Showers & Prices','showers'],
+        vanity:['Browse Vanities & Prices','vanities'],
+        'vanity-light':['Browse Bathroom Lights & Prices','lighting'],
+        mirror:['Browse Mirrors & Prices','accessories'],
+        lighting:['Browse Bathroom Lights & Prices','lighting'],
+        ventilation:['Browse Bathroom Fans & Prices','ventilation'],
+        'bath-shower-valve':['Browse Bathroom Faucets & Prices','faucets']
+      };
+      if((id==='bathrooms'||id==='bath-remodel')&&bathroomShopping[key]){
+        const [label,type]=bathroomShopping[key];
+        const shop=document.createElement('a');
+        shop.href='/bathroom.html?type='+encodeURIComponent(type);
+        shop.className='btn outline project-products-link';
+        shop.textContent=label;
+        card.append(shop);
+      }
+
       if(['furniture','office-furniture'].includes(key)){
         const roomCategory=id==='kids-room'?'kids-room':id==='bedroom-guest-room'?'bedroom':id==='home-office'?'home-office':null;
         if(roomCategory){
