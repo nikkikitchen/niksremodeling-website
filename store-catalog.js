@@ -43,4 +43,9 @@ export const catalog = [
     "image": "https://cf.cjdropshipping.com/17664480/bb077516-7b52-4616-bba8-1435d115be1c.jpg"
   }
 ];
-export const categories = {bedroom:"Bedroom", "home-office":"Home Office", "kids-room":"Kids’ Room"};
+export const categories = {
+ "bathroom":"Bathroom Furniture","bedroom":"Bedroom","decor":"Decor & Accessories",
+ "dining-room":"Dining Room","entryway":"Entryway","home-office":"Home Office",
+ "kids-room":"Kids’ Room","lighting":"Lamps & Lighting","living-room":"Living Room",
+ "outdoor":"Outdoor Furniture","storage":"Storage & Organization"
+};
