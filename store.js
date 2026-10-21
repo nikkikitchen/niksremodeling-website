@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded',async()=>{
  const category=new URLSearchParams(location.search).get('category');
  if(category!=='bedroom'&&!new URLSearchParams(location.search).has('payment')){
-  document.body.innerHTML=header()+`<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → Furniture</nav><h1>Furniture & Accessories</h1><p class="lead">Choose a room to shop.</p><div class="tile-grid"><a class="tile" href="/furniture.html?category=bedroom"><img src="/assets/bed.jpg" alt="Bedroom furniture" loading="lazy"><span>Bedroom<small>Nightstands and bedside storage.</small></span></a></div></main>`+footer();
+  document.body.innerHTML=header()+`<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → Furniture</nav><h1>Furniture & Accessories</h1><p class="lead">Choose a room to shop.</p><div class="tile-grid"><a class="tile" href="/furniture.html?category=bedroom"><img src="/assets/bed.jpg" alt="Bedroom furniture" loading="lazy"><span>Bedroom<small>Nightstands and bedside storage.</small></span></a></div><h2>Shop Furniture</h2><div class="tile-grid"><a class="tile" href="/furniture.html?category=bedroom"><img src="https://cf.cjdropshipping.com/af0eb536-ff3c-429c-ae33-aa318b19d3c8.jpg" alt="Farmington rustic brown nightstand" loading="lazy" style="object-fit:contain;background:#fff"><span>Farmington Nightstand<small>Rustic brown · Bedroom<br>View price &amp; check delivery →</small></span></a></div></main>`+footer();
   updateCartCount();initNavMenus();return;
  }
 
