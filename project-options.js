@@ -150,27 +150,110 @@
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
-      // A work choice should lead to actual products when there is a
-      // corresponding verified retail catalog, not only to a labor estimate.
-      const bathroomShopping = {
-        toilet:['Browse Toilets & Prices','toilets'],
-        tub:['Browse Bathtubs & Prices','bathtubs'],
-        shower:['Browse Showers & Prices','showers'],
-        'tub-shower':['Browse Showers & Prices','showers'],
-        vanity:['Browse Vanities & Prices','vanities'],
-        'vanity-light':['Browse Bathroom Lights & Prices','lighting'],
-        mirror:['Browse Mirrors & Prices','accessories'],
-        lighting:['Browse Bathroom Lights & Prices','lighting'],
-        ventilation:['Browse Bathroom Fans & Prices','ventilation'],
-        'bath-shower-valve':['Browse Bathroom Faucets & Prices','faucets']
+      // Route every Bathroom work section to the appropriate catalog. Verified
+      // retail listings show real product variants and prices; material pages
+      // are planning guides until specific supplier products are approved.
+      const bathroomProductLinks = {
+        ceiling: [
+          ['Browse Paint & Finishes', '/material-paint-finishes.html', false],
+          ['Browse Drywall Materials', '/material-drywall.html', false]
+        ],
+        walls: [
+          ['Browse Wall Paint & Finishes', '/material-paint-finishes.html', false],
+          ['Browse Wall Tile & Stone', '/material-tile-stone.html', false],
+          ['Browse Drywall Materials', '/material-drywall.html', false]
+        ],
+        floor: [
+          ['Browse Flooring Materials', '/material-flooring.html', false],
+          ['Browse Floor Tile & Stone', '/material-tile-stone.html', false]
+        ],
+        tub: [
+          ['Shop Bathtubs & See Prices', '/bathroom.html?type=bathtubs', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        shower: [
+          ['Shop Shower Enclosures', '/bathroom.html?type=showers', true],
+          ['Shop Shower Bases', '/bathroom.html?type=showerBases', true],
+          ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true],
+          ['Browse Shower Tile & Stone', '/material-tile-stone.html', false]
+        ],
+        'tub-shower': [
+          ['Shop Bathtubs', '/bathroom.html?type=bathtubs', true],
+          ['Shop Shower Enclosures', '/bathroom.html?type=showers', true],
+          ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true]
+        ],
+        toilet: [
+          ['Shop Toilets & See Prices', '/bathroom.html?type=toilets', true]
+        ],
+        vanity: [
+          ['Shop Vanities & Sinks', '/bathroom.html?type=vanities', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        'faucet-service': [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        'vanity-light': [
+          ['Shop Bathroom Lights', '/bathroom.html?type=lighting', true]
+        ],
+        mirror: [
+          ['Shop Mirrors & Accessories', '/bathroom.html?type=accessories', true]
+        ],
+        lighting: [
+          ['Shop Bathroom Lights', '/bathroom.html?type=lighting', true]
+        ],
+        ventilation: [
+          ['Shop Bathroom Ventilation & Fans', '/bathroom.html?type=ventilation', true]
+        ],
+        accents: [
+          ['Shop Mirrors & Accessories', '/bathroom.html?type=accessories', true],
+          ['Browse Trim Materials', '/material-trim-molding.html', false]
+        ],
+        refinish: [
+          ['Browse Refinishing Materials', '/material-paint-finishes.html', false]
+        ],
+        prep: [
+          ['Browse Drywall & Repair Materials', '/material-drywall.html', false],
+          ['Browse Paint & Prep Materials', '/material-paint-finishes.html', false]
+        ],
+        'bath-shower-valve': [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        plumbing: [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        other: [
+          ['Browse Material Categories', '/materials.html', false],
+          ['Browse Bathroom Fixtures', '/bathroom.html', true]
+        ]
       };
-      if((id==='bathrooms'||id==='bath-remodel')&&bathroomShopping[key]){
-        const [label,type]=bathroomShopping[key];
-        const shop=document.createElement('a');
-        shop.href='/bathroom.html?type='+encodeURIComponent(type);
-        shop.className='btn outline project-products-link';
-        shop.textContent=label;
-        card.append(shop);
+      if(id==='bathrooms'||id==='bath-remodel'){
+        const related=bathroomProductLinks[key]||[];
+        if(related.length){
+          const box=document.createElement('div');
+          box.className='project-product-links';
+          box.setAttribute('aria-label','Find products for '+item.title);
+          const note=document.createElement('p');
+          note.className='calc-note';
+          note.textContent='Find the specific products for this work:';
+          box.append(note);
+          related.forEach(([label,href,verifiedCatalog])=>{
+            const link=document.createElement('a');
+            link.className='btn outline project-products-link';
+            link.href=href;
+            link.textContent=label;
+            box.append(link);
+          });
+          const isMaterials=related.some(row=>!row[2]);
+          if(isMaterials){
+            const disclaimer=document.createElement('small');
+            disclaimer.className='calc-note';
+            disclaimer.style.display='block';
+            disclaimer.textContent='Material pages help you choose types. Exact brands, stock and purchase prices must be confirmed before ordering.';
+            box.append(disclaimer);
+          }
+          card.append(box);
+        }
       }
 
       if(['furniture','office-furniture'].includes(key)){
@@ -186,7 +269,7 @@
       item.materials.forEach(name=>{if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint — $50/gallon, supplies included':name));card.append(label)});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
-      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent='See Price & Add to Cart';
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'See Price & Add to Cart';
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
