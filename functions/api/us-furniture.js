@@ -30,7 +30,7 @@ export async function onRequestGet({request,env}){
   // The supplier tags kids' beanbag chairs as sofas, not kids' storage.
   // Fetch those candidates separately and verify each product's U.S. stock before display.
   const filteredList=category==='kids-room'&&search==='seating'
-   ? list.filter(p=>/\\b(kids?|children|child|toddler|playroom|nursery)\\b/i.test(String(p.nameEn||'')))
+   ? list.filter(p=>/\b(kids?|children|child|toddler|playroom|nursery)\b/i.test(String(p.nameEn||'')))
    : list;
   const products=filteredList.filter(p=>p?.id&&!blocked.has(String(p.id))&&p.nameEn&&p.bigImage&&
      Number(p.totalVerifiedInventory)>0&&Number(p.warehouseInventoryNum)>0
