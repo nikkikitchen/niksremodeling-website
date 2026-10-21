@@ -18,63 +18,88 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const seenNames=new Set(list.map(p=>normalizeName(p.name)));
   const seenImages=new Set(list.map(p=>p.image).filter(Boolean));
   await priceCards(grid);
-  const rooms=categories[category]?[category]:['living-room','bedroom','dining-room','home-office','outdoor'];
-  let morePage=1,moreTotal=1;
-  // Supplier search is only a list of CANDIDATES. Do not show any card
-  // until the product-detail endpoint verifies real US warehouse variant stock.
-  // Always replace search-result prices with verified variant retail prices.
-  const loadMore=async(cat,page)=>{
-   const r=await fetch('/api/us-furniture?category='+encodeURIComponent(cat)+'&page='+page);
-   if(!r.ok)throw Error('U.S. supplier catalog temporarily unavailable.');
-   const response=await r.json();
+  // Each supplier result is only a candidate until we independently confirm
+  // US warehouse variant stock and a current variant retail price.
+  const selectedRoom=categories[category]?category:null;
+  const rooms=selectedRoom
+   ? (selectedRoom==='kids-room'?[{cat:'kids-room',search:''},{cat:'kids-room',search:'seating'}]:[{cat:selectedRoom,search:''}])
+   : [{cat:'living-room',search:''},{cat:'bedroom',search:''},{cat:'dining-room',search:''},
+      {cat:'home-office',search:''},{cat:'outdoor',search:''},
+      {cat:'kids-room',search:''},{cat:'kids-room',search:'seating'}];
+  const states=new Map();
+  let supplierErrors=0,verificationErrors=0;
+  const roomKey=room=>room.cat+':'+room.search;
+  const showStatus=()=>{
+   const visible=[...grid.querySelectorAll('.store-card')].filter(el=>!el.hidden).length;
+   status.textContent=(visible?
+     'Showing '+visible+' furniture items with confirmed U.S. warehouse stock and checked prices.':
+     'No furniture items could be verified for this view right now.')+
+     (supplierErrors||verificationErrors?' Some supplier checks are temporarily unavailable; those items are hidden until confirmed.':'')+
+     ' Manufacturing origin is not verified.';
+  };
+  const loadMore=async(room)=>{
+   const key=roomKey(room);
+   let state=states.get(key);
+   if(!state){state={page:1,totalPages:1,pending:[],exhausted:false};states.set(key,state);}
+   if(!state.pending.length&&!state.exhausted){
+    try{
+     const qs=new URLSearchParams({category:room.cat,page:String(state.page)});
+     if(room.search)qs.set('search',room.search);
+     const r=await fetch('/api/us-furniture?'+qs,{cache:'no-store'});
+     if(!r.ok)throw Error('Supplier search unavailable');
+     const data=await r.json();
+     state.pending=(data.products||[]).filter(p=>p?.id&&p.name);
+     state.totalPages=Math.max(state.page,Number(data.totalPages)||state.page);
+     state.page++;
+     state.exhausted=state.page>state.totalPages;
+    }catch{supplierErrors++;return 0;}
+   }
+   const batch=state.pending.splice(0,selectedRoom?10:4);
    let added=0;
-   const candidates=(response.products||[]).slice(0,categories[category]?10:3);
-   for(const p of candidates){
+   for(const p of batch){
     if(seen.has(p.id)||seenNames.has(normalizeName(p.name))||seenImages.has(p.image))continue;
     try{
-     const detailResponse=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
-     if(!detailResponse.ok)continue;
-     const detail=await detailResponse.json();
+     const resp=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
+     if(resp.status===503){verificationErrors++;state.pending.push(p);continue;}
+     if(!resp.ok)continue;
+     const detail=await resp.json();
      const variants=(detail.variants||[]).filter(v=>
-       Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number.isFinite(Number(v.usStock))&&Number(v.usStock)>0);
+       Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0);
      if(!detail.inStockUS||detail.warehouseCountry!=='US'||!variants.length)continue;
-     const currentPrice=Math.min(...variants.map(v=>v.priceCents));
-     const name=detail.name||p.name, image=detail.image||p.image, normalized=normalizeName(name);
+     const name=detail.name||p.name;
+     const normalized=normalizeName(name);
+     const image=detail.image||p.image;
+     const isKids=/\b(kids?|children|child|toddler|nursery|playroom)\b/i.test(name);
+     const displayCategory=isKids?'kids-room':room.cat;
+     // Do not show kids' beanbag chairs in Living Room or unrelated categories.
+     if(selectedRoom&&displayCategory!==selectedRoom)continue;
      if(!normalized||seenNames.has(normalized)||seenImages.has(image))continue;
-     const approved={id:p.id,name,category:p.category,image,priceCents:currentPrice,stockVerified:true};
+     const currentPrice=Math.min(...variants.map(v=>v.priceCents));
+     const approved={id:p.id,name,category:displayCategory,image,priceCents:currentPrice,stockVerified:true};
      seen.add(p.id);seenNames.add(normalized);seenImages.add(image);
-     grid.insertAdjacentHTML('beforeend',cardHtml(approved));added++;
-    }catch{
-     // Temporary supplier failures are not evidence of US stock or a valid price.
-     // Never publish that item during this attempt.
-    }
+     grid.insertAdjacentHTML('beforeend',cardHtml(approved));
+     added++;
+    }catch{verificationErrors++;state.pending.push(p);}
    }
-   if(categories[category])moreTotal=Number(response.totalPages)||page;
    return added;
   };
-  let count=0,errors=0;
-  for(const room of rooms){
-   try{count+=await loadMore(room,1);}
-   catch{errors++;}
-  }
+  for(const room of rooms)await loadMore(room);
   const more=document.getElementById('store-more');
-  if(categories[category]&&moreTotal>1){
-   const btn=document.createElement('button');btn.className='btn outline';
-   btn.textContent='Load more U.S. warehouse items';more.appendChild(btn);
-   btn.addEventListener('click',async()=>{
-    btn.disabled=true;status.textContent='Checking more U.S. supplier stock…';
-    try{
-     await loadMore(category,++morePage);
-     if(morePage>=moreTotal)btn.remove();
-     status.textContent='Showing verified U.S. warehouse listings. Manufacturing origin is not verified.';
-    }catch{morePage--;status.textContent='Supplier temporarily unavailable. Try again.';}
-    btn.disabled=false;
-   });
-  }
-  status.textContent=(grid.querySelectorAll('.store-card').length?
-   'Showing U.S. warehouse listings with prices. Country of manufacture is not verified.':
-   'No verified U.S. warehouse listings are available in this selection right now.')+
-   (errors?' Some supplier searches are temporarily unavailable.':'');
+  const btn=document.createElement('button');
+  btn.className='btn outline';
+  btn.type='button';
+  btn.textContent='Load more U.S. warehouse furniture';
+  more.appendChild(btn);
+  btn.addEventListener('click',async()=>{
+   btn.disabled=true;
+   status.textContent='Verifying more U.S. warehouse inventory and prices…';
+   let added=0;
+   for(const room of rooms)added+=await loadMore(room);
+   showStatus();
+   if(!added)status.textContent+=' If stock checks fail, try again later.';
+   btn.disabled=false;
+  });
+  showStatus();
   return;
  }
  let item=catalog.find(p=>p.id===productId);
