@@ -215,12 +215,88 @@ function materialCalcLink(product){const kind=Object.keys(WORK_MATERIAL_CATEGORI
 function materialShopLink(item){const kind=item.type==='flooring'?(item.floorKind==='tile'?'tile':'flooring'):item.type==='drywall'?'drywall':item.type==='lumber'?'lumber':'';return kind?`/materials.html?type=${encodeURIComponent(kind)}`:'/materials.html'}
 function applyMaterialShopFilter(){const type=new URLSearchParams(location.search).get('type');if(!type)return;const allowed={tile:['Tile & Stone'],flooring:['Flooring'],drywall:['Drywall'],lumber:['Lumber']}[type];if(!allowed)return;const products=document.querySelectorAll('.products .card');products.forEach(card=>{card.hidden=!allowed.includes(card.dataset.category)});const catalog=document.querySelector('.catalog-head');if(catalog){const note=document.createElement('p');note.className='calc-note';note.textContent=`Showing ${type==='tile'?'tile & stone':type} materials from your calculation. `;const clear=document.createElement('a');clear.href='/materials.html';clear.textContent='See all materials';note.append(clear);catalog.append(note)}}
 const SHOP_GUIDES={"furniture":[["Living Room","Sofas, chairs, tables and media storage."],["Bedroom","Beds, dressers, nightstands and accents."],["Dining Room","Dining tables, seating and storage."],["Home Office","Desks, shelves and office seating."],["Outdoor Furniture","Patio seating, tables and outdoor pieces."],["Décor & Accessories","Rugs, lighting, mirrors and finishing touches."]],"cabinets":[["Base Cabinets","Kitchen base units, drawers and sink bases."],["Wall & Upper Cabinets","Upper kitchen cabinets and display storage."],["Bathroom Vanities","Vanity cabinets and bath storage."],["Pantry & Tall Cabinets","Tall units, pantry and utility storage."],["Garage Storage Cabinets","Durable storage for garages and workshops."],["Hardware","Cabinet hardware and accessories."]],"appliances":[["Refrigerators","Full-size, counter-depth and specialty refrigeration."],["Gas Ranges","Gas stoves and ranges."],["Electric Ranges","Electric and induction ranges."],["Wall Ovens & Cooktops","Built-in ovens and cooking surfaces."],["Dishwashers","Built-in and compact dishwashers."],["Microwaves & Hoods","Microwaves, vents and range hoods."],["Washers & Electric Dryers","Laundry machines and electric dryers."],["Gas Dryers","Gas laundry dryers."],["Cords & Connections","Power cords, hoses and connection accessories."]],"supplies":[["Paint & Finishes","Paint, primer, stain and prep supplies."],["Fasteners & Adhesives","Screws, nails, glue, mortar and sealants."],["Plumbing Supplies","Pipe, fittings and water connections."],["Electrical Supplies","Wire, switches, boxes and devices."],["Appliance Cords & Connections","Range and dryer cords, hoses and installation accessories."],["Protection & Consumables","Tape, drop cloths, safety gear and jobsite supplies."]],"tools":[["Power Tools","Drills, impact drivers, saws and sanders."],["Hand Tools","Hammers, screwdrivers, wrenches and pliers."],["Specialty Tools","Hammer drills, tile tools and job-specific equipment."],["Drills & Impacts","Drills, impact drivers and bits."],["Saws & Cutting","Circular saws, blades and cutters."],["Measuring & Layout","Tape measures, levels and layout tools."]]};
+
+/* Existing approved photographs power category navigation; product inventory is
+   verified separately. No original project images are removed or replaced. */
+const SHOP_PICTURE_TILES={
+ materials:{
+  'Flooring':'/assets/approved-de82473d9ce3.jpg',
+  'Tile & Stone':'/assets/approved-0ab244a922c8.jpg',
+  'Drywall':'/assets/catalog-8.jpg',
+  'Lumber':'/assets/approved-b5c632fcfbc0.jpg',
+  'Trim & Molding':'/assets/approved-e9fee5a04016.jpg',
+  'Paint & Finishes':'/assets/approved-0af816f48fb0.jpg',
+  'Insulation':'/assets/catalog-9.jpg',
+  'Roofing':'/assets/approved-a11ab0fcd37f.jpg',
+  'Siding & Exterior':'/assets/entryways-card.jpg',
+  'Doors & Windows':'/assets/approved-4de99f88049f.jpg',
+  'Concrete & Masonry':'/assets/patio-concrete.webp'
+ },
+ cabinets:{
+  'Base Cabinets':'/assets/approved-9bfcb89f7800.jpg',
+  'Wall & Upper Cabinets':'/assets/kitchen.jpg',
+  'Bathroom Vanities':'/assets/approved-a908c20ce632.jpg',
+  'Pantry & Tall Cabinets':'/assets/catalog-9.jpg',
+  'Garage Storage Cabinets':'/assets/idea-mechanic-shop.jpg',
+  'Hardware':'/assets/approved-d2807423c8f0.jpg'
+ },
+ appliances:{
+  'Refrigerators':'/assets/approved-26657e8bc7bd.jpg',
+  'Gas Ranges':'/assets/kitchen.jpg',
+  'Electric Ranges':'/assets/approved-9bfcb89f7800.jpg',
+  'Wall Ovens & Cooktops':'/assets/approved-739d17fd2952.jpg',
+  'Dishwashers':'/assets/approved-b9cdb9084877.jpg',
+  'Microwaves & Hoods':'/assets/catalog-8.jpg',
+  'Washers & Electric Dryers':'/assets/approved-807c60a6001a.jpg',
+  'Gas Dryers':'/assets/approved-493d744bf5f7.jpg',
+  'Cords & Connections':'/assets/approved-d2807423c8f0.jpg'
+ },
+ tools:{
+  'Power Tools':'/assets/approved-d2807423c8f0.jpg',
+  'Hand Tools':'/assets/catalog-8.jpg',
+  'Specialty Tools':'/assets/project-stone-real.jpg',
+  'Drills & Impacts':'/assets/idea-mechanic-shop.jpg',
+  'Saws & Cutting':'/assets/arches-columns.jpg',
+  'Measuring & Layout':'/assets/stairs-card.jpg'
+ },
+ supplies:{
+  'Paint & Finishes':'/assets/approved-0af816f48fb0.jpg',
+  'Fasteners & Adhesives':'/assets/approved-d2807423c8f0.jpg',
+  'Plumbing Supplies':'/assets/approved-a908c20ce632.jpg',
+  'Electrical Supplies':'/assets/lighting-card.jpg',
+  'Appliance Cords & Connections':'/assets/approved-b9cdb9084877.jpg',
+  'Protection & Consumables':'/assets/catalog-8.jpg'
+ },
+ furniture:{
+  'Living Room':'/assets/approved-4822ff53e23f.jpg',
+  'Bedroom':'/assets/approved-807c60a6001a.jpg',
+  'Dining Room':'/assets/approved-a051ee7e1935.jpg',
+  'Home Office':'/assets/approved-6075be404407.jpg',
+  'Outdoor Furniture':'/assets/approved-a11ab0fcd37f.jpg',
+  'Décor & Accessories':'/assets/approved-8d4db6742d08.jpg'
+ }
+};
+function shopPhoto(page,name){return SHOP_PICTURE_TILES[page]?.[name]||'/assets/approved-b5c632fcfbc0.jpg';}
+function shopPictureTile(page,name,description,url){
+ const photo=shopPhoto(page,name);
+ const subtitle=description?'<small>'+description+'</small>':'';
+ return '<a class="photo-category-tile" href="'+url+'"><img src="'+photo+'" alt="" loading="lazy"><span><strong>'+name+'</strong>'+subtitle+'</span></a>';
+}
 function shopGuideId(name){return 'browse-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'')}
-function shopGuide(page){const choices=SHOP_GUIDES[page];if(!choices)return '';return '<section class="section shop-guide"><div class="wrap"><h2>Browse '+PAGES[page].title+'</h2><p class="lead">Choose a category to narrow your search. Specific products and availability are added as suppliers are confirmed.</p><div class="shop-guide-grid">'+choices.map(([name,description])=>'<article id="'+shopGuideId(name)+'">'+(page==='furniture'||page==='cabinets'||page==='appliances'||page==='supplies'||page==='tools'?'<a class="shop-guide-card" href="/'+page+'.html?category='+encodeURIComponent(name)+'#catalog-products"><h3>'+name+'</h3><p>'+description+'</p></a>':'<h3>'+name+'</h3><p>'+description+'</p>'+(page==='appliances'&&name==='Cords & Connections'?'':''))+'</article>').join('')+'</div></div></section>'}
+function shopGuide(page){
+ const choices=SHOP_GUIDES[page];if(!choices)return '';
+ return '<section class="section shop-guide"><div class="wrap"><h2>Browse '+PAGES[page].title+'</h2>'+
+  '<p class="lead">Explore categories with pictures. Product prices and U.S. warehouse stock must be independently verified before sale.</p>'+
+  '<div class="shop-guide-grid photo-guide-grid">'+choices.map(([name,description])=>
+   '<article id="'+shopGuideId(name)+'">'+shopPictureTile(page,name,description,
+    '/'+page+'.html?category='+encodeURIComponent(name)+'#catalog-products')+'</article>'
+  ).join('')+'</div></div></section>';
+}
+
 function renderCategory(page){
  const p=PAGES[page],products=PRODUCTS[page]||fallbackProducts(page),imgs=PRODUCT_IMAGES[page]||PRODUCT_IMAGES.installation;
  document.title=`${p.title} | Nik's Remodeling`;
- document.body.innerHTML=header()+`<main><section class="category-hero" style="--hero-image:url('${p.hero}')"><div class="wrap"><div class="eyebrow">${p.title}</div><h1>${p.heroTitle}</h1><h2>${p.tag}</h2><p>${p.desc}</p><div class="hero-points"><span>✓ Product Photos</span><span>✓ Product Details</span><span>✓ Delivery Options</span><span>✓ Add to Review Cart</span></div></div></section>${SHOP_GUIDES[page]?'':`<div class="wrap category-tabs">${p.tabs.map(x=>page==='materials'?`<a href="/material-${x.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'')}.html">${x}</a>`:SHOP_GUIDES[page]?`<a href="#${shopGuideId(x)}">${x}</a>`:`<button>${x}</button>`).join('')}</div>`}${shopGuide(page)}${page==='cabinets'?'<section class="section"><div class="wrap">'+cabinetOptionPicker()+'</div></section>':''}${projectFlow(page)}${page==='supplies'?'<section class="section" id="suggested-supplies"><div class="wrap" id="supply-recommendations"></div></section>':''}${page==='appliances'?'<div class="wrap appliance-supply-cta"><p>Add an appliance to your project to see possible connection supplies.</p><a class="btn outline" href="/supplies.html#suggested-supplies">Review Suggested Supplies →</a></div>':''}<section class="section alt" id="catalog-products"><div class="wrap catalog"><aside class="filters"><h3>Filter Products</h3><label><input type="checkbox"> In Stock / Available</label><label><input type="checkbox"> Delivery Available</label><label><input type="checkbox"> Installation Option</label><label><input type="checkbox"> Custom / Special Order</label><p class="filter-note">Prices are intentionally not displayed so final customer pricing can be set from current supplier cost, freight, and markup.</p></aside><div><div class="catalog-head"><div><h2>${p.title}</h2><p class="lead">Browse products, photos, specifications and availability. Pricing is intentionally omitted.</p></div><select><option>Featured</option><option>Name A–Z</option></select></div><div class="products">${products.map((x,i)=>`<article class="card" data-category="${x.category}"><div class="pic"><img src="${imgs[i%imgs.length]}" alt="${x.name}" loading="lazy"></div><div class="body">${x.badge?`<div class="stock">${x.badge}</div>`:''}<h3>${x.name}</h3><div class="stock neutral">SKU: ${x.sku}</div><div class="stock neutral">${x.category}</div><div class="product-details">${x.details.map(d=>`<div>✓ ${d}</div>`).join('')}</div><div class="card-actions"><button class="btn outline material-calc-trigger" type="button" data-calc-url="${materialCalcLink(x)||`/calculators.html?material=custom&product=${encodeURIComponent(x.name)}`}">Calculate</button><button class="add-project" onclick="addItem('${x.name.replaceAll("'","\\'")}')">Add to Cart</button></div>${page==='cabinets'?cabinetOptionPicker(x.name):servicePicker(x.name,serviceChoices(page))}</div></article>`).join('')}</div></div></div></section>${'<dialog class="material-calc-dialog" id="material-calc-dialog" aria-label="Material quantity calculator"><div class="material-calc-dialog-head"><strong>Calculate while you shop</strong><button type="button" class="btn outline" onclick="closeMaterialCalculator()">Done · Continue Shopping</button></div><p id="material-calc-status" role="status"></p><iframe title="Material quantity calculator" id="material-calc-frame"></iframe></dialog>'}</main>`+projectFlow(page)+footer();updateCartCount();if(page==='supplies')renderSupplyPlan();if(page==='materials')applyMaterialShopFilter();if(SHOP_GUIDES[page])applyShopGuideFilter(page);bindServicePickers();bindCabinetOptionPickers();document.querySelectorAll('.material-calc-trigger').forEach(button=>button.addEventListener('click',()=>openMaterialCalculator(button.dataset.calcUrl)))
+ document.body.innerHTML=header()+`<main><section class="category-hero" style="--hero-image:url('${p.hero}')"><div class="wrap"><div class="eyebrow">${p.title}</div><h1>${p.heroTitle}</h1><h2>${p.tag}</h2><p>${p.desc}</p><div class="hero-points"><span>✓ Product Photos</span><span>✓ Product Details</span><span>✓ Delivery Options</span><span>✓ Add to Review Cart</span></div></div></section>${SHOP_GUIDES[page]?'':`<div class="wrap category-tabs picture-category-tabs">${p.tabs.map(x=>page==='materials'?shopPictureTile('materials',x,'Browse '+x.toLowerCase()+' materials','/material-'+x.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'')+'.html'):SHOP_GUIDES[page]?shopPictureTile(page,x,'Browse '+x,'#'+shopGuideId(x)):`<button>${x}</button>`).join('')}</div>`}${shopGuide(page)}${page==='cabinets'?'<section class="section"><div class="wrap">'+cabinetOptionPicker()+'</div></section>':''}${projectFlow(page)}${page==='supplies'?'<section class="section" id="suggested-supplies"><div class="wrap" id="supply-recommendations"></div></section>':''}${page==='appliances'?'<div class="wrap appliance-supply-cta"><p>Add an appliance to your project to see possible connection supplies.</p><a class="btn outline" href="/supplies.html#suggested-supplies">Review Suggested Supplies →</a></div>':''}<section class="section alt" id="catalog-products"><div class="wrap catalog"><aside class="filters"><h3>Filter Products</h3><label><input type="checkbox"> In Stock / Available</label><label><input type="checkbox"> Delivery Available</label><label><input type="checkbox"> Installation Option</label><label><input type="checkbox"> Custom / Special Order</label><p class="filter-note">Prices are intentionally not displayed so final customer pricing can be set from current supplier cost, freight, and markup.</p></aside><div><div class="catalog-head"><div><h2>${p.title}</h2><p class="lead">Browse products, photos, specifications and availability. Pricing is intentionally omitted.</p></div><select><option>Featured</option><option>Name A–Z</option></select></div><div class="products">${products.map((x,i)=>`<article class="card" data-category="${x.category}"><div class="pic"><img src="${imgs[i%imgs.length]}" alt="${x.name}" loading="lazy"></div><div class="body">${x.badge?`<div class="stock">${x.badge}</div>`:''}<h3>${x.name}</h3><div class="stock neutral">SKU: ${x.sku}</div><div class="stock neutral">${x.category}</div><div class="product-details">${x.details.map(d=>`<div>✓ ${d}</div>`).join('')}</div><div class="card-actions"><button class="btn outline material-calc-trigger" type="button" data-calc-url="${materialCalcLink(x)||`/calculators.html?material=custom&product=${encodeURIComponent(x.name)}`}">Calculate</button><button class="add-project" onclick="addItem('${x.name.replaceAll("'","\\'")}')">Add to Cart</button></div>${page==='cabinets'?cabinetOptionPicker(x.name):servicePicker(x.name,serviceChoices(page))}</div></article>`).join('')}</div></div></div></section>${'<dialog class="material-calc-dialog" id="material-calc-dialog" aria-label="Material quantity calculator"><div class="material-calc-dialog-head"><strong>Calculate while you shop</strong><button type="button" class="btn outline" onclick="closeMaterialCalculator()">Done · Continue Shopping</button></div><p id="material-calc-status" role="status"></p><iframe title="Material quantity calculator" id="material-calc-frame"></iframe></dialog>'}</main>`+projectFlow(page)+footer();updateCartCount();if(page==='supplies')renderSupplyPlan();if(page==='materials')applyMaterialShopFilter();if(SHOP_GUIDES[page])applyShopGuideFilter(page);bindServicePickers();bindCabinetOptionPickers();document.querySelectorAll('.material-calc-trigger').forEach(button=>button.addEventListener('click',()=>openMaterialCalculator(button.dataset.calcUrl)))
 }
 const SHOP_GUIDE_CATEGORIES={
  furniture:{'Living Room':['Living Room','Media & TV','Accent Seating'],'Bedroom':['Bedroom'],'Dining Room':['Dining Room'],'Home Office':['Home Office'],'Outdoor Furniture':['Outdoor'],'Décor & Accessories':['Rugs & Décor','Lighting']},
