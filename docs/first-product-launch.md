@@ -19,3 +19,5 @@ The checkout endpoint fails closed without both settings. It recalculates invent
 No CJ order creation, automatic payment, stock deposit, paid membership, or prepaid inventory was enabled. After a sale, check Square directly for COMPLETED payment and verify funds are available. Verify the customer's shipping ZIP matches the quoted ZIP, recheck CJ availability and costs, then manually order using the cleared proceeds. Do not assume a checkout redirect proves payment. Do not send an order to CJ solely because the payment link was created. Square retains the paid order and delivery information.
 
 Agree on delivery and return terms before enabling automated purchases. Delayed payouts, supplier changes, refunds and chargebacks can create costs after a sale; the site cannot promise zero financial risk.
+
+Checkout remains disabled unless STORE_CHECKOUT_ENABLED is explicitly set to true. Keep it unset until registration, correct address-based tax handling, policies, and hosted payment testing are complete.
