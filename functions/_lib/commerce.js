@@ -27,7 +27,7 @@ export async function accessToken(env) {
 export async function cj(env, path, body) {
  const token=await accessToken(env); if(!token)throw new Error('Supplier not configured');
  const r=await fetch(CJ_BASE+path,{method:body?'POST':'GET',headers:{'CJ-Access-Token':token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
- const data=await r.json();if(!r.ok||!data.result)throw new Error('Supplier unavailable');return data.data;
+ const data=await r.json();if(!r.ok||(!data.result&&!data.success)||!data.data)throw new Error('Supplier unavailable');return data.data;
 }
 export const PRODUCT_ID='1963146233541074945';
 export function retailCents(cost){if(!Number.isFinite(Number(cost))||Number(cost)<=0)throw new Error('Price unavailable');return Math.ceil(Number(cost)*135);}
@@ -35,4 +35,21 @@ export async function square(env,path,body){
  const token=env.SQUARE_ACCESS_TOKEN||env.TOKEN;if(!token)throw new Error('Payments not configured');
  const r=await fetch('https://connect.squareup.com'+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+token,'Square-Version':'2026-09-16','Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
  const data=await r.json();if(!r.ok||data.errors)throw new Error('Square '+(data.errors?.[0]?.code||'unavailable'));return data;
+}
+
+/** Only count physical CJ-warehouse inventory in the USA, never factory/in-transit stock. */
+export function usCjWarehouseUnits(rows) {
+ return (Array.isArray(rows)?rows:[]).reduce((n,row)=>{
+  if(row?.countryCode!=='US')return n;
+  const units=Number(row.cjInventory??row.cjInventoryNum??0);
+  return n+(Number.isFinite(units)&&units>0?Math.floor(units):0);
+ },0);
+}
+export function usVariantStock(inventory) {
+ const byVariant=new Map();
+ for(const row of inventory?.variantInventories||[]) {
+  const units=usCjWarehouseUnits(row.inventory);
+  if(row.vid&&units>0)byVariant.set(String(row.vid),units);
+ }
+ return byVariant;
 }
