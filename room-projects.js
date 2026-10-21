@@ -90,3 +90,15 @@ window.renderOutdoorProjects=(themed=false)=>{
 
 Object.defineProperty(PROJECT_CATALOG,'other',{value:PROJECT_CATALOG.other,enumerable:false,configurable:true,writable:true});
 document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.photo-source').forEach(el=>el.remove());document.querySelectorAll('a[href="/project.html?project=custom"] span').forEach(span=>{if(span.firstChild?.nodeType===3)span.firstChild.textContent='More Ideas';});});
+
+// Main project cards for additional home spaces.
+Object.assign(PROJECT_CATALOG,{
+ attic:{title:'Attic',image:'/assets/approved-94fe00a25a93.jpg',intro:'Access, storage, framing, walls, flooring & ventilation.',materials:[],exterior:false,basicRoom:true},
+ basement:{title:'Basement',image:'/assets/approved-9753e3ad86f9.jpg',intro:'Finishing, flooring, walls, lighting, stairs & storage.',materials:[],exterior:false,basicRoom:true},
+ garage:{title:'Garage',image:'/assets/idea-mechanic-shop.jpg',intro:'Flooring, storage, workbenches, lighting & garage improvements.',materials:[],exterior:false,basicRoom:true}
+});
+Object.assign(window.ROOM_PROJECT_SCOPES,{
+ attic:['framing','ceiling','walls','floor','stairs','storage','lighting','ventilation','prep','other'],
+ basement:['framing','ceiling','walls','floor','stairs','doors','storage','lighting','ventilation','prep','other'],
+ garage:['ceiling','walls','floor','doors','storage','workshop','lighting','ventilation','prep','other']
+});
