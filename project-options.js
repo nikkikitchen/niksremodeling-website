@@ -184,7 +184,7 @@
           ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true]
         ],
         toilet: [
-          ['Shop Toilets & See Prices', '/bathroom.html?type=toilets', true]
+          ['Explore Toilet Styles', '/bathroom.html?type=toilets', true]
         ],
         vanity: [
           ['Shop Vanities & Sinks', '/bathroom.html?type=vanities', true],
