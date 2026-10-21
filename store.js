@@ -19,17 +19,34 @@ document.addEventListener('DOMContentLoaded',async()=>{
   await priceCards(grid);
   const rooms=categories[category]?[category]:['living-room','bedroom','dining-room','home-office','outdoor'];
   let morePage=1,moreTotal=1;
+  // Supplier search is only a list of CANDIDATES. Do not show any card
+  // until the product-detail endpoint verifies real US warehouse variant stock.
+  // Always replace search-result prices with verified variant retail prices.
   const loadMore=async(cat,page)=>{
    const r=await fetch('/api/us-furniture?category='+encodeURIComponent(cat)+'&page='+page);
    if(!r.ok)throw Error('U.S. supplier catalog temporarily unavailable.');
    const response=await r.json();
    let added=0;
-   for(const p of response.products||[]){
-    const normalized=normalizeName(p.name);
-    if(seen.has(p.id)||seenNames.has(normalized)||seenImages.has(p.image)||
-       !Number.isSafeInteger(p.priceCents)||p.priceCents<=0)continue;
-    seen.add(p.id);seenNames.add(normalized);seenImages.add(p.image);
-    grid.insertAdjacentHTML('beforeend',cardHtml(p));added++;
+   const candidates=(response.products||[]).slice(0,categories[category]?10:3);
+   for(const p of candidates){
+    if(seen.has(p.id)||seenNames.has(normalizeName(p.name))||seenImages.has(p.image))continue;
+    try{
+     const detailResponse=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
+     if(!detailResponse.ok)continue;
+     const detail=await detailResponse.json();
+     const variants=(detail.variants||[]).filter(v=>
+       Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number.isFinite(Number(v.usStock))&&Number(v.usStock)>0);
+     if(!detail.inStockUS||detail.warehouseCountry!=='US'||!variants.length)continue;
+     const currentPrice=Math.min(...variants.map(v=>v.priceCents));
+     const name=detail.name||p.name, image=detail.image||p.image, normalized=normalizeName(name);
+     if(!normalized||seenNames.has(normalized)||seenImages.has(image))continue;
+     const approved={id:p.id,name,category:p.category,image,priceCents:currentPrice,stockVerified:true};
+     seen.add(p.id);seenNames.add(normalized);seenImages.add(image);
+     grid.insertAdjacentHTML('beforeend',cardHtml(approved));added++;
+    }catch{
+     // Temporary supplier failures are not evidence of US stock or a valid price.
+     // Never publish that item during this attempt.
+    }
    }
    if(categories[category])moreTotal=Number(response.totalPages)||page;
    return added;
