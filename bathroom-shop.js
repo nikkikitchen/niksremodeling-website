@@ -62,6 +62,44 @@ function bathroomMatch(name,type){
  }
  return true;
 }
+
+const toiletStyles=[
+ {key:'round',name:'Standard Round',desc:'Classic round bowl and standard seat height.'},
+ {key:'elongated',name:'Elongated & Comfort Height',desc:'Longer bowls and taller seating options.'},
+ {key:'smart',name:'Smart Toilets',desc:'Advanced washing, bidet and comfort features.'},
+ {key:'specialty',name:'Wall-Hung & Specialty',desc:'Wall-mounted and space-saving models.'}
+];
+const toiletStyleNames=Object.fromEntries(toiletStyles.map(x=>[x.key,x.name]));
+function toiletStyleFor(name){
+ if(!bathroomMatch(name,'toilets'))return null;
+ const n=String(name).toLowerCase();
+ if(/\b(smart|intelligent|bidet toilet|electronic toilet|heated seat|automatic flush)\b/i.test(n))return 'smart';
+ if(/\b(wall[- ]?(?:hung|mounted)|floating toilet|concealed cistern|in[- ]wall tank|tankless)\b/i.test(n))return 'specialty';
+ if(/\b(elongated|oval|comfort[- ]?height|chair[- ]?height|tall[- ]?toilet|right height|universal height)\b/i.test(n))return 'elongated';
+ if(/\b(round|round[- ]?front|standard[- ]?height|short[- ]?toilet)\b/i.test(n))return 'round';
+ return null;
+}
+function toiletArt(kind){
+ const round=kind==='round',smart=kind==='smart',special=kind==='specialty';
+ return '<svg viewBox="0 0 180 145" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'+
+  (special?'':smart?'<rect x="60" y="33" width="66" height="31" rx="13" fill="#dbe8ed" stroke="#41627b" stroke-width="4"/><circle cx="115" cy="45" r="3" fill="#236d8e"/>':'<rect x="51" y="18" width="77" height="'+(round?49:55)+'" rx="9" fill="#dbe8ed" stroke="#41627b" stroke-width="4"/><rect x="56" y="14" width="67" height="9" rx="4" fill="#eaf4f8" stroke="#41627b" stroke-width="2"/>')+
+  '<path d="M'+(special?48:57)+' 68 Q46 68 47 86 Q49 104 '+(round?68:61)+' 107 L'+(round?105:117)+' 107 Q143 100 138 81 Q136 67 121 68Z" fill="#f5fbfc" stroke="#41627b" stroke-width="4"/>'+
+  '<ellipse cx="93" cy="77" rx="'+(round?37:44)+'" ry="'+(round?13:15)+'" fill="#c4dce5" stroke="#41627b" stroke-width="3"/>'+
+  (special?'<rect x="119" y="87" width="15" height="28" rx="4" fill="#dbe8ed" stroke="#41627b" stroke-width="3"/>':'<path d="M75 104 L69 126 Q69 132 76 132 H113 Q120 132 119 126 L112 104" fill="#dbe8ed" stroke="#41627b" stroke-width="4"/>')+
+  '</svg>';
+}
+function toiletStyleTiles(qs){
+ return '<div class="toilet-choice-grid">'+toiletStyles.map(style=>{
+   const params=new URLSearchParams(qs);params.set('type','toilets');params.set('model',style.key);params.delete('product');
+   return '<a class="toilet-choice-tile" href="/bathroom.html?'+bathEsc(params.toString())+'">'+
+     '<span class="toilet-choice-art">'+toiletArt(style.key)+'</span><strong>'+bathEsc(style.name)+
+     '</strong><small>'+bathEsc(style.desc)+'</small><span class="toilet-choice-action">Explore style →</span></a>';
+ }).join('')+'</div>';
+}
+const toiletStyleCSS=document.createElement('style');
+toiletStyleCSS.textContent='.toilet-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin:24px 0 28px}.toilet-choice-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 14px;border:1px solid #dde5eb;border-radius:12px;background:#fff;box-shadow:0 4px 16px #16202a0a;transition:box-shadow .15s,border-color .15s}.toilet-choice-tile:hover,.toilet-choice-tile:focus-visible{border-color:#0b5aa6;box-shadow:0 6px 18px #16202a18}.toilet-choice-art{display:grid;place-items:center;width:100%;height:147px;background:#f3f7f9;border-radius:9px}.toilet-choice-art svg{width:170px;max-height:135px}.toilet-choice-tile strong{font-size:1.05rem;text-align:center}.toilet-choice-tile small{text-align:center;color:#50606b;line-height:1.4;min-height:40px}.toilet-choice-action{color:#0b5aa6;font-weight:700;margin-top:auto}.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.toilet-back-link{display:inline-block;margin-bottom:10px}';
+document.head.append(toiletStyleCSS);
+
 const bathEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const bathMoney=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
 const bathVerified=detail=>{
@@ -72,6 +110,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const params=new URLSearchParams(location.search);
  const type=bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
+ const toiletModel=type==='toilets'&&toiletStyleNames[params.get('model')]?params.get('model'):null;
  const projectId=['bathrooms','bath-remodel'].includes(params.get('project'))?params.get('project'):null;
  const projectWork=/^[a-z0-9-]{1,60}$/.test(params.get('work')||'')?params.get('work'):null;
  const fromProject=!!projectId&&params.get('fromProject')==='1';
@@ -87,17 +126,27 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '</nav>';
  const base='<main class="wrap section"><nav aria-label="Breadcrumb">'+
    (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
-   '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(selectedCategory))+'</h1>'+
-   '<p class="lead">Only items checked for U.S. warehouse stock and variant pricing are shown. Shipping, tax and installation are separate.</p>'+
+   '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(toiletModel?toiletStyleNames[toiletModel]:selectedCategory))+'</h1>'+
+   '<p class="lead">'+(type==='toilets'?'Choose a toilet style to explore available models.':'Choose products and see prices when items are available.')+'</p>'+
    projectControls+(fromProject&&type!=='all'?'':tabs);
- document.body.innerHTML=header()+base+(product?
-   '<div id="bath-detail" role="status">Verifying U.S. inventory and current price…</div>':
-   '<h2>'+bathEsc(bathroomNames[type]||'Browse Bathroom')+'</h2><div class="store-card-grid" id="bath-products"></div>'+
-   '<p id="bath-status" role="status">Checking U.S. warehouse inventory and prices…</p>'+
+ const toiletHub=type==='toilets'&&!toiletModel&&!product;
+ const chosenStyle=type==='toilets'&&toiletModel;
+ const indexParams=new URLSearchParams(params);
+ indexParams.delete('model');indexParams.delete('product');
+ const allStylesBack=chosenStyle?'<a class="btn outline toilet-back-link" href="/bathroom.html?'+
+   bathEsc(indexParams.toString())+'">← All Toilet Styles</a>':'';
+ document.body.innerHTML=header()+base+(toiletHub?
+   '<h2>Choose Your Toilet Style</h2>'+toiletStyleTiles(params)+
+   '<p class="calc-note">Products and prices will appear under each style as they are added.</p>':
+   product?'<div id="bath-detail" role="status">Checking product options and price…</div>':
+   allStylesBack+'<h2>'+bathEsc(chosenStyle?toiletStyleNames[toiletModel]:(bathroomNames[type]||'Browse Bathroom'))+'</h2>'+
+   '<div class="store-card-grid" id="bath-products"></div>'+
+   '<p id="bath-status" role="status">Loading available products…</p>'+
    '<div id="bath-more"></div>'+
-   '<p>Fixtures are sold separately from installation labor. <a href="/installation.html">View installation & labor</a>. Online payment is not yet available.</p>'+projectControls)+
+   '<p>Product prices exclude delivery, tax and installation. Online payment is not yet available.</p>'+projectControls)+
    '</main>'+footer();
  updateCartCount();initNavMenus();
+ if(toiletHub)return;
  if(product){
   const root=document.getElementById('bath-detail');
   if(!/^[\w-]{8,64}$/.test(product)){root.textContent='Item unavailable.';return;}
@@ -108,12 +157,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const variants=bathVerified(detail);
    if(!variants)throw Error('This product has no verified U.S. warehouse stock or current price.');
    if(type!=='all'&&!bathroomMatch(detail.name,type))throw Error('Product does not belong to this bathroom category.');
+   if(toiletModel&&toiletStyleFor(detail.name)!==toiletModel)throw Error('This item is not listed under the selected toilet style.');
    const image=/^https:\/\//.test(detail.image||'')?detail.image:'';
    root.innerHTML='<article class="store-product"><div><img alt="'+bathEsc(detail.name)+'" src="'+bathEsc(image)+'" loading="lazy"></div>'+
     '<div><h2>'+bathEsc(detail.name)+'</h2><label>Available in-stock option <select id="bath-variant">'+
     variants.map(v=>'<option value="'+bathEsc(v.id)+'">'+bathEsc(v.name||v.sku)+' — '+bathMoney(v.priceCents)+'</option>').join('')+
     '</select></label><p id="bath-price" class="price">'+bathMoney(variants[0].priceCents)+'</p>'+
-    '<p>Verified stock in a U.S. supplier warehouse. Country of manufacture not verified. Shipping and tax extra.</p>'+
+    '<p>Item price excludes delivery, tax and installation.</p>'+
     '<form id="bath-delivery"><label>Delivery ZIP <input id="bath-zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label> '+
     '<button class="btn primary" type="submit">Check Delivery</button></form><p id="bath-quote" role="status"></p>'+
     '<p>Installation is separate. <a href="/installation.html">Browse bathroom labor</a>.</p>'+ 
@@ -188,7 +238,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const request=await fetch('/api/us-furniture?'+q,{cache:'no-store'});
    if(!request.ok)throw Error('Supplier search unavailable');
    const feed=await request.json();
-   row.pending=(feed.products||[]).filter(p=>bathroomMatch(p.name,kind));
+   row.pending=(feed.products||[]).filter(p=>bathroomMatch(p.name,kind)&&(!toiletModel||toiletStyleFor(p.name)===toiletModel));
    row.max=Math.min(100,Math.max(row.page,Number(feed.totalPages)||row.page));
    row.page++;row.exhausted=row.page>row.max;
   }
@@ -200,11 +250,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
     const result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
     if(!result.ok)throw Error('Stock unavailable');
     const detail=await result.json(),variants=bathVerified(detail);
-    if(!variants||!bathroomMatch(detail.name,kind))continue;
+    if(!variants||!bathroomMatch(detail.name,kind)||(toiletModel&&toiletStyleFor(detail.name)!==toiletModel))continue;
     const name=detail.name,image=detail.image||p.image;
     if(seenIds.has(p.id)||seenNames.has(normalized(name))||seenImages.has(image))continue;
     const price=Math.min(...variants.map(v=>v.priceCents));
     const detailParams=new URLSearchParams({type:kind,product:p.id});
+    if(toiletModel)detailParams.set('model',toiletModel);
     if(fromProject){
       detailParams.set('fromProject','1');
       detailParams.set('project',projectId);
@@ -215,7 +266,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     card.innerHTML='<a href="'+href+'"><img loading="lazy" src="'+bathEsc(image)+'" alt="'+bathEsc(name)+'">'+
      '<div class="store-card-copy"><p class="store-card-category">'+bathEsc(bathroomNames[kind])+'</p><h3>'+bathEsc(name)+'</h3>'+
      '<p class="store-card-price">From '+bathMoney(price)+'</p>'+
-     '<p class="store-card-note">U.S. warehouse verified · Shipping & tax extra · Origin not verified</p>'+
+     '<p class="store-card-note">Delivery and tax calculated separately</p>'+
      '<span class="btn primary">View item</span></div></a>';
     grid.appendChild(card);
     seenIds.add(p.id);seenNames.add(normalized(name));seenImages.add(image);added++;
@@ -230,17 +281,17 @@ document.addEventListener('DOMContentLoaded',async()=>{
    catch{errors++;}
   }
   status.textContent=total?
-   'Showing '+total+' individually checked U.S.-warehouse items with prices.'+(errors?' Some supplier checks are temporarily unavailable.':''):
-   'No products could be verified in this selection right now.'+(errors?' Supplier checks are temporarily unavailable.':'');
+   'Showing '+total+' available '+(total===1?'product.':'products.'):
+   (toiletModel?'No '+toiletStyleNames[toiletModel].toLowerCase()+' models listed yet.':'No products listed in this category yet.');
  }
  // Start with the four main fixtures in All Bathroom, keeping supplier calls modest.
  await fetchBatch(type==='all'?searches.slice(0,4):searches);
  let position=type==='all'?4:0;
  const more=document.getElementById('bath-more'),btn=document.createElement('button');
- btn.className='btn outline';btn.textContent=type==='all'?'Load more bathroom items':'Load more '+selectedCategory;btn.type='button';
+ btn.className='btn outline';btn.textContent=type==='all'?'Load more bathroom items':'Load more '+(toiletModel?toiletStyleNames[toiletModel]:selectedCategory);btn.type='button';
  more.appendChild(btn);
  btn.addEventListener('click',async()=>{
-  btn.disabled=true;status.textContent='Checking more U.S. warehouse products and prices…';
+  btn.disabled=true;status.textContent='Loading more products…';
   const next=type==='all'?searches.slice(position,position+3):searches;
   if(type==='all'&&position<searches.length)position+=next.length;
   await fetchBatch(next.length?next:searches);
