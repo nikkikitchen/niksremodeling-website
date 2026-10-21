@@ -4,11 +4,81 @@
   document.head.append(style);
   window.searchProjects=function(e){e.preventDefault();const term=e.target.querySelector('input').value.trim().toLowerCase(),grid=document.getElementById('projects');if(!grid){location.href='/?search='+encodeURIComponent(term)+'#projects';return false;}grid.querySelectorAll('.tile').forEach(t=>t.hidden=!t.textContent.toLowerCase().includes(term));grid.scrollIntoView({behavior:'smooth'});return false;};
   function connect(){
- document.querySelectorAll('.photo-source,a[href="/project.html?project=other"]').forEach(el=>el.remove());
+ document.querySelectorAll('.photo-source').forEach(el=>el.remove());
  if(document.querySelector('main')&&!['calculators','project'].includes(document.body.dataset.page)&&!['/','/index.html'].includes(location.pathname)&&!document.getElementById('page-back-button')){const row=document.createElement('div');row.className='wrap';row.style.cssText='padding:20px 0';const back=document.createElement('button');back.id='page-back-button';back.type='button';back.className='btn outline';back.textContent='Back';back.onclick=()=>{if(history.length>1)history.back();else location.href='/#projects';};row.append(back);document.querySelector('main').append(row);}
  if(window.parent!==window)document.querySelectorAll('a[href="/project-cart.html"]').forEach(a=>a.target='_top');
  document.querySelectorAll('a[href="/calculators.html"]').forEach(a=>{a.href='/#projects';a.textContent='Projects';});
 document.querySelectorAll('.search').forEach(form=>form.onsubmit=window.searchProjects);}
   connect();document.addEventListener('DOMContentLoaded',()=>{connect();const term=new URLSearchParams(location.search).get('search');if(term){const form=document.querySelector('.search');if(form){form.querySelector('input').value=term;window.searchProjects({preventDefault(){},target:form});}}});
+
+  // One shared Shopping menu for the homepage, product pages and project pages.
+  // Each project uses the same URL as the Projects tiles; specialty projects
+  // remain available through Outdoor Projects, Themed Rooms and More Ideas.
+  const shoppingProductLinks = [
+    ['Appliances', '/appliances.html'],
+    ['Bathroom Products', '/bathroom.html'],
+    ['Cabinets', '/cabinets.html'],
+    ['Furniture', '/furniture.html'],
+    ['Installation & Labor', '/installation.html'],
+    ['Materials', '/materials.html'],
+    ['Tools', '/products.html']
+  ];
+  const shoppingProjectIds = [
+    'accents', 'bathrooms', 'bedroom-guest-room', 'closets-storage',
+    'arches', 'murals', 'decks-railings', 'dining-room',
+    'entry-mudroom', 'exterior-improvements', 'fireplaces', 'flooring',
+    'home-office', 'home-theater', 'kitchen-pantry', 'laundry-utility',
+    'lighting', 'living-family-room', 'music-creative-studio',
+    'concrete', 'stairs', 'tile', 'wallpaper', 'themed-rooms',
+    'custom', 'other'
+  ];
+  const shoppingProjectNames = {
+    'bathrooms':'Bathroom', 'bedroom-guest-room':'Bedrooms',
+    'concrete':'Outdoor Projects', 'custom':'More Ideas',
+    'kitchen-pantry':'Kitchens', 'themed-rooms':'Themed Rooms',
+    'flooring':'Flooring & Tile Details'
+  };
+  function syncShoppingMenu() {
+    const catalog = typeof PROJECT_CATALOG === 'undefined' ? {} : PROJECT_CATALOG;
+    document.querySelectorAll('#shopping-menu').forEach(menu => {
+      if (menu.dataset.unifiedShopping === '20261021') return;
+      menu.replaceChildren();
+      const heading = label => {
+        const el = document.createElement('span');
+        el.className = 'shopping-menu-heading';
+        el.textContent = label;
+        menu.append(el);
+      };
+      const link = (label, href) => {
+        const a = document.createElement('a');
+        a.href = href;
+        a.textContent = label;
+        menu.append(a);
+      };
+      heading('Shop Products');
+      shoppingProductLinks.sort((a,b) => a[0].localeCompare(b[0])).forEach(([label,href]) => link(label,href));
+      heading('Browse by Project');
+      shoppingProjectIds
+        .filter(id => catalog[id])
+        .map(id => [shoppingProjectNames[id] || catalog[id].title, '/project.html?project='+encodeURIComponent(id)])
+        .sort((a,b) => a[0].localeCompare(b[0]))
+        .forEach(([label,href]) => link(label,href));
+      menu.dataset.unifiedShopping = '20261021';
+    });
+    // Bookmarks to the old All Shopping page still work, but storefront
+    // breadcrumbs and "keep shopping" links must not imply it still exists.
+    document.querySelectorAll('a[href="/shopping.html"]').forEach(a => {
+      a.href = '/';
+      if (a.closest('nav[aria-label="Breadcrumb"]')) a.textContent = 'Home';
+    });
+  }
+  const menuStyle = document.createElement('style');
+  menuStyle.textContent = '.shopping-menu-heading{display:block;font-weight:800;font-size:12px;letter-spacing:.04em;padding:10px 17px;background:#eff3f7;color:#344657}.nav-menu .nav-dropdown{min-width:230px;max-height:min(72vh,560px);overflow-y:auto;overscroll-behavior:contain}';
+  document.head.append(menuStyle);
+  syncShoppingMenu();
+  document.addEventListener('DOMContentLoaded', syncShoppingMenu);
+  // Some product pages render their header after asynchronously loading a catalog.
+  new MutationObserver(syncShoppingMenu).observe(document.body,{childList:true});
+
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.nav-menu').forEach(m=>{m.classList.remove('open');m.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');});});
 })();
