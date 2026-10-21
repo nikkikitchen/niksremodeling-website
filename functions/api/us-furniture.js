@@ -25,7 +25,8 @@ export async function onRequestGet({request,env}){
   const list=(data.content||[]).flatMap(group=>group.productList||[]);
   const seenIds=new Set(),seenNames=new Set(),seenImages=new Set();
   const normalizeName=name=>String(name).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-  const products=list.filter(p=>p?.id&&p.nameEn&&p.bigImage&&
+  const blocked=new Set(["2003348098417340418","2003347794848272385"]);
+  const products=list.filter(p=>p?.id&&!blocked.has(String(p.id))&&p.nameEn&&p.bigImage&&
      Number(p.totalVerifiedInventory)>0&&Number(p.warehouseInventoryNum)>0
     ).filter(p=>{
       const id=String(p.id),name=normalizeName(p.nameEn),image=String(p.bigImage);
@@ -37,11 +38,11 @@ export async function onRequestGet({request,env}){
     return {...{
      id:String(p.id),name:String(p.nameEn).trim().slice(0,130),category,
      image:String(p.bigImage),priceCents:Number.isFinite(price)&&price>0?retailCents(price):null,
-     warehouseCountry:'US',originVerified:false,
-     }, stockVerified:true};
+     warehouseCountry:'UNVERIFIED',originVerified:false,
+     }, stockVerified:false};
    }).filter(p=>p.priceCents!==null&&/^https:\/\//.test(p.image));
   return Response.json({category,products,page,totalPages:data.totalPages||null,
-   note:'In-stock in a U.S. supplier warehouse. Country of manufacture is not verified. Delivery and tax extra.'},
+   note:'Supplier candidates only. U.S. warehouse inventory and retail price must be independently verified before display.'},
    {headers:{'Cache-Control':'public,max-age=300'}});
  }catch{
   return Response.json({error:'U.S. warehouse catalog temporarily unavailable.'},
