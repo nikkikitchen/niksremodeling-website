@@ -5,6 +5,7 @@ export async function onRequestPost({request,env}){
  if(request.headers.get('Origin')!==origin)return Response.json({error:'Please start checkout from our website.'},{status:403});
  try{
  const body=await request.json();
+ if(body.productId&&body.productId!==PRODUCT_ID)return Response.json({error:'Online payment for this item is not available yet.'},{status:503});
  if(!/^\d{5}$/.test(body.zip||'')||!Number.isSafeInteger(body.expectedTotal)||!/^[-\w]{16,80}$/.test(body.requestId||''))return Response.json({error:'Check your order details.'},{status:400});
  const response=await getQuote({request:new Request(origin+'/api/store-quote?zip='+body.zip),env});const q=await response.json();
  if(!response.ok)return Response.json(q,{status:503});

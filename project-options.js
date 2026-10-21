@@ -138,10 +138,13 @@
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
-      if(key==='furniture'&&['bedroom-guest-room','kids-room'].includes(id)){
-        const product=document.createElement('a');product.className='shop-guide-card';product.href='/furniture.html?category=bedroom';
-        product.innerHTML='<img src="https://cf.cjdropshipping.com/af0eb536-ff3c-429c-ae33-aa318b19d3c8.jpg" alt="Farmington rustic brown nightstand" loading="lazy" style="width:100%;max-height:240px;object-fit:contain;background:#fff"><strong>Farmington Nightstand</strong><p>Rustic brown · View price &amp; check delivery →</p>';
-        card.append(product);
+      if(['furniture','office-furniture'].includes(key)){
+        const roomCategory=id==='kids-room'?'kids-room':id==='bedroom-guest-room'?'bedroom':id==='home-office'?'home-office':null;
+        if(roomCategory){
+          const products=document.createElement('div');card.append(products);
+          const load=()=>{if(!card.open||products.dataset.loaded)return;products.dataset.loaded='true';import('/store-cards.js').then(m=>m.renderRoomCards(products,roomCategory)).catch(()=>{products.innerHTML='<a href="/furniture.html?category='+roomCategory+'">Shop furniture →</a>';});};
+          card.addEventListener('toggle',load);load();
+        }
       }
       if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);}
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
