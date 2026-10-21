@@ -1,4 +1,20 @@
 const furnitureAssetVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'us-warehouse-20261021';
+
+const furnitureCategoryPhotos={
+ 'all':'/assets/approved-7e5510c3dce7.jpg',
+ 'bathroom':'/assets/approved-a908c20ce632.jpg',
+ 'bedroom':'/assets/approved-807c60a6001a.jpg',
+ 'decor':'/assets/approved-8d4db6742d08.jpg',
+ 'dining-room':'/assets/approved-a051ee7e1935.jpg',
+ 'entryway':'/assets/approved-4de99f88049f.jpg',
+ 'home-office':'/assets/approved-6075be404407.jpg',
+ 'kids-room':'/assets/kids-room.jpg',
+ 'lighting':'/assets/lighting-card.jpg',
+ 'living-room':'/assets/approved-4822ff53e23f.jpg',
+ 'outdoor':'/assets/approved-a11ab0fcd37f.jpg',
+ 'storage':'/assets/approved-8a9d216224b8.jpg'
+};
+
 document.addEventListener('DOMContentLoaded',async()=>{
  const {catalog,categories,inCategory,relatedCategories}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
  const {cardHtml,priceCards}=await import('/store-cards.js?v='+encodeURIComponent(furnitureAssetVersion));
@@ -9,7 +25,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const finish=()=>{updateCartCount();initNavMenus();};
  if(!productId){
   const list=catalog.filter(p=>inCategory(p,category)).sort((a,b)=>a.name.localeCompare(b.name));
-  document.body.innerHTML=header()+`<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → <a href="/furniture.html">Furniture</a>${categories[category]?' → '+esc(categories[category]):''}</nav><h1>${esc(categories[category]||'Furniture & Accessories')}</h1><nav class="store-categories" aria-label="Furniture rooms"><a class="btn outline" href="/furniture.html">All Furniture</a>${Object.entries(categories).map(([key,name])=>`<a class="btn outline" href="/furniture.html?category=${encodeURIComponent(key)}">${esc(name)}</a>`).join('')}</nav><p class="lead">Furniture and accessories confirmed in U.S. supplier warehouses. Product manufacturing origin is not verified. Item prices are shown before shipping and tax.</p><div class="store-card-grid" id="store-list">${list.map(p=>cardHtml({...p,category:categories[category]?category:p.category})).join('')}</div><p id="us-load-status" role="status" aria-live="polite">Checking U.S. warehouse inventory and prices…</p><div id="store-more"></div><p>Online payment is coming soon. Check delivery on any available item.</p></main>`+footer();
+  document.body.innerHTML=header()+`<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → <a href="/furniture.html">Furniture</a>${categories[category]?' → '+esc(categories[category]):''}</nav><h1>${esc(categories[category]||'Furniture & Accessories')}</h1><nav class="store-categories photo-store-categories" aria-label="Furniture rooms"><a class="photo-category-tile" href="/furniture.html"><img loading="lazy" src="${furnitureCategoryPhotos.all}" alt=""><span><strong>All Furniture</strong></span></a>${Object.entries(categories).map(([key,name])=>`<a class="photo-category-tile" href="/furniture.html?category=${encodeURIComponent(key)}"><img loading="lazy" src="${furnitureCategoryPhotos[key]}" alt=""><span><strong>${esc(name)}</strong></span></a>`).join('')}</nav><p class="lead">Furniture and accessories confirmed in U.S. supplier warehouses. Product manufacturing origin is not verified. Item prices are shown before shipping and tax.</p><div class="store-card-grid" id="store-list">${list.map(p=>cardHtml({...p,category:categories[category]?category:p.category})).join('')}</div><p id="us-load-status" role="status" aria-live="polite">Checking U.S. warehouse inventory and prices…</p><div id="store-more"></div><p>Online payment is coming soon. Check delivery on any available item.</p></main>`+footer();
   finish();
   const grid=document.getElementById('store-list');
   const status=document.getElementById('us-load-status');
