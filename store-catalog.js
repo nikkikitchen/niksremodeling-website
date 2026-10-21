@@ -29,18 +29,6 @@ export const catalog = [
     "name": "10-Shelf Bookcase",
     "category": "home-office",
     "image": "https://cf.cjdropshipping.com/17680032/88c0d312-021e-45ed-bc32-85d85a5efaa1.jpg"
-  },
-  {
-    "id": "2003348098417340418",
-    "name": "Kids\u2019 Bookcase \u2014 Pink",
-    "category": "kids-room",
-    "image": "https://cf.cjdropshipping.com/17664480/039fc574-0b01-4390-af80-bb79c4b4eec2.jpg"
-  },
-  {
-    "id": "2003347794848272385",
-    "name": "Kids\u2019 Bookcase \u2014 Grey",
-    "category": "kids-room",
-    "image": "https://cf.cjdropshipping.com/17664480/bb077516-7b52-4616-bba8-1435d115be1c.jpg"
   }
 ];
 export const categories = {
