@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const grid=document.getElementById('store-list');
   const status=document.getElementById('us-load-status');
   const seen=new Set(list.map(p=>p.id));
+  const normalizeName=name=>String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  const seenNames=new Set(list.map(p=>normalizeName(p.name)));
+  const seenImages=new Set(list.map(p=>p.image).filter(Boolean));
   await priceCards(grid);
   const rooms=categories[category]?[category]:['living-room','bedroom','dining-room','home-office','outdoor'];
   let morePage=1,moreTotal=1;
@@ -22,8 +25,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const response=await r.json();
    let added=0;
    for(const p of response.products||[]){
-    if(seen.has(p.id)||!Number.isSafeInteger(p.priceCents)||p.priceCents<=0)continue;
-    seen.add(p.id);grid.insertAdjacentHTML('beforeend',cardHtml(p));added++;
+    const normalized=normalizeName(p.name);
+    if(seen.has(p.id)||seenNames.has(normalized)||seenImages.has(p.image)||
+       !Number.isSafeInteger(p.priceCents)||p.priceCents<=0)continue;
+    seen.add(p.id);seenNames.add(normalized);seenImages.add(p.image);
+    grid.insertAdjacentHTML('beforeend',cardHtml(p));added++;
    }
    if(categories[category])moreTotal=Number(response.totalPages)||page;
    return added;
