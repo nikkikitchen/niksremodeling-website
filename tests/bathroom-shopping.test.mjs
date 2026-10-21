@@ -27,6 +27,23 @@ test('accessory names do not masquerade as complete bathroom fixtures',()=>{
  assert.equal(match('Bathroom vanity light','lighting'),true);
  assert.equal(match('Tub soaking bathtub','bathtubs'),true);
 });
+test('supplier cleaning products and bathroom accessories are never misrepresented as fixtures',()=>{
+ for(const title of [
+  'JAYSUING Toilet Bowl Cleaner Tablets, 20 Count',
+  'Drawer-equipped Toilet Above Storage Rack',
+  'VEVOR Portable Toilet For Camping'
+ ])assert.equal(match(title,'toilets'),false,title);
+ assert.equal(match('Elongated Dual Flush Ceramic Toilet','toilets'),true);
+ for(const title of [
+  'Shower Chair Transfer Bench For Bathtub',
+  'Wall Mount Faucet For Bathtub',
+  'Collapsible Dog Bathtub'
+ ])assert.equal(match(title,'bathtubs'),false,title);
+ assert.equal(match('Slipper Acrylic Soaking Bathtub','bathtubs'),true);
+ assert.equal(match('Black Round Wall Mirror, Bathroom Vanity','vanities'),false);
+ assert.equal(match('Pedestal Sink Bathroom Vanity Cabinet','vanities'),true);
+});
+
 test('only priced variants with positive physical U.S. warehouse inventory are shown',()=>{
  assert.equal(verified({inStockUS:true,warehouseCountry:'CN',variants:[{priceCents:10000,usStock:4}]}),null);
  assert.equal(verified({inStockUS:true,warehouseCountry:'US',variants:[{priceCents:10000,usStock:0}]}),null);
