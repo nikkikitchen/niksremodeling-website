@@ -6,7 +6,7 @@ const env={CJ_ACCESS_TOKEN:'private-cj',SQUARE_ACCESS_TOKEN:'private-square',SQU
 let stock=10,calls=[];
 const mock=async(url,opts={})=>{calls.push({url:String(url),body:opts.body});
  if(String(url).includes('/product/query?'))return Response.json({result:true,data:{productNameEn:'Nightstand',variants:[{vid:'1963146233666904066',variantSellPrice:49.72,variantSku:'sku',variantKey:'Brown'}]}});
- if(String(url).includes('queryByVid'))return Response.json({result:true,data:{inventories:[{countryCode:'US',totalInventory:stock}]}});
+ if(String(url).includes('queryByVid'))return Response.json({result:true,data:[{countryCode:'US',cjInventoryNum:stock,totalInventoryNum:stock,factoryInventoryNum:0}]});
  if(String(url).includes('freightCalculate'))return Response.json({result:true,data:[{logisticPrice:10,logisticName:'USPS',logisticAging:'3-5'}]});
  if(String(url).includes('/catalog/list'))return Response.json({objects:[{id:'tax1',tax_data:{enabled:true,percentage:'7',applies_to_custom_amounts:true,inclusion_type:'ADDITIVE'}}]});
  if(String(url).includes('/locations/'))return Response.json({location:{status:'ACTIVE',currency:'USD',capabilities:['CREDIT_CARD_PROCESSING']}});
