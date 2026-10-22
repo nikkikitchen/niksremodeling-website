@@ -65,11 +65,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
   let supplierErrors=0,verificationErrors=0;
   const roomKey=room=>room.cat+':'+room.search;
   const showStatus=()=>{
-   const visible=[...grid.querySelectorAll('.store-card')].filter(el=>!el.hidden).length;
+   const visible=[...grid.querySelectorAll('.store-card')].filter(el=>!el.hidden&&el.dataset.verified==='true').length;
+   const previews=[...grid.querySelectorAll('.store-card')].filter(el=>!el.hidden&&el.dataset.verified!=='true').length;
    status.textContent=(visible?
      'Showing '+visible+' furniture items with confirmed U.S. warehouse stock and checked prices.':
      'No furniture items could be verified for this view right now.')+
-     (supplierErrors||verificationErrors?' Some supplier checks are temporarily unavailable; those items are hidden until confirmed.':'')+
+     (previews?' '+previews+' picture-card previews are shown for browsing only; price and stock are not confirmed.':'')+
+     (supplierErrors||verificationErrors?' Some supplier checks are temporarily unavailable.':'')+
      ' Manufacturing origin is not verified.';
   };
   const loadMore=async(room)=>{

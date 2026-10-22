@@ -79,6 +79,8 @@
   crossList(['Exterior-Grade Shiplap'],['siding-exterior','lumber','paint']);
   crossList(['Wall Panels','Decorative Wall Panels','Decorative 3D Wall Panels'],['lumber','paint']);
   crossList(['Limewash','Venetian Plaster','Textured Plaster','Concrete Look Finish','Metallic Finish','Wallpaper'],['paint']);
+  // Construction materials remain available under relevant wall and tile projects, not the paint shop.
+  shopping.paint=[...MATERIAL_DETAIL_PAGES['paint-finishes'].items];
   crossList(['Baseboards','Crown Molding','Decorative Trim'],['lumber','trim']);
   shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
   const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));

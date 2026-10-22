@@ -4,8 +4,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
 export function cardHtml(p){
  const priced=Number.isSafeInteger(p.priceCents)&&p.priceCents>0;
- const price=priced?'From '+money(p.priceCents):'Checking U.S. warehouse stock…';
- return `<article class="store-card" data-product="${esc(p.id)}" ${priced?'':'hidden'}><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-note">U.S. warehouse stock · Shipping &amp; tax extra · Origin not verified</p><span class="btn primary">View item</span></div></a></article>`;
+ const price=priced?'From '+money(p.priceCents):'Price and stock not yet verified';
+ return `<article class="store-card" data-product="${esc(p.id)}" data-verified="${priced?'true':'false'}"><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-note">${priced?'U.S. warehouse stock checked':'Catalog preview — confirm price and U.S. stock'} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
 export async function priceCards(container){
  for(const card of container.querySelectorAll('[data-product]')){
@@ -16,8 +16,8 @@ export async function priceCards(container){
    const prices=(p.variants||[]).map(v=>v.priceCents).filter(n=>Number.isSafeInteger(n)&&n>0&&vIsInStock(p,n));
    if(!r.ok||!prices.length||!p.inStockUS)throw Error('No confirmed U.S. stock');
    label.textContent=(new Set(prices).size>1?'From ':'')+money(Math.min(...prices));
-   card.hidden=false;
-  }catch{card.remove();}
+   card.hidden=false;card.dataset.verified='true';
+  }catch{card.hidden=false;card.dataset.verified='false';label.textContent='Preview only · Price and U.S. stock not confirmed';}
  }
 }
 function vIsInStock(p,n){return (p.variants||[]).some(v=>v.priceCents===n&&Number(v.usStock)>0);}
