@@ -83,7 +83,7 @@ window.renderThemedRooms=()=>window.renderOutdoorProjects(true);
 window.renderOutdoorProjects=(themed=false)=>{
  document.body.innerHTML=header()+'<main class="wrap section"><a class="project-back" href="/#projects">← All Projects</a><h1>'+ (themed==='custom'?'More Ideas':themed?'Themed Rooms':'Outdoor Projects') +'</h1><p class="lead">'+(themed==='custom'?'Choose a finish or feature to make your space your own.':themed?'Choose a room to explore ideas and plan your work.':'Choose an outdoor area to explore ideas and plan your work.')+'</p><div class="tile-grid project-grid" id="outdoor-project-grid"></div></main>'+footer();
  const choices=Object.entries(PROJECT_CATALOG).filter(([id,p])=>themed==='custom'?p.customGroup:themed?p.themedGroup:(p.exterior||p.outdoorGroup)&&id!=='concrete');
- if(themed==='custom')choices.push(['custom&customWork=1',{...PROJECT_CATALOG.custom,title:'Other Custom Ideas',intro:'Tell us about your one-of-a-kind project.'}]);
+ if(themed==='custom')choices.push(['custom&customWork=1',{...PROJECT_CATALOG.custom,title:'Other Ideas',intro:'Tell us about your one-of-a-kind project.'}]);
  if(!themed)choices.push(['concrete&outdoorWork=1',{...PROJECT_CATALOG.concrete,title:'Patios, Walkways & Concrete',image:'/assets/patio-concrete.webp',intro:'Concrete, paving, walkways, porches & outdoor surfaces.'}]);
  const grid=document.getElementById('outdoor-project-grid');
  choices.sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{
