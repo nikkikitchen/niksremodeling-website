@@ -65,6 +65,53 @@
     'other-interior':work('Other Indoor Work','custom',['Indoor Repair','Interior Upgrade','Indoor Installation','Other material']),
     'other-exterior':work('Other Outdoor Work','custom',['Outdoor Repair','Exterior Upgrade','Outdoor Installation','Other material'])
   });
+  // Feature-specific projects show only the work that belongs to them.
+  // All selections remain quote requests until item and site conditions are verified.
+  Object.assign(options,{
+    'pet-floor':work("Pet-Friendly Floors",'custom',["Water-Resistant Pet Flooring","Slip-Resistant Floor Finish","Easy-Clean Floor Upgrade","Floor Transition for Pet Door"]),
+    'pet-wash':work("Pet Washing Connections",'custom',["Pet Wash Water Supply","Pet Wash Drain","Pet-Friendly Wash Fixture","Splash Protection"]),
+    'pet-storage':work("Pet Storage & Feeding",'custom',["Feeding Cabinet","Food Storage","Leash & Toy Storage","Built-In Pet Bed"]),
+    'pet-walls':work("Pet-Safe Surfaces",'custom',["Washable Wall Finish","Scratch-Resistant Wall Protection","Pet-Safe Trim"]),
+    'outdoor-counters':work("Outdoor Kitchen Counters",'custom',["Weather-Resistant Countertop","Outdoor Prep Counter","Outdoor Serving Counter"]),
+    'outdoor-sink':work("Outdoor Kitchen Plumbing",'custom',["Outdoor Sink Connection Assessment","Water Supply Planning","Drainage Planning"]),
+    'outdoor-storage':work("Outdoor Kitchen Storage",'custom',["Weather-Resistant Base Cabinets","Grill Storage","Outdoor Shelving"]),
+    'outdoor-kitchen-power':work("Outdoor Kitchen Lighting & Power",'custom',["Weather-Rated Task Lighting","Outdoor Outlet Planning","Grill Station Electrical Planning"]),
+    'shop-floor':work("Workshop Floors",'custom',["Durable Shop Floor","Anti-Slip Surface","Floor Coating"]),
+    'shop-storage':work("Workshop Storage",'custom',["Tool Wall","Tool Cabinets","Parts Storage","Workbench Storage"]),
+    'shop-utilities':work("Workshop Power & Ventilation",'custom',["Shop Lighting","Tool Outlet Planning","Workshop Ventilation"]),
+    'wash-floor':work("Wash Area Surface & Drainage",'custom',["Wash Bay Surface","Slip-Resistant Wash Floor","Drainage Assessment"]),
+    'wash-water':work("Water & Hose Connections",'custom',["Hose Bib","Hose Reel Connection","Pressure Washer Supply","Water Management Assessment"]),
+    'wash-storage':work("Wash & Detailing Storage",'custom',["Detailing Supply Shelves","Wash Equipment Cabinet","Vacuum Station Storage"]),
+    'scrap-platform':work("Sorting Pad & Ground Surface",'custom',["Stable Recycling Pad","Bin Station Base","Scrap Area Surface"]),
+    'scrap-cover':work("Covered Scrap Storage",'custom',["Covered Sorting Shelter","Scrap Racks","Weather Protection"]),
+    'vault-door':work("Secure Door Planning",'custom',["Security Door Assessment","Reinforced Doorframe Assessment","Secure Access Hardware"]),
+    'vault-storage':work("Safe & Secure Storage",'custom',["Safe Placement Planning","Secure Cabinets","Concealed Storage"]),
+    'vault-services':work("Secure Room Utilities",'custom',["Ventilation Assessment","Safe Room Lighting","Access Control Planning"]),
+    'snack-counters':work("Snack Counter & Serving Area",'custom',["Snack Counter","Beverage Prep Surface","Bread Box Counter"]),
+    'snack-storage':work("Snack & Coffee Storage",'custom',["Mug Cabinet","Coffee Supply Storage","Snack Cabinet"]),
+    'snack-sink':work("Beverage Station Connections",'custom',["Coffee Station Water Connection","Small Sink Assessment","Drainage Assessment"]),
+    'snack-light':work("Coffee Bar Lighting",'custom',["Under-Cabinet Lighting","Beverage Counter Lighting"]),
+    'pool-deck':work("Pool Deck & Surround",'custom',["Pool Deck Planning","Deck Around Existing Pool","Poolside Walkway","Pool Equipment Platform"]),
+    'pool-access':work("Pool Steps, Railings & Safety",'custom',["Pool Entry Steps Assessment","Deck Handrails","Slip-Resistant Pool Access","Safety Gate Planning"]),
+    'pool-storage':work("Pool Equipment & Storage",'custom',["Pool Equipment Cover","Weather-Resistant Storage","Poolside Utility Area"]),
+    'waiting-access':work("Bus Stop Access & Path",'custom',["Walkway to Pickup Area","Safe Waiting Surface","Accessible Waiting Approach"]),
+    'waiting-shelter':work("Waiting Shelter & Seating",'custom',["Covered Shelter","Bench Installation","Weather Screen","Shade & Rain Protection"]),
+    'waiting-light':work("Waiting Area Lighting",'custom',["Weather-Rated Shelter Light","Safe Path Lighting","Lighting Placement Assessment"]),
+    'mailbox-base':work("Mailbox Posts & Bases",'custom',["Post-Mounted Mailbox","Mailbox Post Replacement","Masonry Mailbox Base","Stable Mailbox Footing"]),
+    'mailbox-parcels':work("Parcel Delivery Options",'custom',["Locking Parcel Box","Package Drop Station","Multiple-Mailbox Unit","Address Sign"]),
+    'garden-beds':work("Garden Beds & Paths",'custom',["Raised Garden Bed","Garden Path","Potting Area"]),
+    'garden-shelter':work("Greenhouse & Tool Storage",'custom',["Greenhouse Kit","Garden Tool Shed","Covered Potting Bench"]),
+    'garden-water':work("Garden Water Planning",'custom',["Garden Hose Station","Irrigation Access Assessment","Rainwater Collection Planning"]),
+    'fit-floor':work("Exercise Room Floors",'custom',["Rubber Gym Flooring","Exercise Mat Area","Low-Impact Floor Surface"]),
+    'fit-mirror':work("Fitness Mirrors & Storage",'custom',["Wall Gym Mirrors","Equipment Rack","Towel & Accessory Storage"]),
+    'hobby-work':work("Craft & Hobby Workstations",'custom',["Craft Table","Sewing Station","Model Workbench"]),
+    'hobby-display':work("Hobby Storage & Display",'custom',["Display Shelves","Game Storage","Organizing Cabinets"]),
+    'sound-install':work("Outdoor Audio Installation",'custom',["Weather-Rated Speaker Mounting","Concealed Cable Path Assessment","Outdoor Audio Control Location"]),
+    'sound-power':work("Outdoor Entertainment Power",'custom',["Weather-Rated Outlet Assessment","Outdoor Lighting Planning","Outdoor TV / Projector Power Planning"]),
+    'retreat-surface':work("Backyard Seating & Paths",'custom',["Outdoor Seating Area","Patio Connection","Walkway","Outdoor Surface"]),
+    'retreat-privacy':work("Outdoor Privacy & Shade",'custom',["Privacy Screen","Shade Structure","Pergola Details"]),
+    'retreat-light':work("Backyard Lighting",'custom',["Weather-Rated Accent Lighting","Path Lighting","Pergola Lighting"])
+  });
   // The catalog, project cards and calculator read the same material lists.
   const shared=window.WORK_MATERIAL_OPTIONS={};
   for(const [kind,slug] of Object.entries(WORK_MATERIAL_CATEGORIES))shared[kind]=[...MATERIAL_DETAIL_PAGES[slug].items];
@@ -117,6 +164,115 @@
     custom:['ceiling','walls','floor','framing','cabinets','refinish','trim','lighting','prep','other']
   };
   Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];scopes.accents=scopes.accents.filter(key=>key!=='prep');
+  // Limit specialty projects to meaningful tasks; never inherit an unrelated
+  // trade-wide list from a generic room or remodeling category.
+  Object.assign(scopes,{
+  "pet-room": [
+    "pet-care",
+    "pet-floor",
+    "pet-wash",
+    "pet-storage",
+    "pet-walls",
+    "other"
+  ],
+  "outdoor-kitchen": [
+    "outdoor-cooking",
+    "outdoor-counters",
+    "outdoor-sink",
+    "outdoor-storage",
+    "outdoor-kitchen-power",
+    "other"
+  ],
+  "mechanic-shop": [
+    "workshop",
+    "car-wash",
+    "shop-floor",
+    "shop-storage",
+    "shop-utilities",
+    "other"
+  ],
+  "car-wash": [
+    "car-wash",
+    "wash-floor",
+    "wash-water",
+    "wash-storage",
+    "other"
+  ],
+  "recycling-scrap": [
+    "recycling",
+    "scrap-platform",
+    "scrap-cover",
+    "other"
+  ],
+  "vault-safe-room": [
+    "secure-room",
+    "vault-door",
+    "vault-storage",
+    "vault-services",
+    "other"
+  ],
+  "snack-beverage": [
+    "snack-station",
+    "beverage",
+    "snack-counters",
+    "snack-storage",
+    "snack-sink",
+    "snack-light",
+    "other"
+  ],
+  "pools": [
+    "pool-options",
+    "pool-deck",
+    "pool-access",
+    "pool-storage",
+    "other"
+  ],
+  "bus-stop": [
+    "waiting-area",
+    "waiting-access",
+    "waiting-shelter",
+    "waiting-light",
+    "other"
+  ],
+  "mailboxes": [
+    "mailbox-options",
+    "mailbox-base",
+    "mailbox-parcels",
+    "other"
+  ],
+  "garden-greenhouse": [
+    "garden",
+    "garden-beds",
+    "garden-shelter",
+    "garden-water",
+    "other"
+  ],
+  "fitness-wellness": [
+    "fitness",
+    "fit-floor",
+    "fit-mirror",
+    "other"
+  ],
+  "games-hobbies": [
+    "hobbies",
+    "hobby-work",
+    "hobby-display",
+    "other"
+  ],
+  "outdoor-sound": [
+    "outdoor-media",
+    "sound-install",
+    "sound-power",
+    "other"
+  ],
+  "backyard-retreat": [
+    "retreat",
+    "retreat-surface",
+    "retreat-privacy",
+    "retreat-light",
+    "other"
+  ]
+});
   const locationScopes={
     fireplaces:{interior:['fireplace','walls','trim','prep','other'],exterior:['fireplace-outdoor','outdoor-tile','concrete','prep','other']},
     accessibility:{interior:['access-bath','access-grab-bars','access-indoor-rails','access-doorways','access-thresholds','access-controls','access-other'],exterior:['access-ramps','access-outdoor-rails','access-walkways','access-entry','access-other']},
@@ -131,7 +287,9 @@
     other:{interior:['other-interior','prep'],exterior:['other-exterior','prep']}
   };
   Object.entries(locationScopes).forEach(([project,places])=>{scopes[project]=[...new Set([...places.interior,...places.exterior])];});
-  Object.values(scopes).forEach(keys=>{if(keys.includes('plumbing')&&!keys.includes('faucet-service'))keys.push('faucet-service');});
+  // Only bathrooms offer a vanity-faucet replacement. Adding that service to
+  // every project containing plumbing incorrectly polluted pet and outdoor kitchens.
+  if(!scopes.bathrooms.includes('faucet-service'))scopes.bathrooms.push('faucet-service');
   window.materialSupplyList=(name)=>{
     if(/knob|pull|hinge|hardware/i.test(name))return ['Correct-size mounting screws','Compatible mounting plates if required','Hole repair / filler supplies if required'];
     if(/backer|drywall|wall panels?/i.test(name))return ['Compatible board fasteners','Joint / seam tape','Compatible joint or seam compound','Surface protection'];
@@ -290,9 +448,10 @@
       'access-other':['/assets/custom-projects-card.jpg']
     };
     const spareWorkPhotos=['/assets/approved-17df84119d39.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-6075be404407.jpg','/assets/approved-807c60a6001a.jpg','/assets/approved-a051ee7e1935.jpg','/assets/approved-9753e3ad86f9.jpg','/assets/approved-94fe00a25a93.jpg','/assets/approved-8d4db6742d08.jpg','/assets/idea-mechanic-shop.jpg','/assets/idea-pet-room.jpg','/assets/idea-recycling-scrap.jpg','/assets/idea-mailboxes.jpg','/assets/idea-outdoor-kitchen.jpg','/assets/idea-garden-greenhouse.jpg','/assets/approved-7e5510c3dce7.jpg'];
+    const specialtyProjectPhotos={"pet-room":["/assets/idea-pet-room.jpg","/assets/tile-shower.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/approved-0af816f48fb0.jpg","/assets/kids-room.jpg"],"outdoor-kitchen":["/assets/idea-outdoor-kitchen.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/approved-b9cdb9084877.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg"],"mechanic-shop":["/assets/idea-mechanic-shop.jpg","/assets/idea-car-wash.jpg","/assets/flooring-card.jpg","/assets/approved-d2807423c8f0.jpg","/assets/lighting-card.jpg","/assets/approved-8a9d216224b8.jpg"],"car-wash":["/assets/idea-car-wash.jpg","/assets/patio-concrete.webp","/assets/approved-b9cdb9084877.jpg","/assets/idea-mechanic-shop.jpg","/assets/approved-4de99f88049f.jpg"],"recycling-scrap":["/assets/idea-recycling-scrap.jpg","/assets/concrete-card.jpg","/assets/idea-garden-greenhouse.jpg","/assets/approved-b5c632fcfbc0.jpg"],"vault-safe-room":["/assets/idea-vault-safe-room.jpg","/assets/entryways-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/lighting-card.jpg","/assets/approved-739d17fd2952.jpg"],"snack-beverage":["/assets/idea-snack-beverage.jpg","/assets/approved-b9cdb9084877.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/lighting-card.jpg","/assets/approved-a051ee7e1935.jpg","/assets/approved-807c60a6001a.jpg"],"pools":["/assets/idea-pools.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/stairs-card.jpg","/assets/idea-backyard-retreat.jpg","/assets/patio-concrete.webp"],"bus-stop":["/assets/idea-bus-stop.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/lighting-card.jpg","/assets/approved-a11ab0fcd37f.jpg"],"mailboxes":["/assets/idea-mailboxes.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/approved-b5c632fcfbc0.jpg"],"garden-greenhouse":["/assets/idea-garden-greenhouse.jpg","/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/patio-concrete.webp","/assets/approved-b5c632fcfbc0.jpg"],"fitness-wellness":["/assets/idea-fitness-wellness.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/office.jpg"],"games-hobbies":["/assets/idea-games-hobbies.jpg","/assets/office.jpg","/assets/approved-6075be404407.jpg","/assets/approved-17df84119d39.jpg"],"outdoor-sound":["/assets/idea-outdoor-sound.jpg","/assets/cinema.jpg","/assets/lighting-card.jpg","/assets/idea-backyard-retreat.jpg"],"backyard-retreat":["/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg","/assets/lighting-card.jpg","/assets/patio-concrete.webp"]};
     const usedWorkPhotos=new Set();
     const workPhoto=key=>{
-      const choices=[...(workPhotoChoices[key]||[]),...spareWorkPhotos];
+      const choices=[...(specialtyProjectPhotos[id]||[]),...(workPhotoChoices[key]||[]),...spareWorkPhotos];
       const chosen=choices.find(url=>!usedWorkPhotos.has(url))||choices[0];
       usedWorkPhotos.add(chosen);return chosen;
     };
