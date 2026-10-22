@@ -165,7 +165,7 @@
       selectedRoom.value=chosenRoom;
       selectedRoom.closest('.field').style.display='none';
     }
-    const fixedLocation=project.exterior||['bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies','wallpaper'].includes(id);
+    const fixedLocation=project.exterior||['attic','basement','garage','bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies','wallpaper'].includes(id);
     const locationFromLink=new URLSearchParams(location.search).get('location');
     document.getElementById('scope-location').value=fixedLocation?(project.exterior?'exterior':'interior'):(['interior','exterior'].includes(locationFromLink)?locationFromLink:'');
     if(fixedLocation)document.getElementById('scope-location').closest('.field').hidden=true;
@@ -190,7 +190,36 @@
     const stepButtons=[];
     const setStep=step=>{if(step===1&&!document.getElementById('scope-location').value){document.getElementById('scope-location').reportValidity();return;}if(step===1)filterLocationMaterials();measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=step!==1;back.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
     ['Location','Choose Work','Review Cart'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
-    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};setStep(0);
+    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};
+    back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};
+    if(!fixedLocation){
+      // Choosing indoor or outdoor work is the only required first step.
+      // Make the options visual instead of making customers open an empty select.
+      const choices=document.createElement('div');choices.className='project-location-photo-choices';
+      for(const option of [
+        {value:'interior',label:'Interior Work',photo:'/assets/approved-9bfcb89f7800.jpg'},
+        {value:'exterior',label:'Exterior Work',photo:'/assets/approved-a11ab0fcd37f.jpg'}
+      ]){
+        const button=document.createElement('button');button.type='button';button.className='project-location-photo';
+        const image=document.createElement('img');image.src=option.photo;image.alt='';image.loading='lazy';
+        const label=document.createElement('strong');label.textContent=option.label;
+        button.append(image,label);
+        button.onclick=()=>{
+          const field=document.getElementById('scope-location');field.value=option.value;
+          field.dispatchEvent(new Event('input',{bubbles:true}));
+          setStep(1);
+        };
+        choices.append(button);
+      }
+      const selector=document.getElementById('scope-location').closest('.field');
+      selector.hidden=true;
+      next.hidden=true;
+      measurementPanel.append(choices);
+      const locationStyles=document.createElement('style');
+      locationStyles.textContent='.project-location-photo-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:14px 0}.project-location-photo{border:2px solid #d4dee6;border-radius:12px;padding:0;overflow:hidden;background:#fff;color:#204968;cursor:pointer;box-shadow:0 4px 15px #152a3c1c;text-align:left}.project-location-photo img{width:100%;height:205px;object-fit:cover;display:block}.project-location-photo strong{display:block;padding:14px 18px;font-size:18px}.project-location-photo:hover,.project-location-photo:focus-visible{border-color:#165a9c}@media(max-width:580px){.project-location-photo-choices{grid-template-columns:1fr}.project-location-photo img{height:160px}}';
+      document.head.append(locationStyles);
+    }
+    setStep(0);
     const grid=document.getElementById('project-work-grid');
     // Use existing approved job photographs on every work choice, retaining
     // the accordion controls for material selection and calculator handoff.
