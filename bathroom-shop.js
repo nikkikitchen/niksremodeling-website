@@ -9,17 +9,17 @@ const bathroomTypes=[
 ];
 const bathroomNames=Object.fromEntries(bathroomTypes);
 const bathroomCategoryPhotos={
- "all": "/assets/idea-accessibility.jpg",
+ "all": "/assets/tile-shower.jpg",
  "toilets": "/assets/approved-a908c20ce632.jpg",
- "bathtubs": "/assets/tile-shower.jpg",
- "vanities": "/assets/approved-9bfcb89f7800.jpg",
+ "bathtubs": "https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82",
+ "vanities": "https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82",
  "showers": "/assets/showers-card.png",
- "showerBases": "/assets/project-stone-real.jpg",
- "showerDoors": "/assets/approved-0ab244a922c8.jpg",
+ "showerBases": "/assets/approved-0ab244a922c8.jpg",
+ "showerDoors": "https://images.unsplash.com/photo-1771929662486-f793e08f0f16?auto=format&fit=crop&w=900&q=82",
  "faucets": "/assets/approved-b9cdb9084877.jpg",
- "lighting": "/assets/pendant-lighting.jpg",
- "ventilation": "/assets/catalog-8.jpg",
- "accessories": "/assets/approved-a051ee7e1935.jpg"
+ "lighting": "https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82",
+ "ventilation": "/assets/project-attic.jpg",
+ "accessories": "/assets/approved-8d4db6742d08.jpg"
 };
 const bathroomRules={
  toilets:/\b(toilets?|commodes?|intelligent toilets?)\b/i,
