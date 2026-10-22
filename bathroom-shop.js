@@ -99,6 +99,10 @@ function toiletStyleTiles(qs){
 const toiletStyleCSS=document.createElement('style');
 toiletStyleCSS.textContent='.toilet-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin:24px 0 28px}.toilet-choice-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 14px;border:1px solid #dde5eb;border-radius:12px;background:#fff;box-shadow:0 4px 16px #16202a0a;transition:box-shadow .15s,border-color .15s}.toilet-choice-tile:hover,.toilet-choice-tile:focus-visible{border-color:#0b5aa6;box-shadow:0 6px 18px #16202a18}.toilet-choice-art{display:grid;place-items:center;width:100%;height:147px;background:#f3f7f9;border-radius:9px}.toilet-choice-art svg{width:170px;max-height:135px}.toilet-choice-tile strong{font-size:1.05rem;text-align:center}.toilet-choice-tile small{text-align:center;color:#50606b;line-height:1.4;min-height:40px}.toilet-choice-action{color:#0b5aa6;font-weight:700;margin-top:auto}.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.toilet-back-link{display:inline-block;margin-bottom:10px}';
 document.head.append(toiletStyleCSS);
+const planningStyle=document.createElement('style');
+planningStyle.textContent='.bath-plan-fallback{margin:22px 0;padding:18px 20px;background:#f2f7fa;border:1px solid #cbdbe6;border-radius:10px}.bath-plan-fallback p{margin:0 0 12px;max-width:650px;line-height:1.5}.bath-plan-fallback .btn{display:inline-flex;white-space:normal;text-align:center}';
+document.head.append(planningStyle);
+
 
 const bathEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const bathMoney=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
@@ -120,6 +124,15 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const selectedCategory=bathroomNames[type]||'Bathroom Products';
  const projectBack='<a class="btn outline" href="'+projectReturn+'">← Back to Bathroom Project / Add Labor</a>';
  const projectControls=fromProject?'<div class="project-shopping-return">'+projectBack+' <a class="btn outline" href="/project-cart.html">Review Cart</a></div>':'';
+ // Preserve a route to project planning when retail warehouse stock is unavailable.
+ const bathWorkByType={toilets:'toilet',bathtubs:'tub',vanities:'vanity',showers:'shower',showerBases:'shower',showerDoors:'shower',faucets:'faucet-service',lighting:'vanity-light',ventilation:'ventilation',accessories:'mirror'};
+ const planningWork=bathWorkByType[type]||'';
+ const planningParams=new URLSearchParams({project:'bathrooms'});
+ if(planningWork)planningParams.set('work',planningWork);
+ if(toiletModel)planningParams.set('toiletStyle',toiletModel);
+ const planningUrl='/project.html?'+planningParams.toString();
+ const planWithoutProduct='<div class="bath-plan-fallback"><p>No verified product yet? You can still plan the work and request a quote. Stock and product prices are not assumed.</p><a class="btn primary" href="'+bathEsc(planningUrl)+'">'+(type==='toilets'?(toiletModel?'Plan '+bathEsc(toiletStyleNames[toiletModel])+' / Request Quote':'Plan Toilet Installation / Request Quote'):'Plan '+bathEsc(selectedCategory)+' / Request Quote')+'</a></div>';
+
  const tabs='<nav class="store-categories photo-store-categories" aria-label="Bathroom fixture categories">'+
    '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
    bathroomTypes.map(([key,label])=>'<a class="photo-category-tile" href="/bathroom.html?type='+key+'"><img src="'+bathroomCategoryPhotos[key]+'" alt="" loading="lazy"><span><strong>'+bathEsc(label)+'</strong></span></a>').join('')+
@@ -137,13 +150,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
    bathEsc(indexParams.toString())+'">← All Toilet Styles</a>':'';
  document.body.innerHTML=header()+base+(toiletHub?
    '<h2>Choose Your Toilet Style</h2>'+toiletStyleTiles(params)+
-   '<p class="calc-note">Products and prices will appear under each style as they are added.</p>':
+   '<p class="calc-note">Individual fixture prices appear only when supplier stock and pricing are verified.</p>'+planWithoutProduct:
    product?'<div id="bath-detail" role="status">Checking product options and price…</div>':
    allStylesBack+'<h2>'+bathEsc(chosenStyle?toiletStyleNames[toiletModel]:(bathroomNames[type]||'Browse Bathroom'))+'</h2>'+
    '<div class="store-card-grid" id="bath-products"></div>'+
    '<p id="bath-status" role="status">Loading available products…</p>'+
    '<div id="bath-more"></div>'+
-   '<p>Product prices exclude delivery, tax and installation. Online payment is not yet available.</p>'+projectControls)+
+   '<p>Product prices exclude delivery, tax and installation. Online payment is not yet available.</p>'+planWithoutProduct+projectControls)+
    '</main>'+footer();
  updateCartCount();initNavMenus();
  if(toiletHub)return;
