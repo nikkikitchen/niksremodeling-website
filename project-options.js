@@ -112,6 +112,8 @@
     'retreat-privacy':work("Outdoor Privacy & Shade",'custom',["Privacy Screen","Shade Structure","Pergola Details"]),
     'retreat-light':work("Backyard Lighting",'custom',["Weather-Rated Accent Lighting","Path Lighting","Pergola Lighting"])
   });
+  // Keep the same feature from appearing under several cards on a page.
+  Object.entries({"pool-options":["Above-ground Pool — Without Deck","Above-ground Pool — With Deck","Pool-company Project Coordination"],"secure-room":["Vault Room Planning","Safe Room Assessment","Safe Installation Planning"],"outdoor-cooking":["Built-in Outdoor Kitchen","Mobile / Rolling Outdoor Kitchen","Grill Station","Pizza Oven Station"],"workshop":["Workbench","Air Hose Storage","Vehicle Lift Planning"],"car-wash":["Wash Bay","Pressure Washer Station","Detailing Bench","Vacuum Station"],"snack-station":["Bread Box","Coffee / Barista Station","Espresso Machine Station","Popcorn Station"],"recycling":["Recycling Bin Station","Scrap Metal Racks","Reusable Material Storage"]}).forEach(([key,names])=>{if(options[key])options[key].materials=names;});
   // The catalog, project cards and calculator read the same material lists.
   const shared=window.WORK_MATERIAL_OPTIONS={};
   for(const [kind,slug] of Object.entries(WORK_MATERIAL_CATEGORIES))shared[kind]=[...MATERIAL_DETAIL_PAGES[slug].items];
@@ -230,18 +232,15 @@
   "bus-stop": [
     "waiting-area",
     "waiting-access",
-    "waiting-shelter",
     "waiting-light",
     "other"
   ],
   "mailboxes": [
     "mailbox-options",
     "mailbox-base",
-    "mailbox-parcels",
     "other"
   ],
   "garden-greenhouse": [
-    "garden",
     "garden-beds",
     "garden-shelter",
     "garden-water",
@@ -255,7 +254,6 @@
   ],
   "games-hobbies": [
     "hobbies",
-    "hobby-work",
     "hobby-display",
     "other"
   ],
@@ -593,7 +591,7 @@
       item.materials.forEach(name=>{if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint — $50/gallon, supplies included':name));card.append(label)});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
-      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'See Price & Add to Cart';
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
