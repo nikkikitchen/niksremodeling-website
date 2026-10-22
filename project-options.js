@@ -40,7 +40,7 @@
     'fireplace-outdoor':work('Outdoor Fireplaces & Fire Pits','custom',['Outdoor Fireplace Surround','Fire Pit Surround','Outdoor Hearth','Fire-Rated Stone / Masonry','Outdoor Mantel / Shelf']),
     'access-interior':work('Indoor Accessibility','custom',['Shower Grab Bars','Bathroom Grab Bars','Indoor Handrails','Accessible Door Hardware','Interior Threshold Transition','Doorway Widening Assessment']),
     'access-exterior':work('Exterior Accessibility','custom',['Entry Ramp Planning','Exterior Handrails','Accessible Walkway Planning','Entry Landing Assessment','Exterior Threshold Transition']),
-    'outdoor-accent':work('Outdoor Accent Walls','custom',['Exterior Stone Veneer','Weather-Resistant Wall Cladding','Exterior Decorative Panels','Exterior-Grade Wood Accents']),
+    'outdoor-accent':work('Outdoor Accent Walls','custom',['Exterior-Grade Shiplap','Exterior Stone Veneer','Weather-Resistant Wall Cladding','Exterior Decorative Panels','Exterior-Grade Wood Accents']),
     'outdoor-floor':work('Outdoor Flooring','custom',['Porch Flooring','Deck Surface Boards','Exterior Floor Tile','Exterior-Grade Floor Finish']),
     'outdoor-tile':work('Outdoor Tile & Stone','custom',['Exterior Porcelain Tile','Slip-Resistant Outdoor Tile','Stone Pavers','Exterior Stone Veneer']),
     'outdoor-stairs':work('Outdoor Stairs & Railings','custom',['Exterior Stair Treads','Outdoor Handrails','Deck Stairs','Exterior Balusters','Stair Landing Assessment']),
@@ -76,6 +76,7 @@
   crossList(['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile'],['flooring','tile','paint']);
   crossList(['Backsplash Tile','Glass Tile','Stone Veneer',...options['accent-stone'].materials,...options['accent-tile'].materials],['tile','paint']);
   crossList(options['accent-wood'].materials,['lumber','trim','paint']);
+  crossList(['Exterior-Grade Shiplap'],['siding-exterior','lumber','paint']);
   crossList(['Wall Panels','Decorative Wall Panels','Decorative 3D Wall Panels'],['lumber','paint']);
   crossList(['Limewash','Venetian Plaster','Textured Plaster','Concrete Look Finish','Metallic Finish','Wallpaper'],['paint']);
   crossList(['Baseboards','Crown Molding','Decorative Trim'],['lumber','trim']);
