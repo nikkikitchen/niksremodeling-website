@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
    '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(toiletModel?toiletStyleNames[toiletModel]:selectedCategory))+'</h1>'+
    '<p class="lead">'+(type==='toilets'?'Choose a toilet style to explore available models.':'Choose products and see prices when items are available.')+'</p>'+
-   projectControls+(fromProject&&type!=='all'?'':tabs);
+   projectControls+(type!=='all'?'':tabs);
  const toiletHub=type==='toilets'&&!toiletModel&&!product;
  const chosenStyle=type==='toilets'&&toiletModel;
  const indexParams=new URLSearchParams(params);
