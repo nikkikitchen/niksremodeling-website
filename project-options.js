@@ -59,6 +59,8 @@
   Object.values(options).forEach(option=>{
     if(shared[option.kind])shared[option.kind]=[...new Set([...shared[option.kind],...option.materials])];
   });
+  // Wall projects include tile and boards; those are not paint products.
+  shared.paint=[...MATERIAL_DETAIL_PAGES['paint-finishes'].items];
   ['flooring','tile'].forEach(kind=>{shared[kind]=[...new Set([...shared[kind],'Underlayment','Backer Board'])]});
   Object.values(options).forEach(option=>{if(shared[option.kind])option.materials=shared[option.kind].filter(name=>name!=='Other material')});
   // Finish selections stay separate from structural and preparation products.
