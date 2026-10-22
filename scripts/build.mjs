@@ -18,12 +18,12 @@ const availablePages = new Set(files.filter(file=>file.endsWith('.html')));
 let testedPhotos=0,testedLinks=0;
 for (const file of integrityPages) {
   const content=readFileSync(new URL('../'+file,import.meta.url),'utf8');
-  for (const match of content.matchAll(/\\/assets\\/[a-zA-Z0-9._-]+\\.(?:jpe?g|png|webp|gif)/g)) {
+  for (const match of content.matchAll(/\/assets\/[a-zA-Z0-9._-]+\.(?:jpe?g|png|webp|gif)/g)) {
     const asset=match[0];
     if (!existsSync(new URL('..'+asset,import.meta.url))) throw Error('Missing photograph: '+file+' → '+asset);
     testedPhotos++;
   }
-  for (const match of content.matchAll(/href=["'`]\\/([a-z0-9-]+\\.html)(?=[?'"\`])/g)) {
+  for (const match of content.matchAll(/href=["'`]\/([a-z0-9-]+\.html)(?=[?'"\`])/g)) {
     if (!availablePages.has(match[1])) throw Error('Broken local link: '+file+' → /'+match[1]);
     testedLinks++;
   }
@@ -34,10 +34,10 @@ if (shoppingSource.includes('http-equiv="refresh"') ||
     (shoppingSource.match(/class="photo-category-tile"/g)||[]).length < 8)
   throw Error('Shopping picture cards or landing page are missing.');
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
-const access=projectSource.match(/accessibility:\\{interior:\\[([^\\]]+)\\],exterior:\\[([^\\]]+)\\]\\}/);
+const access=projectSource.match(/accessibility:\{interior:\[([^\]]+)\],exterior:\[([^\]]+)\]\}/);
 if (!access || /'(?:doors|floor|lighting|concrete|stairs|framing)'/.test(access[1]+access[2]))
   throw Error('Accessibility has unrelated generic trade options.');
-const key='Object.assign(scopes,{\\n  "pet-room"';
+const key='Object.assign(scopes,{\n  "pet-room"';
 const at=projectSource.indexOf(key);
 const end=projectSource.indexOf('});',at);
 if (at<0||end<0) throw Error('Specialty scope map missing.');
