@@ -132,3 +132,30 @@ test('Custom work choices transfer to the calculator and cart', async () => {
     dom.window.close();
   }
 });
+
+test('Installation supplies are charged once with labor and never added to materials-only orders', async () => {
+  const dom = await openPage('calculators.html');
+  const w = dom.window;
+  const estimates = w.eval('materialEstimates');
+  const item = {type:'flooring',roomId:'supply-policy',roomName:'Bedroom',title:'Flooring',measurements:{},products:[{name:'Laminate',quantity:100,unit:'sq. ft.',price:200}],supplyChoices:[{name:'Underlayment',quantity:1,unit:'roll',price:25}],projectOptions:['Materials'],labor:[]};
+  estimates.splice(0,estimates.length,item);
+  w.addProjectToCart();
+  assert.equal(w.getCart().length,1);
+  assert.equal(w.getCart()[0].price,200);
+  item.labor=[{service:'Installation',scope:'Flooring',quantity:100,unit:'sq. ft.',price:300}];
+  for (const materials of [true,false]) {
+    item.projectOptions=materials?['Materials']:[];
+    w.addProjectToCart();
+    w.addProjectToCart();
+    const cart=w.getCart();
+    assert.equal(cart.filter(x=>x.type==='Included project costs').length,1);
+    assert.equal(cart.find(x=>x.type==='Included project costs').price,25);
+    assert.equal(cart.filter(x=>x.type==='Material estimate').length,materials?1:0);
+    w.renderMaterialEstimates();
+    assert.match(w.document.querySelector('.project-total-note').textContent,/supplies are included with labor/);
+  }
+  item.labor=[{service:'Removal',quantity:100,unit:'sq. ft.',price:150}];
+  w.addProjectToCart();
+  assert.equal(w.getCart().filter(x=>x.type==='Included project costs').length,0);
+  dom.window.close();
+});

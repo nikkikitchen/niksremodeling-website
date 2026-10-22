@@ -9,6 +9,7 @@
     const legend = choicesPanel.querySelector('legend');
     legend.textContent = 'What do you need for this project?';
     const installation = choicesPanel.querySelector('[value="Installation"]').closest('label');
+    installation.append(document.createTextNode(' — needed supplies included'));
     const prep = choicesPanel.querySelector('[value="Prep"]').closest('label');
     const removalSelected = choicesPanel.querySelector('[value="Removal"]').checked;
     const makeBox = (label, name, value, description = '') => {
@@ -23,7 +24,7 @@
       }
       el.append(box, text); return el;
     };
-    const materialsChoice = makeBox('Materials', 'project-option', 'Materials');
+    const materialsChoice = makeBox('Materials', 'project-option', 'Materials', 'Buy the selected items. Installation is optional.');
     const toolsChoice = makeBox('Tools', 'project-option', 'Tools');
     const debrisChoice = makeBox('Debris Removal', 'project-option', 'Debris Removal');
     debrisChoice.querySelector('input').checked = removalSelected;
@@ -561,8 +562,8 @@
             const taskLabel=x.fixedPackage?x.scope:[x.service,x.scope].filter((value,index,all)=>value&&all.indexOf(value)===index).join(' — ');
             add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:taskLabel+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageNote:x.packageNote,internalCosts:x.internalCosts}:{});
           });
-          const included=item.paintPackage||item.stoneMaterialPackage?[]:item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
-          if(included.length&&(item.projectOptions?.includes('Materials')||(item.labor?.length||item.labor?.service)))add('Included project costs','Included project costs',includedProjectCosts(included));
+          const included=installationSupplies(item);
+          if(included.length)add('Included project costs','Included project costs',includedProjectCosts(included));
           if(item.projectOptions?.includes('Tools'))add('Tools needed for this project','Tools request');
           if(item.projectOptions?.includes('Debris Removal'))add('Debris Removal','Service');
           if(item.projectOptions?.includes('Delivery'))(item.deliveryTypes?.length?item.deliveryTypes:['Delivery']).forEach(x=>add(x,'Service'));
@@ -610,7 +611,7 @@
           if(item.products?.length)item.products.forEach(product=>serviceItems.push({type:'Material estimate',name:namedCost(item,product.name),price:product.price,qty:1}));
           else serviceItems.push({type:'Material estimate',name:namedCost(item,item.workLabel||'Selected material')});
         }
-        if(item.supplyChoices?.length&&(item.projectOptions?.includes('Materials')||item.labor?.length||item.labor?.service))item.supplyChoices.forEach(supply=>serviceItems.push({type:'Included project costs',name:namedCost(item,supply.name),...includedProjectCosts([supply])}));
+        installationSupplies(item).forEach(supply=>serviceItems.push({type:'Included project costs',name:namedCost(item,supply.name),...includedProjectCosts([supply])}));
       });
       const services=serviceEstimateSummary(serviceItems),others=serviceItems.filter(x=>!['Labor','Service'].includes(x.type));
       const known=x=>x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price))&&Number(x.price)>=0;
@@ -623,7 +624,7 @@
       let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
       let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}
       const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.name))];
-      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Includes the selected materials, supplies and labor. Customer-provided items are excluded.';
+      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Materials and labor are selected separately. Needed installation supplies are included with labor, once—even when you provide the materials.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       const add=create('button',pending?'Add for In-person Quote':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
