@@ -487,6 +487,15 @@
       const headingImage=document.createElement('img');headingImage.src=workPhoto(key);headingImage.alt='';headingImage.loading='lazy';
       const headingLabel=document.createElement('span');headingLabel.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;
       heading.append(headingImage,headingLabel);card.append(heading);
+      if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){
+        const styleKey=new URLSearchParams(location.search).get('toiletStyle');
+        const names={round:'Standard Round',elongated:'Elongated & Comfort Height',smart:'Smart Toilets',specialty:'Wall-Hung & Specialty'};
+        if(names[styleKey]){
+          const note=document.createElement('p');note.className='calc-note';
+          note.textContent='Preferred toilet style: '+names[styleKey]+'. Select the work below. Specific model, stock and product price must be confirmed.';
+          card.append(note);
+        }
+      }
       // Route every Bathroom work section to the appropriate catalog. Verified
       // retail listings show real product variants and prices; material pages
       // are planning guides until specific supplier products are approved.
@@ -613,7 +622,7 @@
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
       const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
-      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
+      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
       status.textContent='Choose what you need. Sizes and options come next.';
