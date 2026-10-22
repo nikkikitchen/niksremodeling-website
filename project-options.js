@@ -70,6 +70,15 @@
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
   options.shower.materials=['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile','Shower Base','Shower Valve / Head','Shower Glass'];
   options.backsplash.materials=['Backsplash Tile','Ceramic Tile','Glass Tile','Mosaic Tile','Natural Stone','Porcelain Tile'];
+  // Shopping categories overlap by use without changing project-specific work choices.
+  const shopping=window.SHOP_MATERIAL_OPTIONS=Object.fromEntries(Object.entries(shared).map(([kind,names])=>[kind,[...names]]));
+  const crossList=(names,kinds)=>kinds.forEach(kind=>shopping[kind]=[...new Set([...(shopping[kind]||[]),...names])]);
+  crossList(['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile'],['flooring','tile','paint']);
+  crossList(['Backsplash Tile','Glass Tile','Stone Veneer',...options['accent-stone'].materials,...options['accent-tile'].materials],['tile','paint']);
+  crossList(options['accent-wood'].materials,['lumber','trim','paint']);
+  crossList(['Wall Panels','Decorative Wall Panels','Decorative 3D Wall Panels'],['lumber','paint']);
+  crossList(['Limewash','Venetian Plaster','Textured Plaster','Concrete Look Finish','Metallic Finish','Wallpaper'],['paint']);
+  crossList(['Baseboards','Crown Molding','Decorative Trim'],['lumber','trim']);
   shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
   const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));
   options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-wax-ring','toilet-flange','toilet-remove']);
