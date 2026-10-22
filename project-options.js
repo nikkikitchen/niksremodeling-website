@@ -192,6 +192,57 @@
     ['Location','Choose Work','Review Cart'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
     next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};setStep(0);
     const grid=document.getElementById('project-work-grid');
+    // Use existing approved job photographs on every work choice, retaining
+    // the accordion controls for material selection and calculator handoff.
+    grid.classList.add('project-work-pictures');
+    const pictureStyle=document.createElement('style');
+    pictureStyle.textContent=`#project-work-grid.project-work-pictures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}#project-work-grid .project-work-card{margin:0;padding:0;overflow:hidden;border-radius:12px;box-shadow:0 5px 18px #20304022}#project-work-grid .project-work-card>summary{display:block;cursor:pointer;list-style:none;padding:0;background:#fff}#project-work-grid .project-work-card>summary::-webkit-details-marker{display:none}#project-work-grid .project-work-card>summary img{display:block;width:100%;height:170px;object-fit:cover}#project-work-grid .project-work-card>summary span{display:block;min-height:52px;padding:11px 14px;font-size:16px;font-weight:800;color:#193e5b}#project-work-grid .project-work-card[open]>summary span{background:#edf5fc}#project-work-grid .project-work-card>:not(summary){margin:10px 14px}#project-work-grid .project-work-card>label{display:block;padding:5px 0}#project-work-grid .project-work-card .service-dropdown{margin-bottom:8px}@media(max-width:900px){#project-work-grid.project-work-pictures{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){#project-work-grid.project-work-pictures{grid-template-columns:1fr}#project-work-grid .project-work-card>summary img{height:185px}}`;
+    document.head.append(pictureStyle);
+    const workPhotoChoices={
+      ceiling:['/assets/approved-0af816f48fb0.jpg'],
+      walls:['/assets/accent-walls-card.jpg'],
+      floor:['/assets/flooring-card.jpg'],
+      trim:['/assets/approved-e9fee5a04016.jpg'],
+      doors:['/assets/entryways-card.jpg'],
+      lighting:['/assets/lighting-card.jpg'],
+      'vanity-light':['/assets/pendant-lighting.jpg'],
+      toilet:['/assets/approved-a908c20ce632.jpg'],
+      tub:['/assets/tile-shower.jpg'],
+      shower:['/assets/showers-card.png'],
+      'bath-shower-valve':['/assets/approved-b9cdb9084877.jpg'],
+      vanity:['/assets/approved-9bfcb89f7800.jpg'],
+      backsplash:['/assets/approved-0ab244a922c8.jpg'],
+      cabinets:['/assets/kitchen.jpg'],
+      refinish:['/assets/approved-739d17fd2952.jpg'],
+      drywall:['/assets/catalog-8.jpg'],
+      framing:['/assets/arches-columns.jpg'],
+      fireplace:['/assets/fireplace-card.jpg'],
+      'fireplace-outdoor':['/assets/idea-backyard-retreat.jpg'],
+      stairs:['/assets/stairs-card.jpg'],
+      plumbing:['/assets/approved-493d744bf5f7.jpg'],
+      storage:['/assets/approved-8a9d216224b8.jpg'],
+      furniture:['/assets/approved-4822ff53e23f.jpg'],
+      ventilation:['/assets/catalog-9.jpg'],
+      appliances:['/assets/approved-26657e8bc7bd.jpg'],
+      prep:['/assets/approved-b5c632fcfbc0.jpg'],
+      concrete:['/assets/patio-concrete.webp'],
+      decking:['/assets/approved-4de99f88049f.jpg'],
+      exterior:['/assets/approved-a11ab0fcd37f.jpg'],
+      wallpaper:['/assets/wallpaper-card.jpg'],
+      murals:['/assets/murals-card.jpg'],
+      'outdoor-accent':['/assets/project-stone-real.jpg'],
+      'outdoor-tile':['/assets/approved-de82473d9ce3.jpg'],
+      'outdoor-lighting':['/assets/idea-outdoor-sound.jpg'],
+      'access-interior':['/assets/idea-accessibility.jpg'],
+      'access-exterior':['/assets/idea-bus-stop.jpg']
+    };
+    const spareWorkPhotos=['/assets/approved-17df84119d39.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-6075be404407.jpg','/assets/approved-807c60a6001a.jpg','/assets/approved-a051ee7e1935.jpg','/assets/approved-9753e3ad86f9.jpg','/assets/approved-94fe00a25a93.jpg','/assets/approved-8d4db6742d08.jpg','/assets/idea-mechanic-shop.jpg','/assets/idea-pet-room.jpg','/assets/idea-recycling-scrap.jpg','/assets/idea-mailboxes.jpg','/assets/idea-outdoor-kitchen.jpg','/assets/idea-garden-greenhouse.jpg','/assets/approved-7e5510c3dce7.jpg'];
+    const usedWorkPhotos=new Set();
+    const workPhoto=key=>{
+      const choices=[...(workPhotoChoices[key]||[]),...spareWorkPhotos];
+      const chosen=choices.find(url=>!usedWorkPhotos.has(url))||choices[0];
+      usedWorkPhotos.add(chosen);return chosen;
+    };
     const draftKey='niks-project-options-'+id;
     let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
 
@@ -201,7 +252,10 @@
     ['scope-room','scope-location','scope-length','scope-width','scope-height'].forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
-      const heading=document.createElement('summary');heading.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;card.append(heading);
+      const heading=document.createElement('summary');
+      const headingImage=document.createElement('img');headingImage.src=workPhoto(key);headingImage.alt='';headingImage.loading='lazy';
+      const headingLabel=document.createElement('span');headingLabel.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;
+      heading.append(headingImage,headingLabel);card.append(heading);
       // Route every Bathroom work section to the appropriate catalog. Verified
       // retail listings show real product variants and prices; material pages
       // are planning guides until specific supplier products are approved.
