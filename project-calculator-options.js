@@ -627,7 +627,7 @@
       note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Materials and labor are selected separately. Needed installation supplies are included with labor, once—even when you provide the materials.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
-      const add=create('button',pending?'Add for In-person Quote':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
+      const add=create('button',pending?'Add to Cart — Quote Required':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
       status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);summary.append(actions);
       document.dispatchEvent(new CustomEvent('estimate-rendered'));
 
