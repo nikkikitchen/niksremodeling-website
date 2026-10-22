@@ -289,7 +289,7 @@ function shopGuide(page){
   '<p class="lead">Explore categories with pictures. Product prices and U.S. warehouse stock must be independently verified before sale.</p>'+
   '<div class="shop-guide-grid photo-guide-grid">'+choices.map(([name,description])=>
    '<article id="'+shopGuideId(name)+'">'+shopPictureTile(page,name,description,
-    '/'+page+'.html?category='+encodeURIComponent(name)+'#catalog-products')+'</article>'
+    '/'+(page==='tools'?'products':page)+'.html?category='+encodeURIComponent(name)+'#catalog-products')+'</article>'
   ).join('')+'</div></div></section>';
 }
 
