@@ -40,6 +40,19 @@
     'fireplace-outdoor':work('Outdoor Fireplaces & Fire Pits','custom',['Outdoor Fireplace Surround','Fire Pit Surround','Outdoor Hearth','Fire-Rated Stone / Masonry','Outdoor Mantel / Shelf']),
     'access-interior':work('Indoor Accessibility','custom',['Shower Grab Bars','Bathroom Grab Bars','Indoor Handrails','Accessible Door Hardware','Interior Threshold Transition','Doorway Widening Assessment']),
     'access-exterior':work('Exterior Accessibility','custom',['Entry Ramp Planning','Exterior Handrails','Accessible Walkway Planning','Entry Landing Assessment','Exterior Threshold Transition']),
+    // Accessibility is organized by actual access improvements, not unrelated
+    // general trade catalogs like Flooring, Lighting or Doors & Windows.
+    'access-bath':work('Accessible Bath & Shower','custom',['Shower Grab Bars','Low-Threshold Shower Assessment','Walk-In Shower Accessibility','Shower Seat','Handheld Shower Access','Tub-to-Shower Conversion Assessment']),
+    'access-grab-bars':work('Grab Bars & Support Rails','custom',['Shower Grab Bars','Toilet Grab Bars','Reinforced Grab Bar Mounting','Support Rails']),
+    'access-indoor-rails':work('Indoor Handrails & Stair Access','custom',['Hallway Handrails','Stair Handrails','Continuous Handrails','Stair Access Assessment']),
+    'access-doorways':work('Accessible Doorways & Hardware','custom',['Doorway Widening Assessment','Accessible Lever Handles','Door Swing & Clearance Improvements','Pocket / Sliding Door Assessment']),
+    'access-thresholds':work('Interior Thresholds & Transitions','custom',['Low-Profile Threshold','Wheelchair-Friendly Floor Transition','Raised Threshold Removal','Smooth Room-to-Room Access']),
+    'access-controls':work('Easy-Reach Controls','custom',['Easy-Reach Switch Assessment','Accessible Door Controls','Motion-Activated Lighting Controls','Accessible Thermostat Placement']),
+    'access-ramps':work('Entry Ramps & Landings','custom',['Entry Ramp Assessment','Wheelchair Ramp Planning','Ramp Handrails','Ramp Landing','Ramp Surface & Traction']),
+    'access-outdoor-rails':work('Outdoor Handrails & Steps','custom',['Entry Handrails','Porch Handrails','Outdoor Step Handrails','Safer Entry-Step Assessment']),
+    'access-walkways':work('Accessible Walkways','custom',['Accessible Walkway Planning','Even Walking Surface','Slip-Resistant Walkway','Pathway Clearance']),
+    'access-entry':work('Exterior Door Access','custom',['Accessible Entry Threshold','Landing & Doorway Clearance','Low-Profile Weatherproof Threshold','Accessible Entry Assessment']),
+    'access-other':work('Other Accessibility Improvements','custom',['Home Access Assessment','Safer Mobility Improvement','Other Accessible Feature']),
     'outdoor-accent':work('Outdoor Accent Walls','custom',['Exterior-Grade Shiplap','Exterior Stone Veneer','Weather-Resistant Wall Cladding','Exterior Decorative Panels','Exterior-Grade Wood Accents']),
     'outdoor-floor':work('Outdoor Flooring','custom',['Porch Flooring','Deck Surface Boards','Exterior Floor Tile','Exterior-Grade Floor Finish']),
     'outdoor-tile':work('Outdoor Tile & Stone','custom',['Exterior Porcelain Tile','Slip-Resistant Outdoor Tile','Stone Pavers','Exterior Stone Veneer']),
@@ -106,7 +119,7 @@
   Object.assign(scopes,window.ROOM_PROJECT_SCOPES||{});scopes.bathrooms=scopes.bathrooms.filter(k=>k!=='tub-shower');scopes.bathrooms.push('bath-shower-valve');scopes.other=['other'];scopes.accents=scopes.accents.filter(key=>key!=='prep');
   const locationScopes={
     fireplaces:{interior:['fireplace','walls','trim','prep','other'],exterior:['fireplace-outdoor','outdoor-tile','concrete','prep','other']},
-    accessibility:{interior:['access-interior','doors','floor','lighting','other'],exterior:['access-exterior','concrete','stairs','lighting','other']},
+    accessibility:{interior:['access-bath','access-grab-bars','access-indoor-rails','access-doorways','access-thresholds','access-controls','access-other'],exterior:['access-ramps','access-outdoor-rails','access-walkways','access-entry','access-other']},
     accents:{interior:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','other'],exterior:['outdoor-accent','outdoor-tile','walls','lighting','other']},
     tile:{interior:['floor','walls','backsplash','shower','prep','other'],exterior:['outdoor-tile','concrete','prep','other']},
     flooring:{interior:['floor','trim','prep','other'],exterior:['outdoor-floor','concrete','prep','other']},
@@ -197,8 +210,8 @@
       // Make the options visual instead of making customers open an empty select.
       const choices=document.createElement('div');choices.className='project-location-photo-choices';
       for(const option of [
-        {value:'interior',label:'Interior Work',photo:'/assets/approved-9bfcb89f7800.jpg'},
-        {value:'exterior',label:'Exterior Work',photo:'/assets/approved-a11ab0fcd37f.jpg'}
+        {value:'interior',label:id==='accessibility'?'Indoor Accessibility':'Interior Work',photo:id==='accessibility'?'/assets/idea-accessibility.jpg':'/assets/approved-9bfcb89f7800.jpg'},
+        {value:'exterior',label:id==='accessibility'?'Outdoor Accessibility':'Exterior Work',photo:id==='accessibility'?'/assets/entryways-card.jpg':'/assets/approved-a11ab0fcd37f.jpg'}
       ]){
         const button=document.createElement('button');button.type='button';button.className='project-location-photo';
         const image=document.createElement('img');image.src=option.photo;image.alt='';image.loading='lazy';
@@ -263,7 +276,18 @@
       'outdoor-tile':['/assets/approved-de82473d9ce3.jpg'],
       'outdoor-lighting':['/assets/idea-outdoor-sound.jpg'],
       'access-interior':['/assets/idea-accessibility.jpg'],
-      'access-exterior':['/assets/idea-bus-stop.jpg']
+      'access-exterior':['/assets/idea-bus-stop.jpg'],
+      'access-bath':['/assets/showers-card.png'],
+      'access-grab-bars':['/assets/idea-accessibility.jpg'],
+      'access-indoor-rails':['/assets/stairs-card.jpg'],
+      'access-doorways':['/assets/entryways-card.jpg'],
+      'access-thresholds':['/assets/approved-4de99f88049f.jpg'],
+      'access-controls':['/assets/lighting-card.jpg'],
+      'access-ramps':['/assets/idea-accessibility.jpg'],
+      'access-outdoor-rails':['/assets/approved-94fe00a25a93.jpg'],
+      'access-walkways':['/assets/patio-concrete.webp'],
+      'access-entry':['/assets/entryways-card.jpg'],
+      'access-other':['/assets/custom-projects-card.jpg']
     };
     const spareWorkPhotos=['/assets/approved-17df84119d39.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-6075be404407.jpg','/assets/approved-807c60a6001a.jpg','/assets/approved-a051ee7e1935.jpg','/assets/approved-9753e3ad86f9.jpg','/assets/approved-94fe00a25a93.jpg','/assets/approved-8d4db6742d08.jpg','/assets/idea-mechanic-shop.jpg','/assets/idea-pet-room.jpg','/assets/idea-recycling-scrap.jpg','/assets/idea-mailboxes.jpg','/assets/idea-outdoor-kitchen.jpg','/assets/idea-garden-greenhouse.jpg','/assets/approved-7e5510c3dce7.jpg'];
     const usedWorkPhotos=new Set();
@@ -410,7 +434,7 @@
       item.materials.forEach(name=>{if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint — $50/gallon, supplies included':name));card.append(label)});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
-      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'See Price & Add to Cart';
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'See Price & Add to Cart';
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
