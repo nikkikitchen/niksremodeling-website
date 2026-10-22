@@ -66,7 +66,7 @@ window.ROOM_PROJECT_SCOPES['kids-room']=['ceiling','walls','floor','trim','doors
 const THEMED_ROOMS=['bedroom-guest-room','home-theater','entry-mudroom','home-office','music-creative-studio','fitness-wellness','games-hobbies','pet-room','snack-beverage','vault-safe-room'];
 THEMED_ROOMS.forEach(id=>PROJECT_CATALOG[id].themedGroup=true);
 PROJECT_CATALOG['themed-rooms']={title:'Themed Rooms',image:'/assets/bed.jpg',intro:'Bedrooms, kids\' rooms, theaters, mudrooms, offices, hobby spaces & more.',materials:[],exterior:false};
-const CUSTOM_PROJECTS=['accents','murals','wallpaper','arches','fireplaces','stairs','accessibility'];
+const CUSTOM_PROJECTS=['accents','murals','wallpaper','arches','fireplaces','stairs'];
 CUSTOM_PROJECTS.forEach(id=>PROJECT_CATALOG[id].customGroup=true);
 PROJECT_CATALOG.custom.title='More Ideas';
 PROJECT_CATALOG.custom.intro='Accent walls, murals, fireplaces, accessibility updates & specialty improvements.';
