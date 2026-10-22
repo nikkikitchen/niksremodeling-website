@@ -114,6 +114,15 @@
   });
   // Keep the same feature from appearing under several cards on a page.
   Object.entries({"pool-options":["Above-ground Pool — Without Deck","Above-ground Pool — With Deck","Pool-company Project Coordination"],"secure-room":["Vault Room Planning","Safe Room Assessment","Safe Installation Planning"],"outdoor-cooking":["Built-in Outdoor Kitchen","Mobile / Rolling Outdoor Kitchen","Grill Station","Pizza Oven Station"],"workshop":["Workbench","Air Hose Storage","Vehicle Lift Planning"],"car-wash":["Wash Bay","Pressure Washer Station","Detailing Bench","Vacuum Station"],"snack-station":["Bread Box","Coffee / Barista Station","Espresso Machine Station","Popcorn Station"],"recycling":["Recycling Bin Station","Scrap Metal Racks","Reusable Material Storage"]}).forEach(([key,names])=>{if(options[key])options[key].materials=names;});
+  // Outside work is not the same as indoor carpentry, doors or lighting.
+  Object.assign(options,{
+    'exterior-doors':work("Exterior Doors & Windows",'custom',["Exterior Door Installation","Exterior Door Weatherstripping","Window Trim Repair","Exterior Threshold","Exterior Doorframe Repair"]),
+    'exterior-trim':work("Exterior Trim & Siding Details",'custom',["Fascia & Soffit Work","Exterior Trim Board","Weather-Resistant Decorative Trim","Siding Transition"]),
+    'exterior-framing':work("Exterior Framing & Supports",'custom',["Weather-Resistant Framing","Porch Support Assessment","Exterior Blocking & Bracing","Outdoor Wood Repairs"]),
+    'deck-frame':work("Deck Framing & Structure",'custom',["Deck Joists & Framing","Deck Posts","Deck Substructure Assessment","Ledger & Attachment Assessment"]),
+    'deck-stairs':work("Deck Steps & Landings",'custom',["Deck Stair Treads","Deck Risers","Outdoor Landing","Stair Grip & Surface"]),
+    'deck-rails':work("Deck Railings & Posts",'custom',["Deck Handrail","Deck Railing Balusters","Newel & Corner Posts","Guardrail Assessment"])
+  });
   // The catalog, project cards and calculator read the same material lists.
   const shared=window.WORK_MATERIAL_OPTIONS={};
   for(const [kind,slug] of Object.entries(WORK_MATERIAL_CATEGORIES))shared[kind]=[...MATERIAL_DETAIL_PAGES[slug].items];
@@ -271,17 +280,21 @@
     "other"
   ]
 });
+  Object.assign(scopes,{
+    'decks-railings':['deck-frame','decking','deck-stairs','deck-rails','other'],
+    'exterior-improvements':['exterior','exterior-doors','exterior-trim','exterior-framing','outdoor-lighting','other']
+  });
   const locationScopes={
-    fireplaces:{interior:['fireplace','walls','trim','prep','other'],exterior:['fireplace-outdoor','outdoor-tile','concrete','prep','other']},
+    fireplaces:{interior:['fireplace','walls','trim','prep','other'],exterior:['fireplace-outdoor','outdoor-tile','prep','other']},
     accessibility:{interior:['access-bath','access-grab-bars','access-indoor-rails','access-doorways','access-thresholds','access-controls','access-other'],exterior:['access-ramps','access-outdoor-rails','access-walkways','access-entry','access-other']},
-    accents:{interior:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','other'],exterior:['outdoor-accent','outdoor-tile','walls','lighting','other']},
+    accents:{interior:['accent-stone','accent-wood','accent-tile','accent-texture','accent-design','wallpaper','walls','trim','lighting','other'],exterior:['outdoor-accent','outdoor-tile','other']},
     tile:{interior:['floor','walls','backsplash','shower','prep','other'],exterior:['outdoor-tile','concrete','prep','other']},
     flooring:{interior:['floor','trim','prep','other'],exterior:['outdoor-floor','concrete','prep','other']},
-    stairs:{interior:['stairs','trim','refinish','prep','other'],exterior:['outdoor-stairs','framing','prep','other']},
+    stairs:{interior:['stairs','trim','refinish','prep','other'],exterior:['outdoor-stairs','prep','other']},
     lighting:{interior:['lighting','ventilation','prep','other'],exterior:['outdoor-lighting','prep','other']},
-    arches:{interior:['framing','trim','walls','prep','other'],exterior:['outdoor-arches','framing','prep','other']},
-    murals:{interior:['ceiling','walls','refinish','trim','prep','other'],exterior:['outdoor-murals','walls','prep','other']},
-    'home-theater':{interior:['theater-interior','walls','floor','acoustics','media-furniture','beverage','lighting','snack-station','other'],exterior:['theater-exterior','outdoor-media','outdoor-furniture','lighting','other']},
+    arches:{interior:['framing','trim','walls','prep','other'],exterior:['outdoor-arches','prep','other']},
+    murals:{interior:['ceiling','walls','refinish','trim','prep','other'],exterior:['outdoor-murals','prep','other']},
+    'home-theater':{interior:['theater-interior','walls','floor','acoustics','media-furniture','beverage','lighting','snack-station','other'],exterior:['theater-exterior','outdoor-media','outdoor-furniture','outdoor-lighting','other']},
     other:{interior:['other-interior','prep'],exterior:['other-exterior','prep']}
   };
   Object.entries(locationScopes).forEach(([project,places])=>{scopes[project]=[...new Set([...places.interior,...places.exterior])];});
@@ -443,7 +456,13 @@
       'access-outdoor-rails':['/assets/approved-94fe00a25a93.jpg'],
       'access-walkways':['/assets/patio-concrete.webp'],
       'access-entry':['/assets/entryways-card.jpg'],
-      'access-other':['/assets/custom-projects-card.jpg']
+      'access-other':['/assets/custom-projects-card.jpg'],
+      'exterior-doors':['/assets/entryways-card.jpg'],
+      'exterior-trim':['/assets/approved-4de99f88049f.jpg'],
+      'exterior-framing':['/assets/arches-columns.jpg'],
+      'deck-frame':['/assets/approved-a11ab0fcd37f.jpg'],
+      'deck-stairs':['/assets/stairs-card.jpg'],
+      'deck-rails':['/assets/approved-94fe00a25a93.jpg']
     };
     const spareWorkPhotos=['/assets/approved-17df84119d39.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-6075be404407.jpg','/assets/approved-807c60a6001a.jpg','/assets/approved-a051ee7e1935.jpg','/assets/approved-9753e3ad86f9.jpg','/assets/approved-94fe00a25a93.jpg','/assets/approved-8d4db6742d08.jpg','/assets/idea-mechanic-shop.jpg','/assets/idea-pet-room.jpg','/assets/idea-recycling-scrap.jpg','/assets/idea-mailboxes.jpg','/assets/idea-outdoor-kitchen.jpg','/assets/idea-garden-greenhouse.jpg','/assets/approved-7e5510c3dce7.jpg'];
     const specialtyProjectPhotos={"pet-room":["/assets/idea-pet-room.jpg","/assets/tile-shower.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/approved-0af816f48fb0.jpg","/assets/kids-room.jpg"],"outdoor-kitchen":["/assets/idea-outdoor-kitchen.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/approved-b9cdb9084877.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg"],"mechanic-shop":["/assets/idea-mechanic-shop.jpg","/assets/idea-car-wash.jpg","/assets/flooring-card.jpg","/assets/approved-d2807423c8f0.jpg","/assets/lighting-card.jpg","/assets/approved-8a9d216224b8.jpg"],"car-wash":["/assets/idea-car-wash.jpg","/assets/patio-concrete.webp","/assets/approved-b9cdb9084877.jpg","/assets/idea-mechanic-shop.jpg","/assets/approved-4de99f88049f.jpg"],"recycling-scrap":["/assets/idea-recycling-scrap.jpg","/assets/concrete-card.jpg","/assets/idea-garden-greenhouse.jpg","/assets/approved-b5c632fcfbc0.jpg"],"vault-safe-room":["/assets/idea-vault-safe-room.jpg","/assets/entryways-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/lighting-card.jpg","/assets/approved-739d17fd2952.jpg"],"snack-beverage":["/assets/idea-snack-beverage.jpg","/assets/approved-b9cdb9084877.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/lighting-card.jpg","/assets/approved-a051ee7e1935.jpg","/assets/approved-807c60a6001a.jpg"],"pools":["/assets/idea-pools.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/stairs-card.jpg","/assets/idea-backyard-retreat.jpg","/assets/patio-concrete.webp"],"bus-stop":["/assets/idea-bus-stop.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/lighting-card.jpg","/assets/approved-a11ab0fcd37f.jpg"],"mailboxes":["/assets/idea-mailboxes.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/approved-b5c632fcfbc0.jpg"],"garden-greenhouse":["/assets/idea-garden-greenhouse.jpg","/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/patio-concrete.webp","/assets/approved-b5c632fcfbc0.jpg"],"fitness-wellness":["/assets/idea-fitness-wellness.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/office.jpg"],"games-hobbies":["/assets/idea-games-hobbies.jpg","/assets/office.jpg","/assets/approved-6075be404407.jpg","/assets/approved-17df84119d39.jpg"],"outdoor-sound":["/assets/idea-outdoor-sound.jpg","/assets/cinema.jpg","/assets/lighting-card.jpg","/assets/idea-backyard-retreat.jpg"],"backyard-retreat":["/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg","/assets/lighting-card.jpg","/assets/patio-concrete.webp"]};
