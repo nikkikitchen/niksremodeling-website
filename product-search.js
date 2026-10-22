@@ -44,6 +44,22 @@
     ['Themed Rooms','Projects','Bedrooms, offices, theaters and other rooms','/project.html?project=themed-rooms','rooms bedroom office theater']
   ];
   const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function resultPhoto(name,group){
+    const specific={
+      'Bathroom Project':'/assets/showers-card.png','Kitchen Projects':'/assets/approved-9bfcb89f7800.jpg',
+      'Outdoor Projects':'/assets/approved-a11ab0fcd37f.jpg','Themed Rooms':'/assets/bed.jpg',
+      'Refrigerators & Freezers':'/assets/approved-26657e8bc7bd.jpg',
+      'Ranges & Cooktops':'/assets/kitchen.jpg','Dishwashers':'/assets/approved-b9cdb9084877.jpg',
+      'Microwaves & Range Hoods':'/assets/catalog-8.jpg','Washers & Dryers':'/assets/approved-493d744bf5f7.jpg',
+      'Bedroom Furniture':'/assets/approved-807c60a6001a.jpg','Kids Room Furniture':'/assets/bed.jpg',
+      'Home Office Furniture':'/assets/approved-6075be404407.jpg','Dining Room Furniture':'/assets/approved-a051ee7e1935.jpg',
+      'Outdoor Furniture':'/assets/approved-a11ab0fcd37f.jpg','Bathroom Lights':'/assets/pendant-lighting.jpg',
+      'Shower Enclosures':'/assets/showers-card.png','Shower Doors':'/assets/tile-shower.jpg'
+    };
+    if(specific[name])return specific[name];
+    if(group==='Materials')return shopPhoto('materials',name);
+    return {Bathroom:'/assets/approved-a908c20ce632.jpg',Cabinets:'/assets/approved-9bfcb89f7800.jpg',Furniture:'/assets/approved-4822ff53e23f.jpg',Tools:'/assets/approved-d2807423c8f0.jpg'}[group]||'/assets/approved-b5c632fcfbc0.jpg';
+  }
   function matched(query){
     const terms=query.toLowerCase().trim().split(/\s+/).filter(Boolean);
     if(!terms.length)return routes.filter(r=>['Toilets','Refrigerators & Freezers','All Furniture','All Materials','Tools','Kitchen Projects','Bathroom Project'].includes(r[0]));
@@ -57,7 +73,7 @@
     const entries=matched(q),root=document.getElementById('product-search-results');
     root.innerHTML='<p class="search-count">'+(entries.length?entries.length+' matching '+(entries.length===1?'destination':'destinations'):'No matching categories yet. Try another product name or browse by project.')+'</p>'+
       (entries.length?'<div class="product-search-results">'+entries.map(([name,group,description,url])=>
-        '<a class="product-search-result" href="'+esc(url)+'"><span class="product-search-group">'+esc(group)+'</span>'+
+        '<a class="product-search-result" href="'+esc(url)+'"><img class="product-search-photo" src="'+esc(resultPhoto(name,group))+'" alt="" loading="lazy"><span class="product-search-group">'+esc(group)+'</span>'+
         '<strong>'+esc(name)+'</strong><span>'+esc(description)+'</span><span class="product-search-arrow">View options →</span></a>').join('')+'</div>':'');
   }
   document.addEventListener('DOMContentLoaded',()=>{
@@ -72,7 +88,7 @@
       '<div id="product-search-results" aria-live="polite"></div><p class="calc-note">Individual products appear only when pricing and availability can be confirmed. <a href="/#projects">Shop by Project</a></p>'+
       '</main>'+footer();
     const style=document.createElement('style');
-    style.textContent='.product-search-form{display:flex;gap:10px;margin:8px 0 24px}.product-search-form input{min-width:0;flex:1;padding:13px;border:1px solid #becbd6;border-radius:8px}.product-search-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:12px 0 24px}.product-search-result{display:flex;flex-direction:column;gap:8px;border:1px solid #dce5ec;border-radius:10px;padding:18px;background:white}.product-search-result:hover,.product-search-result:focus-visible{border-color:#0b5aa6;box-shadow:0 4px 16px #16202a13}.product-search-result strong{font-size:1.06rem}.product-search-group{font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:#4a6377;font-weight:700}.product-search-arrow{color:#0b5aa6;font-weight:700;margin-top:auto}.search-count{color:#53606d;font-size:14px}@media(max-width:480px){.product-search-form{flex-direction:column}}';
+    style.textContent='.product-search-form{display:flex;gap:10px;margin:8px 0 24px}.product-search-form input{min-width:0;flex:1;padding:13px;border:1px solid #becbd6;border-radius:8px}.product-search-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:12px 0 24px}.product-search-result{display:flex;flex-direction:column;gap:8px;border:1px solid #dce5ec;border-radius:10px;padding:18px;background:white}.product-search-result:hover,.product-search-result:focus-visible{border-color:#0b5aa6;box-shadow:0 4px 16px #16202a13}.product-search-photo{display:block;width:calc(100% + 36px);max-width:none;height:180px;object-fit:cover;margin:-18px -18px 8px;border-radius:9px 9px 0 0}.product-search-result strong{font-size:1.06rem}.product-search-group{font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:#4a6377;font-weight:700}.product-search-arrow{color:#0b5aa6;font-weight:700;margin-top:auto}.search-count{color:#53606d;font-size:14px}@media(max-width:480px){.product-search-form{flex-direction:column}}';
     document.head.append(style);
     const input=document.getElementById('product-query');
     const form=document.getElementById('product-lookup');
