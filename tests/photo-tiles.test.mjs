@@ -15,8 +15,8 @@ test('all shopping guides use distinct approved local pictures',()=>{
   assert.ok(paths.length>=6,page+' should have photo categories');
   assert.equal(new Set(paths).size,paths.length,page+' has duplicate photos');
   for(const path of paths){
-   assert.match(path,/^\/assets\//);
-   assert.equal(existsSync(new URL('..'+path,import.meta.url)),true,'Missing '+path);
+   if(path.startsWith('/assets/'))assert.equal(existsSync(new URL('..'+path,import.meta.url)),true,'Missing '+path);
+   else assert.match(path,/^https:\/\/images\.unsplash\.com\/photo-[^\s]+$/,'Unapproved image host '+path);
   }
  }
 });
@@ -38,4 +38,15 @@ test('retail checkout stays opt-in server-side',()=>{
  assert.ok(status.includes('STORE_CHECKOUT_ENABLED'));
  const checkout=readFileSync(new URL('../functions/api/store-checkout.js',import.meta.url),'utf8');
  assert.ok(checkout.includes('checkoutEnabled'));
+});
+
+test('appliance dryers show a laundry image, not kitchen images',()=>{
+ assert.notEqual(map.appliances['Gas Dryers'],'/assets/approved-493d744bf5f7.jpg');
+ assert.notEqual(map.appliances['Washers & Electric Dryers'],'/assets/approved-807c60a6001a.jpg');
+ assert.notEqual(map.appliances['Gas Dryers'],map.appliances['Washers & Electric Dryers']);
+});
+test('preview products choose by SKU rather than cycling unrelated photos',()=>{
+ assert.ok(app.includes('const PRODUCT_CARD_PHOTOS='));
+ assert.ok(app.includes('productCardPhoto(page,x,i)'));
+ assert.ok(!app.includes('src="${imgs[i%imgs.length]}"'));
 });
