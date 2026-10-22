@@ -252,6 +252,15 @@
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
     if(initialParams.has('cabinetItem')){const note=document.createElement('p');note.className='calc-note';note.textContent='Cabinet work for: '+initialParams.get('cabinetItem');cabinetFields.prepend(note);}
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
+    // A toilet/vanity/shower service is already an indoor bathroom job. Do not
+    // trap visitors in an unnecessary Interior/Exterior question on labor links.
+    if(types.value==='bathroom'){
+      if(!initialParams.has('room'))document.getElementById('material-name').value='Bathroom';
+      if(!['interior','exterior'].includes(initialParams.get('location'))){
+        projectLocation.value='interior';
+        locationField.hidden=true;
+      }
+    }
     const prefill={length:['floor-length','paint-length','paint-ceiling-length','paint-trim-length','wood-length','dry-length','concrete-length'],width:['floor-width','paint-ceiling-width','concrete-width'],height:['paint-height','wood-height','dry-height']};
     for(const [param,ids] of Object.entries(prefill)){const value=initialParams.get(param);if(value)ids.forEach(id=>{const field=document.getElementById(id);if(field)field.value=value;});}
     if(['interior','exterior'].includes(initialParams.get('location'))){projectLocation.value=initialParams.get('location');locationField.hidden=true;}
