@@ -428,7 +428,7 @@
     pictureStyle.textContent=`#project-work-grid.project-work-pictures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}#project-work-grid .project-work-card{margin:0;padding:0;overflow:hidden;border-radius:12px;box-shadow:0 5px 18px #20304022}#project-work-grid .project-work-card>summary{display:block;cursor:pointer;list-style:none;padding:0;background:#fff}#project-work-grid .project-work-card>summary::-webkit-details-marker{display:none}#project-work-grid .project-work-card>summary img{display:block;width:100%;height:170px;object-fit:cover}#project-work-grid .project-work-card>summary span{display:block;min-height:52px;padding:11px 14px;font-size:16px;font-weight:800;color:#193e5b}#project-work-grid .project-work-card[open]>summary span{background:#edf5fc}#project-work-grid .project-work-card>:not(summary){margin:10px 14px}#project-work-grid .project-work-card>label{display:block;padding:5px 0}#project-work-grid .project-work-card .service-dropdown{margin-bottom:8px}@media(max-width:900px){#project-work-grid.project-work-pictures{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){#project-work-grid.project-work-pictures{grid-template-columns:1fr}#project-work-grid .project-work-card>summary img{height:185px}}`;
     document.head.append(pictureStyle);
     const workPhotoChoices={
-      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
+      ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
       walls:['/assets/accent-walls-card.jpg'],
       floor:['/assets/flooring-card.jpg'],
       trim:['/assets/approved-e9fee5a04016.jpg'],
@@ -487,7 +487,7 @@
     // Match each picture to the actual task. Approved local photographs take priority;
     // use a task-specific licensed stock photo only when our own photos do not cover it.
     const bathroomWorkPhotos={
-      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
+      ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
       walls:['/assets/approved-0ab244a922c8.jpg'],
       floor:['/assets/flooring-card.jpg'],
       tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
@@ -495,11 +495,11 @@
       toilet:['/assets/approved-a908c20ce632.jpg'],
       vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
       'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
-      refinish:['/assets/approved-9bfcb89f7800.jpg'],
+      refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
       mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
       lighting:['/assets/pendant-lighting.jpg'],
       ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
-      accents:['/assets/approved-8a9d216224b8.jpg'],
+      accents:['https://images.pexels.com/photos/6934226/pexels-photo-6934226.jpeg?auto=compress&cs=tinysrgb&w=900'],
       prep:['/assets/approved-b5c632fcfbc0.jpg'],
       'bath-shower-valve':['/assets/approved-b9cdb9084877.jpg'],
       'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82'],
@@ -510,6 +510,8 @@
     const usedWorkPhotos=new Set([project.image]);
     document.querySelectorAll('.project-location-photo img').forEach(img=>usedWorkPhotos.add(img.getAttribute('src')));
     const stockByWork={
+      accents:['https://images.pexels.com/photos/6934226/pexels-photo-6934226.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
       ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
       vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
       'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
