@@ -428,7 +428,7 @@
     pictureStyle.textContent=`#project-work-grid.project-work-pictures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}#project-work-grid .project-work-card{margin:0;padding:0;overflow:hidden;border-radius:12px;box-shadow:0 5px 18px #20304022}#project-work-grid .project-work-card>summary{display:block;cursor:pointer;list-style:none;padding:0;background:#fff}#project-work-grid .project-work-card>summary::-webkit-details-marker{display:none}#project-work-grid .project-work-card>summary img{display:block;width:100%;height:170px;object-fit:cover}#project-work-grid .project-work-card>summary span{display:block;min-height:52px;padding:11px 14px;font-size:16px;font-weight:800;color:#193e5b}#project-work-grid .project-work-card[open]>summary span{background:#edf5fc}#project-work-grid .project-work-card>:not(summary){margin:10px 14px}#project-work-grid .project-work-card>label{display:block;padding:5px 0}#project-work-grid .project-work-card .service-dropdown{margin-bottom:8px}@media(max-width:900px){#project-work-grid.project-work-pictures{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){#project-work-grid.project-work-pictures{grid-template-columns:1fr}#project-work-grid .project-work-card>summary img{height:185px}}`;
     document.head.append(pictureStyle);
     const workPhotoChoices={
-      ceiling:['/assets/approved-0af816f48fb0.jpg'],
+      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
       walls:['/assets/accent-walls-card.jpg'],
       floor:['/assets/flooring-card.jpg'],
       trim:['/assets/approved-e9fee5a04016.jpg'],
@@ -484,16 +484,64 @@
     };
     const specialtyProjectPhotos={"pet-room":["/assets/idea-pet-room.jpg","/assets/tile-shower.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/approved-0af816f48fb0.jpg","/assets/kids-room.jpg"],"outdoor-kitchen":["/assets/idea-outdoor-kitchen.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/approved-b9cdb9084877.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg"],"mechanic-shop":["/assets/idea-mechanic-shop.jpg","/assets/idea-car-wash.jpg","/assets/flooring-card.jpg","/assets/approved-d2807423c8f0.jpg","/assets/lighting-card.jpg","/assets/approved-8a9d216224b8.jpg"],"car-wash":["/assets/idea-car-wash.jpg","/assets/patio-concrete.webp","/assets/approved-b9cdb9084877.jpg","/assets/idea-mechanic-shop.jpg","/assets/approved-4de99f88049f.jpg"],"recycling-scrap":["/assets/idea-recycling-scrap.jpg","/assets/concrete-card.jpg","/assets/idea-garden-greenhouse.jpg","/assets/approved-b5c632fcfbc0.jpg"],"vault-safe-room":["/assets/idea-vault-safe-room.jpg","/assets/entryways-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/lighting-card.jpg","/assets/approved-739d17fd2952.jpg"],"snack-beverage":["/assets/idea-snack-beverage.jpg","/assets/approved-b9cdb9084877.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/lighting-card.jpg","/assets/approved-a051ee7e1935.jpg","/assets/approved-807c60a6001a.jpg"],"pools":["/assets/idea-pools.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/stairs-card.jpg","/assets/idea-backyard-retreat.jpg","/assets/patio-concrete.webp"],"bus-stop":["/assets/idea-bus-stop.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/lighting-card.jpg","/assets/approved-a11ab0fcd37f.jpg"],"mailboxes":["/assets/idea-mailboxes.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/approved-b5c632fcfbc0.jpg"],"garden-greenhouse":["/assets/idea-garden-greenhouse.jpg","/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/patio-concrete.webp","/assets/approved-b5c632fcfbc0.jpg"],"fitness-wellness":["/assets/idea-fitness-wellness.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/office.jpg"],"games-hobbies":["/assets/idea-games-hobbies.jpg","/assets/office.jpg","/assets/approved-6075be404407.jpg","/assets/approved-17df84119d39.jpg"],"outdoor-sound":["/assets/idea-outdoor-sound.jpg","/assets/cinema.jpg","/assets/lighting-card.jpg","/assets/idea-backyard-retreat.jpg"],"backyard-retreat":["/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg","/assets/lighting-card.jpg","/assets/patio-concrete.webp"]};
     const specificWorkPhotos={"pet-floor":"/assets/flooring-card.jpg","pet-wash":"/assets/tile-shower.jpg","pet-storage":"/assets/approved-8a9d216224b8.jpg","pet-walls":"/assets/approved-0af816f48fb0.jpg","outdoor-counters":"/assets/approved-9bfcb89f7800.jpg","outdoor-sink":"/assets/approved-b9cdb9084877.jpg","outdoor-storage":"/assets/approved-4de99f88049f.jpg","outdoor-kitchen-power":"/assets/lighting-card.jpg","shop-floor":"/assets/flooring-card.jpg","shop-storage":"/assets/approved-d2807423c8f0.jpg","shop-utilities":"/assets/lighting-card.jpg","wash-floor":"/assets/patio-concrete.webp","wash-water":"/assets/approved-b9cdb9084877.jpg","wash-storage":"/assets/idea-mechanic-shop.jpg","scrap-platform":"/assets/concrete-card.jpg","scrap-cover":"/assets/idea-recycling-scrap.jpg","vault-door":"/assets/entryways-card.jpg","vault-storage":"/assets/approved-8a9d216224b8.jpg","vault-services":"/assets/lighting-card.jpg","snack-counters":"/assets/kitchen.jpg","snack-storage":"/assets/approved-9bfcb89f7800.jpg","snack-sink":"/assets/approved-b9cdb9084877.jpg","snack-light":"/assets/pendant-lighting.jpg","pool-deck":"/assets/approved-a11ab0fcd37f.jpg","pool-access":"/assets/stairs-card.jpg","pool-storage":"/assets/idea-pools.jpg","waiting-access":"/assets/patio-concrete.webp","waiting-shelter":"/assets/idea-bus-stop.jpg","waiting-light":"/assets/lighting-card.jpg","mailbox-base":"/assets/idea-mailboxes.jpg","mailbox-parcels":"/assets/idea-mailboxes.jpg","garden-beds":"/assets/idea-garden-greenhouse.jpg","garden-shelter":"/assets/idea-backyard-retreat.jpg","garden-water":"/assets/approved-a11ab0fcd37f.jpg","fit-floor":"/assets/flooring-card.jpg","fit-mirror":"/assets/idea-fitness-wellness.jpg","hobby-work":"/assets/office.jpg","hobby-display":"/assets/approved-6075be404407.jpg","sound-install":"/assets/idea-outdoor-sound.jpg","sound-power":"/assets/lighting-card.jpg","retreat-surface":"/assets/patio-concrete.webp","retreat-privacy":"/assets/idea-backyard-retreat.jpg","retreat-light":"/assets/lighting-card.jpg"};
-    const usedWorkPhotos=new Set();
+    // Match each picture to the actual task. Approved local photographs take priority;
+    // use a task-specific licensed stock photo only when our own photos do not cover it.
+    const bathroomWorkPhotos={
+      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
+      walls:['/assets/approved-0ab244a922c8.jpg'],
+      floor:['/assets/flooring-card.jpg'],
+      tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
+      shower:['/assets/showers-card.png'],
+      toilet:['/assets/approved-a908c20ce632.jpg'],
+      vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
+      'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
+      refinish:['/assets/approved-9bfcb89f7800.jpg'],
+      mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
+      lighting:['/assets/pendant-lighting.jpg'],
+      ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
+      accents:['/assets/approved-8a9d216224b8.jpg'],
+      prep:['/assets/approved-b5c632fcfbc0.jpg'],
+      'bath-shower-valve':['/assets/approved-b9cdb9084877.jpg'],
+      'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82'],
+      other:['/assets/custom-projects-card.jpg']
+    };
+    // More cards can share a subject, but must never display the very same picture.
+    // Reserve the hero and any indoor/outdoor selector photos before drawing work cards.
+    const usedWorkPhotos=new Set([project.image]);
+    document.querySelectorAll('.project-location-photo img').forEach(img=>usedWorkPhotos.add(img.getAttribute('src')));
+    const stockByWork={
+      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
+      vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
+      'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
+      mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
+      ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
+      tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
+      'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82']
+    };
+    const isBathroom=id==='bathrooms'||id==='bath-remodel';
     const workPhoto=key=>{
-      // A job-specific photo is always better than a random, unrelated picture.
-      // If we do not have a suitable job photo, use this project's own cover.
-      // Never fill in from a global bag of unrelated stock/project photos.
-      const matches=[...(specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),...(workPhotoChoices[key]||[])];
-      const cover=PROJECT_CATALOG[id]?.image||'/assets/custom-projects-card.jpg';
-      const choices=matches.length?matches:[cover,...(specialtyProjectPhotos[id]||[])];
-      const chosen=choices.find(url=>!usedWorkPhotos.has(url))||choices[0];
-      usedWorkPhotos.add(chosen);return chosen;
+      const ownPhotos=[
+        ...(isBathroom?(bathroomWorkPhotos[key]||[]):[]),
+        ...(specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
+        ...(workPhotoChoices[key]||[]),
+        ...(stockByWork[key]||[])
+      ];
+      const chosen=ownPhotos.find(url=>!usedWorkPhotos.has(url))
+        ||(specialtyProjectPhotos[id]||[]).find(url=>!usedWorkPhotos.has(url))
+        ||(PROJECT_CATALOG[id]?.image&&!usedWorkPhotos.has(PROJECT_CATALOG[id].image)?PROJECT_CATALOG[id].image:null);
+      // Never repeat a photo, including the hero. If there is no suitable unique
+      // photograph for a specialty task, use a labeled task-specific illustration.
+      // This is preferable to a random kitchen, bathroom or repeated hero photo.
+      const photo=chosen||('data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460">'+
+        '<rect width="720" height="460" fill="#e7edf0"/>'+
+        '<rect x="112" y="76" width="496" height="308" rx="12" fill="#f7f9fa" stroke="#b3c3cb" stroke-width="5"/>'+
+        '<path d="M220 242h280M360 150v184" stroke="#aac0cb" stroke-width="9" stroke-linecap="round"/>'+
+        '<text x="360" y="402" font-size="27" font-family="Arial,sans-serif" fill="#25495b" text-anchor="middle">'+
+        String(options[key]?.title||key).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</text></svg>'
+      ));
+      usedWorkPhotos.add(photo);
+      return photo;
     };
     const draftKey='niks-project-options-'+id;
     let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
