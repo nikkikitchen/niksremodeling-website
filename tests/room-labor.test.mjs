@@ -20,7 +20,7 @@ test('room package cart uses the approved total and replacing its scope never du
 test('the catalog removes seam-foot pricing, retains accent $175, and matches crown rates',async()=>{
  const dom=await open('installation.html'),w=dom.window;const tasks=w.LABOR_CATALOG.flatMap(c=>c.groups.flatMap(g=>Object.values(g.actions).flat()));
  assert(!tasks.some(t=>t.label==='Finish drywall seams'));const finish=tasks.find(t=>t.label==='Drywall finishing — ready for primer');assert.equal(finish.price,2.25);assert.equal(finish.unit,'sq. ft.');assert.equal(tasks.find(t=>t.id==='paint-accent').price,175);
- for(const task of tasks.filter(t=>/crown molding/i.test(t.label)&&/Install|installation/.test(t.label)))assert.equal(task.price,3);
+ for(const task of tasks.filter(t=>/crown molding/i.test(t.label)&&/Install|installation/.test(t.label)&&!/finishing/i.test(t.label)))assert.equal(task.price,4);
  const row=w.document.getElementById('labor-task-'+finish.id);row.querySelector('input').value='32.5';w.document.getElementById('labor-room').value='Wall';row.querySelector('button').click();assert.equal(w.getCart()[0].price*w.getCart()[0].qty,73.125);assert.equal(w.serviceEstimateSummary(w.getCart()).total,150);
  dom.window.close();
 });
@@ -34,3 +34,5 @@ test('ceiling premium applies only to overhead work and remains in the combined 
  assert.equal(d.getElementById('room-price').textContent,'$259.20');d.getElementById('room-add').click();assert.equal(w.getCart().length,1);assert.equal(w.getCart()[0].price,259.2);
  dom.window.close();
 });
+
+test('trim combined services equal the separate work and medium-room target',async()=>{const dom=await open('installation.html');const tasks=dom.window.LABOR_CATALOG.flatMap(c=>c.groups.flatMap(g=>Object.values(g.actions).flat()));const rate=label=>tasks.find(t=>t.label===label).price;assert.equal(rate('Baseboard installation')+rate('Baseboard finishing and painting'),rate('Baseboard installation, finishing and painting'));assert.equal(rate('Crown molding installation')+rate('Crown molding finishing and painting'),rate('Crown molding installation, finishing and painting'));assert.equal(rate('Baseboard installation, finishing and painting')*48,300);assert.equal(rate('Crown molding installation, finishing and painting')*48,396);const d=dom.window.document;d.getElementById('labor-room').value='Medium room';for(const id of ['baseboard-complete','crown-complete']){const row=d.getElementById('labor-task-'+id);row.querySelector('input').value=48;row.querySelector('button').click();}assert.equal(dom.window.serviceEstimateSummary(dom.window.getCart()).total,696);assert.equal(dom.window.getCart().length,2);dom.window.close();});

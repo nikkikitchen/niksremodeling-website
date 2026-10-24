@@ -11,3 +11,6 @@ User approved room pricing table and packages. Accent wall remains $175 labor fo
 
 ## Ceiling approval
 User requested a modest overhead premium for ceiling painting and drywall, added to packages. Applied 20% above matching wall rates. Ceiling hang $90/4x8 sheet; finish $2.70/sqft alone or $2.40 bundled with hanging; primer/one paint coat $.90/sqft alone, bundled primer $.60 and bundled two paint coats $1.50. Ceiling patch repairs $210/$330/$540, finishing included. Room quote supports walls, ceiling, or both and applies multiplier only to ceiling work. Water damage uses existing repair tiers; underlying damage quoted separately.
+
+## Final trim review
+User approved baseboard installation $3/linear foot plus finishing/painting $3.25, combined $6.25. A 12x12 room with 48-foot perimeter totals $300 labor. Crown costs more: install $4/foot everywhere, finish/paint $4.25, combined $8.25; medium room $396. Small 5x8/26-foot perimeter: baseboard $162.50, crown $214.50. Large 10x25/70-foot perimeter: baseboard $437.50, crown $577.50. Materials/supplies and removal separate. Chair rail not changed; spoken reference was ambiguous.
