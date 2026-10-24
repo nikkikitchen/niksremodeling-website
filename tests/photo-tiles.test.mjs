@@ -61,7 +61,7 @@ test('product preview photos exist, match each SKU mapping and do not repeat wit
   for(const [sku,path] of entries){
    assert.ok(/^[A-Z]{2}-/.test(sku),'Unexpected SKU in '+page+': '+sku);
    if(path.startsWith('/assets/'))assert.equal(existsSync(new URL('..'+path,import.meta.url)),true,'Missing '+path);
-   else assert.match(path,/^https:\\/\\/images\\.unsplash\\.com\\/photo-[^\\s]+$/,'Unapproved image host '+path);
+   else assert.match(path,/^https:\/\/images\.unsplash\.com\/photo-[^\s]+$/,'Unapproved image host '+path);
   }
  }
 });
