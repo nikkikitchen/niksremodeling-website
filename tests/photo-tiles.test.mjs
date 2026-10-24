@@ -7,8 +7,9 @@ const begin=app.indexOf('const SHOP_PICTURE_TILES=');
 const end=app.indexOf('function shopPhoto(',begin);
 assert.ok(begin>=0&&end>begin,'photo tile mapping must exist');
 const sandbox={};
-runInNewContext(app.slice(begin,end)+'\nglobalThis.map=SHOP_PICTURE_TILES;',sandbox);
+runInNewContext(app.slice(begin,end)+'\nglobalThis.map=SHOP_PICTURE_TILES;globalThis.previews=PRODUCT_CARD_PHOTOS;',sandbox);
 const map=sandbox.map;
+const previews=sandbox.previews;
 test('all shopping guides use distinct approved local pictures',()=>{
  for(const page of ['materials','furniture','appliances','cabinets','tools','supplies']){
   const paths=Object.values(map[page]||{});
@@ -49,4 +50,29 @@ test('preview products choose by SKU rather than cycling unrelated photos',()=>{
  assert.ok(app.includes('const PRODUCT_CARD_PHOTOS='));
  assert.ok(app.includes('productCardPhoto(page,x,i)'));
  assert.ok(!app.includes('src="${imgs[i%imgs.length]}"'));
+});
+
+test('product preview photos exist, match each SKU mapping and do not repeat within a page',()=>{
+ for(const page of ['appliances','tools','materials','supplies','cabinets']){
+  const entries=Object.entries(previews[page]||{});
+  assert.ok(entries.length>=10,page+' should have representative pictures for the catalog');
+  const paths=entries.map(([,path])=>path);
+  assert.equal(new Set(paths).size,paths.length,page+' repeats a preview image');
+  for(const [sku,path] of entries){
+   assert.ok(/^[A-Z]{2}-/.test(sku),'Unexpected SKU in '+page+': '+sku);
+   if(path.startsWith('/assets/'))assert.equal(existsSync(new URL('..'+path,import.meta.url)),true,'Missing '+path);
+   else assert.match(path,/^https:\\/\\/images\\.unsplash\\.com\\/photo-[^\\s]+$/,'Unapproved image host '+path);
+  }
+ }
+});
+test('specialist photo cards show their subjects, not unrelated generic project covers',()=>{
+ assert.notEqual(map.materials.Drywall,'/assets/project-basement.jpg');
+ assert.notEqual(map.materials.Lumber,'/assets/arches-columns.jpg');
+ assert.notEqual(map.materials['Siding & Exterior'],'/assets/entryways-card.jpg');
+ assert.notEqual(map.tools['Measuring & Layout'],'/assets/stairs-card.jpg');
+ assert.notEqual(map.cabinets.Hardware,'/assets/approved-d2807423c8f0.jpg');
+ assert.notEqual(map.supplies['Appliance Cords & Connections'],'/assets/approved-b9cdb9084877.jpg');
+ const bathroom=readFileSync(new URL('../bathroom-shop.js',import.meta.url),'utf8');
+ assert.ok(!bathroom.includes('"ventilation": "/assets/project-attic.jpg"'));
+ assert.ok(!bathroom.includes('"accessories": "/assets/approved-8d4db6742d08.jpg"'));
 });
