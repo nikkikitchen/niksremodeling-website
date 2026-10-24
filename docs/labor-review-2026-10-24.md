@@ -5,3 +5,6 @@ Cabinet packages: install $150; install and paint outside $275; install and pain
 Bathroom: faucet $150, standard toilet $150, smart toilet $750, vanity/sink combo and faucet $300, vanity light replacement $150. Tank parts labor $150, parts excluded. Other reviewed bathroom rates retained.
 Exterior door/frame replacement $550; exterior install starts $450; window replacement starts $450; hinge mortising $125/door; door adjustment $75/hour. Crown install $3/linear foot, finish/paint $1.75; shoe install/finish/paint $1.25. Door painting/staining interior/exterior $150/door.
 Exhaust fan new duct starts $225; exterior wall venting extra belongs in terms only, duct routed through attic and discharged outdoors.
+
+## Final drywall / painting approval
+User approved room pricing table and packages. Accent wall remains $175 labor for up to 96 square feet, two coats. Paint-material pricing and existing material section unchanged. Crown installation $3/linear foot everywhere. Standard 4x8 sheet installation $75; finishing alone $2.25/wall sq ft, with hanging $2. Primer and one paint coat $.75/wall sq ft; bundled primer $.50; bundled two-coat paint $1.25. Full package $75/sheet plus $3.75/wall sq ft. Room bands match flooring: <=40, >40–144, >144–250 floor sq ft. Patch prices $175/$275/$450 include finishing. Shared roomLaborQuote is the source for packages.

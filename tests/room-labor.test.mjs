@@ -1,0 +1,26 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+import {JSDOM} from 'jsdom';
+async function open(file,query=''){
+ const html=readFileSync(file,'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(_,src)=>{const p=src.split('?')[0].replace(/^\//,'');return existsSync(p)?'<script>'+readFileSync(p,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';});
+ const dom=new JSDOM(html,{url:'https://niksremodeling.com/'+file+query,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};}});
+ await new Promise(r=>setTimeout(r,100));return dom;
+}
+test('room package cart uses the approved total and replacing its scope never duplicates a charge',async()=>{
+ const dom=await open('room-labor.html','?package=full'),w=dom.window,d=w.document;
+ assert.equal(d.getElementById('room-price').textContent,'$2,340.00');
+ d.getElementById('room-add').click();assert.equal(w.serviceEstimateSummary(w.getCart()).total,2340);
+ const select=d.getElementById('room-service');select.value='hang-finish';select.dispatchEvent(new w.Event('input'));d.getElementById('room-add').click();
+ assert.equal(w.getCart().length,1);assert.equal(w.serviceEstimateSummary(w.getCart()).total,1668);
+ d.getElementById('room-length').value=5;d.getElementById('room-width').value=8;select.value='full';select.dispatchEvent(new w.Event('input'));assert.equal(d.getElementById('room-price').textContent,'$1,305.00');
+ d.getElementById('room-length').value=10;d.getElementById('room-width').value=25;select.dispatchEvent(new w.Event('input'));assert.equal(d.getElementById('room-price').textContent,'$3,450.00');
+ dom.window.close();
+});
+test('the catalog removes seam-foot pricing, retains accent $175, and matches crown rates',async()=>{
+ const dom=await open('installation.html'),w=dom.window;const tasks=w.LABOR_CATALOG.flatMap(c=>c.groups.flatMap(g=>Object.values(g.actions).flat()));
+ assert(!tasks.some(t=>t.label==='Finish drywall seams'));const finish=tasks.find(t=>t.label==='Drywall finishing — ready for primer');assert.equal(finish.price,2.25);assert.equal(finish.unit,'sq. ft.');assert.equal(tasks.find(t=>t.id==='paint-accent').price,175);
+ for(const task of tasks.filter(t=>/crown molding/i.test(t.label)&&/Install|installation/.test(t.label)))assert.equal(task.price,3);
+ const row=w.document.getElementById('labor-task-'+finish.id);row.querySelector('input').value='32.5';w.document.getElementById('labor-room').value='Wall';row.querySelector('button').click();assert.equal(w.getCart()[0].price*w.getCart()[0].qty,73.125);assert.equal(w.serviceEstimateSummary(w.getCart()).total,150);
+ dom.window.close();
+});

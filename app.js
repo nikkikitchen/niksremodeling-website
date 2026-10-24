@@ -176,7 +176,7 @@ const CABINET_WORK_OPTIONS=[
  {key:'install-paint-out',label:'Install and paint outside — $275 per cabinet',fields:[['install-paint-out-count','Cabinets','Install cabinet and paint outside','cabinets']]},
  {key:'install-paint-all',label:'Install and paint inside and out — $325 per cabinet',fields:[['install-paint-all-count','Cabinets','Install cabinet and paint inside and out','cabinets']]},
  {key:'door-adjust',label:'Adjust cabinet door — $75 per hours',fields:[['door-adjust-qty','Quantity','Adjust cabinet door','hours']]},
- {key:'cabinet-crown',label:'Install cabinet crown molding — $2.75 per linear foot',fields:[['crown-feet','Cabinet crown molding length (feet)','Install cabinet crown molding','linear foot']]},
+ {key:'cabinet-crown',label:'Install cabinet crown molding — $3 per linear foot',fields:[['crown-feet','Cabinet crown molding length (feet)','Install cabinet crown molding','linear foot']]},
  {key:'toe-kick',label:'Install cabinet toe-kick — $1.25 per linear foot',fields:[['toe-feet','Cabinet toe-kick length (feet)','Install cabinet toe-kick','linear foot']]},
  {key:'filler',label:'Install cabinet filler strips — $15 each',fields:[['filler-count','Filler strips','Install cabinet filler strip','strips']]},
  {key:'end-panel',label:'Install cabinet end panels — $75 each',fields:[['panel-count','End panels','Install cabinet end panel','panels']]},
@@ -753,7 +753,7 @@ function cabinetRefinishingEstimate(){
  const count=id=>{const n=materialNumber('cabinet-'+id);if(id==='door-adjust-qty'){if(!Number.isFinite(n)||n<0||Math.round(n*4)!==n*4)throw Error('Enter adjustment hours in quarter-hour increments.');return n;}if(!Number.isSafeInteger(n))throw Error('Enter whole counts for cabinet parts.');return n;};
  const doors=count('doors'),drawers=count('drawers'),measurements={doors,drawers};
  const labor=[];
- const add=(service,quantity,unit)=>{const approved={'Adjust cabinet door':75,'Stain cabinet door interior':150,'Stain cabinet door exterior':150,'Stain cabinet box':150,'Paint or stain cabinet inside and out':225,'Install cabinet and paint outside':275,'Install cabinet and paint inside and out':325,'Install cabinet box':150,'Remove cabinet box and haul off':cabinetRemovalRate(quantity),'Paint cabinet door and matching box':150,'Paint cabinet interiors':225,'Install cabinet hardware':15,'Fill cabinet hardware hole and touch up paint if possible':15,'Install cabinet crown molding':2.75,'Install cabinet toe-kick':1.25,'Install cabinet filler strip':15,'Install cabinet end panel':75};const unitPrice=approved[service]??null;if(quantity)labor.push({service,scope:'Cabinet / Vanity Work',quantity,unit,...(unitPrice!==null?{price:unitPrice*quantity,unitPrice}: {})});};
+ const add=(service,quantity,unit)=>{const approved={'Adjust cabinet door':75,'Stain cabinet door interior':150,'Stain cabinet door exterior':150,'Stain cabinet box':150,'Paint or stain cabinet inside and out':225,'Install cabinet and paint outside':275,'Install cabinet and paint inside and out':325,'Install cabinet box':150,'Remove cabinet box and haul off':cabinetRemovalRate(quantity),'Paint cabinet door and matching box':150,'Paint cabinet interiors':225,'Install cabinet hardware':15,'Fill cabinet hardware hole and touch up paint if possible':15,'Install cabinet crown molding':3,'Install cabinet toe-kick':1.25,'Install cabinet filler strip':15,'Install cabinet end panel':75};const unitPrice=approved[service]??null;if(quantity)labor.push({service,scope:'Cabinet / Vanity Work',quantity,unit,...(unitPrice!==null?{price:unitPrice*quantity,unitPrice}: {})});};
  add('Refinish doors — frames included',doors,'doors');add('Refinish drawer fronts — frames included',drawers,'drawer fronts');
  CABINET_WORK_OPTIONS.filter(option=>option.fields.length).forEach(option=>{
   if(!document.getElementById('cabinet-'+option.key).checked)return;
@@ -835,3 +835,24 @@ document.addEventListener('click',event=>{const control=event.target.closest('bu
 document.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.page==='calculators'&&customUrl(location.href))renderCustomQuotePage(new URLSearchParams(location.search).get('workLabel')||'Custom work');});
 
 function requiresInPersonQuote(item){return !!item&&(item.quoteRequired||item.pricingPending||item.price===null||item.price===undefined||item.price===''||!Number.isFinite(Number(item.price)));}
+
+// Owner-approved October 24, 2026. Labor only; material pricing stays separate.
+window.ROOM_LABOR_SERVICES={
+ hang:{label:'Drywall installation',sheetRate:75,wallRate:0},
+ finish:{label:'Drywall finishing',sheetRate:0,wallRate:2.25},
+ prime:{label:'Prime walls — one coat',sheetRate:0,wallRate:0.75},
+ paint1:{label:'Paint walls — one coat',sheetRate:0,wallRate:0.75},
+ paint2:{label:'Paint walls — two coats',sheetRate:0,wallRate:1.5},
+ 'hang-finish':{label:'Install and finish drywall',sheetRate:75,wallRate:2},
+ 'finish-prime':{label:'Finish and prime drywall',sheetRate:0,wallRate:2.75},
+ 'hang-finish-prime':{label:'Install, finish and prime drywall',sheetRate:75,wallRate:2.5},
+ 'finish-prime-paint':{label:'Finish, prime and paint walls — two paint coats',sheetRate:0,wallRate:4},
+ full:{label:'Install, finish, prime and paint walls — two paint coats',sheetRate:75,wallRate:3.75}
+};
+window.roomLaborQuote=function(area,key){
+ const service=window.ROOM_LABOR_SERVICES[key];
+ if(!service||!Number.isFinite(area)||area<=0)throw Error('Enter a valid wall area and choose the work.');
+ const sheets=Math.ceil(area/32),amount=Math.round((sheets*service.sheetRate+area*service.wallRate)*100)/100;
+ return {...service,key,area,sheets,amount};
+};
+window.roomLaborSize=function(floor){return floor<=40?'Small':floor<=144?'Medium':floor<=250?'Large':'Larger project';};
