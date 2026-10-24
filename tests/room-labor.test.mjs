@@ -24,3 +24,13 @@ test('the catalog removes seam-foot pricing, retains accent $175, and matches cr
  const row=w.document.getElementById('labor-task-'+finish.id);row.querySelector('input').value='32.5';w.document.getElementById('labor-room').value='Wall';row.querySelector('button').click();assert.equal(w.getCart()[0].price*w.getCart()[0].qty,73.125);assert.equal(w.serviceEstimateSummary(w.getCart()).total,150);
  dom.window.close();
 });
+test('ceiling premium applies only to overhead work and remains in the combined package cart',async()=>{
+ const dom=await open('room-labor.html','?package=full&surfaces=both'),w=dom.window,d=w.document;
+ assert.equal(d.getElementById('room-price').textContent,'$3,438.00');
+ assert.equal(w.roomLaborQuote(0,'full',144).amount,1098);
+ assert.equal(w.roomLaborQuote(384,'full').amount,2340);
+ d.getElementById('room-add').click();assert.equal(w.getCart()[0].ceilingArea,144);assert.equal(w.serviceEstimateSummary(w.getCart()).total,3438);
+ const surface=d.getElementById('room-surfaces');surface.value='ceiling';surface.dispatchEvent(new w.Event('input'));d.getElementById('room-service').value='paint2';d.getElementById('room-service').dispatchEvent(new w.Event('input'));
+ assert.equal(d.getElementById('room-price').textContent,'$259.20');d.getElementById('room-add').click();assert.equal(w.getCart().length,1);assert.equal(w.getCart()[0].price,259.2);
+ dom.window.close();
+});

@@ -8,3 +8,6 @@ Exhaust fan new duct starts $225; exterior wall venting extra belongs in terms o
 
 ## Final drywall / painting approval
 User approved room pricing table and packages. Accent wall remains $175 labor for up to 96 square feet, two coats. Paint-material pricing and existing material section unchanged. Crown installation $3/linear foot everywhere. Standard 4x8 sheet installation $75; finishing alone $2.25/wall sq ft, with hanging $2. Primer and one paint coat $.75/wall sq ft; bundled primer $.50; bundled two-coat paint $1.25. Full package $75/sheet plus $3.75/wall sq ft. Room bands match flooring: <=40, >40–144, >144–250 floor sq ft. Patch prices $175/$275/$450 include finishing. Shared roomLaborQuote is the source for packages.
+
+## Ceiling approval
+User requested a modest overhead premium for ceiling painting and drywall, added to packages. Applied 20% above matching wall rates. Ceiling hang $90/4x8 sheet; finish $2.70/sqft alone or $2.40 bundled with hanging; primer/one paint coat $.90/sqft alone, bundled primer $.60 and bundled two paint coats $1.50. Ceiling patch repairs $210/$330/$540, finishing included. Room quote supports walls, ceiling, or both and applies multiplier only to ceiling work. Water damage uses existing repair tiers; underlying damage quoted separately.

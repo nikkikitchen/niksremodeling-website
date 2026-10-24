@@ -849,10 +849,14 @@ window.ROOM_LABOR_SERVICES={
  'finish-prime-paint':{label:'Finish, prime and paint walls — two paint coats',sheetRate:0,wallRate:4},
  full:{label:'Install, finish, prime and paint walls — two paint coats',sheetRate:75,wallRate:3.75}
 };
-window.roomLaborQuote=function(area,key){
+window.CEILING_LABOR_MULTIPLIER=1.2;
+window.roomLaborQuote=function(area,key,ceilingArea=0){
  const service=window.ROOM_LABOR_SERVICES[key];
- if(!service||!Number.isFinite(area)||area<=0)throw Error('Enter a valid wall area and choose the work.');
- const sheets=Math.ceil(area/32),amount=Math.round((sheets*service.sheetRate+area*service.wallRate)*100)/100;
- return {...service,key,area,sheets,amount};
+ if(!service||!Number.isFinite(area)||!Number.isFinite(ceilingArea)||area<0||ceilingArea<0||area+ceilingArea<=0)throw Error('Enter a valid area and choose the work.');
+ const sheets=Math.ceil(area/32),ceilingSheets=Math.ceil(ceilingArea/32);
+ const wallAmount=sheets*service.sheetRate+area*service.wallRate;
+ const ceilingAmount=(ceilingSheets*service.sheetRate+ceilingArea*service.wallRate)*window.CEILING_LABOR_MULTIPLIER;
+ const amount=Math.round((wallAmount+ceilingAmount)*100)/100;
+ return {...service,key,area,sheets,ceilingArea,ceilingSheets,wallAmount,ceilingAmount:Math.round(ceilingAmount*100)/100,amount};
 };
 window.roomLaborSize=function(floor){return floor<=40?'Small':floor<=144?'Medium':floor<=250?'Large':'Larger project';};
