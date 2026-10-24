@@ -36,15 +36,15 @@ test('Cart preserves distinct cabinet tasks and shares the visit minimum with ho
   estimates.length = 0;
   estimates.push({type:'custom',roomId:'kitchen-cabinets',roomName:'Kitchen',title:'Cabinet / Vanity Work',measurements:{},projectOptions:[],labor:[
     {service:'Install cabinet box',scope:'Cabinet / Vanity Work',quantity:1,unit:'boxes',price:150},
-    {service:'Remove cabinet box and haul off',scope:'Cabinet / Vanity Work',quantity:1,unit:'boxes',price:125},
-    {service:'Paint cabinet door and matching frame',scope:'Cabinet / Vanity Work',quantity:1,unit:'doors',price:125}
+    {service:'Remove cabinet box and haul off',scope:'Cabinet / Vanity Work',quantity:1,unit:'boxes',price:75},
+    {service:'Paint cabinet door and matching frame',scope:'Cabinet / Vanity Work',quantity:1,unit:'doors',price:150}
   ]});
   w.addProjectToCart();
   let cart = w.getCart();
   for (const task of estimates[0].labor) assert.ok(cart.some(item => item.name.includes(task.service)), task.service);
-  assert.equal(w.serviceEstimateSummary(cart).total,400);
+  assert.equal(w.serviceEstimateSummary(cart).total,375);
   assert.equal(w.serviceEstimateSummary([{type:'Labor',price:75,qty:1}]).total,150);
-  assert.equal(w.serviceEstimateSummary([...cart,{type:'Labor',price:75,qty:1}]).total,475);
+  assert.equal(w.serviceEstimateSummary([...cart,{type:'Labor',price:75,qty:1}]).total,450);
   w.addProjectToCart();
   assert.equal(w.getCart().length,3,'Saving the same room must not duplicate charges');
   dom.window.close();
