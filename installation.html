@@ -266,6 +266,16 @@ catalog.find(c=>c.id==='paint').groups.push({id:'ceiling-room-paint',label:'Ceil
 const bathCeiling=bathSurface?.actions.Install.find(t=>t.id==='bath-ceiling-paint');if(bathCeiling)Object.assign(bathCeiling,{label:'Paint bathroom ceiling — two coats',price:1.8,unit:'sq. ft.',status:'approved',note:ceilNote});
 // Approved trim pricing: a 48-foot medium-room perimeter totals $300 baseboard / $396 crown.
 trim.push(approvedTask('baseboard-complete','Baseboard installation, finishing and painting',6.25,'linear foot','Labor only: install $3 plus finish and paint $3.25 per foot. Do not add the separate install/finish services to this combined option.'),approvedTask('crown-complete','Crown molding installation, finishing and painting',8.25,'linear foot','Labor only: install $4 plus finish and paint $4.25 per foot. Do not add the separate install/finish services to this combined option.'));
+// Smart devices include basic pairing and testing; larger system setup needs an in-person estimate.
+const smartPrices={'Smart light switch installation (existing connections)':175,'Smart thermostat installation (existing connections)':200,'Smart doorbell installation (existing connections)':175};
+const electricalTasks=catalog.find(c=>c.id==='electrical').groups.flatMap(g=>Object.values(g.actions).flat());
+for(const [label,price] of Object.entries(smartPrices)){
+ const task=electricalTasks.find(t=>t.label===label);
+ if(!task)throw Error('Missing smart-device service: '+label);
+ Object.assign(task,{price,status:'approved',startingAt:false,note:'Labor only; device separate.'});
+}
+const smartSetup=electricalTasks.find(t=>t.label==='Smart lighting system setup');
+Object.assign(smartSetup,{label:'Whole-home smart lighting setup',price:null,status:'pending',startingAt:false,note:'In-person estimate required.'});
 catalog.sort((a,b)=>a.label.localeCompare(b.label));for(const c of catalog)for(const g of c.groups)for(const tasks of Object.values(g.actions))tasks.sort((a,b)=>a.label.localeCompare(b.label));
 const finishes=cabinet.groups.find(g=>g.id==='refinishing').actions.Refinish;finishes.sort((a,b)=>(a.label.startsWith('Paint')?0:1)-(b.label.startsWith('Paint')?0:1)||a.label.localeCompare(b.label));
 })();
