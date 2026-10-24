@@ -403,6 +403,19 @@
     }
     setStep(0);
     const grid=document.getElementById('project-work-grid');
+    if(id==='bathrooms'||id==='bath-remodel'){
+      const shortcuts=document.createElement('nav');
+      shortcuts.className='project-product-links';
+      shortcuts.setAttribute('aria-label','Bathroom installation and labor');
+      shortcuts.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px';
+      for(const [label,href] of [
+        ['Bathroom Installation & Labor','/installation.html#labor-category-bathroom'],
+        ['Heated Towel Rack Installation','/installation.html?service=heated-towel-rack#labor-category-electrical']
+      ]){
+        const link=document.createElement('a');link.className='btn outline';link.href=href;link.textContent=label;shortcuts.append(link);
+      }
+      grid.before(shortcuts);
+    }
     // Use existing approved job photographs on every work choice, retaining
     // the accordion controls for material selection and calculator handoff.
     grid.classList.add('project-work-pictures');
@@ -576,6 +589,13 @@
           ['Browse Bathroom Fixtures', '/bathroom.html', true]
         ]
       };
+      if((id==='bathrooms'||id==='bath-remodel')&&['other','accents'].includes(key)){
+        const link=document.createElement('a');
+        link.className='btn outline project-products-link';
+        link.href='/installation.html?service=heated-towel-rack#labor-category-electrical';
+        link.textContent='Heated Towel Rack — Installation & Labor';
+        card.append(link);
+      }
       if(id==='bathrooms'||id==='bath-remodel'){
         const related=bathroomProductLinks[key]||[];
         if(related.length){
