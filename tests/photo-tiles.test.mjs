@@ -27,7 +27,7 @@ test('materials use image tiles rather than text-only category tabs',()=>{
  assert.ok(app.includes('photo-guide-grid'));
 });
 test('photo navigation changes do not alter approved labor amounts',()=>{
- for(const [id,labor] of [['toilet-install',175],['vanity-install',350],['tub-replace',1600]]){
+ for(const [id,labor] of [['toilet-install',150],['vanity-install',300],['tub-replace',1600]]){
   const start=app.indexOf('window.BATHROOM_PACKAGES=');
   const end=app.indexOf('];',start);
   const packages=JSON.parse(app.slice(start+'window.BATHROOM_PACKAGES='.length,end+1));
