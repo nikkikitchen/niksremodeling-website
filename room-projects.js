@@ -110,3 +110,11 @@ Object.assign(window.ROOM_PROJECT_SCOPES,{
  basement:['framing','ceiling','walls','floor','stairs','doors','storage','lighting','ventilation','prep','other'],
  garage:['ceiling','walls','floor','doors','storage','workshop','lighting','ventilation','prep','other']
 });
+
+// New construction belongs in its own project category, with an actual home-extension photo.
+PROJECT_CATALOG['room-additions']={
+  title:'Room Additions',
+  image:'https://images.unsplash.com/photo-1753717202565-ee088d9871fc?auto=format&fit=crop&w=1200&q=80',
+  intro:'Add a bedroom, family room, sunroom or living space. Design, permits & construction quoted on site.',
+  materials:[],exterior:false
+};
