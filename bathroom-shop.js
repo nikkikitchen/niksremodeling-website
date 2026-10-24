@@ -18,8 +18,8 @@ const bathroomCategoryPhotos={
  "showerDoors": "https://images.unsplash.com/photo-1771929662486-f793e08f0f16?auto=format&fit=crop&w=900&q=82",
  "faucets": "https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82",
  "lighting": "https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82",
- "ventilation": "/assets/project-attic.jpg",
- "accessories": "/assets/approved-8d4db6742d08.jpg"
+ "ventilation": "https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82",
+ "accessories": "https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82"
 };
 const bathroomRules={
  toilets:/\b(toilets?|commodes?|intelligent toilets?)\b/i,
