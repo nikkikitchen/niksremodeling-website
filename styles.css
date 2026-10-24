@@ -286,3 +286,14 @@ body[data-page="materials"] .picture-category-tabs a.photo-category-tile:focus-v
 .nav .wrap.simple-nav{display:flex;align-items:center;gap:clamp(8px,2vw,24px);flex-wrap:wrap;overflow:visible}
 .nav .simple-nav>.review-link{margin-left:auto}
 @media(max-width:650px){.nav .wrap.simple-nav{gap:5px 13px}.nav .simple-nav>a{font-size:13px;padding:9px 0}.nav .simple-nav>.review-link{margin-left:0}}
+
+/* Uniform primary navigation: Home, Projects, Shopping, Installation & Labor, Cart. */
+.nav .wrap.simple-nav{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:0!important;align-items:stretch;overflow:visible!important}
+.nav .wrap.simple-nav>.nav-menu{min-width:0;width:100%;display:flex;justify-content:stretch;align-items:stretch}
+.nav .wrap.simple-nav>a,.nav .wrap.simple-nav>.nav-menu>.nav-toggle{box-sizing:border-box;width:100%;display:flex;justify-content:center;align-items:center;min-height:52px;padding:10px 8px!important;font-size:clamp(12px,1.2vw,15px)!important;font-weight:700!important;line-height:1.25;text-align:center;white-space:normal;color:var(--blue2);background:transparent;text-decoration:none;border:0}
+.nav .wrap.simple-nav>.nav-menu>.nav-toggle{cursor:pointer}
+.nav .wrap.simple-nav>.nav-menu>.nav-toggle:hover,.nav .wrap.simple-nav>.nav-menu>.nav-toggle:focus-visible,.nav .wrap.simple-nav>a:hover,.nav .wrap.simple-nav>a:focus-visible{color:var(--blue);background:#edf3f8}
+.nav .wrap.simple-nav>.review-link{margin-left:0!important}
+.nav .wrap.simple-nav>.nav-menu .nav-dropdown{z-index:50}
+@media(max-width:820px){.nav .wrap.simple-nav{grid-template-columns:repeat(3,minmax(0,1fr))}.nav .wrap.simple-nav>a,.nav .wrap.simple-nav>.nav-menu>.nav-toggle{font-size:14px!important;min-height:49px}}
+@media(max-width:500px){.nav .wrap.simple-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.nav .wrap.simple-nav>a,.nav .wrap.simple-nav>.nav-menu>.nav-toggle{font-size:13px!important;min-height:47px}}
