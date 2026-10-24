@@ -281,3 +281,8 @@ body[data-page="materials"] .picture-category-tabs a.photo-category-tile:focus-v
  .store-categories.photo-store-categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
  .store-categories.photo-store-categories .photo-category-tile{min-height:138px}
 }
+
+/* Main navigation stays usable when Installation & Labor is added. */
+.nav .wrap.simple-nav{display:flex;align-items:center;gap:clamp(8px,2vw,24px);flex-wrap:wrap;overflow:visible}
+.nav .simple-nav>.review-link{margin-left:auto}
+@media(max-width:650px){.nav .wrap.simple-nav{gap:5px 13px}.nav .simple-nav>a{font-size:13px;padding:9px 0}.nav .simple-nav>.review-link{margin-left:0}}
