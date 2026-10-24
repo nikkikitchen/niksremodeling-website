@@ -76,3 +76,20 @@ test('specialist photo cards show their subjects, not unrelated generic project 
  assert.ok(!bathroom.includes('"ventilation": "/assets/project-attic.jpg"'));
  assert.ok(!bathroom.includes('"accessories": "/assets/approved-8d4db6742d08.jpg"'));
 });
+
+test('every material detail page shows a unique picture per material option',()=>{
+ const jsonBetween=(start,end)=>app.split(start)[1].split(end)[0].trim().replace(/;$/,'');
+ const pages=JSON.parse(jsonBetween('const MATERIAL_DETAIL_PAGES=','const FLOORING_SAMPLE_CHOICES='));
+ const options=JSON.parse(jsonBetween('const MATERIAL_ITEM_PICTURES=','const cardImages='));
+ const fallbacks=JSON.parse(jsonBetween('const materialChoicePhotos=','const MATERIAL_ITEM_PICTURES=').replace(/'/g,'"'));
+ const additional={'tile-stone':['Wall Tile','Decorative Stone Slabs','Stacked Stone Veneer'],'siding-exterior':['Exterior-Grade Shiplap'],'trim-molding':['Interior Shiplap'],'lumber':['Shiplap Boards']};
+ for(const [slug,category] of Object.entries(pages)){
+  const pictures=[...category.items,...(additional[slug]||[])].map((item,i)=>options[slug]?.[item]||fallbacks[slug]?.[i%fallbacks[slug].length]);
+  assert.ok(pictures.every(Boolean),'Every '+slug+' option needs a photo');
+  assert.equal(new Set(pictures).size,pictures.length,'Repeated material photos in '+slug);
+  for(const photo of pictures){
+   if(photo.startsWith('/assets/'))assert.equal(existsSync(new URL('..'+photo,import.meta.url)),true,'Missing '+photo);
+   else assert.ok(photo.startsWith('https://images.unsplash.com/photo-'),'Unrecognized photo source '+photo);
+  }
+ }
+});
