@@ -222,13 +222,13 @@ const SHOP_PICTURE_TILES={
  materials:{
   'Flooring':'/assets/approved-de82473d9ce3.jpg',
   'Tile & Stone':'/assets/tile-shower.jpg',
-  'Drywall':'/assets/project-basement.jpg',
-  'Lumber':'/assets/arches-columns.jpg',
+  'Drywall':'https://images.unsplash.com/photo-1768321917995-2d992c50854b?auto=format&fit=crop&w=900&q=82',
+  'Lumber':'https://images.unsplash.com/photo-1681752972950-6229ca099fbc?auto=format&fit=crop&w=900&q=82',
   'Trim & Molding':'/assets/approved-e9fee5a04016.jpg',
-  'Paint & Finishes':'/assets/murals-card.jpg',
+  'Paint & Finishes':'https://images.unsplash.com/photo-1599619585752-c3edb42a414c?auto=format&fit=crop&w=900&q=82',
   'Insulation':'/assets/project-attic.jpg',
   'Roofing':'https://images.unsplash.com/photo-1655373617557-7138d45582d4?auto=format&fit=crop&w=900&q=82',
-  'Siding & Exterior':'/assets/entryways-card.jpg',
+  'Siding & Exterior':'https://images.unsplash.com/photo-1775695161075-f286033564df?auto=format&fit=crop&w=900&q=82',
   'Doors & Windows':'/assets/approved-4de99f88049f.jpg',
   'Concrete & Masonry':'/assets/patio-concrete.webp'
  },
@@ -237,8 +237,8 @@ const SHOP_PICTURE_TILES={
   'Wall & Upper Cabinets':'/assets/kitchen.jpg',
   'Bathroom Vanities':'/assets/approved-a908c20ce632.jpg',
   'Pantry & Tall Cabinets':'/assets/catalog-9.jpg',
-  'Garage Storage Cabinets':'/assets/idea-mechanic-shop.jpg',
-  'Hardware':'/assets/approved-d2807423c8f0.jpg'
+  'Garage Storage Cabinets':'/assets/approved-8a9d216224b8.jpg',
+  'Hardware':'https://images.unsplash.com/photo-1679990130718-78143499971d?auto=format&fit=crop&w=900&q=82'
  },
  appliances:{
   'Refrigerators':'/assets/approved-26657e8bc7bd.jpg',
@@ -253,18 +253,18 @@ const SHOP_PICTURE_TILES={
  },
  tools:{
   'Power Tools':'/assets/approved-d2807423c8f0.jpg',
-  'Hand Tools':'/assets/catalog-8.jpg',
-  'Specialty Tools':'/assets/project-stone-real.jpg',
+  'Hand Tools':'https://images.unsplash.com/photo-1508873535684-277a3cbcc4e8?auto=format&fit=crop&w=900&q=82',
+  'Specialty Tools':'https://images.unsplash.com/photo-1685320198649-781e83a61de4?auto=format&fit=crop&w=900&q=82',
   'Drills & Impacts':'https://images.unsplash.com/photo-1770763233593-74dfd0da7bf0?auto=format&fit=crop&w=900&q=82',
   'Saws & Cutting':'https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?auto=format&fit=crop&w=900&q=82',
-  'Measuring & Layout':'/assets/stairs-card.jpg'
+  'Measuring & Layout':'https://images.unsplash.com/photo-1716698286313-9a2349d41110?auto=format&fit=crop&w=900&q=82'
  },
  supplies:{
-  'Paint & Finishes':'/assets/murals-card.jpg',
+  'Paint & Finishes':'https://images.unsplash.com/photo-1599619585752-c3edb42a414c?auto=format&fit=crop&w=900&q=82',
   'Fasteners & Adhesives':'/assets/approved-d2807423c8f0.jpg',
-  'Plumbing Supplies':'/assets/approved-a908c20ce632.jpg',
+  'Plumbing Supplies':'/assets/approved-b9cdb9084877.jpg',
   'Electrical Supplies':'/assets/lighting-card.jpg',
-  'Appliance Cords & Connections':'/assets/approved-b9cdb9084877.jpg',
+  'Appliance Cords & Connections':'https://images.unsplash.com/photo-1775714351784-51e93e4c12a7?auto=format&fit=crop&w=900&q=82',
   'Protection & Consumables':'/assets/catalog-8.jpg'
  },
  furniture:{
