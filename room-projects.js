@@ -50,19 +50,45 @@ window.ROOM_PROJECT_SCOPES['home-theater'].push('outdoor-media','snack-station')
 window.ROOM_PROJECT_SCOPES['kitchen-pantry'].push('snack-station','beverage');
 const TOPIC_PHOTOS={"pet-room": "/assets/idea-pet-room.jpg", "outdoor-kitchen": "/assets/idea-outdoor-kitchen.jpg", "mechanic-shop": "/assets/idea-mechanic-shop.jpg", "car-wash": "/assets/idea-car-wash.jpg", "recycling-scrap": "/assets/idea-recycling-scrap.jpg", "vault-safe-room": "/assets/idea-vault-safe-room.jpg", "snack-beverage": "/assets/idea-snack-beverage.jpg", "pools": "/assets/idea-pools.jpg", "bus-stop": "/assets/idea-bus-stop.jpg", "mailboxes": "/assets/idea-mailboxes.jpg", "outdoor-sound": "/assets/idea-outdoor-sound.jpg", "garden-greenhouse": "/assets/idea-garden-greenhouse.jpg", "fitness-wellness": "/assets/idea-fitness-wellness.jpg", "games-hobbies": "/assets/idea-games-hobbies.jpg", "accessibility": "/assets/idea-accessibility.jpg", "backyard-retreat": "/assets/idea-backyard-retreat.jpg"};
 Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=image;});
+// Customer-approved project photos have priority over general catalog covers.
+const PROJECT_PAGE_APPROVED_PHOTOS={
+ bathrooms:'/assets/approved-a908c20ce632.jpg',
+ 'bedroom-guest-room':'/assets/approved-807c60a6001a.jpg',
+ 'closets-storage':'/assets/approved-8a9d216224b8.jpg',
+ concrete:'/assets/approved-a11ab0fcd37f.jpg',
+ 'dining-room':'/assets/approved-a051ee7e1935.jpg',
+ 'kitchen-pantry':'/assets/approved-9bfcb89f7800.jpg',
+ 'laundry-utility':'/assets/approved-b9cdb9084877.jpg',
+ 'living-family-room':'/assets/approved-4822ff53e23f.jpg',
+ custom:'/assets/approved-739d17fd2952.jpg',
+ attic:'/assets/project-attic.jpg',
+ basement:'/assets/project-basement.jpg',
+ garage:'/assets/idea-mechanic-shop.jpg',
+ 'themed-rooms':'/assets/kids-room.jpg'
+};
 document.addEventListener('DOMContentLoaded',()=>{
  const grid=document.querySelector('#projects .project-grid')||document.querySelector('#projects .tiles');
  if(!grid)return;
  const customLink=grid.querySelector('a[href="/project.html?project=custom"]');if(customLink?.querySelector('small'))customLink.querySelector('small').textContent=PROJECT_CATALOG.custom.intro;
  const outdoorLink=grid.querySelector('a[href="/project.html?project=concrete"]');if(outdoorLink?.querySelector('small'))outdoorLink.querySelector('small').textContent=PROJECT_CATALOG.concrete.intro;
- grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');const img=a.querySelector('img');if(img&&PROJECT_CATALOG[id]){img.src=PROJECT_CATALOG[id].image;img.alt=PROJECT_CATALOG[id].title+' project ideas';}if(['tile','flooring','lighting'].includes(id)||PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
+ grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');const img=a.querySelector('img');if(img&&PROJECT_CATALOG[id]){img.src=PROJECT_PAGE_APPROVED_PHOTOS[id]||PROJECT_CATALOG[id].image;img.alt=PROJECT_CATALOG[id].title+' project ideas';}if(['tile','flooring','lighting'].includes(id)||PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
  for(const [id,p] of Object.entries(PROJECT_CATALOG)){
   if(p.customGroup||(p.themedGroup&&!p.basicRoom)||((p.exterior||p.outdoorGroup)&&id!=='concrete'))continue;
   if(grid.querySelector('a[href="/project.html?project='+id+'"]'))continue;
   const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
-  const img=document.createElement('img');img.src=p.image;img.alt=p.title+' project ideas';img.loading='lazy';
+  const img=document.createElement('img');img.src=PROJECT_PAGE_APPROVED_PHOTOS[id]||p.image;img.alt=p.title+' project ideas';img.loading='lazy';
   const span=document.createElement('span');span.textContent=p.title;const small=document.createElement('small');small.textContent=p.intro;span.append(small);a.append(img,span);grid.append(a);
  }
+ // A picture must never repeat on one project-grid page.
+ const usedProjectPictures=new Set();
+ grid.querySelectorAll('a.tile').forEach(a=>{
+   const img=a.querySelector('img');if(!img)return;
+   const id=new URL(a.href).searchParams.get('project');
+   const candidates=[PROJECT_PAGE_APPROVED_PHOTOS[id],PROJECT_CATALOG[id]?.image].filter(Boolean);
+   const available=candidates.find(src=>!usedProjectPictures.has(src));
+   if(available)img.src=available;
+   usedProjectPictures.add(img.getAttribute('src'));
+ });
  [...grid.children].sort((a,b)=>{const basic=el=>!!PROJECT_CATALOG[new URL(el.href).searchParams.get('project')]?.basicRoom;return Number(basic(b))-Number(basic(a))||a.textContent.localeCompare(b.textContent);}).forEach(a=>grid.append(a));
 });
 
