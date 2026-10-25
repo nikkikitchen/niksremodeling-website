@@ -79,14 +79,13 @@ function toiletStyleFor(name){
  if(/\b(round|round[- ]?front|standard[- ]?height|short[- ]?toilet)\b/i.test(n))return 'round';
  return null;
 }
+// Real representative manufacturer/retailer product photography, not merchandise offers.
+// Each style picture is illustrative; verified supplier listings show actual sale items.
+const toiletStylePhotos={"round":{"src":"https://www.americanstandard-us.com/cdn/shop/files/53999_3332DB101CR020_2_0_CDNwebp.webp?v=1774639118&width=2000","alt":"Standard white round-front toilet, with compact bowl and floor-mounted tank"},"elongated":{"src":"https://mobileimages.lowes.com/productimages/56cbf3cf-22af-4bd9-bd4e-1e1d83b850df/67531300.jpeg","alt":"White elongated chair-height toilet with longer oval bowl and traditional tank"},"smart":{"src":"https://bathify.com/cdn/shop/files/958a89d6e426938a2ab11e8d447a8f74b99e2907_8fdc20bb-4a65-41ab-9e1a-624e051b2559.jpg?v=1759504050&width=1946","alt":"Modern white one-piece smart toilet with electronic controls and integrated bidet"},"specialty":{"src":"https://img.reuter.de/products/fg/1400x1400/fg-39899000_0.jpg","alt":"White wall-hung toilet mounted above the floor with concealed plumbing"}};
 function toiletArt(kind){
- const round=kind==='round',smart=kind==='smart',special=kind==='specialty';
- return '<svg viewBox="0 0 180 145" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">'+
-  (special?'':smart?'<rect x="60" y="33" width="66" height="31" rx="13" fill="#dbe8ed" stroke="#41627b" stroke-width="4"/><circle cx="115" cy="45" r="3" fill="#236d8e"/>':'<rect x="51" y="18" width="77" height="'+(round?49:55)+'" rx="9" fill="#dbe8ed" stroke="#41627b" stroke-width="4"/><rect x="56" y="14" width="67" height="9" rx="4" fill="#eaf4f8" stroke="#41627b" stroke-width="2"/>')+
-  '<path d="M'+(special?48:57)+' 68 Q46 68 47 86 Q49 104 '+(round?68:61)+' 107 L'+(round?105:117)+' 107 Q143 100 138 81 Q136 67 121 68Z" fill="#f5fbfc" stroke="#41627b" stroke-width="4"/>'+
-  '<ellipse cx="93" cy="77" rx="'+(round?37:44)+'" ry="'+(round?13:15)+'" fill="#c4dce5" stroke="#41627b" stroke-width="3"/>'+
-  (special?'<rect x="119" y="87" width="15" height="28" rx="4" fill="#dbe8ed" stroke="#41627b" stroke-width="3"/>':'<path d="M75 104 L69 126 Q69 132 76 132 H113 Q120 132 119 126 L112 104" fill="#dbe8ed" stroke="#41627b" stroke-width="4"/>')+
-  '</svg>';
+ const image=toiletStylePhotos[kind];
+ if(!image)return '';
+ return '<img src="'+bathEsc(image.src)+'" alt="'+bathEsc(image.alt)+'" loading="lazy" decoding="async">';
 }
 function toiletStyleTiles(qs){
  return '<div class="toilet-choice-grid">'+toiletStyles.map(style=>{
@@ -97,7 +96,7 @@ function toiletStyleTiles(qs){
  }).join('')+'</div>';
 }
 const toiletStyleCSS=document.createElement('style');
-toiletStyleCSS.textContent='.toilet-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin:24px 0 28px}.toilet-choice-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 14px;border:1px solid #dde5eb;border-radius:12px;background:#fff;box-shadow:0 4px 16px #16202a0a;transition:box-shadow .15s,border-color .15s}.toilet-choice-tile:hover,.toilet-choice-tile:focus-visible{border-color:#0b5aa6;box-shadow:0 6px 18px #16202a18}.toilet-choice-art{display:grid;place-items:center;width:100%;height:147px;background:#f3f7f9;border-radius:9px}.toilet-choice-art svg{width:170px;max-height:135px}.toilet-choice-tile strong{font-size:1.05rem;text-align:center}.toilet-choice-tile small{text-align:center;color:#50606b;line-height:1.4;min-height:40px}.toilet-choice-action{color:#0b5aa6;font-weight:700;margin-top:auto}.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.toilet-back-link{display:inline-block;margin-bottom:10px}';
+toiletStyleCSS.textContent='.toilet-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin:24px 0 28px}.toilet-choice-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 14px;border:1px solid #dde5eb;border-radius:12px;background:#fff;box-shadow:0 4px 16px #16202a0a;transition:box-shadow .15s,border-color .15s}.toilet-choice-tile:hover,.toilet-choice-tile:focus-visible{border-color:#0b5aa6;box-shadow:0 6px 18px #16202a18}.toilet-choice-art{display:grid;place-items:center;width:100%;height:147px;background:#f3f7f9;border-radius:9px}.toilet-choice-art img{width:100%;height:100%;max-height:147px;object-fit:contain;object-position:center;border-radius:8px}.toilet-choice-tile strong{font-size:1.05rem;text-align:center}.toilet-choice-tile small{text-align:center;color:#50606b;line-height:1.4;min-height:40px}.toilet-choice-action{color:#0b5aa6;font-weight:700;margin-top:auto}.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.toilet-back-link{display:inline-block;margin-bottom:10px}';
 document.head.append(toiletStyleCSS);
 const planningStyle=document.createElement('style');
 planningStyle.textContent='.bath-plan-fallback{margin:22px 0;padding:18px 20px;background:#f2f7fa;border:1px solid #cbdbe6;border-radius:10px}.bath-plan-fallback p{margin:0 0 12px;max-width:650px;line-height:1.5}.bath-plan-fallback .btn{display:inline-flex;white-space:normal;text-align:center}';
@@ -150,7 +149,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    bathEsc(indexParams.toString())+'">← All Toilet Styles</a>':'';
  document.body.innerHTML=header()+base+(toiletHub?
    '<h2>Choose Your Toilet Style</h2>'+toiletStyleTiles(params)+
-   '<p class="calc-note">Individual fixture prices appear only when supplier stock and pricing are verified.</p>'+planWithoutProduct:
+   '<p class="calc-note">Representative toilet photos illustrate the four styles, not items currently for sale. Exact fixture prices appear only when supplier stock and pricing are verified.</p>'+planWithoutProduct:
    product?'<div id="bath-detail" role="status">Checking product options and price…</div>':
    allStylesBack+'<h2>'+bathEsc(chosenStyle?toiletStyleNames[toiletModel]:(bathroomNames[type]||'Browse Bathroom'))+'</h2>'+
    '<div class="store-card-grid" id="bath-products"></div>'+
