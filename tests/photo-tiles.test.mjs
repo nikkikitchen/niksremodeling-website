@@ -46,9 +46,10 @@ test('appliance dryers show a laundry image, not kitchen images',()=>{
  assert.notEqual(map.appliances['Washers & Electric Dryers'],'/assets/approved-807c60a6001a.jpg');
  assert.notEqual(map.appliances['Gas Dryers'],map.appliances['Washers & Electric Dryers']);
 });
-test('preview products choose by SKU rather than cycling unrelated photos',()=>{
+test('shopping no longer renders illustrative sample products',()=>{
  assert.ok(app.includes('const PRODUCT_CARD_PHOTOS='));
- assert.ok(app.includes('productCardPhoto(page,x,i)'));
+ assert.ok(!app.includes('Planning example · Not verified'));
+ assert.ok(app.includes('loadRealCatalog(page)'));
  assert.ok(!app.includes('src="${imgs[i%imgs.length]}"'));
 });
 
@@ -79,7 +80,7 @@ test('specialist photo cards show their subjects, not unrelated generic project 
 
 test('every material detail page shows a unique picture per material option',()=>{
  const jsonBetween=(start,end)=>app.split(start)[1].split(end)[0].trim().replace(/;$/,'');
- const pages=JSON.parse(jsonBetween('const MATERIAL_DETAIL_PAGES=','const FLOORING_SAMPLE_CHOICES='));
+ const pages=JSON.parse(jsonBetween('const MATERIAL_DETAIL_PAGES=','const FLOORING_PRODUCT_TYPES='));
  const options=JSON.parse(jsonBetween('const MATERIAL_ITEM_PICTURES=','const cardImages='));
  const fallbacks=JSON.parse(jsonBetween('const materialChoicePhotos=','const MATERIAL_ITEM_PICTURES=').replace(/'/g,'"'));
  const additional={'tile-stone':['Wall Tile','Decorative Stone Slabs','Stacked Stone Veneer'],'siding-exterior':['Exterior-Grade Shiplap'],'trim-molding':['Interior Shiplap'],'lumber':['Shiplap Boards']};
