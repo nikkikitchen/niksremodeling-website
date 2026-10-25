@@ -199,6 +199,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
        existing.price=variant.priceCents/100;
        existing.projectId=existing.projectId||projectId||'bathrooms';
        existing.workKey=existing.workKey||projectWork||null;
+       existing.bathroomFixtureType=type;
+       if(type==='toilets')existing.toiletStyle=toiletModel||toiletStyleFor(detail.name)||null;
      }else{
        cart.push({
          name:detail.name+' — '+(variant.name||variant.sku||'Selected option'),
@@ -206,6 +208,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
          source:'bathroom-retail',
          projectId:projectId||'bathrooms',
          workKey:projectWork,
+         bathroomFixtureType:type,
+         ...(type==='toilets'?{toiletStyle:toiletModel||toiletStyleFor(detail.name)||null}:{}),
          productId:product,
          variantId:String(variant.id),
          sku:variant.sku||'',
