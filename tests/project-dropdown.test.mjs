@@ -107,5 +107,21 @@ test('Arrow tap expands flyout, mouse hover opens it and keyboard navigation is 
   desktop.dispatchEvent(new w.MouseEvent('mouseenter'));
   assert.equal(desktop.querySelector('button').getAttribute('aria-expanded'),'true');
   assert.match(doc.getElementById('expanded-projects-menu-style').textContent,/overflow-y:auto/);
+  // Every desktop subflyout fills the available viewport, even for the
+  // last option in a long scrollable Projects menu.
+  Object.defineProperty(w,'innerHeight',{value:650,configurable:true});
+  const branches=[...doc.querySelectorAll('#projects-menu .project-branch')];
+  const heights=[];
+  const tops=[];
+  for(const branch of [branches[0],branches[branches.length-1]]){
+    branch.dispatchEvent(new w.MouseEvent('mouseenter'));
+    const flyout=branch.querySelector('.project-submenu');
+    heights.push(flyout.style.getPropertyValue('--project-submenu-height'));
+    tops.push(flyout.style.getPropertyValue('--project-submenu-top'));
+  }
+  assert.deepEqual(heights,['626px','626px']);
+  assert.deepEqual(tops,['12px','12px']);
+  assert.match(doc.getElementById('expanded-projects-menu-style').textContent,/height:var\(--project-submenu-height/);
+
  }finally{dom.window.close()}
 });
