@@ -28,7 +28,7 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
     'Appliances','Bathroom Fixtures','Cabinets','Doors, Windows & Access',
     'Electrical, Lighting & Smart Home','Exterior, Decks & Outdoor',
     'Flooring, Walls & Finishes','Furniture & Accessories','Heating, Ventilation & Audio',
-    'Kitchen & Plumbing','Materials','Tools','Other Ideas'
+    'Kitchen & Plumbing','Materials','Tools'
    ]);
    const appliance=menu.querySelector('#'+id+'-appliances');
    assert.deepEqual([...appliance.querySelectorAll('a')].map(a=>a.textContent),["Beverage Refrigerators", "Beverage Taps", "Built-In Microwaves", "Coffee Systems", "Cords & Connections", "Dishwashers", "Double Wall Ovens", "Dryer Vent Kits", "Electric Cooktops", "Electric Dryers", "Electric Ranges", "Fireplace Inserts", "Garbage Disposals", "Gas Cooktops", "Gas Dryers", "Gas Ranges", "Kegerators", "Microwave/Oven Combinations", "Microwaves & Hoods", "Over-Range Microwaves", "Refrigerators", "Single Wall Ovens", "Stacked Washer & Dryer Sets", "Trash Compactors", "Wall Ovens & Cooktops", "Warming Drawers", "Washers & Electric Dryers"].sort((a,b)=>a.localeCompare(b)));
@@ -41,6 +41,12 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
     assert.deepEqual(entries.map(a=>a.textContent),entries.map(a=>a.textContent).sort((a,b)=>a.localeCompare(b)));
    }
    assert.equal(menu.lastElementChild.textContent,'Red dot = No items listed yet.');
+   const walls=menu.querySelector('#'+id+'--shop-installed-flooring-walls-finishes');
+   assert.ok(walls,'Flooring, Walls & Finishes dropdown missing');
+   assert.ok([...walls.querySelectorAll('a')].some(a=>a.textContent==='Tile'),'Shopping should say Tile');
+   assert.equal([...walls.querySelectorAll('a')].some(a=>a.textContent==='Tile Backsplash'),false,'Backsplash is not a floor product');
+   assert.ok([...walls.querySelectorAll('a')].some(a=>a.textContent==='Wallpaper'),'Wallpaper is a shippable product type');
+   assert.equal([...menu.querySelectorAll('a')].some(a=>a.getAttribute('href')==='/project.html?project=custom'),false,'Custom labor never belongs in Shopping');
   }
  }finally{dom.window.close();}
 });
@@ -56,7 +62,7 @@ test('red dots also cover installable-product shopping links and empty departmen
    const emptyGroup=[...menu.querySelectorAll('.shopping-branch')].find(b=>b.querySelector('button')?.textContent.includes('Doors, Windows & Access'));
    assert.equal(emptyGroup?.querySelector('button').classList.contains('shopping-empty'),true,'Entirely empty specialty department missing red dot');
    const quoteGroup=[...menu.querySelectorAll('.shopping-branch')].find(b=>b.querySelector('button')?.textContent.includes('Other Ideas'));
-   assert.equal(quoteGroup?.querySelector('button').classList.contains('shopping-empty'),false,'Project ideas are not empty merchandise');
+   assert.equal(quoteGroup,undefined,'Custom labor and project ideas must not appear in Shopping');
    const cabinet=menu.querySelector('a[href*="category=Storage%20Cabinets"]');
    assert.ok(cabinet&&!cabinet.classList.contains('shopping-empty'),'Populated products must not show a red dot');
    const material=menu.querySelector('a[href*="/material-flooring.html"]');
