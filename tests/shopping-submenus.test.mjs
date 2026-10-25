@@ -139,6 +139,6 @@ test('long desktop menus scroll and lower flyouts stay inside the viewport',asyn
   Object.defineProperty(w,'innerHeight',{value:400,configurable:true});
   w.dispatchEvent(new w.Event('resize'));
   assert.equal(menu.style.getPropertyValue('--shopping-menu-height'),'224px');
-  assert.equal(submenu.style.getPropertyValue('--shopping-submenu-height'),'368px');
+  assert.equal(last.querySelector('nav').style.getPropertyValue('--shopping-submenu-height'),'368px','Open flyout must resize with the viewport');
  }finally{dom.window.close();}
 });
