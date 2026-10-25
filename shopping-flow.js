@@ -2,6 +2,7 @@
   const style=document.createElement('style');
   style.textContent=`[hidden]{display:none!important}.nav .simple-nav{overflow:visible;gap:36px}.simple-nav>a,.shopping-toggle{font-size:16px;font-weight:700}.shopping-toggle{background:none;border:0;padding:17px 0;cursor:pointer;color:inherit}.simple-nav .review-link{margin-left:auto;display:flex;align-items:center;gap:7px}.review-link .cart-count{position:static;display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px}.nav-menu.open .nav-dropdown{display:block}.nav-dropdown a{display:block;padding:11px 17px}.brandbar>.actions .cart-pill,.topline-cart>a,.room-supply-list,a[href*="supplies.html"],.project-related-supplies{display:none!important}.shopping-toggle .nav-main{padding:0}.nav .simple-nav{flex-wrap:wrap}.nav-menu{position:relative}.nav-dropdown{min-width:210px;max-height:min(70vh,520px);overflow-y:auto;overscroll-behavior:contain}.shopping-menu-divider{border-top:1px solid #ddd;margin:8px 0}@media(max-width:620px){.nav-menu .nav-dropdown{max-width:calc(100vw - 24px);max-height:65vh;overflow-y:auto}}.project-grid .tile span{text-align:center}body{padding-bottom:0}.project-shopping-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;border-top:1px solid #ddd;padding:12px 4%;display:flex;align-items:center;gap:12px;box-shadow:0 -2px 10px #0001}.project-shopping-bar span{flex:1;font-size:13px}.project-shopping-bar .btn{white-space:nowrap}@media(max-width:620px){body{padding-bottom:0}.project-shopping-bar{flex-wrap:wrap;padding:10px}.project-shopping-bar span{flex-basis:100%}.project-shopping-bar .btn{font-size:12px;padding:10px}}@media(max-width:620px){.nav .simple-nav{gap:12px}.simple-nav>a,.shopping-toggle{font-size:13px}.simple-nav .review-link{margin-left:0}}`;
   style.textContent+=`#shopping-menu a.shopping-empty,#mobile-shopping-menu a.shopping-empty{position:relative;padding-left:32px}#shopping-menu a.shopping-empty::before,#mobile-shopping-menu a.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:#d71920}.shopping-availability-note{margin:6px 0 0;padding:12px 15px;border-top:1px solid #ddd;font-size:12px;line-height:1.4;color:#555;white-space:normal}.shopping-availability-note span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
+  style.textContent+=`.shopping-tile-empty strong::before,.shopping-tile-empty h3::before{content:"";display:inline-block;width:10px;height:10px;background:#d71920;border-radius:50%;margin-right:8px;vertical-align:middle}.shopping-tile-legend{margin:10px 0 20px;font-size:13px;color:#555}.shopping-tile-legend span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
   document.head.append(style);
   window.searchProjects=function(e){e.preventDefault();const term=e.target.querySelector('input').value.trim().toLowerCase(),grid=document.getElementById('projects');if(!grid){location.href='/?search='+encodeURIComponent(term)+'#projects';return false;}grid.querySelectorAll('.tile').forEach(t=>t.hidden=!t.textContent.toLowerCase().includes(term));grid.scrollIntoView({behavior:'smooth'});return false;};
   function connect(){
@@ -17,17 +18,18 @@
   // compact Shopping menu. All links go to the same project and product routes.
   const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Other Ideas","/project.html?project=custom"],["Tools","/products.html"]];
   const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/project.html?project=custom':'custom'};
-  let listedCounts=null;
+  let listedCounts=null, furnitureListings=[], retailListings=[], furnitureCategoryMatch=null;
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
   Promise.all([
     import('/store-catalog.js?v='+encodeURIComponent(availabilityVersion)),
     import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))
-  ]).then(([{catalog},{retailCatalog}])=>{
+  ]).then(([{catalog,inCategory},{retailCatalog}])=>{
+    furnitureListings=catalog;retailListings=retailCatalog;furnitureCategoryMatch=inCategory;
     listedCounts={furniture:catalog.length};
     for(const department of Object.values(departmentByPath)){
       if(department!=='furniture')listedCounts[department]=retailCatalog.filter(p=>p.department===department).length;
     }
-    syncShoppingMenu();
+    syncShoppingMenu();syncTileAvailability();
   }).catch(()=>{});
   function syncShoppingMenu(){
     document.querySelectorAll('#shopping-menu, #mobile-shopping-menu').forEach(menu=>{
@@ -50,6 +52,45 @@
       menu.dataset.unifiedShopping=state;
     });
   }
+  function tileListingCount(tile){
+    if(!listedCounts)return null;
+    // Material type cards are planning/category choices, never merchandise cards.
+    if(tile.matches('.material-option-card')){
+      const material=document.body.dataset.material;
+      const type=tile.querySelector('h3')?.textContent.trim();
+      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&p.materialType===type).length;
+    }
+    const url=new URL(tile.href,location.href);
+    if(url.origin!==location.origin)return null;
+    const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
+    if(material){
+      const type=url.searchParams.get('type');
+      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type)).length;
+    }
+    const department=departmentByPath[url.pathname]||(url.pathname==='/project.html'&&url.searchParams.get('project')==='custom'?'custom':null);
+    if(!department)return null;
+    if(department==='furniture'){
+      const category=url.searchParams.get('category');
+      return furnitureListings.filter(p=>!category||furnitureCategoryMatch(p,category)).length;
+    }
+    const category=url.searchParams.get('category'),type=url.searchParams.get('type'),model=url.searchParams.get('model');
+    return retailListings.filter(p=>p.department===department&&(!category||p.category===category)&&(!type||p.type===type)&&(!model||p.model===model)).length;
+  }
+  function syncTileAvailability(){
+    if(!listedCounts)return;
+    document.querySelectorAll('main .photo-category-tile,main .toilet-choice-tile,main .material-option-card').forEach(tile=>{
+      const count=tileListingCount(tile);if(count===null)return;
+      tile.classList.toggle('shopping-tile-empty',count===0);
+      if(count===0){tile.setAttribute('title','No items listed yet');}
+      else if(tile.getAttribute('title')==='No items listed yet')tile.removeAttribute('title');
+    });
+    document.querySelectorAll('.shopping-landing-grid,.shop-guide-grid,.picture-category-tabs,.photo-store-categories,.toilet-choice-grid,.material-detail-grid').forEach(grid=>{
+      const existing=grid.nextElementSibling?.matches('.shopping-tile-legend')?grid.nextElementSibling:null;
+      if(grid.querySelector('.shopping-tile-empty')){
+        if(!existing){const note=document.createElement('p');note.className='shopping-tile-legend';note.innerHTML='<span aria-hidden="true"></span>Red dot = No items listed yet.';grid.after(note);}
+      }else existing?.remove();
+    });
+  }
   function connectSearchForms(){
     document.querySelectorAll('form.search').forEach(form=>{
       form.setAttribute('action','/product-search.html');
@@ -64,8 +105,8 @@
       }
     });
   }
-  syncShoppingMenu();connectSearchForms();
-  document.addEventListener('DOMContentLoaded',()=>{syncShoppingMenu();connectSearchForms();});
-  new MutationObserver(()=>{syncShoppingMenu();connectSearchForms();}).observe(document.body,{childList:true});
+  syncShoppingMenu();syncTileAvailability();connectSearchForms();
+  document.addEventListener('DOMContentLoaded',()=>{syncShoppingMenu();syncTileAvailability();connectSearchForms();});
+  new MutationObserver(()=>{syncShoppingMenu();syncTileAvailability();connectSearchForms();}).observe(document.body,{childList:true,subtree:true});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.nav-menu').forEach(m=>{m.classList.remove('open');m.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');});});
 })();
