@@ -579,7 +579,7 @@
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
             const taskLabel=x.fixedPackage?x.scope:[x.service,x.scope].filter((value,index,all)=>value&&all.indexOf(value)===index).join(' — ');
-            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:taskLabel+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageNote:x.packageNote,internalCosts:x.internalCosts,...(x.service==='Remove cabinet box and haul off'?{removalGroup:'cabinets',removalCount:x.quantity}:{})}:{});
+            add(quote?x.service+' — '+quote.label+' — '+x.quantity+' '+x.unit:taskLabel+' — '+x.quantity+' '+x.unit,'Labor',quote?{price:quote.amount}:x.price?{price:x.price,packageId:x.packageId,packageQuantity:x.quantity,packageNote:x.packageNote,internalCosts:x.internalCosts,...(x.service==='Remove cabinet box and haul off'?{removalGroup:'cabinets',removalCount:x.quantity}:{})}:{});
           });
           const included=installationSupplies(item);
           if(included.length)add('Included project costs','Included project costs',includedProjectCosts(included));
