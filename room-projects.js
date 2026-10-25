@@ -33,6 +33,19 @@ window.ROOM_PROJECT_SCOPES['kitchen-pantry'].push('snack-station','beverage');
 const TOPIC_PHOTOS={"pet-room": "/assets/idea-pet-room.jpg", "outdoor-kitchen": "/assets/idea-outdoor-kitchen.jpg", "mechanic-shop": "/assets/idea-mechanic-shop.jpg", "car-wash": "/assets/idea-car-wash.jpg", "recycling-scrap": "/assets/idea-recycling-scrap.jpg", "vault-safe-room": "/assets/idea-vault-safe-room.jpg", "snack-beverage": "/assets/idea-snack-beverage.jpg", "pools": "/assets/idea-pools.jpg", "bus-stop": "/assets/idea-bus-stop.jpg", "mailboxes": "/assets/idea-mailboxes.jpg", "outdoor-sound": "/assets/idea-outdoor-sound.jpg", "garden-greenhouse": "/assets/idea-garden-greenhouse.jpg", "fitness-wellness": "/assets/idea-fitness-wellness.jpg", "games-hobbies": "/assets/idea-games-hobbies.jpg", "accessibility": "/assets/idea-accessibility.jpg", "backyard-retreat": "/assets/idea-backyard-retreat.jpg"};
 Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=image;});
 // Customer-approved project photos have priority over general catalog covers.
+// Exactly the 15 picture-card Projects approved for the site's primary menu.
+// Specialty spaces, outdoor ideas and trade details are nested underneath these.
+const PROJECT_MAIN_ENTRIES=[
+ ['accessibility','Disability Updates'],['attic','Attic'],['basement','Basement'],
+ ['bathrooms','Bathroom'],['bedroom-guest-room','Bedrooms'],
+ ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
+ ['garage','Garage'],['kitchen-pantry','Kitchens'],
+ ['laundry-utility','Laundry & Utility'],['living-family-room','Living & Family Room'],
+ ['custom','More Ideas'],['concrete','Outdoor Projects'],
+ ['room-additions','Room Additions'],['themed-rooms','Themed Rooms']
+];
+const PROJECT_MAIN_IDS=new Set(PROJECT_MAIN_ENTRIES.map(([id])=>id));
+PROJECT_CATALOG.accessibility.title='Disability Updates';
 const PROJECT_PAGE_APPROVED_PHOTOS={
  bathrooms:'/assets/approved-a908c20ce632.jpg',
  'bedroom-guest-room':'/assets/approved-807c60a6001a.jpg',
@@ -53,9 +66,16 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(!grid)return;
  const customLink=grid.querySelector('a[href="/project.html?project=custom"]');if(customLink?.querySelector('small'))customLink.querySelector('small').textContent=PROJECT_CATALOG.custom.intro;
  const outdoorLink=grid.querySelector('a[href="/project.html?project=concrete"]');if(outdoorLink?.querySelector('small'))outdoorLink.querySelector('small').textContent=PROJECT_CATALOG.concrete.intro;
- grid.querySelectorAll('a.tile').forEach(a=>{const id=new URL(a.href).searchParams.get('project');const img=a.querySelector('img');if(img&&PROJECT_CATALOG[id]){img.src=PROJECT_PAGE_APPROVED_PHOTOS[id]||PROJECT_CATALOG[id].image;img.alt=PROJECT_CATALOG[id].title+' project ideas';}if(['tile','flooring','lighting'].includes(id)||PROJECT_CATALOG[id]?.customGroup||(PROJECT_CATALOG[id]?.themedGroup&&!PROJECT_CATALOG[id]?.basicRoom)||((PROJECT_CATALOG[id]?.exterior||PROJECT_CATALOG[id]?.outdoorGroup)&&id!=='concrete'))a.remove();});
+ grid.querySelectorAll('a.tile').forEach(a=>{
+    const id=new URL(a.href).searchParams.get('project');
+    if(!PROJECT_MAIN_IDS.has(id)){a.remove();return;}
+    const p=PROJECT_CATALOG[id],img=a.querySelector('img'),span=a.querySelector('span');
+    if(img){img.src=PROJECT_PAGE_APPROVED_PHOTOS[id]||p.image;img.alt=p.title+' project ideas';}
+    if(span?.firstChild?.nodeType===3)span.firstChild.textContent=p.title;
+    if(span?.querySelector('small'))span.querySelector('small').textContent=p.intro;
+  });
  for(const [id,p] of Object.entries(PROJECT_CATALOG)){
-  if(p.customGroup||(p.themedGroup&&!p.basicRoom)||((p.exterior||p.outdoorGroup)&&id!=='concrete'))continue;
+  if(!PROJECT_MAIN_IDS.has(id))continue;
   if(grid.querySelector('a[href="/project.html?project='+id+'"]'))continue;
   const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
   const img=document.createElement('img');img.src=PROJECT_PAGE_APPROVED_PHOTOS[id]||p.image;img.alt=p.title+' project ideas';img.loading='lazy';
@@ -71,7 +91,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(available)img.src=available;
    usedProjectPictures.add(img.getAttribute('src'));
  });
- [...grid.children].sort((a,b)=>{const basic=el=>!!PROJECT_CATALOG[new URL(el.href).searchParams.get('project')]?.basicRoom;return Number(basic(b))-Number(basic(a))||a.textContent.localeCompare(b.textContent);}).forEach(a=>grid.append(a));
+ [...grid.children].sort((a,b)=>PROJECT_MAIN_ENTRIES.findIndex(([id])=>a.href.includes('project='+id))-PROJECT_MAIN_ENTRIES.findIndex(([id])=>b.href.includes('project='+id))).forEach(a=>grid.append(a));
 });
 
 // Group the home garage and wash area with outdoor projects.
@@ -143,38 +163,83 @@ PROJECT_CATALOG['room-additions']={
 };
 
 
-// One shared, complete project directory drives both the PC and phone menus.
+// Both desktop and mobile use the same 15 first-level Projects.
 function buildProjectDropdowns(){
- const groups={main:[],themed:[],outdoor:[],ideas:[]};
- for(const [id,p] of Object.entries(PROJECT_CATALOG)){
-   if(!p||!p.title)continue;
-   const item={id,title:p.title,href:'/project.html?project='+encodeURIComponent(id)};
-   if(id==='concrete'||p.exterior||p.outdoorGroup)groups.outdoor.push(item);
-   else if(id==='custom'||p.customGroup)groups.ideas.push(item);
-   else if(id==='themed-rooms'||(p.themedGroup&&!p.basicRoom))groups.themed.push(item);
-   else groups.main.push(item);
- }
- const specs=[
-   ['Rooms & Projects','main',null],
-   ['Themed Rooms','themed','themed-rooms'],
-   ['Outdoor Projects','outdoor','concrete'],
-   ['More Ideas & Finishes','ideas','custom']
- ];
+ const workLabels={
+   ceiling:'Ceilings',walls:'Walls & Finishes',floor:'Flooring',trim:'Trim & Molding',
+   doors:'Doors & Windows',lighting:'Lighting & Electrical',furniture:'Furniture',
+   storage:'Storage & Shelving',ventilation:'Ventilation & Fans',framing:'Framing',
+   stairs:'Stairs & Railings',prep:'Preparation & Repairs',other:'Other Work',
+   cabinets:'Cabinets',refinish:'Cabinet Refinishing',countertops:'Countertops',
+   backsplash:'Backsplashes',appliances:'Appliances',plumbing:'Sinks & Plumbing',
+   tub:'Bathtubs & Surrounds',shower:'Showers',toilet:'Toilets',
+   vanity:'Vanities & Faucets','vanity-light':'Vanity Lighting',
+   mirror:'Mirrors & Accessories',accents:'Bathroom Accessories',
+   'bath-shower-valve':'Shower Valves', 'pet-care':'Pet Features',
+   workshop:'Workshop & Tools',
+   'access-bath':'Accessible Bathrooms',
+   'access-grab-bars':'Grab Bars',
+   'access-indoor-rails':'Indoor Handrails',
+   'access-doorways':'Doorway Accessibility',
+   'access-thresholds':'Threshold Improvements',
+   'access-controls':'Accessible Controls',
+   'access-ramps':'Ramps',
+   'access-outdoor-rails':'Outdoor Handrails',
+   'access-walkways':'Accessible Walkways',
+   'access-entry':'Entry Accessibility',
+   'access-other':'Other Accessibility Work'
+ };
+ const mainWork={
+   accessibility:['access-bath','access-grab-bars','access-indoor-rails','access-doorways','access-thresholds','access-controls','access-ramps','access-outdoor-rails','access-walkways','access-entry','access-other'],
+   bathrooms:['ceiling','walls','floor','tub','shower','toilet','vanity','vanity-light','bath-shower-valve','mirror','lighting','ventilation','accents','refinish','prep','other']
+ };
  const menus=['projects-menu','mobile-projects-menu'].map(id=>document.getElementById(id)).filter(Boolean);
  if(!menus.length)return;
  const style=document.createElement('style');style.id='expanded-projects-menu-style';
  style.textContent=[
- '#projects-menu.projects-mega,#mobile-projects-menu.projects-mega{box-sizing:border-box;width:290px;min-width:240px;max-width:calc(100vw - 20px);max-height:var(--project-menu-height,65vh)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:8px;overscroll-behavior:contain;z-index:120}',
+ '#projects-menu.projects-mega,#mobile-projects-menu.projects-mega{box-sizing:border-box;width:270px;min-width:240px;max-width:calc(100vw - 20px);max-height:var(--project-menu-height,65vh)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:6px;overscroll-behavior:contain;z-index:120}',
  '.projects-mega .project-branch{position:relative}',
- '.projects-mega .project-category-toggle{display:flex;width:100%;min-height:43px;align-items:center;justify-content:space-between;gap:12px;padding:10px 13px;border:0;border-radius:6px;background:transparent;color:inherit;text-align:left;font:700 14px/1.3 Arial,sans-serif;cursor:pointer}',
+ '.projects-mega .project-category-toggle{display:flex;width:100%;min-height:39px;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border:0;border-radius:6px;background:transparent;color:inherit;text-align:left;font:700 13px/1.3 Arial,sans-serif;cursor:pointer}',
  '.projects-mega .project-category-toggle:hover,.projects-mega .project-category-toggle:focus-visible,.projects-mega .project-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}',
- '.projects-mega .project-submenu{position:fixed;top:var(--project-submenu-top,12px);left:var(--project-submenu-left,280px);box-sizing:border-box;width:min(310px,calc(100vw - 24px));max-height:var(--project-submenu-height,70vh);overflow-y:auto;padding:8px;background:white;border:1px solid #dfe5ea;border-radius:8px;box-shadow:0 14px 36px #1423321f;z-index:121;overscroll-behavior:contain}',
- '.projects-mega .project-submenu a{display:block;white-space:normal!important;padding:10px 12px;line-height:1.4}',
+ '.projects-mega .project-submenu{position:fixed;top:var(--project-submenu-top,12px);left:var(--project-submenu-left,280px);box-sizing:border-box;width:min(290px,calc(100vw - 24px));max-height:var(--project-submenu-height,70vh);overflow-y:auto;padding:8px;background:white;border:1px solid #dfe5ea;border-radius:8px;box-shadow:0 14px 36px #1423321f;z-index:121;overscroll-behavior:contain}',
+ '.projects-mega .project-submenu a{display:block;white-space:normal!important;padding:9px 12px;line-height:1.35}',
  '.projects-mega>a{font-weight:700}',
- '@media(max-width:820px),(hover:none){nav.nav .mobile-top-nav #mobile-projects-menu.projects-mega{position:fixed!important;top:var(--project-menu-top,auto)!important;left:10px!important;right:10px!important;width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:var(--project-menu-height,65vh)!important}.projects-mega .project-submenu{position:static!important;width:auto!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0 4px 8px 12px;padding:0 0 0 6px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none}.projects-mega .project-category-toggle{min-height:46px}}'
+ '@media(max-width:820px),(hover:none){nav.nav .mobile-top-nav #mobile-projects-menu.projects-mega{position:fixed!important;top:var(--project-menu-top,auto)!important;left:10px!important;right:10px!important;width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:var(--project-menu-height,65vh)!important}.projects-mega .project-submenu{position:static!important;width:auto!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0 4px 8px 12px;padding:0 0 0 6px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none}.projects-mega .project-category-toggle{min-height:46px;font-size:14px}}'
  ].join('');
  document.getElementById(style.id)?.remove();document.head.append(style);
  const hover=()=>window.innerWidth>820&&!!window.matchMedia?.('(hover:hover)').matches;
+ const projectLink=(id,params)=>'/project.html?project='+encodeURIComponent(id)+(params?'&'+params:'');
+ function choicesFor(id,label){
+   const choices=[['View '+label,projectLink(id)]];
+   if(id==='themed-rooms'){
+     const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>p.themedGroup).map(([child])=>child);
+     childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title));
+     for(const child of childIds){
+       const name=child==='fitness-wellness'?'Workout / Fitness Room':PROJECT_CATALOG[child].title;
+       choices.push([name,projectLink(child)]);
+     }
+   }else if(id==='concrete'){
+     const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>child!==id&&(p.exterior||p.outdoorGroup)).map(([child])=>child);
+     for(const child of childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title)))
+       choices.push([PROJECT_CATALOG[child].title,projectLink(child)]);
+     choices.push(['Patios, Walkways & Concrete',projectLink('concrete','outdoorWork=1')]);
+   }else if(id==='custom'){
+     const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>p.customGroup).map(([child])=>child);
+     for(const child of childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title)))
+       choices.push([PROJECT_CATALOG[child].title,projectLink(child)]);
+     choices.push(['Other Custom Ideas',projectLink('custom','customWork=1')]);
+   }else if(id==='room-additions'){
+     for(const name of ['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'])
+       choices.push([name,projectLink(id,'additionType='+encodeURIComponent(name))]);
+   }else{
+     const keys=mainWork[id]||window.ROOM_PROJECT_SCOPES?.[id]||[];
+     for(const key of keys){
+       const title=workLabels[key]||window.ROOM_WORK_OPTIONS?.[key]?.title;
+       if(title)choices.push([title,projectLink(id,'work='+encodeURIComponent(key))]);
+     }
+   }
+   return choices;
+ }
  function fit(menu){
    const bottom=menu.closest('.nav-menu')?.getBoundingClientRect().bottom||130;
    const top=Math.max(8,Math.min(bottom,window.innerHeight-105));
@@ -190,7 +255,7 @@ function buildProjectDropdowns(){
    const button=branch.querySelector('.project-category-toggle'),nav=branch.querySelector('.project-submenu');
    close(menu);button.setAttribute('aria-expanded','true');nav.hidden=false;
    if(window.innerWidth>820){
-     const box=menu.getBoundingClientRect(),line=branch.getBoundingClientRect(),width=Math.min(310,window.innerWidth-24);
+     const box=menu.getBoundingClientRect(),line=branch.getBoundingClientRect(),width=Math.min(290,window.innerWidth-24);
      const left=box.right+width+4<=window.innerWidth?box.right+2:Math.max(8,box.left-width-2);
      const top=Math.max(8,Math.min(line.top,window.innerHeight-170));
      nav.style.setProperty('--project-submenu-left',left+'px');
@@ -202,15 +267,14 @@ function buildProjectDropdowns(){
    menu.classList.add('projects-mega');menu.replaceChildren();
    const link=(label,url)=>{const a=document.createElement('a');a.href=url;a.textContent=label;return a};
    menu.append(link('All Projects','/#projects'));
-   for(const [heading,key,hub] of specs){
-     const branch=document.createElement('div');branch.className='project-branch';
+   for(const [id,label] of PROJECT_MAIN_ENTRIES){
+     const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const button=document.createElement('button');button.type='button';button.className='project-category-toggle';button.setAttribute('aria-expanded','false');
-     const title=document.createElement('span');title.textContent=heading;
+     const title=document.createElement('span');title.textContent=label;
      const arrow=document.createElement('span');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';button.append(title,arrow);
-     const nav=document.createElement('nav');nav.className='project-submenu';nav.hidden=true;nav.setAttribute('aria-label',heading+' projects');
-     const items=[...groups[key]].sort((a,b)=>a.title.localeCompare(b.title));
-     if(hub){const root=items.find(x=>x.id===hub);if(root){nav.append(link('Browse All '+root.title,root.href));items.splice(items.indexOf(root),1)}}
-     for(const item of items)nav.append(link(item.title,item.href));
+     const nav=document.createElement('nav');nav.className='project-submenu';nav.hidden=true;nav.setAttribute('aria-label',label+' options');
+     const items=choicesFor(id,label);
+     for(const [name,url] of items)nav.append(link(name,url));
      branch.append(button,nav);menu.append(branch);
      button.addEventListener('click',()=>{fit(menu);button.getAttribute('aria-expanded')==='true'?close(menu):open(menu,branch)});
      button.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowDown'){
