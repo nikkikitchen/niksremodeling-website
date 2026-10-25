@@ -13,24 +13,6 @@ Object.entries(mergedRoomAliases).forEach(([oldId,id])=>{
  Object.defineProperty(PROJECT_CATALOG,oldId,{value:PROJECT_CATALOG[id],enumerable:false,configurable:true,writable:true});
  if(window.ROOM_PROJECT_SCOPES[id])window.ROOM_PROJECT_SCOPES[oldId]=window.ROOM_PROJECT_SCOPES[id];
 });
-// Keep both Projects dropdowns in sync with the picture cards on the Projects page.
-document.addEventListener('DOMContentLoaded',()=>{
-  const projects=Object.entries(PROJECT_CATALOG)
-    .filter(([id,p])=>!p.customGroup&&(!p.themedGroup||p.basicRoom)&&(!(p.exterior||p.outdoorGroup)||id==='concrete'))
-    .sort((a,b)=>a[1].title.localeCompare(b[1].title));
-  document.querySelectorAll('#projects-menu, #mobile-projects-menu').forEach(menu=>{
-    const links=[['All Projects','/#projects'],...projects.map(([id,p])=>[p.title,'/project.html?project='+id]),['Project Calculator','/calculators.html?from=projects-menu']];
-    menu.replaceChildren(...links.map(([title,url])=>{
-      const link=document.createElement('a');
-      link.href=url;
-      link.textContent=title;
-      return link;
-    }));
-  });
-  updateCartCount();
-});
-
-
 PROJECT_CATALOG.other={title:'Other',image:'/assets/custom-projects-card.jpg',intro:'Tell us about other products, materials or work you need.',materials:[],exterior:false};
 // Tile & Stone is a material/finish rather than a top-level room or project.
 // Preserve direct project links and all work/pricing options, but omit it from project navigation.
@@ -161,64 +143,97 @@ PROJECT_CATALOG['room-additions']={
 };
 
 
-// The dropdown always mirrors the finished Projects picture cards.
-// Fallback on other pages uses the same visibility rules as the homepage.
-document.addEventListener('DOMContentLoaded',()=>{
-  const grid=document.querySelector('#projects .project-grid');
-  let choices=grid?[...grid.querySelectorAll('a.tile[href^="/project.html?project="]')].filter(a=>!a.hidden):[];
-  if(!choices.length)choices=Object.entries(PROJECT_CATALOG)
-    .filter(([id,p])=>!p.customGroup&&(!p.themedGroup||p.basicRoom)&&(!(p.exterior||p.outdoorGroup)||id==='concrete'))
-    .map(([id])=>({href:'/project.html?project='+id}));
-  const destinations=new Map();
-  for(const card of choices){
-    const url=new URL(card.href,location.href);
-    const id=url.searchParams.get('project');
-    if(!id||!PROJECT_CATALOG[id])continue;
-    destinations.set('/project.html?project='+id,PROJECT_CATALOG[id].title);
-  }
-  const projects=[...destinations].sort((a,b)=>a[1].localeCompare(b[1]));
-  const links=[['All Projects','/#projects'],...projects.map(([url,title])=>[title,url]),['Project Calculator','/calculators.html?from=projects-menu']];
-  for(const menu of document.querySelectorAll('#projects-menu,#mobile-projects-menu')){
-    menu.replaceChildren(...links.map(([label,url])=>{
-      const a=document.createElement('a');a.href=url;a.textContent=label;return a;
-    }));
-  }
-});
-
-/* Keep every project option in view on desktop and phones, rather than
-   making the last alphabetized entries appear to be missing. */
-document.addEventListener('DOMContentLoaded',()=>{
-  if(document.getElementById('expanded-projects-menu-style'))return;
-  const style=document.createElement('style');
-  style.id='expanded-projects-menu-style';
-  style.textContent=`
-    @media (min-width:821px){
-      nav.nav .nav-menu:hover > #projects-menu,
-      nav.nav .nav-menu.open > #projects-menu,
-      nav.nav .nav-menu:focus-within > #projects-menu {
-        display:grid !important;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        column-gap:6px;
-        width:min(540px,calc(100vw - 24px)) !important;
-        max-width:calc(100vw - 24px) !important;
-        max-height:min(80vh,700px);
-        overflow-y:auto;
-      }
-    }
-    @media (max-width:820px){
-      nav.nav .mobile-top-nav .nav-menu.open > #mobile-projects-menu {
-        display:grid !important;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        column-gap:4px;
-        max-height:min(75vh,600px) !important;
-        overflow-y:auto !important;
-      }
-      nav.nav .mobile-top-nav #mobile-projects-menu > a {
-        display:flex !important;
-        align-items:center;
-        min-height:38px;
-      }
-    }
-  `;
-  document.head.append(style);
-});
+// One shared, complete project directory drives both the PC and phone menus.
+function buildProjectDropdowns(){
+ const groups={main:[],themed:[],outdoor:[],ideas:[]};
+ for(const [id,p] of Object.entries(PROJECT_CATALOG)){
+   if(!p||!p.title)continue;
+   const item={id,title:p.title,href:'/project.html?project='+encodeURIComponent(id)};
+   if(id==='concrete'||p.exterior||p.outdoorGroup)groups.outdoor.push(item);
+   else if(id==='custom'||p.customGroup)groups.ideas.push(item);
+   else if(id==='themed-rooms'||(p.themedGroup&&!p.basicRoom))groups.themed.push(item);
+   else groups.main.push(item);
+ }
+ const specs=[
+   ['Rooms & Projects','main',null],
+   ['Themed Rooms','themed','themed-rooms'],
+   ['Outdoor Projects','outdoor','concrete'],
+   ['More Ideas & Finishes','ideas','custom']
+ ];
+ const menus=['projects-menu','mobile-projects-menu'].map(id=>document.getElementById(id)).filter(Boolean);
+ if(!menus.length)return;
+ const style=document.createElement('style');style.id='expanded-projects-menu-style';
+ style.textContent=[
+ '#projects-menu.projects-mega,#mobile-projects-menu.projects-mega{box-sizing:border-box;width:290px;min-width:240px;max-width:calc(100vw - 20px);max-height:var(--project-menu-height,65vh)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:8px;overscroll-behavior:contain;z-index:120}',
+ '.projects-mega .project-branch{position:relative}',
+ '.projects-mega .project-category-toggle{display:flex;width:100%;min-height:43px;align-items:center;justify-content:space-between;gap:12px;padding:10px 13px;border:0;border-radius:6px;background:transparent;color:inherit;text-align:left;font:700 14px/1.3 Arial,sans-serif;cursor:pointer}',
+ '.projects-mega .project-category-toggle:hover,.projects-mega .project-category-toggle:focus-visible,.projects-mega .project-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}',
+ '.projects-mega .project-submenu{position:fixed;top:var(--project-submenu-top,12px);left:var(--project-submenu-left,280px);box-sizing:border-box;width:min(310px,calc(100vw - 24px));max-height:var(--project-submenu-height,70vh);overflow-y:auto;padding:8px;background:white;border:1px solid #dfe5ea;border-radius:8px;box-shadow:0 14px 36px #1423321f;z-index:121;overscroll-behavior:contain}',
+ '.projects-mega .project-submenu a{display:block;white-space:normal!important;padding:10px 12px;line-height:1.4}',
+ '.projects-mega>a{font-weight:700}',
+ '@media(max-width:820px),(hover:none){nav.nav .mobile-top-nav #mobile-projects-menu.projects-mega{position:fixed!important;top:var(--project-menu-top,auto)!important;left:10px!important;right:10px!important;width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:var(--project-menu-height,65vh)!important}.projects-mega .project-submenu{position:static!important;width:auto!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0 4px 8px 12px;padding:0 0 0 6px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none}.projects-mega .project-category-toggle{min-height:46px}}'
+ ].join('');
+ document.getElementById(style.id)?.remove();document.head.append(style);
+ const hover=()=>window.innerWidth>820&&!!window.matchMedia?.('(hover:hover)').matches;
+ function fit(menu){
+   const bottom=menu.closest('.nav-menu')?.getBoundingClientRect().bottom||130;
+   const top=Math.max(8,Math.min(bottom,window.innerHeight-105));
+   menu.style.setProperty('--project-menu-top',top+'px');
+   menu.style.setProperty('--project-menu-height',Math.max(95,Math.min(620,window.innerHeight-top-12))+'px');
+ }
+ function close(menu){
+   menu.querySelectorAll('.project-category-toggle[aria-expanded="true"]').forEach(button=>{
+     button.setAttribute('aria-expanded','false');button.closest('.project-branch').querySelector('.project-submenu').hidden=true;
+   });
+ }
+ function open(menu,branch){
+   const button=branch.querySelector('.project-category-toggle'),nav=branch.querySelector('.project-submenu');
+   close(menu);button.setAttribute('aria-expanded','true');nav.hidden=false;
+   if(window.innerWidth>820){
+     const box=menu.getBoundingClientRect(),line=branch.getBoundingClientRect(),width=Math.min(310,window.innerWidth-24);
+     const left=box.right+width+4<=window.innerWidth?box.right+2:Math.max(8,box.left-width-2);
+     const top=Math.max(8,Math.min(line.top,window.innerHeight-170));
+     nav.style.setProperty('--project-submenu-left',left+'px');
+     nav.style.setProperty('--project-submenu-top',top+'px');
+     nav.style.setProperty('--project-submenu-height',Math.max(120,window.innerHeight-top-12)+'px');
+   }
+ }
+ for(const menu of menus){
+   menu.classList.add('projects-mega');menu.replaceChildren();
+   const link=(label,url)=>{const a=document.createElement('a');a.href=url;a.textContent=label;return a};
+   menu.append(link('All Projects','/#projects'));
+   for(const [heading,key,hub] of specs){
+     const branch=document.createElement('div');branch.className='project-branch';
+     const button=document.createElement('button');button.type='button';button.className='project-category-toggle';button.setAttribute('aria-expanded','false');
+     const title=document.createElement('span');title.textContent=heading;
+     const arrow=document.createElement('span');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';button.append(title,arrow);
+     const nav=document.createElement('nav');nav.className='project-submenu';nav.hidden=true;nav.setAttribute('aria-label',heading+' projects');
+     const items=[...groups[key]].sort((a,b)=>a.title.localeCompare(b.title));
+     if(hub){const root=items.find(x=>x.id===hub);if(root){nav.append(link('Browse All '+root.title,root.href));items.splice(items.indexOf(root),1)}}
+     for(const item of items)nav.append(link(item.title,item.href));
+     branch.append(button,nav);menu.append(branch);
+     button.addEventListener('click',()=>{fit(menu);button.getAttribute('aria-expanded')==='true'?close(menu):open(menu,branch)});
+     button.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowDown'){
+       event.preventDefault();if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);
+       nav.querySelector('a')?.focus();
+     }});
+     nav.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close(menu);button.focus()}});
+     branch.addEventListener('mouseenter',()=>{if(hover()){if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);menu.closest('.nav-menu')?.classList.add('open')}});
+   }
+   menu.append(link('Project Calculator','/calculators.html?from=projects-menu'));
+   const wrapper=menu.closest('.nav-menu');let leaveTimer;
+   const stay=()=>{clearTimeout(leaveTimer);fit(menu)};
+   wrapper?.addEventListener('mouseenter',stay);menu.addEventListener('mouseenter',stay);
+   menu.querySelectorAll('.project-submenu').forEach(nav=>nav.addEventListener('mouseenter',stay));
+   wrapper?.addEventListener('mouseleave',()=>{clearTimeout(leaveTimer);leaveTimer=setTimeout(()=>{
+     close(menu);wrapper.classList.remove('open');wrapper.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');
+   },320)});
+   menu.querySelectorAll('.project-submenu').forEach(nav=>nav.addEventListener('mouseleave',()=>{
+     if(hover())leaveTimer=setTimeout(()=>close(menu),320);
+   }));
+   wrapper?.querySelector('.nav-toggle')?.addEventListener('click',()=>fit(menu));
+   fit(menu);
+ }
+ window.addEventListener('resize',()=>menus.forEach(menu=>{fit(menu);close(menu)}));
+}
+document.addEventListener('DOMContentLoaded',buildProjectDropdowns);
