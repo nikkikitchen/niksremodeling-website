@@ -22,6 +22,10 @@ test('supplier candidates require stocked U.S. variants and relevant product nam
  assert.deepEqual(availableVariants({inStockUS:true,warehouseCountry:'US',variants:[{id:'a',priceCents:100,usStock:0}]}),[]);
  assert.equal(matchesListing('Mermaid Diamond Painting Drill Kit','electric drill'),false);
  assert.equal(matchesListing('Refrigerator Divider Clip','refrigerator'),false);
+ assert.equal(matchesListing('JAKEHOE Refrigerator Cleaning Tablets, 20 Count','refrigerator'),false);
+ assert.equal(matchesListing('Mini Fridge Stand, Washer and Refrigerator Mobile Base','refrigerator'),false);
+ assert.equal(matchesListing('Ceramic Nonstick Egg Pan, Dishwasher Safe','dishwasher'),false);
+ assert.equal(matchesListing('30 Inch Range Hood With Baffle Filters','range hood'),true);
  assert.equal(matchesListing('Cordless Electric Drill Kit','electric drill'),true);
 });
 
