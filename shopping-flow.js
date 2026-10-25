@@ -89,8 +89,13 @@
     if(!hoverMenus()||window.innerWidth<=900)return;
     const bounds=menu.getBoundingClientRect();
     const width=Math.min(290,window.innerWidth-24);
-    // Every department opens a full-height flyout, even near the bottom.
-    const top=16;
+    // Installation groups open beside the hovered row, not at the top
+    // of the screen; near the bottom they move upward and remain scrollable.
+    const isLabor=menu.id==='labor-menu'||menu.id==='mobile-labor-menu';
+    const rowTop=branch.getBoundingClientRect().top;
+    const naturalHeight=submenu.scrollHeight||submenu.querySelectorAll('a').length*42+16;
+    const panelHeight=Math.min(Math.max(120,window.innerHeight-32),Math.max(72,naturalHeight));
+    const top=isLabor?Math.max(12,Math.min(rowTop,window.innerHeight-panelHeight-12)):16;
     const left=bounds.right+width>window.innerWidth-12?bounds.left-width+10:bounds.right-10;
     submenu.style.setProperty('--shopping-submenu-left',Math.max(12,Math.min(left,window.innerWidth-width-12))+'px');
     submenu.style.setProperty('--shopping-submenu-top',top+'px');
