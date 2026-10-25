@@ -26,6 +26,23 @@
   // Every page (including catalog pages with late-rendered headers) gets one
   // compact Shopping menu. All links go to the same project and product routes.
   const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Other Ideas","/project.html?project=custom"],["Tools","/products.html"]];
+
+  // Retail equipment/material choices complement (never change) approved labor prices.
+  // No unverified item receives a sale price until inventory/variants are confirmed.
+  const installedMenuChoices={},installableById={};
+  const installableGroups={"Doors, Windows & Access":[["Attic Access Ladders","attic ladder","materials"],["Bifold Closet Doors","bifold door","materials"],["Door Hardware & Locks","door handle","materials"],["Exterior Doors","exterior door","materials"],["French Doors","french door","materials"],["Garage Door Insulation Kits","garage door insulation kit","materials"],["Grab Bars & Handrails","grab bar","materials"],["Interior Prehung Doors","prehung door","materials"],["Interior Slab Doors","interior door slab","materials"],["Pocket Doors","pocket door","materials"],["Sliding Barn Doors","barn door","materials"],["Storm Doors","storm door","materials"],["Thresholds & Weatherstripping","door threshold","materials"],["Windows","replacement window","materials"]],"Electrical, Lighting & Smart Home":[["Ceiling Fans","ceiling fan","materials"],["Ceiling Lights","ceiling light fixture","materials"],["Dimmer Switches","dimmer switch","materials"],["Doorbells & Smart Doorbells","smart doorbell","materials"],["Electrical Outlets & GFCI","gfci outlet","materials"],["Hardwired Smoke & CO Detectors","smoke detector","materials"],["Heated Towel Racks","heated towel rack","materials"],["Light Switches","light switch","materials"],["Smart Light Switches","smart light switch","materials"],["Smart Lighting Systems","smart light system","materials"],["Smart Thermostats","smart thermostat","materials"],["Under-Cabinet Lighting","under cabinet lighting","materials"],["Vanity Lights","vanity light","materials","/bathroom.html?type=lighting"]],"Exterior, Decks & Outdoor":[["Composite Deck Boards","composite decking","materials"],["Concrete Pavers","concrete paver","materials"],["Deck Boards","deck board","materials"],["Exterior Siding","exterior siding","materials"],["Exterior-Grade Shiplap","exterior shiplap","materials"],["Gutters","rain gutter","materials"],["Outdoor Light Fixtures","outdoor wall light","materials"],["Pergolas & Gazebos","pergola","materials"],["Railings","deck railing","materials"],["Roof Shingles","roof shingles","materials"],["Soffit & Fascia","soffit fascia","materials"],["Stair Treads","stair tread","materials"]],"Flooring, Walls & Finishes":[["Baseboards & Shoe Molding","baseboard molding","materials"],["Carpet","carpet flooring","materials"],["Ceramic & Porcelain Tile","ceramic tile","materials"],["Crown Molding","crown molding","materials"],["Door & Window Casing","door casing","materials"],["Drywall Panels","drywall panel","materials"],["Hardwood Flooring","hardwood flooring","materials"],["Interior Shiplap","shiplap boards","materials"],["Laminate Flooring","laminate flooring","materials"],["Luxury Vinyl Plank (LVP)","vinyl plank flooring","materials"],["Paint & Primer","interior wall paint","materials"],["Stone Veneer","stone veneer","materials"],["Tile Backsplash","backsplash tile","materials"],["Wall Insulation","insulation board","materials"],["Wallpaper","wallpaper","materials"],["Wood Stain & Finish","wood stain","materials"]],"Heating, Ventilation & Audio":[["Built-In Speakers","in wall speaker","materials"],["Dryer Vent Kits","dryer vent duct","materials"],["Electric Wall Heaters","electric wall heater","materials"],["Exhaust Fans","exhaust fan","materials"],["Fireplace Inserts","electric fireplace insert","appliances"],["Infrared Heaters","infrared wall heater","materials"],["Outdoor Speakers","outdoor speaker","materials"],["Speaker Brackets","speaker wall mount","materials"],["TV Wall Mounts","tv wall mount","materials"]],"Kitchen & Plumbing":[["Backsplash Tile","backsplash tile","materials"],["Countertops","kitchen countertop","materials"],["Garbage Disposals","garbage disposal","appliances"],["Kitchen Faucets","kitchen faucet","materials"],["Kitchen Sinks","kitchen sink","materials"],["Shower Faucets & Valves","shower mixing valve","materials"],["Sink Drains & Plumbing Connections","sink drain assembly","materials"],["Water Supply Lines","refrigerator water supply line","materials"]]};
+  for(const [group,products] of Object.entries(installableGroups)){
+    const groupSlug=group.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');
+    const path='/shop-installed-'+groupSlug;
+    installedMenuChoices[path]=products.map(([name,keyword,department,direct])=>{
+      const id=(groupSlug+'-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-')).replace(/-$/,'');
+      installableById[id]={name,keyword,department,group};
+      return [name,direct||'/shop-installed.html?item='+encodeURIComponent(id)];
+    });
+    links.push([group,path]);
+  }
+  window.INSTALLABLE_SHOP_ITEMS=installableById;
+  window.INSTALLABLE_SHOP_GROUPS=installableGroups;
   const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/project.html?project=custom':'custom'};
   let listedCounts=null, furnitureListings=[], retailListings=[], furnitureCategoryMatch=null, furnitureCategories={};
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
@@ -42,6 +59,7 @@
     syncShoppingMenu();syncTileAvailability();
   }).catch(()=>{});
   function submenuLinks(department){
+    if(installedMenuChoices[department])return installedMenuChoices[department];
     const page=departmentByPath[department];
     if(page==='furniture')return Object.entries(furnitureCategories).map(([key,name])=>[name,'/furniture.html?category='+encodeURIComponent(key)]);
     if(page==='bathroom')return [['toilets','Toilets'],['bathtubs','Bathtubs'],['vanities','Vanities & Sinks'],['showers','Stand-up Showers'],['showerBases','Shower Pans & Bases'],['showerDoors','Shower Doors'],['faucets','Bathroom Faucets'],['lighting','Bathroom Lighting'],['ventilation','Ventilation & Fans'],['accessories','Mirrors & Accessories']].map(([key,name])=>[name,'/bathroom.html?type='+key]);
@@ -124,7 +142,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
         const branch=document.createElement('div');branch.className='shopping-branch';
         const button=document.createElement('button');button.type='button';button.className='shopping-category-toggle';
         button.append(document.createTextNode(label));const arrow=document.createElement('span');arrow.className='shopping-submenu-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');button.append(arrow);
-        const submenu=document.createElement('nav');submenu.className='shopping-submenu';submenu.id=menu.id+'-'+departmentByPath[url];submenu.hidden=true;submenu.setAttribute('aria-label',label+' categories');
+        const submenu=document.createElement('nav');submenu.className='shopping-submenu';submenu.id=menu.id+'-'+(departmentByPath[url]||url.replace(/[^a-z0-9]+/gi,'-'));submenu.hidden=true;submenu.setAttribute('aria-label',label+' categories');
         button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
         markEmpty(button,label,listedCounts?.[departmentByPath[url]]);
         for(const [name,href] of children){const link=document.createElement('a');link.textContent=name;link.href=href;markEmpty(link,name,tileListingCount(link));submenu.append(link);}
