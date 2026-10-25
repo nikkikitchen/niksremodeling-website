@@ -58,3 +58,51 @@ test('the remaining approved voice-review prices are present and door discounts 
  const grouped=w.repriceRemovalGroups([{removalGroup:'cabinets',removalCount:2,qty:1},{removalGroup:'cabinets',removalCount:2,qty:1}]);assert.equal(grouped.reduce((n,x)=>n+x.price,0),260);
  dom.window.close();
 });
+
+test('original labor price table tracks final October 24 approvals',()=>{
+ const html=readFileSync('installation.html','utf8');
+ const match=html.match(/const rates=(\\{[^\\n]+\\});\\nconst catalog=window\\.LABOR_CATALOG;/);
+ assert.ok(match,'The original rates must be readable and centrally reviewed.');
+ const rates=JSON.parse(match[1]);
+ const expected={
+  appliances:{'Microwave/oven combination installation':650},
+  electrical:{
+   'Under-cabinet lighting installation (existing connections)':375,
+   'Heated towel rack installation, plug-in (existing outlet)':150,
+   'Smart thermostat installation (existing connections)':200,
+   'Replace existing ceiling fan (existing connections)':175,
+   'Install ceiling fan with new wiring':450,
+   'Smart light switch installation (existing connections)':175,
+   'Built-in speaker installation (existing wiring)':150,
+   'Wall-mounted speaker installation':100,
+   'Smart doorbell installation (existing connections)':175,
+   'Under-cabinet lighting installation (new wiring and switch)':575,
+   'Heated towel rack installation (new wiring and switch)':475,
+   'Hardwired smoke or CO detector installation (existing connections)':150
+  },
+  doors:{
+   'Interior prehung door installation (including closet doors)':100,
+   'Interior slab door installation':250,
+   'Storm door installation':175,
+   'French door installation':250,
+   'Bifold door installation':175
+  },
+  carpentry:{
+   'Attic access ladder installation':350,
+   'Garage door insulation kit installation':150
+  }
+ };
+ for(const [category,items] of Object.entries(expected)){
+  for(const [name,price] of Object.entries(items)){
+   const entries=rates[category].filter(([label])=>label===name);
+   assert.equal(entries.length,1,name+' should have one source entry');
+   assert.equal(entries[0][1],price,name+' must match final owner approval');
+  }
+ }
+ const app=readFileSync('app.js','utf8');
+ const bathMatch=app.match(/window\\.BATHROOM_PACKAGES=(\\[[^\\n]+\\]);/);
+ assert.ok(bathMatch);
+ const packages=JSON.parse(bathMatch[1]);
+ for(const [id,price] of Object.entries({'toilet-install':150,'smart-toilet-install':750,'vanity-install':300,'faucet-replace':150,'vanity-light-replace':150}))
+  assert.equal(packages.find(item=>item.id===id)?.labor,price,'Bathroom package '+id);
+});
