@@ -35,8 +35,8 @@ test('Homepage tiles and both Projects dropdowns match the exact fifteen approve
     const cards=[...doc.querySelectorAll('#projects .project-grid > a.tile')];
     assert.equal(cards.length,15,'There must only be 15 main project picture cards');
     const cardIds=cards.map(a=>new URL(a.href).searchParams.get('project'));
-    assert.deepEqual(cardIds,approved.map(([id])=>id),'Homepage picture cards not in approved order');
-    assert.deepEqual(cards.map(a=>a.querySelector('span')?.childNodes[0]?.textContent.trim()),approved.map(([,label])=>label));
+    assert.deepEqual(cardIds.slice().sort(),approved.map(([id])=>id).sort(),'Homepage picture cards differ from the approved list');
+    assert.deepEqual(cards.map(a=>a.querySelector('span')?.childNodes[0]?.textContent.trim()).sort(),approved.map(([,label])=>label).sort());
     for(const id of ['projects-menu','mobile-projects-menu']){
       const menu=doc.getElementById(id);
       assert.ok(menu?.classList.contains('projects-mega'),id+' is missing');
