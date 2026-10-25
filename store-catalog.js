@@ -1,5 +1,14 @@
 export const catalog = [
   {
+    "id": "2048673899356721154",
+    "priceCents": 5093,
+    "priceCheckedAt": "2026-10-25",
+    "name": "Round Side Table with Double Storage Shelves",
+    "category": "living-room",
+    "image": "https://cf.cjdropshipping.com/1793b0ba-d7e4-431c-892f-3c0825fd0d16.jpg",
+    "departments": ["living-room", "bedroom", "storage"]
+  },
+  {
     "id": "1963146233541074945",
     "priceCents": 6713,
     "priceCheckedAt": "2026-10-25",
