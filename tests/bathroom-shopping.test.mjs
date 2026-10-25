@@ -69,3 +69,38 @@ test('stand-up shower installation and removal are separate unpriced quotes',()=
   assert.equal(p.labor,null);
  }
 });
+
+test('featured smart toilet is displayed only with live verified U.S. stock and a price',async()=>{
+ const {JSDOM}=await import('jsdom');
+ async function open(stock){
+  const dom=new JSDOM('<!doctype html><html><head></head><body></body></html>',{
+   url:'https://niksremodeling.com/bathroom.html?type=toilets&model=smart',
+   runScripts:'outside-only'
+  });
+  const w=dom.window;
+  w.header=()=>'<header></header>';w.footer=()=>'<footer></footer>';
+  w.updateCartCount=()=>{};w.initNavMenus=()=>{};
+  w.fetch=async url=>({
+   ok:true,
+   json:async()=>String(url).includes('/api/store-product')
+    ?{id:'2046529401898950658',name:'Smart Toilet Bidet Combo with Heated Seat',
+      image:'https://example.com/smart-toilet.jpg',warehouseCountry:'US',inStockUS:stock,
+      variants:[{id:'us-white',name:'White',priceCents:69471,usStock:stock?25:0}]}
+    :{products:[],totalPages:1}
+  });
+  w.eval(src);
+  await new Promise(resolve=>setTimeout(resolve,100));
+  return dom;
+ }
+ const available=await open(true);
+ try{
+  const link=available.window.document.querySelector('#bath-products a[href*="product=2046529401898950658"]');
+  assert.ok(link,'Verified smart toilet must appear in its category');
+  assert.ok(link.textContent.includes('$694.71'),'Displayed price must use current verified retail variant');
+ }finally{available.window.close();}
+ const unavailable=await open(false);
+ try{
+  assert.equal(unavailable.window.document.querySelector('#bath-products a[href*="product=2046529401898950658"]'),null,
+   'An unverified toilet must never appear as in-stock merchandise');
+ }finally{unavailable.window.close();}
+});

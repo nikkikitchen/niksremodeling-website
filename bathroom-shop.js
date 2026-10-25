@@ -291,6 +291,34 @@ document.addEventListener('DOMContentLoaded',async()=>{
   return {added,failures};
  }
  let total=0,errors=0;
+ // Featured supplier product ID is only a lookup hint, never a stock or price claim.
+ // Its card is added only after a fresh US warehouse inventory AND retail price check.
+ // The product detail page checks both again before anything can enter the cart.
+ async function loadVerifiedSmartToilet(){
+  if(type!=='toilets'||toiletModel!=='smart')return;
+  const id='2046529401898950658';
+  try{
+   const reply=await fetch('/api/store-product?product='+id,{cache:'no-store'});
+   if(!reply.ok)return;
+   const detail=await reply.json(),variants=bathVerified(detail);
+   if(!variants||!bathroomMatch(detail.name,'toilets')||toiletStyleFor(detail.name)!=='smart')return;
+   const name=String(detail.name||''),image=String(detail.image||'');
+   if(!/^https:\/\//.test(image)||seenIds.has(id)||seenNames.has(normalized(name))||seenImages.has(image))return;
+   const price=Math.min(...variants.map(v=>v.priceCents));
+   const query=new URLSearchParams({type:'toilets',model:'smart',product:id});
+   if(fromProject){query.set('fromProject','1');query.set('project',projectId);if(projectWork)query.set('work',projectWork);}
+   const card=document.createElement('article');card.className='store-card';
+   card.innerHTML='<a href="/bathroom.html?'+bathEsc(query.toString())+'"><img loading="lazy" src="'+bathEsc(image)+'" alt="'+bathEsc(name)+'">'+
+    '<div class="store-card-copy"><p class="store-card-category">Smart Toilets</p><h3>'+bathEsc(name)+'</h3>'+
+    '<p class="store-card-price">From '+bathMoney(price)+'</p>'+
+    '<p class="store-card-note">US stock verified now. Delivery and tax calculated separately.</p>'+
+    '<span class="btn primary">View item</span></div></a>';
+   grid.appendChild(card);
+   seenIds.add(id);seenNames.add(normalized(name));seenImages.add(image);total++;
+  }catch{
+   // If supplier verification fails, do not advertise outdated stock or price.
+  }
+ }
  async function fetchBatch(kinds){
   for(const kind of kinds){
    try{const result=await load(kind);total+=result.added;errors+=result.failures;}
@@ -300,6 +328,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
    'Showing '+total+' available '+(total===1?'product.':'products.'):
    (toiletModel?'No '+toiletStyleNames[toiletModel].toLowerCase()+' models listed yet.':'No products listed in this category yet.');
  }
+ // Check this supplier-confirmed item directly; search ranking often buries fixtures behind cleaners.
+ await loadVerifiedSmartToilet();
  // Start with the four main fixtures in All Bathroom, keeping supplier calls modest.
  await fetchBatch(type==='all'?searches.slice(0,4):searches);
  let position=type==='all'?4:0;
