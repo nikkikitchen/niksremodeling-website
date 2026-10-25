@@ -2,6 +2,7 @@
   const style=document.createElement('style');
   style.textContent=`[hidden]{display:none!important}.nav .simple-nav{overflow:visible;gap:36px}.simple-nav>a,.shopping-toggle{font-size:16px;font-weight:700}.shopping-toggle{background:none;border:0;padding:17px 0;cursor:pointer;color:inherit}.simple-nav .review-link{margin-left:auto;display:flex;align-items:center;gap:7px}.review-link .cart-count{position:static;display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px}.nav-menu.open .nav-dropdown{display:block}.nav-dropdown a{display:block;padding:11px 17px}.brandbar>.actions .cart-pill,.topline-cart>a,.room-supply-list,a[href*="supplies.html"],.project-related-supplies{display:none!important}.shopping-toggle .nav-main{padding:0}.nav .simple-nav{flex-wrap:wrap}.nav-menu{position:relative}.nav-dropdown{min-width:210px;max-height:min(70vh,520px);overflow-y:auto;overscroll-behavior:contain}.shopping-menu-divider{border-top:1px solid #ddd;margin:8px 0}@media(max-width:620px){.nav-menu .nav-dropdown{max-width:calc(100vw - 24px);max-height:65vh;overflow-y:auto}}.project-grid .tile span{text-align:center}body{padding-bottom:0}.project-shopping-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;border-top:1px solid #ddd;padding:12px 4%;display:flex;align-items:center;gap:12px;box-shadow:0 -2px 10px #0001}.project-shopping-bar span{flex:1;font-size:13px}.project-shopping-bar .btn{white-space:nowrap}@media(max-width:620px){body{padding-bottom:0}.project-shopping-bar{flex-wrap:wrap;padding:10px}.project-shopping-bar span{flex-basis:100%}.project-shopping-bar .btn{font-size:12px;padding:10px}}@media(max-width:620px){.nav .simple-nav{gap:12px}.simple-nav>a,.shopping-toggle{font-size:13px}.simple-nav .review-link{margin-left:0}}`;
   style.textContent+=`#shopping-menu a.shopping-empty,#mobile-shopping-menu a.shopping-empty{position:relative;padding-left:32px}#shopping-menu a.shopping-empty::before,#mobile-shopping-menu a.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:#d71920}.shopping-availability-note{margin:6px 0 0;padding:12px 15px;border-top:1px solid #ddd;font-size:12px;line-height:1.4;color:#555;white-space:normal}.shopping-availability-note span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
+  style.textContent+='.installed-groups a.shopping-tile-empty::before{content:"";display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:50%;vertical-align:middle;background:#d71920}.installed-group.shopping-tile-empty>h2::before{content:"";display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:50%;background:#d71920}';
   style.textContent+=`.shopping-tile-empty strong::before,.shopping-tile-empty h3::before{content:"";display:inline-block;width:10px;height:10px;background:#d71920;border-radius:50%;margin-right:8px;vertical-align:middle}.shopping-tile-legend{margin:10px 0 20px;font-size:13px;color:#555}.shopping-tile-legend span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
   style.textContent+=`
 #shopping-menu,#mobile-shopping-menu,#labor-menu,#mobile-labor-menu{overflow-y:auto!important;overflow-x:hidden!important;max-height:var(--shopping-menu-height,65vh)!important;min-width:240px}
@@ -65,7 +66,7 @@
     furnitureListings=catalog;retailListings=retailCatalog;furnitureCategoryMatch=inCategory;
     listedCounts={furniture:catalog.length};
     for(const department of Object.values(departmentByPath)){
-      if(department!=='furniture')listedCounts[department]=retailCatalog.filter(p=>p.department===department).length;
+      if(department!=='furniture'&&department!=='custom')listedCounts[department]=retailCatalog.filter(p=>p.department===department).length;
     }
     syncShoppingMenu();syncTileAvailability();
   }).catch(()=>{});
@@ -179,8 +180,16 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
         button.append(document.createTextNode(label));const arrow=document.createElement('span');arrow.className='shopping-submenu-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');button.append(arrow);
         const submenu=document.createElement('nav');submenu.className='shopping-submenu';submenu.id=menu.id+'-'+(departmentByPath[url]||url.replace(/[^a-z0-9]+/gi,'-'));submenu.hidden=true;submenu.setAttribute('aria-label',label+' categories');
         button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
-        markEmpty(button,label,listedCounts?.[departmentByPath[url]]);
-        for(const [name,href] of children){const link=document.createElement('a');link.textContent=name;link.href=href;markEmpty(link,name,tileListingCount(link));submenu.append(link);}
+        const department=departmentByPath[url];
+        const childCounts=[];
+        for(const [name,href] of children){
+          const link=document.createElement('a');link.textContent=name;link.href=href;
+          const count=tileListingCount(link);childCounts.push(count);
+          markEmpty(link,name,count);submenu.append(link);
+        }
+        // Specialty shopping groups have no matching retail-catalog department.
+        const count=listedCounts?.[department];
+        markEmpty(button,label,count===undefined&&children.length&&childCounts.every(n=>n===0)?0:count);
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
         branch.append(button,submenu);menu.append(branch);
         bindCategoryBranch(branch);
@@ -225,23 +234,41 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       menu.dataset.unifiedLabor='labor-all-v1';
     });
   }
+  function installedListingCount(item){
+    if(!item||!item.department||!item.keyword)return 0;
+    const ignored=new Set(['wall','electric','kitchen','bathroom','hand','exterior','interior','appliance','new','kit']);
+    const words=item.keyword.toLowerCase().split(/[^a-z0-9]+/g).filter(word=>word&&!ignored.has(word));
+    return retailListings.filter(p=>{
+      if(p.department!==item.department)return false;
+      const name=String(p.name||'').toLowerCase();
+      return words.length>0&&words.every(word=>name.includes(word));
+    }).length;
+  }
   function tileListingCount(tile){
-    if(!listedCounts)return null;
-    // Material type cards are planning/category choices, never merchandise cards.
+    if(!listedCounts||!tile)return null;
+    // Material choices on detail pages carry their product type in the card heading.
     if(tile.matches('.material-option-card')){
       const material=document.body.dataset.material;
       const type=tile.querySelector('h3')?.textContent.trim();
       return retailListings.filter(p=>p.department==='materials'&&p.material===material&&p.materialType===type).length;
     }
+    if(!tile.href)return null;
     const url=new URL(tile.href,location.href);
     if(url.origin!==location.origin)return null;
+    // Specialty links were skipped before, leaving unlisted goods without dots.
+    if(url.pathname==='/shop-installed.html'){
+      const id=url.searchParams.get('item');
+      return id?installedListingCount(installableById[id]):null;
+    }
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
       const type=url.searchParams.get('type');
       return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type)).length;
     }
-    const department=departmentByPath[url.pathname]||(url.pathname==='/project.html'&&(url.searchParams.get('project')==='custom'||(typeof PROJECT_CATALOG!=='undefined'&&PROJECT_CATALOG[url.searchParams.get('project')]?.customGroup))?'custom':null);
-    if(!department)return null;
+    // Project planning/in-person quotes are services, not empty retail shelves.
+    if(url.pathname==='/project.html')return null;
+    const department=departmentByPath[url.pathname];
+    if(!department||department==='custom')return null;
     if(department==='furniture'){
       const category=url.searchParams.get('category');
       return furnitureListings.filter(p=>!category||furnitureCategoryMatch(p,category)).length;
@@ -251,13 +278,17 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
   }
   function syncTileAvailability(){
     if(!listedCounts)return;
-    document.querySelectorAll('main .photo-category-tile,main .toilet-choice-tile,main .material-option-card').forEach(tile=>{
+    document.querySelectorAll('main .photo-category-tile,main .toilet-choice-tile,main .material-option-card,main .installed-groups a').forEach(tile=>{
       const count=tileListingCount(tile);if(count===null)return;
       tile.classList.toggle('shopping-tile-empty',count===0);
       if(count===0){tile.setAttribute('title','No items listed yet');}
       else if(tile.getAttribute('title')==='No items listed yet')tile.removeAttribute('title');
     });
-    document.querySelectorAll('.shopping-landing-grid,.shop-guide-grid,.picture-category-tabs,.photo-store-categories,.toilet-choice-grid,.material-detail-grid').forEach(grid=>{
+    document.querySelectorAll('.installed-group').forEach(group=>{
+      const items=[...group.querySelectorAll('a[href*="/shop-installed.html?item="]')];
+      group.classList.toggle('shopping-tile-empty',items.length>0&&items.every(item=>item.classList.contains('shopping-tile-empty')));
+    });
+    document.querySelectorAll('.shopping-landing-grid,.shop-guide-grid,.picture-category-tabs,.photo-store-categories,.toilet-choice-grid,.material-detail-grid,.installed-groups').forEach(grid=>{
       const existing=grid.nextElementSibling?.matches('.shopping-tile-legend')?grid.nextElementSibling:null;
       if(grid.querySelector('.shopping-tile-empty')){
         if(!existing){const note=document.createElement('p');note.className='shopping-tile-legend';note.innerHTML='<span aria-hidden="true"></span>Red dot = No items listed yet.';grid.after(note);}
