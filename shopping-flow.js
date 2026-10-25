@@ -8,8 +8,8 @@
 .shopping-category-toggle{position:relative;display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;border:0;background:transparent;padding:12px 16px;text-align:left;font-family:inherit;font-size:14px;font-weight:700;line-height:1.3;color:inherit;cursor:pointer;border-radius:6px}
 .shopping-category-toggle:hover,.shopping-category-toggle:focus-visible,.shopping-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}
 .shopping-category-toggle.shopping-empty{padding-left:32px}.shopping-category-toggle.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;background:#d71920;border-radius:50%}
-.shopping-submenu{position:absolute;left:100%;top:0;width:290px;max-width:calc(100vw - 24px);max-height:var(--shopping-submenu-height,65vh);overflow-y:auto;background:#fff;border:1px solid #dfe5ea;border-radius:8px;padding:8px;box-shadow:0 14px 36px #1423321f;z-index:110}
-.shopping-flyout-left .shopping-submenu{left:auto;right:100%}
+.shopping-submenu{position:absolute;left:calc(100% - 10px);top:0;width:290px;max-width:calc(100vw - 24px);max-height:var(--shopping-submenu-height,65vh);overflow-y:auto;background:#fff;border:1px solid #dfe5ea;border-radius:8px;padding:8px;box-shadow:0 14px 36px #1423321f;z-index:110}
+.shopping-flyout-left .shopping-submenu{left:auto;right:calc(100% - 10px)}
 .shopping-submenu a{white-space:normal!important;line-height:1.4}
 @media(max-width:900px),(hover:none){#shopping-menu,#mobile-shopping-menu{overflow-y:auto!important;overflow-x:hidden!important;max-height:65vh!important;min-width:0}.shopping-submenu,.shopping-flyout-left .shopping-submenu{position:static;width:auto;max-width:none;max-height:none;overflow:visible;margin:0 4px 8px 14px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none;padding:0 0 0 6px}.shopping-category-toggle{min-height:44px}.shopping-category-toggle[aria-expanded="true"] .shopping-submenu-arrow{transform:rotate(90deg)}}`;
   document.head.append(style);
@@ -50,7 +50,30 @@
     if(typeof SHOP_GUIDES!=='undefined')return (SHOP_GUIDES[page]||[]).map(([name])=>[name,department+'?category='+encodeURIComponent(name)+'#catalog-products']);
     return [];
   }
-  const hoverMenus=()=>Boolean(window.matchMedia?.('(hover: hover) and (min-width: 901px)').matches);
+  const hoverMenus=()=>Boolean(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches);
+  function bindShoppingHover(menu){
+    const wrapper=menu.parentElement;
+    if(wrapper.dataset.shoppingHoverBound)return;
+    wrapper.dataset.shoppingHoverBound='true';
+    let closeTimer;
+    menu.addEventListener('mouseenter',()=>{
+      if(!hoverMenus())return;
+      clearTimeout(closeTimer);
+      wrapper.classList.add('open');
+      wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','true');
+    });
+    wrapper.addEventListener('mouseenter',()=>clearTimeout(closeTimer));
+    wrapper.addEventListener('mouseleave',()=>{
+      if(!hoverMenus())return;
+      clearTimeout(closeTimer);
+      closeTimer=setTimeout(()=>{
+        if(wrapper.matches(':hover')||wrapper.contains(document.activeElement))return;
+        for(const branch of menu.querySelectorAll(':scope > .shopping-branch'))openShoppingBranch(branch,false);
+        wrapper.classList.remove('open');
+        wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','false');
+      },350);
+    });
+  }
   function openShoppingBranch(branch,open){
     const menu=branch.parentElement;
     if(open){
@@ -69,8 +92,9 @@
   }
   function syncShoppingMenu(){
     document.querySelectorAll('#shopping-menu, #mobile-shopping-menu').forEach(menu=>{
-      const state='nested-shopping-v1-'+Boolean(listedCounts);
+      const state='nested-shopping-v2-'+Boolean(listedCounts);
       if(menu.dataset.unifiedShopping===state)return;
+      bindShoppingHover(menu);
       menu.replaceChildren();
       const ordered=links.slice().sort((a,b)=>a[0].startsWith('Other')?1:b[0].startsWith('Other')?-1:a[0].localeCompare(b[0]));
       for(const [label,url] of ordered){
@@ -86,7 +110,6 @@
         branch.append(button,submenu);menu.append(branch);
         button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&event.detail>0?true:submenu.hidden));
         branch.addEventListener('mouseenter',()=>{if(hoverMenus())openShoppingBranch(branch,true);});
-        branch.addEventListener('mouseleave',()=>{if(hoverMenus()&&!branch.contains(document.activeElement))openShoppingBranch(branch,false);});
         branch.addEventListener('keydown',event=>{
           if(['Escape','ArrowLeft'].includes(event.key)&&!submenu.hidden){event.preventDefault();event.stopPropagation();openShoppingBranch(branch,false);button.focus();}
           else if(event.target===button&&['ArrowRight','ArrowDown'].includes(event.key)){event.preventDefault();openShoppingBranch(branch,true);submenu.querySelector('a')?.focus();}

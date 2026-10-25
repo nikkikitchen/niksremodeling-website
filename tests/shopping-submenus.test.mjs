@@ -55,11 +55,29 @@ test('tap and keyboard open submenus, close siblings, and return focus without n
  }finally{dom.window.close();}
 });
 
-test('desktop hover opens a department and leaving it closes the submenu',async()=>{
+test('desktop hover stays open across the department-to-submenu boundary and closes only after leaving Shopping',async()=>{
  const dom=await open(true);
  try{
   const w=dom.window,branch=w.document.querySelector('#shopping-menu .shopping-branch'),button=branch.querySelector('button');
   branch.dispatchEvent(new w.MouseEvent('mouseenter'));assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(branch.querySelector('nav').hidden,false);
-  branch.dispatchEvent(new w.MouseEvent('mouseleave'));assert.equal(button.getAttribute('aria-expanded'),'false');assert.equal(branch.querySelector('nav').hidden,true);
+  branch.dispatchEvent(new w.MouseEvent('mouseleave'));assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(branch.querySelector('nav').hidden,false);
+  const wrapper=branch.closest('.nav-menu');
+  wrapper.dispatchEvent(new w.MouseEvent('mouseleave'));
+  assert.equal(button.getAttribute('aria-expanded'),'true');
+  await new Promise(r=>setTimeout(r,380));
+  assert.equal(button.getAttribute('aria-expanded'),'false');assert.equal(branch.querySelector('nav').hidden,true);
+ }finally{dom.window.close();}
+});
+
+test('returning to Shopping before the hover grace period keeps the submenu open without a click',async()=>{
+ const dom=await open(true);
+ try{
+  const w=dom.window,menu=w.document.getElementById('shopping-menu'),wrapper=menu.parentElement;
+  const branch=menu.querySelector('.shopping-branch'),button=branch.querySelector('button');
+  menu.dispatchEvent(new w.MouseEvent('mouseenter'));branch.dispatchEvent(new w.MouseEvent('mouseenter'));
+  wrapper.dispatchEvent(new w.MouseEvent('mouseleave'));menu.dispatchEvent(new w.MouseEvent('mouseenter'));
+  await new Promise(r=>setTimeout(r,380));
+  assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(wrapper.classList.contains('open'),true);
+  assert.equal(w.location.href,'https://niksremodeling.com/appliances.html');
  }finally{dom.window.close();}
 });
