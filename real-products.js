@@ -89,6 +89,29 @@ export async function mountCatalog(target,{department,material,type}={}){
  const seen=new Set(saved.map(p=>p.id)),names=new Set(saved.map(p=>p.name.toLowerCase())),images=new Set(saved.map(p=>p.image));
  target.innerHTML=saved.map(p=>card(p)).join('')||'<p class="empty" role="status">Checking available products…</p>';
  await priceCards(target);
+ // Candidate IDs are not retail offers. Each item is shown only after the
+ // existing product API independently confirms a priced U.S.-warehouse variant.
+ const equipmentCandidates={
+  'Beverage Taps':['1993033437579866113'],
+  'Kegerators':['1992915110470656002','1992915023801270274'],
+  'Coffee Systems':['1997963905444204545','2104817591011717121']
+ };
+ const equipmentKeyword={'Beverage Taps':'beer tower','Kegerators':'kegerator','Coffee Systems':'espresso machine'}[category];
+ for(const candidateId of (department==='appliances'?equipmentCandidates[category]||[]:[])){
+  try{
+   const response=await fetch('/api/store-product?product='+encodeURIComponent(candidateId),{cache:'no-store'});
+   if(!response.ok)continue;
+   const data=await response.json(),vs=availableVariants(data),name=data.name||'',image=data.image||'';
+   if(!vs.length||!matchesListing(name,equipmentKeyword)||!/^https:\/\//.test(image)||seen.has(candidateId)||names.has(name.toLowerCase())||images.has(image))continue;
+   target.querySelectorAll('.empty').forEach(el=>el.remove());
+   target.insertAdjacentHTML('beforeend',card({
+    id:candidateId,department,name,image,category,
+    priceCents:Math.min(...vs.map(v=>v.priceCents)),
+    priceCheckedAt:new Date().toISOString().slice(0,10)
+   },true));
+   seen.add(candidateId);names.add(name.toLowerCase());images.add(image);
+  }catch{ /* Never advertise items whose current U.S. stock cannot be checked. */ }
+ }
  const keyword=type?({'LVP':'vinyl flooring','Luxury Vinyl Plank (LVP)':'vinyl flooring','Hardwood':'hardwood flooring','Laminate':'laminate flooring','Floor Tile':'floor tile','Underlayment':'floor underlayment'}[type]||type):material?materialSearch[material]:category?categorySearch[category]:({appliances:'refrigerator',cabinets:'storage cabinet',tools:'electric drill',materials:'wall panel',supplies:'construction adhesive'}[department]);
  if(keyword){try{
   const r=await fetch('/api/cj-products?keyword='+encodeURIComponent(keyword));const d=await r.json();if(!r.ok)throw Error('Unavailable');
