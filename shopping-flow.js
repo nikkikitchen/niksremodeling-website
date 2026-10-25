@@ -69,6 +69,13 @@
       wrapper.classList.add('open');
       wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','true');
     });
+    menu.addEventListener('mouseenter',()=>{
+      // Keep the submenu open when the mouse returns before the close delay.
+      if(!hoverMenus())return;
+      clearTimeout(closeTimer);
+      wrapper.classList.add('open');
+      wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','true');
+    });
     wrapper.addEventListener('mouseleave',()=>{
       if(!hoverMenus())return;
       clearTimeout(closeTimer);
@@ -147,7 +154,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
         const submenu=document.createElement('nav');submenu.id=menu.id+'-'+category.id;submenu.className='shopping-submenu';submenu.hidden=true;submenu.setAttribute('aria-label',category.label+' labor options');
         button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
         const main='/installation.html#labor-category-'+category.id;
-        const allCategory=document.createElement('a');allCategory.href=main;allCategory.textContent='All '+category.label;submenu.append(allCategory);
+        const allCategory=document.createElement('a');allCategory.href=main;allCategory.textContent='All '+category.label;if(category.id!=='appliances')submenu.append(allCategory);
         const groups=category.id==='appliances'&&window.APPLIANCE_LABOR_GROUPS
           ? window.APPLIANCE_LABOR_GROUPS.map(g=>({id:g.id,label:g.label}))
           : category.groups||[];
