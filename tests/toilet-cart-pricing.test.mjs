@@ -1,0 +1,56 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+
+const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+const start=app.indexOf('function reconcileBathroomFixtureAllowances(');
+const end=app.indexOf('function projectEstimateMarkup(',start);
+assert.ok(start>=0&&end>start,'Toilet fixture matching helper must be present');
+const reconcile=new Function(app.slice(start,end)+';return reconcileBathroomFixtureAllowances;')();
+
+function install({kind='standard',qty=1,own=false}={}){
+ const smart=kind==='smart',fixture=own?0:smart?2000:300,labor=smart?750:150,supplies=smart?100:75;
+ return {type:'Labor',source:'project-calculator',
+  packageId:smart?'smart-toilet-install':'toilet-install',packageQuantity:qty,
+  price:(labor+supplies+fixture)*qty,internalCosts:{labor,supplies,fixture}};
+}
+function product({kind='round',price=400,qty=1}={}){
+ return {type:'Product',source:'bathroom-retail',bathroomFixtureType:'toilets',toiletStyle:kind,price,qty,name:'Selected toilet'};
+}
+const total=items=>items.reduce((sum,x)=>sum+Number(x.price)*(Number(x.qty)||1),0);
+
+test('one verified round or elongated toilet replaces only its standard fixture allowance',()=>{
+ for(const kind of ['round','elongated']){
+  const raw=[install(),product({kind})],result=reconcile(raw);
+  assert.equal(result[0].price,225);
+  assert.equal(total(result),625);
+  assert.equal(raw[0].price,525,'original cart must remain unchanged');
+ }
+});
+test('adding a toilet later and removing it restores original fixture allowance',()=>{
+ const labor=install(),selected=product();
+ assert.equal(total(reconcile([labor])),525);
+ assert.equal(total(reconcile([labor,selected])),625);
+ assert.equal(total(reconcile([labor])),525);
+});
+test('one toilet of two replaces only one allowance',()=>{
+ const result=reconcile([install({qty:2}),product()]);
+ assert.equal(result[0].price,750);
+ assert.equal(total(result),1150);
+});
+test('already customer-supplied fixture has no extra allowance to remove',()=>{
+ const result=reconcile([install({own:true}),product()]);
+ assert.equal(result[0].price,225);
+ assert.equal(total(result),625);
+});
+test('smart toilet matches only smart installation while wall-hung is not treated as standard labor',()=>{
+ const smart=reconcile([install({kind:'smart'}),product({kind:'smart',price:2200})]);
+ assert.equal(smart[0].price,850);
+ assert.equal(total(smart),3050);
+ const specialty=reconcile([install(),product({kind:'specialty',price:450})]);
+ assert.equal(specialty[0].price,525,'wall-hung installation must be quoted separately');
+});
+test('retail products without a matching toilet installation do not alter labor prices',()=>{
+ const result=reconcile([install(),{...product(),bathroomFixtureType:'lighting'}]);
+ assert.equal(result[0].price,525);
+});
