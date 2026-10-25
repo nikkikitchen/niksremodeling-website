@@ -493,7 +493,8 @@ function reconcileBathroomFixtureAllowances(cart){
   const toilet=item.bathroomFixtureType==='toilets'||(item.bathroomFixtureType==null&&/\btoilet\b/i.test(item.name||''));
   if(!toilet)continue;
   const label=String(item.name||'');
-  const style=item.toiletStyle||(/\bsmart|intelligent|bidet toilet\b/i.test(label)?'smart':/\bround\b/i.test(label)?'round':/\belongated|comfort.height|chair.height\b/i.test(label)?'elongated':null);
+  const wallMounted=/wall[- ]?(?:hung|mounted)|floating toilet|concealed cistern|in[- ]wall tank/i.test(label);
+  const style=wallMounted?'specialty':item.toiletStyle||(/\bsmart|intelligent|bidet toilet\b/i.test(label)?'smart':/\belongated|comfort.height|chair.height\b/i.test(label)?'elongated':'round');
   const group=style==='smart'?'smart':['round','elongated'].includes(style)?'standard':null;
   if(group)purchased[group]+=Number.isSafeInteger(Number(item.qty))&&Number(item.qty)>0?Number(item.qty):1;
  }
