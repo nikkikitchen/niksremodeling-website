@@ -54,3 +54,10 @@ test('retail products without a matching toilet installation do not alter labor 
  const result=reconcile([install(),{...product(),bathroomFixtureType:'lighting'}]);
  assert.equal(result[0].price,525);
 });
+
+test('unlabeled verified standard toilet uses normal installation while a wall-hung model does not',()=>{
+ const ordinary=reconcile([install(),{...product(),toiletStyle:null,name:'Classic two-piece porcelain toilet'}]);
+ assert.equal(ordinary[0].price,225);
+ const wall=reconcile([install(),{...product({kind:'smart'}),name:'Smart wall-mounted toilet'}]);
+ assert.equal(wall[0].price,525);
+});
