@@ -159,3 +159,28 @@ PROJECT_CATALOG['room-additions']={
   intro:'Add a bedroom, family room, sunroom or living space. Design, permits & construction quoted on site.',
   materials:[],exterior:false
 };
+
+
+// The dropdown always mirrors the finished Projects picture cards.
+// Fallback on other pages uses the same visibility rules as the homepage.
+document.addEventListener('DOMContentLoaded',()=>{
+  const grid=document.querySelector('#projects .project-grid');
+  let choices=grid?[...grid.querySelectorAll('a.tile[href^="/project.html?project="]')].filter(a=>!a.hidden):[];
+  if(!choices.length)choices=Object.entries(PROJECT_CATALOG)
+    .filter(([id,p])=>!p.customGroup&&(!p.themedGroup||p.basicRoom)&&(!(p.exterior||p.outdoorGroup)||id==='concrete'))
+    .map(([id])=>({href:'/project.html?project='+id}));
+  const destinations=new Map();
+  for(const card of choices){
+    const url=new URL(card.href,location.href);
+    const id=url.searchParams.get('project');
+    if(!id||!PROJECT_CATALOG[id])continue;
+    destinations.set('/project.html?project='+id,PROJECT_CATALOG[id].title);
+  }
+  const projects=[...destinations].sort((a,b)=>a[1].localeCompare(b[1]));
+  const links=[['All Projects','/#projects'],...projects.map(([url,title])=>[title,url]),['Project Calculator','/calculators.html?from=projects-menu']];
+  for(const menu of document.querySelectorAll('#projects-menu,#mobile-projects-menu')){
+    menu.replaceChildren(...links.map(([label,url])=>{
+      const a=document.createElement('a');a.href=url;a.textContent=label;return a;
+    }));
+  }
+});
