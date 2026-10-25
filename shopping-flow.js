@@ -5,13 +5,13 @@
   style.textContent+=`.shopping-tile-empty strong::before,.shopping-tile-empty h3::before{content:"";display:inline-block;width:10px;height:10px;background:#d71920;border-radius:50%;margin-right:8px;vertical-align:middle}.shopping-tile-legend{margin:10px 0 20px;font-size:13px;color:#555}.shopping-tile-legend span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
   style.textContent+=`
 #shopping-menu,#mobile-shopping-menu,#labor-menu,#mobile-labor-menu{overflow:visible!important;max-height:none!important;min-width:240px}
-.shopping-category-toggle{position:relative;display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;border:0;background:transparent;padding:12px 16px;text-align:left;font-family:inherit;font-size:14px;font-weight:700;line-height:1.3;color:inherit;cursor:pointer;border-radius:6px}
+.shopping-branch{position:relative}.shopping-category-toggle{position:relative;display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;border:0;background:transparent;padding:12px 16px;text-align:left;font-family:inherit;font-size:14px;font-weight:700;line-height:1.3;color:inherit;cursor:pointer;border-radius:6px}
 .shopping-category-toggle:hover,.shopping-category-toggle:focus-visible,.shopping-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}
 .shopping-category-toggle.shopping-empty{padding-left:32px}.shopping-category-toggle.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;background:#d71920;border-radius:50%}
 .shopping-submenu{position:absolute;left:calc(100% - 10px);top:0;width:290px;max-width:calc(100vw - 24px);max-height:var(--shopping-submenu-height,65vh);overflow-y:auto;background:#fff;border:1px solid #dfe5ea;border-radius:8px;padding:8px;box-shadow:0 14px 36px #1423321f;z-index:110}
 .shopping-flyout-left .shopping-submenu{left:auto;right:calc(100% - 10px)}
 .shopping-submenu a{white-space:normal!important;line-height:1.4}
-@media(max-width:900px),(hover:none){#shopping-menu,#mobile-shopping-menu{overflow-y:auto!important;overflow-x:hidden!important;max-height:65vh!important;min-width:0}.shopping-submenu,.shopping-flyout-left .shopping-submenu{position:static;width:auto;max-width:none;max-height:none;overflow:visible;margin:0 4px 8px 14px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none;padding:0 0 0 6px}.shopping-category-toggle{min-height:44px}.shopping-category-toggle[aria-expanded="true"] .shopping-submenu-arrow{transform:rotate(90deg)}}`;
+@media(max-width:900px),(hover:none){#shopping-menu,#mobile-shopping-menu,#labor-menu,#mobile-labor-menu{overflow-y:auto!important;overflow-x:hidden!important;max-height:65vh!important;min-width:0}.shopping-submenu,.shopping-flyout-left .shopping-submenu{position:static;width:auto;max-width:none;max-height:none;overflow:visible;margin:0 4px 8px 14px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none;padding:0 0 0 6px}.shopping-category-toggle{min-height:44px}.shopping-category-toggle[aria-expanded="true"] .shopping-submenu-arrow{transform:rotate(90deg)}}`;
   document.head.append(style);
   window.searchProjects=function(e){e.preventDefault();const term=e.target.querySelector('input').value.trim().toLowerCase(),grid=document.getElementById('projects');if(!grid){location.href='/?search='+encodeURIComponent(term)+'#projects';return false;}grid.querySelectorAll('.tile').forEach(t=>t.hidden=!t.textContent.toLowerCase().includes(term));grid.scrollIntoView({behavior:'smooth'});return false;};
   function connect(){
@@ -56,18 +56,24 @@
     if(wrapper.dataset.shoppingHoverBound)return;
     wrapper.dataset.shoppingHoverBound='true';
     let closeTimer;
-    menu.addEventListener('mouseenter',()=>{
+    // Opening from the top navigation label must not require a click.
+    wrapper.addEventListener('mouseenter',()=>{
       if(!hoverMenus())return;
       clearTimeout(closeTimer);
+      document.querySelectorAll('.nav-menu.open').forEach(other=>{
+        if(other===wrapper)return;
+        other.classList.remove('open');
+        other.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','false');
+        other.querySelectorAll(':scope > .nav-dropdown > .shopping-branch').forEach(branch=>openShoppingBranch(branch,false));
+      });
       wrapper.classList.add('open');
       wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','true');
     });
-    wrapper.addEventListener('mouseenter',()=>clearTimeout(closeTimer));
     wrapper.addEventListener('mouseleave',()=>{
       if(!hoverMenus())return;
       clearTimeout(closeTimer);
       closeTimer=setTimeout(()=>{
-        if(wrapper.matches(':hover')||wrapper.contains(document.activeElement))return;
+        if(wrapper.matches(':hover'))return;
         for(const branch of menu.querySelectorAll(':scope > .shopping-branch'))openShoppingBranch(branch,false);
         wrapper.classList.remove('open');
         wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','false');
@@ -123,21 +129,40 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       menu.dataset.unifiedShopping=state;
     });
   }
-  function syncLaborAppliances(){
-    if(!window.APPLIANCE_LABOR_GROUPS)return;
+  // Menu groups link to existing expandable labor sections; installation.html
+  // supplies the current catalog, while all other pages use matching group IDs.
+  const laborNavFallback=[{"id":"appliances","label":"Appliances","groups":[]},{"id":"bathroom","label":"Bathroom","groups":[{"id":"toilet","label":"Toilets"},{"id":"faucet","label":"Faucets"},{"id":"sink","label":"Sinks"},{"id":"vanity","label":"Vanities"},{"id":"vanity-lights","label":"Vanity Lights"},{"id":"tub","label":"Bathtubs"},{"id":"shower","label":"Walk-in Showers"},{"id":"glass","label":"Shower Doors"},{"id":"fan","label":"Vent Fans"},{"id":"accessory","label":"Mirrors & Accessories"},{"id":"bath-tile","label":"Tile & Grout"},{"id":"bath-surfaces","label":"Walls & Ceilings"}]},{"id":"cabinets","label":"Cabinets & Vanities","groups":[{"id":"cabinet","label":"Cabinet Installation & Removal"},{"id":"refinishing","label":"Cabinet Refinishing"},{"id":"hardware","label":"Hardware"},{"id":"cabinet-adjustment","label":"Cabinet Adjustment"},{"id":"approved-cabinet-additions","label":"Trim & Preparation"}]},{"id":"carpentry","label":"Carpentry & Trim","groups":[{"id":"stairs","label":"Stairs & Railings"},{"id":"custom","label":"Custom Carpentry"},{"id":"carpentry-reviewed","label":"Carpentry & Trim Services"}]},{"id":"doors","label":"Doors & Windows","groups":[{"id":"doors-reviewed","label":"Doors & Windows"}]},{"id":"drywall","label":"Drywall & Texture","groups":[{"id":"drywall-reviewed","label":"Drywall Services"},{"id":"drywall-sheet-work","label":"Drywall Installation & Removal"},{"id":"drywall-packages","label":"Drywall Room Packages"},{"id":"ceiling-drywall","label":"Ceiling Drywall"},{"id":"ceiling-patches","label":"Ceiling Repairs"},{"id":"wall-ceiling-packages","label":"Walls & Ceiling Packages"}]},{"id":"electrical","label":"Electrical & Smart Home","groups":[{"id":"electrical-reviewed","label":"Electrical & Smart Home"}]},{"id":"exterior","label":"Exterior & Outdoor","groups":[{"id":"siding","label":"Siding"},{"id":"deck","label":"Decks & Steps"},{"id":"concrete","label":"Concrete"},{"id":"insulation","label":"Insulation"}]},{"id":"flooring","label":"Flooring & Tile","groups":[{"id":"flooring-calc","label":"Flooring Installation"},{"id":"floor-repair","label":"Flooring Repairs"},{"id":"grout","label":"Grout & Caulk"}]},{"id":"kitchen","label":"Kitchens & Countertops","groups":[{"id":"kitchen-plumbing","label":"Kitchen Sinks & Plumbing"},{"id":"kitchen-surfaces","label":"Countertops & Backsplash"}]},{"id":"other","label":"Other Labor & Delivery","groups":[{"id":"misc","label":"Miscellaneous Labor"},{"id":"assembly","label":"Furniture Assembly"},{"id":"delivery","label":"Delivery & Debris"},{"id":"approved-support","label":"Delivery, Placement & Demolition"}]},{"id":"paint","label":"Painting & Wallpaper","groups":[{"id":"painting","label":"Painting"},{"id":"wallpaper","label":"Wallpaper"},{"id":"door-finish","label":"Door Painting & Staining"},{"id":"paint-room-prices","label":"Room Painting"},{"id":"ceiling-room-paint","label":"Ceiling Painting"}]}];
+  function syncLaborMenus(){
     document.querySelectorAll('#labor-menu,#mobile-labor-menu').forEach(menu=>{
-      if(menu.dataset.applianceSubmenu)return;
-      const original=menu.querySelector('a[href="/installation.html#labor-category-appliances"]');if(!original)return;
+      if(menu.dataset.unifiedLabor==='labor-all-v1')return;
       bindShoppingHover(menu);
-      const branch=document.createElement('div');branch.className='shopping-branch';
-      const button=document.createElement('button');button.type='button';button.className='shopping-category-toggle';button.textContent='Appliances';
-      const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');arrow.className='shopping-submenu-arrow';button.append(arrow);
-      const submenu=document.createElement('nav');submenu.className='shopping-submenu';submenu.id=menu.id+'-appliances';submenu.hidden=true;submenu.setAttribute('aria-label','Appliance installation and labor');
-      button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
-      for(const group of window.APPLIANCE_LABOR_GROUPS.slice().sort((a,b)=>a.label.localeCompare(b.label))){
-        const link=document.createElement('a');link.textContent=group.label;link.href='/installation.html?appliance='+encodeURIComponent(group.id)+'#labor-category-appliances';submenu.append(link);
+      const categories=window.LABOR_CATALOG||laborNavFallback;
+      menu.replaceChildren();
+      const all=document.createElement('a');all.href='/installation.html';all.textContent='All Installation & Labor';menu.append(all);
+      for(const category of categories.slice().sort((a,b)=>a.label.localeCompare(b.label))){
+        const branch=document.createElement('div');branch.className='shopping-branch';
+        const button=document.createElement('button');button.type='button';button.className='shopping-category-toggle';
+        button.append(document.createTextNode(category.label));
+        const arrow=document.createElement('span');arrow.className='shopping-submenu-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');button.append(arrow);
+        const submenu=document.createElement('nav');submenu.id=menu.id+'-'+category.id;submenu.className='shopping-submenu';submenu.hidden=true;submenu.setAttribute('aria-label',category.label+' labor options');
+        button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
+        const main='/installation.html#labor-category-'+category.id;
+        const allCategory=document.createElement('a');allCategory.href=main;allCategory.textContent='All '+category.label;submenu.append(allCategory);
+        const groups=category.id==='appliances'&&window.APPLIANCE_LABOR_GROUPS
+          ? window.APPLIANCE_LABOR_GROUPS.map(g=>({id:g.id,label:g.label}))
+          : category.groups||[];
+        if(groups.length>1||category.id==='appliances'){
+          for(const group of groups.slice().sort((a,b)=>a.label.localeCompare(b.label))){
+            const link=document.createElement('a');link.textContent=group.label;
+            link.href=category.id==='appliances'
+              ? '/installation.html?appliance='+encodeURIComponent(group.id)+'#labor-category-appliances'
+              : '/installation.html#labor-group-'+category.id+'-'+group.id;
+            submenu.append(link);
+          }
+        }
+        branch.append(button,submenu);menu.append(branch);bindCategoryBranch(branch);
       }
-      branch.append(button,submenu);original.replaceWith(branch);bindCategoryBranch(branch);menu.dataset.applianceSubmenu='true';
+      menu.dataset.unifiedLabor='labor-all-v1';
     });
   }
   function tileListingCount(tile){
@@ -193,8 +218,8 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       }
     });
   }
-  syncShoppingMenu();syncLaborAppliances();syncTileAvailability();connectSearchForms();
-  document.addEventListener('DOMContentLoaded',()=>{syncShoppingMenu();syncLaborAppliances();syncTileAvailability();connectSearchForms();});
-  new MutationObserver(()=>{syncShoppingMenu();syncLaborAppliances();syncTileAvailability();connectSearchForms();}).observe(document.body,{childList:true,subtree:true});
+  syncShoppingMenu();syncLaborMenus();document.querySelectorAll('#projects-menu,#mobile-projects-menu').forEach(bindShoppingHover);syncTileAvailability();connectSearchForms();
+  document.addEventListener('DOMContentLoaded',()=>{syncShoppingMenu();syncLaborMenus();document.querySelectorAll('#projects-menu,#mobile-projects-menu').forEach(bindShoppingHover);syncTileAvailability();connectSearchForms();});
+  new MutationObserver(()=>{syncShoppingMenu();syncLaborMenus();document.querySelectorAll('#projects-menu,#mobile-projects-menu').forEach(bindShoppingHover);syncTileAvailability();connectSearchForms();}).observe(document.body,{childList:true,subtree:true});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.nav-menu').forEach(m=>{m.classList.remove('open');m.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');});});
 })();
