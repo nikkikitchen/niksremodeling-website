@@ -184,3 +184,41 @@ document.addEventListener('DOMContentLoaded',()=>{
     }));
   }
 });
+
+/* Keep every project option in view on desktop and phones, rather than
+   making the last alphabetized entries appear to be missing. */
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('expanded-projects-menu-style'))return;
+  const style=document.createElement('style');
+  style.id='expanded-projects-menu-style';
+  style.textContent=`
+    @media (min-width:821px){
+      nav.nav .nav-menu:hover > #projects-menu,
+      nav.nav .nav-menu.open > #projects-menu,
+      nav.nav .nav-menu:focus-within > #projects-menu {
+        display:grid !important;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        column-gap:6px;
+        width:min(540px,calc(100vw - 24px)) !important;
+        max-width:calc(100vw - 24px) !important;
+        max-height:min(80vh,700px);
+        overflow-y:auto;
+      }
+    }
+    @media (max-width:820px){
+      nav.nav .mobile-top-nav .nav-menu.open > #mobile-projects-menu {
+        display:grid !important;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        column-gap:4px;
+        max-height:min(75vh,600px) !important;
+        overflow-y:auto !important;
+      }
+      nav.nav .mobile-top-nav #mobile-projects-menu > a {
+        display:flex !important;
+        align-items:center;
+        min-height:38px;
+      }
+    }
+  `;
+  document.head.append(style);
+});

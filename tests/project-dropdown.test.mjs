@@ -25,6 +25,9 @@ test('desktop and mobile Projects dropdowns contain every visible project pictur
   for(const id of ['attic','basement','garage','room-additions','themed-rooms']){
     assert.ok(expected.includes('/project.html?project='+id),id+' must have a picture card');
   }
+  const visibilityStyle=doc.getElementById('expanded-projects-menu-style');
+  assert.ok(visibilityStyle,'Projects menus need the full-height two-column layout');
+  assert.match(visibilityStyle.textContent,/grid-template-columns:repeat\\(2,minmax\\(0,1fr\\)\\)/);
   for(const id of ['projects-menu','mobile-projects-menu']){
     const menu=doc.getElementById(id);
     assert.ok(menu,id+' is missing');
