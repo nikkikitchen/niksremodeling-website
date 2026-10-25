@@ -1,5 +1,6 @@
-import {retailCatalog} from './retail-catalog.js';
-import {priceCards} from './store-cards.js';
+const assetVersion=new URL(import.meta.url).searchParams.get('v')||'item-preview-20261025';
+const {retailCatalog}=await import('./retail-catalog.js?v='+encodeURIComponent(assetVersion));
+const {priceCards}=await import('./store-cards.js?v='+encodeURIComponent(assetVersion));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>(c/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
 export function availableVariants(detail){
@@ -71,7 +72,7 @@ async function detailView(target,id,department){
 }
 export async function mountCatalog(target,{department,material,type}={}){
  if(!document.querySelector('link[href^="/store.css"]')){
-  const css=document.createElement('link');css.rel='stylesheet';css.href='/store.css';document.head.append(css);
+  const css=document.createElement('link');css.rel='stylesheet';css.href='/store.css?v='+encodeURIComponent(assetVersion);document.head.append(css);
  }
  const params=new URLSearchParams(location.search),id=params.get('product'),category=params.get('category');
  target.classList.add('store-card-grid');
