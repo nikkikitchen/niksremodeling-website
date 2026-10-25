@@ -10,14 +10,19 @@ const sandbox={};
 runInNewContext(app.slice(begin,end)+'\nglobalThis.map=SHOP_PICTURE_TILES;globalThis.previews=PRODUCT_CARD_PHOTOS;',sandbox);
 const map=sandbox.map;
 const previews=sandbox.previews;
-test('all shopping guides use distinct approved local pictures',()=>{
+// These supplier photographs are the existing beverage category images.
+const approvedSupplierPhotos=new Set([
+ 'https://cf.cjdropshipping.com/17639424/f6fb41ac-34f8-4679-91f1-389c65fd1385.jpg',
+ 'https://cf.cjdropshipping.com/17639424/08f44f66-17e9-44d3-84a6-ff86a3d4d230.jpg'
+]);
+test('all shopping guides use distinct approved pictures',()=>{
  for(const page of ['materials','furniture','appliances','cabinets','tools','supplies']){
   const paths=Object.values(map[page]||{});
   assert.ok(paths.length>=6,page+' should have photo categories');
   assert.equal(new Set(paths).size,paths.length,page+' has duplicate photos');
   for(const path of paths){
    if(path.startsWith('/assets/'))assert.equal(existsSync(new URL('..'+path,import.meta.url)),true,'Missing '+path);
-   else assert.match(path,/^https:\/\/images\.unsplash\.com\/photo-[^\s]+$/,'Unapproved image host '+path);
+   else if(!approvedSupplierPhotos.has(path))assert.match(path,/^https:\/\/images\.unsplash\.com\/photo-[^\s]+$/,'Unapproved image host '+path);
   }
  }
 });

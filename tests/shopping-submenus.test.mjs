@@ -23,9 +23,15 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
  try{
   for(const id of ['shopping-menu','mobile-shopping-menu']){
    const menu=dom.window.document.getElementById(id);
-   assert.equal(menu.querySelectorAll(':scope > .shopping-branch').length,7);
+   const departments=[...menu.querySelectorAll(':scope > .shopping-branch nav')].map(nav=>nav.getAttribute('aria-label').replace(/ categories$/,''));
+   assert.deepEqual(departments,[
+    'Appliances','Bathroom Fixtures','Cabinets','Doors, Windows & Access',
+    'Electrical, Lighting & Smart Home','Exterior, Decks & Outdoor',
+    'Flooring, Walls & Finishes','Furniture & Accessories','Heating, Ventilation & Audio',
+    'Kitchen & Plumbing','Materials','Tools','Other Ideas'
+   ]);
    const appliance=menu.querySelector('#'+id+'-appliances');
-   assert.deepEqual([...appliance.querySelectorAll('a')].map(a=>a.textContent),['Cords & Connections','Dishwashers','Electric Ranges','Gas Dryers','Gas Ranges','Microwaves & Hoods','Refrigerators','Wall Ovens & Cooktops','Washers & Electric Dryers']);
+   assert.deepEqual([...appliance.querySelectorAll('a')].map(a=>a.textContent),["Beverage Refrigerators", "Beverage Taps", "Built-In Microwaves", "Coffee Systems", "Cords & Connections", "Dishwashers", "Double Wall Ovens", "Dryer Vent Kits", "Electric Cooktops", "Electric Dryers", "Electric Ranges", "Fireplace Inserts", "Garbage Disposals", "Gas Cooktops", "Gas Dryers", "Gas Ranges", "Kegerators", "Microwave/Oven Combinations", "Microwaves & Hoods", "Over-Range Microwaves", "Refrigerators", "Single Wall Ovens", "Stacked Washer & Dryer Sets", "Trash Compactors", "Wall Ovens & Cooktops", "Warming Drawers", "Washers & Electric Dryers"].sort((a,b)=>a.localeCompare(b)));
    assert.match(appliance.querySelector('a[href*="Dishwashers"]').href,/appliances\.html\?category=Dishwashers#catalog-products$/);
    assert.equal(appliance.querySelector('a[href*="Dishwashers"]').classList.contains('shopping-empty'),false);
    assert.equal(appliance.querySelector('a[href*="Gas%20Ranges"]').classList.contains('shopping-empty'),true);
