@@ -227,7 +227,7 @@ function buildProjectDropdowns(){
      const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>p.customGroup).map(([child])=>child);
      for(const child of childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title)))
        choices.push([PROJECT_CATALOG[child].title,projectLink(child)]);
-     choices.push(['Other Custom Ideas',projectLink('custom','customWork=1')]);
+     choices.push(['Other Ideas',projectLink('custom','customWork=1')]);
    }else if(id==='room-additions'){
      for(const name of ['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'])
        choices.push([name,projectLink(id,'additionType='+encodeURIComponent(name))]);
@@ -266,7 +266,6 @@ function buildProjectDropdowns(){
  for(const menu of menus){
    menu.classList.add('projects-mega');menu.replaceChildren();
    const link=(label,url)=>{const a=document.createElement('a');a.href=url;a.textContent=label;return a};
-   menu.append(link('All Projects','/#projects'));
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const button=document.createElement('button');button.type='button';button.className='project-category-toggle';button.setAttribute('aria-expanded','false');
@@ -284,7 +283,6 @@ function buildProjectDropdowns(){
      nav.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close(menu);button.focus()}});
      branch.addEventListener('mouseenter',()=>{if(hover()){if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);menu.closest('.nav-menu')?.classList.add('open')}});
    }
-   menu.append(link('Project Calculator','/calculators.html?from=projects-menu'));
    const wrapper=menu.closest('.nav-menu');let leaveTimer;
    const stay=()=>{clearTimeout(leaveTimer);fit(menu)};
    wrapper?.addEventListener('mouseenter',stay);menu.addEventListener('mouseenter',stay);
