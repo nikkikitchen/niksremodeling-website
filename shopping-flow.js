@@ -43,6 +43,17 @@
   }
   window.INSTALLABLE_SHOP_ITEMS=installableById;
   window.INSTALLABLE_SHOP_GROUPS=installableGroups;
+  const installableExtras={"appliances":[["Beverage Refrigerators","beverage cooler","appliances"],["Built-In Microwaves","built in microwave","appliances"],["Double Wall Ovens","double wall oven","appliances"],["Dryer Vent Kits","dryer vent duct","materials"],["Electric Cooktops","electric cooktop","appliances"],["Electric Dryers","electric dryer","appliances"],["Fireplace Inserts","electric fireplace insert","appliances"],["Garbage Disposals","garbage disposal","appliances"],["Gas Cooktops","gas cooktop","appliances"],["Microwave/Oven Combinations","microwave oven combo","appliances"],["Over-Range Microwaves","over range microwave","appliances"],["Single Wall Ovens","single wall oven","appliances"],["Stacked Washer & Dryer Sets","stackable washer dryer","appliances"],["Trash Compactors","trash compactor","appliances"],["Warming Drawers","warming drawer","appliances"]],"cabinets":[["Cabinet End Panels","cabinet end panel","materials"],["Cabinet Filler Strips","cabinet filler strip","materials"],["Cabinet Toe Kicks","cabinet toe kick","materials"],["Cabinet Crown Molding","cabinet crown molding","materials"]],"bathroom":[["Round Toilets",null,null,"/bathroom.html?type=toilets&model=round"],["Elongated & Comfort Height Toilets",null,null,"/bathroom.html?type=toilets&model=elongated"],["Smart Toilets",null,null,"/bathroom.html?type=toilets&model=smart"],["Wall-Hung & Specialty Toilets",null,null,"/bathroom.html?type=toilets&model=specialty"],["Shower Faucets & Mixing Valves","shower mixing valve","materials"],["Toilet Tank Repair Parts","toilet fill flush valve","materials"]]};
+  const extraMenuLinks={};
+  for(const [department,items]of Object.entries(installableExtras)){
+    extraMenuLinks[department]=items.map(([name,keyword,retailDepartment,direct])=>{
+      if(direct)return [name,direct];
+      const key=department+'-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');
+      installableById[key]={name,keyword,department:retailDepartment,group:department};
+      return [name,'/shop-installed.html?item='+encodeURIComponent(key)];
+    });
+  }
+
   const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/project.html?project=custom':'custom'};
   let listedCounts=null, furnitureListings=[], retailListings=[], furnitureCategoryMatch=null, furnitureCategories={};
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
@@ -62,10 +73,10 @@
     if(installedMenuChoices[department])return installedMenuChoices[department];
     const page=departmentByPath[department];
     if(page==='furniture')return Object.entries(furnitureCategories).map(([key,name])=>[name,'/furniture.html?category='+encodeURIComponent(key)]);
-    if(page==='bathroom')return [['toilets','Toilets'],['bathtubs','Bathtubs'],['vanities','Vanities & Sinks'],['showers','Stand-up Showers'],['showerBases','Shower Pans & Bases'],['showerDoors','Shower Doors'],['faucets','Bathroom Faucets'],['lighting','Bathroom Lighting'],['ventilation','Ventilation & Fans'],['accessories','Mirrors & Accessories']].map(([key,name])=>[name,'/bathroom.html?type='+key]);
+    if(page==='bathroom')return [['toilets','Toilets'],['bathtubs','Bathtubs'],['vanities','Vanities & Sinks'],['showers','Stand-up Showers'],['showerBases','Shower Pans & Bases'],['showerDoors','Shower Doors'],['faucets','Bathroom Faucets'],['lighting','Bathroom Lighting'],['ventilation','Ventilation & Fans'],['accessories','Mirrors & Accessories']].map(([key,name])=>[name,'/bathroom.html?type='+key]).concat(extraMenuLinks.bathroom);
     if(page==='materials'&&typeof MATERIAL_DETAIL_PAGES!=='undefined')return Object.entries(MATERIAL_DETAIL_PAGES).map(([key,p])=>[p.title,'/material-'+key+'.html']);
     if(page==='custom'&&typeof PROJECT_CATALOG!=='undefined')return Object.entries(PROJECT_CATALOG).filter(([key,p])=>p.customGroup).map(([key,p])=>[p.title,'/project.html?project='+key]);
-    if(typeof SHOP_GUIDES!=='undefined')return (SHOP_GUIDES[page]||[]).map(([name])=>[name,department+'?category='+encodeURIComponent(name)+'#catalog-products']);
+    if(typeof SHOP_GUIDES!=='undefined')return (SHOP_GUIDES[page]||[]).map(([name])=>[name,department+'?category='+encodeURIComponent(name)+'#catalog-products']).concat(extraMenuLinks[page]||[]);
     return [];
   }
   const hoverMenus=()=>Boolean(window.matchMedia?.('(hover: hover) and (pointer: fine)').matches);
