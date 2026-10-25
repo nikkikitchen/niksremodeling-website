@@ -12,7 +12,7 @@ test('Shopping includes every installed trade group and individual equipment cho
  const expected=['Doors, Windows & Access','Electrical, Lighting & Smart Home','Exterior, Decks & Outdoor',
   'Flooring, Walls & Finishes','Heating, Ventilation & Audio','Kitchen & Plumbing'];
  for(const title of expected)assert.ok(groups[title]?.length>=8,title);
- assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0),72);
+ assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0),69,'Only physical shippable product categories belong in Shopping');
  assert.equal(Object.values(extras).reduce((n,v)=>n+v.length,0),25);
  assert.ok(source.includes('window.INSTALLABLE_SHOP_ITEMS=installableById'));
  assert.ok(source.includes('if(installedMenuChoices[department])return installedMenuChoices[department]'));
@@ -32,7 +32,7 @@ test('every new installation shopping link resolves to its own product search de
   assert.ok(keyword?.trim());
   assert.ok(['materials','appliances'].includes(target));
  }
- assert.equal(ids.size,93);
+ assert.equal(ids.size,Object.values(groups).reduce((n,v)=>n+v.length,0)+Object.values(extras).reduce((n,v)=>n+v.filter(item=>!item[3]).length,0),'Every shippable entry has a unique destination');
 });
 test('Cloudflare build publishes the new paths and listing refuses unknown stock',()=>{
  const build=readFileSync('scripts/build.mjs','utf8');
