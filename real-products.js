@@ -37,12 +37,17 @@ function card(p,current=false){
 }
 async function detailView(target,id,department){
  const saved=retailCatalog.find(p=>p.id===id&&p.department===department);
- target.innerHTML='<p role="status">Checking this item’s current price and availability…</p>';
+ const pageTitle=document.getElementById('retail-page-title');
+ const setTitle=name=>{document.title=name+" | Nik's Remodeling";if(pageTitle)pageTitle.textContent=name;};
+ const preview=message=>saved?`<article class="store-product"><img src="${esc(saved.image)}" alt="${esc(saved.name)}"><div>${pageTitle?'':'<h2>'+esc(saved.name)+'</h2>'}<p class="price">Last checked price: from ${money(saved.priceCents)}</p><p>Price checked ${esc(saved.priceCheckedAt)}. Shipping, tax and installation extra.</p><p role="status">${message}</p></div></article>`:`<p role="status">${message}</p>`;
+ if(saved)setTitle(saved.name);
+ target.innerHTML=preview('Checking this item’s current price and availability…');
  try{
   const r=await fetch('/api/store-product?product='+encodeURIComponent(id));const data=await r.json();
   const variants=availableVariants(data);if(!r.ok||!variants.length)throw Error('Unavailable');
   const name=saved?.name||data.name;
-  target.innerHTML=`<article class="store-product"><img id="retail-photo" src="${esc(variants[0].image||data.image)}" alt="${esc(name)}"><div><h2>${esc(name)}</h2><label for="retail-option">Available option</label><select id="retail-option">${variants.map(v=>`<option value="${esc(v.id)}">${esc(v.name||v.sku)}</option>`).join('')}</select><p id="retail-price" class="price"></p><p id="retail-sku"></p><p>Product only. Shipping, tax and installation are extra. U.S. warehouse stock checked.</p><button type="button" id="retail-add" class="btn primary">Add to Cart</button><p id="retail-status" role="status"></p><form id="retail-delivery"><label>Delivery ZIP <input id="retail-zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required></label><button class="btn outline">Check delivery</button></form><p id="retail-quote" role="status"></p><p>Online payment is not yet available. Nothing is charged from this page.</p><a class="btn outline" href="/${department==='tools'?'products':department}.html">Keep shopping</a></div></article>`;
+  setTitle(name);
+  target.innerHTML=`<article class="store-product"><img id="retail-photo" src="${esc(variants[0].image||data.image)}" alt="${esc(name)}"><div>${pageTitle?'':'<h2>'+esc(name)+'</h2>'}<label for="retail-option">Available option</label><select id="retail-option">${variants.map(v=>`<option value="${esc(v.id)}">${esc(v.name||v.sku)}</option>`).join('')}</select><p id="retail-price" class="price"></p><p id="retail-sku"></p><p>Product only. Shipping, tax and installation are extra. U.S. warehouse stock checked.</p><button type="button" id="retail-add" class="btn primary">Add to Cart</button><p id="retail-status" role="status"></p><form id="retail-delivery"><label>Delivery ZIP <input id="retail-zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required></label><button class="btn outline">Check delivery</button></form><p id="retail-quote" role="status"></p><p>Online payment is not yet available. Nothing is charged from this page.</p><a class="btn outline" href="/${department==='tools'?'products':department}.html">Keep shopping</a></div></article>`;
   const $=id=>target.querySelector('#'+id),chosen=()=>variants.find(v=>String(v.id)===$('retail-option').value);
   const update=()=>{const v=chosen();$('retail-price').textContent=money(v.priceCents);$('retail-sku').textContent='Supplier SKU: '+v.sku;$('retail-photo').src=v.image||data.image;$('retail-status').textContent='';$('retail-quote').textContent='';};
   update();$('retail-option').addEventListener('change',update);
@@ -60,7 +65,8 @@ async function detailView(target,id,department){
    try{const qs=new URLSearchParams({product:id,variant:chosen().id,zip:$('retail-zip').value});const r=await fetch('/api/store-quote?'+qs);const q=await r.json();if(version!==quoteVersion)return;if(!r.ok)throw Error(q.error||'Delivery could not be confirmed.');$('retail-quote').textContent='Item '+money(q.productCents)+' + delivery '+money(q.deliveryCents)+' = '+money(q.subtotalCents)+' before tax.';}catch(e){if(version===quoteVersion)$('retail-quote').textContent=e.message;}
   });
  }catch{
-  target.innerHTML=`<p class="empty">Current availability could not be confirmed.${saved?' Last checked price: from '+money(saved.priceCents)+' ('+esc(saved.priceCheckedAt)+').':''} Please check back.</p>`;
+  target.innerHTML=preview('Current availability could not be confirmed. Please retry before adding this item to your cart.')+'<button type="button" class="btn outline" id="retail-retry">Retry availability</button>';
+  target.querySelector('#retail-retry').addEventListener('click',()=>detailView(target,id,department));
  }
 }
 export async function mountCatalog(target,{department,material,type}={}){
@@ -69,7 +75,7 @@ export async function mountCatalog(target,{department,material,type}={}){
  }
  const params=new URLSearchParams(location.search),id=params.get('product'),category=params.get('category');
  target.classList.add('store-card-grid');
- if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');return detailView(target,id,department);}
+ if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
  const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material));
  const seen=new Set(saved.map(p=>p.id)),names=new Set(saved.map(p=>p.name.toLowerCase())),images=new Set(saved.map(p=>p.image));
  target.innerHTML=saved.map(p=>card(p)).join('')||'<p class="empty" role="status">Checking available products…</p>';

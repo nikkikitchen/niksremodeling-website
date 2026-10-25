@@ -27,3 +27,15 @@ for(const page of ['appliances','cabinets','tools'])test(page+' category cards o
   dom.window.close();
  }
 });
+
+for(const page of ['appliances','cabinets','tools'])test(page+' product links open a dedicated preview instead of the category introduction',async()=>{
+ const dom=await open(page,'?product=1997962863887962114');
+ try{
+  const doc=dom.window.document;
+  assert.equal(doc.querySelector('.category-hero'),null);
+  assert.equal(doc.querySelector('.shop-guide'),null);
+  assert.ok(doc.querySelector('#retail-page-title'));
+  assert.equal(doc.querySelector('main nav a').getAttribute('href'),'/'+(page==='tools'?'products':page)+'.html');
+  assert.ok(doc.querySelector('main .products'));
+ }finally{dom.window.close();}
+});

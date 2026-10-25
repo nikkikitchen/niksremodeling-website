@@ -58,6 +58,26 @@ test('a supplier failure cannot turn a dated listing into an addable product',as
  }finally{Object.assign(globalThis,old);dom.window.close();}
 });
 
+test('saved item previews remain visible while stock loads and after a failed check',async()=>{
+ const old={fetch:globalThis.fetch,document:globalThis.document,location:globalThis.location};
+ const item=retailCatalog.find(p=>p.department==='appliances');
+ const dom=new JSDOM('<head></head><h1 id="retail-page-title">Item preview</h1><main></main>',{url:'https://niksremodeling.com/appliances?product='+item.id});
+ globalThis.document=dom.window.document;globalThis.location=dom.window.location;
+ let finishCheck;globalThis.fetch=()=>new Promise(resolve=>{finishCheck=resolve;});
+ try{
+  const target=document.querySelector('main'),pending=mountCatalog(target,{department:'appliances'});
+  assert.equal(document.getElementById('retail-page-title').textContent,item.name);
+  assert.equal(target.querySelector('img').getAttribute('src'),item.image);
+  assert.match(target.textContent,/Checking this item/);
+  assert.equal(document.getElementById('retail-add'),null);
+  finishCheck(Response.json({error:'Unavailable'},{status:503}));await pending;
+  assert.equal(target.querySelector('img').getAttribute('src'),item.image);
+  assert.match(target.textContent,/Last checked price/);
+  assert.ok(document.getElementById('retail-retry'));
+  assert.equal(document.getElementById('retail-add'),null);
+ }finally{Object.assign(globalThis,old);dom.window.close();}
+});
+
 test('category searches omit overseas inventory and unrelated sample-like results',async()=>{
  const old={fetch:globalThis.fetch,document:globalThis.document,location:globalThis.location};
  const dom=new JSDOM('<head></head><main></main>',{url:'https://niksremodeling.com/products.html?category=Drills%20%26%20Impacts'});

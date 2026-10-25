@@ -7,3 +7,5 @@
 .store-card[hidden]{display:none!important}
 #store-more{margin:20px 0 28px}
 #us-load-status{margin:14px 0;font-size:14px}
+
+.products.retail-item-preview{display:block}
