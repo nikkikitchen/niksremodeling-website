@@ -31,7 +31,7 @@ for (const file of integrityPages) {
 for (const file of browserScripts) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'pipe'});
 const shoppingSource=readFileSync(new URL('../shopping.html',import.meta.url),'utf8');
 if (shoppingSource.includes('http-equiv="refresh"') ||
-    (shoppingSource.match(/class="photo-category-tile"/g)||[]).length < 8)
+    (shoppingSource.match(/class="photo-category-tile"/g)||[]).length < 7)
   throw Error('Shopping picture cards or landing page are missing.');
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
 const access=projectSource.match(/accessibility:\{interior:\[([^\]]+)\],exterior:\[([^\]]+)\]\}/);

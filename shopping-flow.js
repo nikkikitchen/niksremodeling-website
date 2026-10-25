@@ -15,8 +15,8 @@
 
   // Every page (including catalog pages with late-rendered headers) gets one
   // compact Shopping menu. All links go to the same project and product routes.
-  const links=[["Browse Shopping","/shopping.html"],["Search Products","/product-search.html"],["Shop by Project","/#projects"],["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Tools","/products.html"]];
-  const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools'};
+  const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Other Ideas","/project.html?project=custom"],["Tools","/products.html"]];
+  const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/project.html?project=custom':'custom'};
   let listedCounts=null;
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
   Promise.all([
@@ -31,7 +31,7 @@
   }).catch(()=>{});
   function syncShoppingMenu(){
     document.querySelectorAll('#shopping-menu, #mobile-shopping-menu').forEach(menu=>{
-      const state='category-links-v3-'+Boolean(listedCounts);
+      const state='category-links-v4-'+Boolean(listedCounts);
       if(menu.dataset.unifiedShopping===state)return;
       menu.replaceChildren();
       for(const [label,url] of links){
