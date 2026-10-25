@@ -5,6 +5,15 @@ import {JSDOM} from 'jsdom';
 
 const root=new URL('../',import.meta.url);
 const source=path=>readFileSync(new URL(path,root),'utf8');
+const approved=[
+  ['accessibility','Disability Updates'],['attic','Attic'],['basement','Basement'],
+  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedrooms'],
+  ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
+  ['garage','Garage'],['kitchen-pantry','Kitchens'],
+  ['laundry-utility','Laundry & Utility'],['living-family-room','Living & Family Room'],
+  ['custom','More Ideas'],['concrete','Outdoor Projects'],
+  ['room-additions','Room Additions'],['themed-rooms','Themed Rooms']
+];
 
 async function load(){
   const dom=new JSDOM(source('index.html'),{
@@ -15,45 +24,61 @@ async function load(){
     const script=dom.window.document.createElement('script');
     script.textContent=source(file);dom.window.document.body.append(script);
   }
-  await new Promise(resolve=>setTimeout(resolve,80));
+  await new Promise(resolve=>setTimeout(resolve,90));
   return dom;
 }
 
-test('desktop and mobile Projects menus share all catalog destinations, including nested specialties',async()=>{
+test('Homepage tiles and both Projects dropdowns match the exact fifteen approved projects',async()=>{
   const dom=await load();
   try{
     const doc=dom.window.document;
-    const tiles=[...doc.querySelectorAll('#projects .project-grid > a.tile[href^="/project.html?project="]')];
-    const visible=new Set(tiles.map(card=>card.getAttribute('href')));
-    assert.ok(visible.size>=15);
-    const expected=dom.window.eval('Object.keys(PROJECT_CATALOG).map(id=>"/project.html?project="+encodeURIComponent(id))');
-    // Object.keys includes only intentional, non-legacy project destinations.
-    assert.ok(expected.length>visible.size,'Specialty projects should appear inside nested menus');
-    for(const id of ['attic','basement','garage','room-additions','themed-rooms','kids-room','pet-room','playground','outdoor-kitchen','mechanic-shop','car-wash','accessibility']){
-      assert.ok(expected.includes('/project.html?project='+id),'Missing '+id+' in catalog');
-    }
-    assert.ok(doc.getElementById('expanded-projects-menu-style')?.textContent.includes('overflow-y:auto'));
+    const cards=[...doc.querySelectorAll('#projects .project-grid > a.tile')];
+    assert.equal(cards.length,15,'There must only be 15 main project picture cards');
+    const cardIds=cards.map(a=>new URL(a.href).searchParams.get('project'));
+    assert.deepEqual(cardIds,approved.map(([id])=>id),'Homepage picture cards not in approved order');
+    assert.deepEqual(cards.map(a=>a.querySelector('span')?.childNodes[0]?.textContent.trim()),approved.map(([,label])=>label));
     for(const id of ['projects-menu','mobile-projects-menu']){
       const menu=doc.getElementById(id);
-      assert.ok(menu?.classList.contains('projects-mega'),id+' must use shared menu builder');
+      assert.ok(menu?.classList.contains('projects-mega'),id+' is missing');
       const branches=[...menu.querySelectorAll(':scope > .project-branch')];
-      assert.deepEqual(branches.map(b=>b.querySelector('button').textContent.replace('›','').trim()),[
-        'Rooms & Projects','Themed Rooms','Outdoor Projects','More Ideas & Finishes'
-      ]);
-      const links=[...menu.querySelectorAll('a[href^="/project.html?project="]')].map(a=>a.getAttribute('href'));
-      assert.deepEqual([...links].sort(),[...expected].sort(),id+' is missing published projects');
-      assert.equal(links.length,new Set(links).size,id+' contains duplicate project links');
-      assert.ok([...visible].every(href=>links.includes(href)),id+' misses a homepage card');
-      assert.ok(menu.querySelector('a[href="/#projects"]'),'All Projects link must remain');
-      assert.ok(menu.querySelector('a[href="/calculators.html?from=projects-menu"]'),'Calculator link must remain');
+      assert.equal(branches.length,15,id+' has unwanted top-level categories');
+      assert.deepEqual(branches.map(b=>[b.dataset.project,b.querySelector('button > span').textContent]),approved,id+' main list differs');
+      assert.equal(menu.querySelectorAll(':scope > a').length,0,'No extra first-level links allowed');
+      for(const branch of branches){
+        const options=[...branch.querySelectorAll('.project-submenu a')];
+        assert.ok(options.length>=2,'Every project needs relevant choices: '+branch.dataset.project);
+        assert.ok(options[0].href.includes('project='+branch.dataset.project),'The first option must browse that project');
+        assert.equal(new Set(options.map(a=>a.href)).size,options.length,'Duplicate submenu destination for '+branch.dataset.project);
+      }
     }
   }finally{dom.window.close()}
 });
 
-test('Projects sections expand on tap or hover, close siblings and fit the viewport',async()=>{
+test('Themed rooms offer Kids Room, Workout and other actual project destinations',async()=>{
   const dom=await load();
   try{
-    const w=dom.window,menu=w.document.getElementById('mobile-projects-menu');
+    for(const id of ['projects-menu','mobile-projects-menu']){
+      const doc=dom.window.document;
+      const themed=doc.querySelector('#'+id+' .project-branch[data-project="themed-rooms"]');
+      const items=[...themed.querySelectorAll('.project-submenu a')];
+      assert.ok(items.some(a=>a.textContent==="Kids' Room"&&a.href.includes('project=kids-room')));
+      assert.ok(items.some(a=>a.textContent==='Workout / Fitness Room'&&a.href.includes('project=fitness-wellness')));
+      assert.ok(items.some(a=>a.href.includes('project=home-theater')));
+      const outdoor=doc.querySelector('#'+id+' .project-branch[data-project="concrete"]');
+      assert.ok([...outdoor.querySelectorAll('a')].some(a=>a.href.includes('project=playground')));
+      assert.ok([...outdoor.querySelectorAll('a')].some(a=>a.href.includes('project=outdoor-kitchen')));
+      const bath=doc.querySelector('#'+id+' .project-branch[data-project="bathrooms"]');
+      assert.ok([...bath.querySelectorAll('a')].some(a=>a.href.includes('project=bathrooms&work=toilet')));
+      const additions=doc.querySelector('#'+id+' .project-branch[data-project="room-additions"]');
+      assert.ok([...additions.querySelectorAll('a')].some(a=>a.href.includes('additionType=Bedroom%20Addition')));
+    }
+  }finally{dom.window.close()}
+});
+
+test('Dropdowns support mouse hover, phone tap and keyboard without clipped menu height',async()=>{
+  const dom=await load();
+  try{
+    const w=dom.window,doc=w.document,menu=doc.getElementById('mobile-projects-menu');
     const buttons=[...menu.querySelectorAll('.project-category-toggle')];
     buttons[0].click();
     assert.equal(buttons[0].getAttribute('aria-expanded'),'true');
@@ -64,8 +89,9 @@ test('Projects sections expand on tap or hover, close siblings and fit the viewp
     buttons[1].click();
     assert.equal(buttons[1].getAttribute('aria-expanded'),'false');
     assert.ok(Number.parseInt(menu.style.getPropertyValue('--project-menu-height'))>0);
-    const desktop=w.document.querySelector('#projects-menu .project-branch');
+    const desktop=doc.querySelector('#projects-menu .project-branch');
     desktop.dispatchEvent(new w.MouseEvent('mouseenter'));
     assert.equal(desktop.querySelector('button').getAttribute('aria-expanded'),'true');
+    assert.match(doc.getElementById('expanded-projects-menu-style').textContent,/overflow-y:auto/);
   }finally{dom.window.close()}
 });
