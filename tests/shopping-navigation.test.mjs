@@ -18,6 +18,7 @@ for(const page of ['appliances','cabinets','tools'])test(page+' category cards o
   const url=new URL(href),category=url.searchParams.get('category');
   const dom=await open(page,url.search),doc=dom.window.document;
   assert.equal(doc.querySelector('h1').textContent,category);
+  assert.equal(doc.body.textContent.includes('No current listings for'),false,'Wait for supplier listing load before declaring the category empty');
   assert.equal(doc.querySelector('.shop-guide'),null,'Do not show the same category picker again');
   assert.equal(doc.querySelector('.category-hero a').getAttribute('href'),'/'+(page==='tools'?'products':page)+'.html');
   const allowed=dom.window.eval('SHOP_GUIDE_CATEGORIES')[page][category];
