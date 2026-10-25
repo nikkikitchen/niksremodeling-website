@@ -45,6 +45,26 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
  }finally{dom.window.close();}
 });
 
+test('red dots also cover installable-product shopping links and empty departments, but not quotes',async()=>{
+ const dom=await open();
+ try{
+  for(const id of ['shopping-menu','mobile-shopping-menu']){
+   const menu=dom.window.document.getElementById(id);
+   const unlisted=menu.querySelector('a[href*="shop-installed.html?item=doors-windows-access-attic-access-ladders"]');
+   assert.ok(unlisted,'Installable-product link must be discoverable');
+   assert.equal(unlisted.classList.contains('shopping-empty'),true,'Unlisted product link missing red dot');
+   const emptyGroup=[...menu.querySelectorAll('.shopping-branch')].find(b=>b.querySelector('button')?.textContent.includes('Doors, Windows & Access'));
+   assert.equal(emptyGroup?.querySelector('button').classList.contains('shopping-empty'),true,'Entirely empty specialty department missing red dot');
+   const quoteGroup=[...menu.querySelectorAll('.shopping-branch')].find(b=>b.querySelector('button')?.textContent.includes('Other Ideas'));
+   assert.equal(quoteGroup?.querySelector('button').classList.contains('shopping-empty'),false,'Project ideas are not empty merchandise');
+   const cabinet=menu.querySelector('a[href*="category=Storage%20Cabinets"]');
+   assert.ok(cabinet&&!cabinet.classList.contains('shopping-empty'),'Populated products must not show a red dot');
+   const material=menu.querySelector('a[href*="/material-flooring.html"]');
+   assert.ok(material?.classList.contains('shopping-empty'),'Unlisted material type must be marked empty');
+  }
+ }finally{dom.window.close()}
+});
+
 test('tap and keyboard open submenus, close siblings, and return focus without navigation',async()=>{
  const dom=await open();
  try{
