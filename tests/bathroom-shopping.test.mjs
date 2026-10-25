@@ -50,6 +50,13 @@ test('supplier cleaning products and bathroom accessories are never misrepresent
  assert.equal(match('Pedestal Sink Bathroom Vanity Cabinet','vanities'),true);
 });
 
+test('built-in self-cleaning nozzle stays categorized as a smart toilet, not a cleanser',()=>{
+ const product='Smart Toilet Bidet Combo With Foot Sensor Open Cover Seat, Self-Cleaning Nozzle, Heated Seat, Auto Flush';
+ assert.equal(match(product,'toilets'),true);
+ assert.equal(match('JAKEHOE Toilet Bowl Cleaning Powder, 150 g','toilets'),false);
+ assert.equal(match('Self-Cleaning Toilet Brush Cleaner','toilets'),false);
+});
+
 test('only priced variants with positive physical U.S. warehouse inventory are shown',()=>{
  assert.equal(verified({inStockUS:true,warehouseCountry:'CN',variants:[{priceCents:10000,usStock:4}]}),null);
  assert.equal(verified({inStockUS:true,warehouseCountry:'US',variants:[{priceCents:10000,usStock:0}]}),null);
@@ -83,7 +90,7 @@ test('featured smart toilet is displayed only with live verified U.S. stock and 
   w.fetch=async url=>({
    ok:true,
    json:async()=>String(url).includes('/api/store-product')
-    ?{id:'2046529401898950658',name:'Smart Toilet Bidet Combo with Heated Seat',
+    ?{id:'2046529401898950658',name:'Smart Toilet Bidet Combo with Self-Cleaning Nozzle and Heated Seat',
       image:'https://example.com/smart-toilet.jpg',warehouseCountry:'US',inStockUS:stock,
       variants:[{id:'us-white',name:'White',priceCents:69471,usStock:stock?25:0}]}
     :{products:[],totalPages:1}

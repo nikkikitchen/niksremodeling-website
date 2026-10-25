@@ -50,7 +50,11 @@ function bathroomMatch(name,type){
  // Conservative fixture classification. Keyword matches alone routinely confuse
  // toilet cleaners, pet bathtubs, shower chairs and vanity mirrors with fixtures.
  if(type==='toilets'){
-  if(/\b(clean(?:er|ing)?|deodor(?:ant|iz(?:er|ing))|tablets?|powder|sprays?|blocks?|rack|storage|shel(?:f|ves)|paper|holder|accessor(?:y|ies)|urinal|pee|bottle|portable|camping|tent|car|travel|potty|brush|plunger|bowl cleaner)\b/i.test(text))return false;
+  // Built-in self-cleaning nozzles are a SMART TOILET feature, not a toilet cleaner.
+  // Keep actual cleansers, additives, portable toilets and accessories excluded.
+  const builtInNozzle=/\bsmart[ -]?toilet\b/.test(text)&&/\bself[ -]?cleaning nozzle\b/.test(text);
+  if(/\bclean(?:er|ing)?\b/.test(text)&&!builtInNozzle)return false;
+  if(/\b(deodor(?:ant|iz(?:er|ing))|tablets?|powder|sprays?|blocks?|rack|storage|shel(?:f|ves)|paper|holder|accessor(?:y|ies)|urinal|pee|bottle|portable|camping|tent|car|travel|potty|brush|plunger)\b/i.test(text))return false;
   return /\b(one[ -]?piece|two[ -]?piece|dual[ -]?flush|single[ -]?flush|flush[ -]?toilet|smart[ -]?toilet|intelligent[ -]?toilet|elongated|round[ -]?front|comfort[ -]?height|ceramic[ -]?toilet|porcelain[ -]?toilet|water[ -]?closet|gravity[ -]?flush|wall[ -]?hung[ -]?toilet|bathroom[ -]?toilet|compact[ -]?toilet)\b/i.test(text);
  }
  if(type==='bathtubs'){
