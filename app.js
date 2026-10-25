@@ -641,7 +641,7 @@ function cartCheckoutSummary(items){
  const supplyEstimate=packagedSupplies+standaloneSupplies+laborCatalogTotal;
  const hasSupplyEstimate=packaged.length>0||standalone.length>0||laborCatalogSupplies.length>0;
  const pendingSupplies=items.some(x=>x.hiddenFromCustomer&&x.pricingPending)||items.some(x=>x.source==='supplier-retail'&&x.suppliesRequested&&!x.installationRequested)||items.some(x=>x.source==='labor-catalog'&&['Labor','Service'].includes(x.type)&&!x.supplyPackage);
- const suppliesLabel=hasSupplyEstimate?money(supplyEstimate)+(pendingSupplies?' + additional supplies to confirm':''):'Price to be confirmed';
+ const suppliesLabel=hasSupplyEstimate?money(supplyEstimate)+(pendingSupplies?' + additional supplies to confirm':''):pendingSupplies?'Price to be confirmed':'Not applicable';
  const payableSubtotal=amount+supplyEstimate;
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Order Summary</h3>
@@ -650,7 +650,8 @@ function cartCheckoutSummary(items){
  <div class="cart-item"><span>Delivery / shipping</span><strong>Calculated before payment</strong></div>
  <div class="cart-item"><span>Sales tax</span><strong>Calculated before payment</strong></div>
  <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
- <div class="cart-item"><span><strong>Purchase subtotal (before shipping/tax)</strong></span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies||!hasSupplyEstimate? " + pending prices":""}</strong></div>\n <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before any payment, we'll confirm the exact supplies amount, delivery fee, tax, availability and total. Your installation supplies are included at the price shown. Should your project require anything beyond the standard installation, we'll discuss the options and pricing with you before proceeding. Supplies already included in a package are not charged twice. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
+ <div class="cart-item"><span><strong>Purchase subtotal (before shipping/tax)</strong></span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies? " + pending prices":""}</strong></div>
+ <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before any payment, we'll confirm the exact supplies amount, delivery fee, tax, availability and total. Your installation supplies are included at the price shown. Should your project require anything beyond the standard installation, we'll discuss the options and pricing with you before proceeding. Supplies already included in a package are not charged twice. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
  </section>`;
 }
 function cartShoppingChoices(items){
