@@ -123,6 +123,11 @@ test('long desktop menus scroll and lower flyouts stay inside the viewport',asyn
   branch.dispatchEvent(new w.MouseEvent('mouseenter'));
   assert.equal(menu.style.getPropertyValue('--shopping-menu-height'),'424px');
   assert.equal(submenu.style.getPropertyValue('--shopping-submenu-top'),'16px');
+  const last=[...menu.querySelectorAll(':scope > .shopping-branch')].at(-1);
+  last.getBoundingClientRect=()=>({top:570});
+  last.dispatchEvent(new w.MouseEvent('mouseenter'));
+  assert.equal(last.querySelector('nav').style.getPropertyValue('--shopping-submenu-top'),'16px');
+  assert.equal(last.querySelector('nav').style.getPropertyValue('--shopping-submenu-height'),'568px');
   assert.equal(submenu.style.getPropertyValue('--shopping-submenu-left'),'520px');
   assert.equal(submenu.style.getPropertyValue('--shopping-submenu-height'),'568px');
   Object.defineProperty(w,'innerHeight',{value:400,configurable:true});
