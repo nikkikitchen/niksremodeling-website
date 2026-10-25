@@ -1,0 +1,373 @@
+[
+  {
+    "id": "approved-appliances-22",
+    "label": "Built-in beverage tap / kegerator installation \u2014 starting at",
+    "price": 350,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Starting price; final price confirmed after viewing."
+  },
+  {
+    "id": "approved-appliances-19",
+    "label": "Built-in coffee system installation",
+    "price": 350,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible opening and necessary electrical and water connections. New connections or cabinet alterations quoted separately.",
+    "startingAt": true
+  },
+  {
+    "id": "approved-appliances-18",
+    "label": "Built-in wine cooler / beverage fridge installation",
+    "price": 150,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing fitting opening and working power outlet. Standard slide-in, leveling and plug-in. Cabinet alterations or new electrical quoted separately.",
+    "startingAt": true
+  },
+  {
+    "id": "approved-appliances-0",
+    "label": "Dishwasher installation",
+    "price": 275,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-6",
+    "label": "Double wall oven installation with existing connections",
+    "price": 575,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-16",
+    "label": "Dryer vent cleaning",
+    "price": 150,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-8",
+    "label": "Electric cooktop installation",
+    "price": 250,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-13",
+    "label": "Electric dryer installation with existing hookups",
+    "price": 175,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-23",
+    "label": "Electric fireplace insert replacement with existing connections",
+    "price": 150,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-3",
+    "label": "Electric range installation",
+    "price": 150,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-9",
+    "label": "Gas cooktop installation",
+    "price": 275,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-14",
+    "label": "Gas dryer installation with existing hookups",
+    "price": 225,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-24",
+    "label": "Gas fireplace insert replacement with existing connections",
+    "price": 175,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-4",
+    "label": "Gas range installation with existing connections",
+    "price": 225,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-7",
+    "label": "Microwave/oven combination installation",
+    "price": 650,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only.",
+    "startingAt": true
+  },
+  {
+    "id": "approved-appliances-15",
+    "label": "New dryer vent installation",
+    "price": 250,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-25",
+    "label": "New electric fireplace insert installation",
+    "price": null,
+    "unit": "each",
+    "status": "pending",
+    "note": "Priced after an in-person assessment."
+  },
+  {
+    "id": "approved-appliances-26",
+    "label": "New gas fireplace insert installation",
+    "price": null,
+    "unit": "each",
+    "status": "pending",
+    "note": "Priced after an in-person assessment."
+  },
+  {
+    "id": "approved-appliances-1",
+    "label": "Over-the-range microwave installation",
+    "price": 275,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-2",
+    "label": "Range hood installation",
+    "price": 150,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-10",
+    "label": "Refrigerator installation with existing water hookup",
+    "price": 225,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-11",
+    "label": "Refrigerator installation with new water line",
+    "price": 350,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-5",
+    "label": "Single wall oven installation with existing connections",
+    "price": 325,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-17",
+    "label": "Stacked washer/dryer installation with existing hookups",
+    "price": 550,
+    "unit": "set",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-20",
+    "label": "Trash compactor installation with ready opening and outlet",
+    "price": 335,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-21",
+    "label": "Warming drawer installation with ready opening and power",
+    "price": 275,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-appliances-12",
+    "label": "Washing machine installation with existing hookups",
+    "price": 175,
+    "unit": "each",
+    "status": "approved",
+    "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
+  },
+  {
+    "id": "approved-haul-15",
+    "label": "Beverage tap / kegerator removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-12",
+    "label": "Coffee system removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-7",
+    "label": "Cooktop removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-0",
+    "label": "Dishwasher removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-10",
+    "label": "Dryer removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-16",
+    "label": "Electric fireplace insert removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-4",
+    "label": "Electric range removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-1",
+    "label": "Garbage disposal removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-17",
+    "label": "Gas fireplace insert removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-5",
+    "label": "Gas range removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-2",
+    "label": "Over-the-range microwave removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-3",
+    "label": "Range hood removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-8",
+    "label": "Refrigerator removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-stacked-haul",
+    "label": "Stacked washer/dryer removal and haul-off",
+    "price": 300,
+    "status": "approved",
+    "unit": "set",
+    "note": "Two appliances at $150 each; removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-13",
+    "label": "Trash compactor removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-6",
+    "label": "Wall oven removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-14",
+    "label": "Warming drawer removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-9",
+    "label": "Washing machine removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  },
+  {
+    "id": "approved-haul-11",
+    "label": "Wine cooler / beverage fridge removal and haul-off",
+    "price": 150,
+    "status": "approved",
+    "unit": "each",
+    "note": "Removal and haul-off included."
+  }
+]

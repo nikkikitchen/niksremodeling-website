@@ -4,7 +4,7 @@
   style.textContent+=`#shopping-menu a.shopping-empty,#mobile-shopping-menu a.shopping-empty{position:relative;padding-left:32px}#shopping-menu a.shopping-empty::before,#mobile-shopping-menu a.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:#d71920}.shopping-availability-note{margin:6px 0 0;padding:12px 15px;border-top:1px solid #ddd;font-size:12px;line-height:1.4;color:#555;white-space:normal}.shopping-availability-note span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
   style.textContent+=`.shopping-tile-empty strong::before,.shopping-tile-empty h3::before{content:"";display:inline-block;width:10px;height:10px;background:#d71920;border-radius:50%;margin-right:8px;vertical-align:middle}.shopping-tile-legend{margin:10px 0 20px;font-size:13px;color:#555}.shopping-tile-legend span{display:inline-block;width:9px;height:9px;background:#d71920;border-radius:50%;margin-right:6px}`;
   style.textContent+=`
-#shopping-menu,#mobile-shopping-menu{overflow:visible!important;max-height:none!important;min-width:240px}
+#shopping-menu,#mobile-shopping-menu,#labor-menu,#mobile-labor-menu{overflow:visible!important;max-height:none!important;min-width:240px}
 .shopping-category-toggle{position:relative;display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;border:0;background:transparent;padding:12px 16px;text-align:left;font-family:inherit;font-size:14px;font-weight:700;line-height:1.3;color:inherit;cursor:pointer;border-radius:6px}
 .shopping-category-toggle:hover,.shopping-category-toggle:focus-visible,.shopping-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}
 .shopping-category-toggle.shopping-empty{padding-left:32px}.shopping-category-toggle.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;background:#d71920;border-radius:50%}
@@ -90,6 +90,15 @@
     control.classList.add('shopping-empty');control.title='No items listed yet';
     control.setAttribute('aria-label',label+' — no items listed yet');
   }
+  function bindCategoryBranch(branch){
+    const button=branch.querySelector('.shopping-category-toggle'),submenu=branch.querySelector('.shopping-submenu');
+button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&event.detail>0?true:submenu.hidden));
+        branch.addEventListener('mouseenter',()=>{if(hoverMenus())openShoppingBranch(branch,true);});
+        branch.addEventListener('keydown',event=>{
+          if(['Escape','ArrowLeft'].includes(event.key)&&!submenu.hidden){event.preventDefault();event.stopPropagation();openShoppingBranch(branch,false);button.focus();}
+          else if(event.target===button&&['ArrowRight','ArrowDown'].includes(event.key)){event.preventDefault();openShoppingBranch(branch,true);submenu.querySelector('a')?.focus();}
+        });
+  }
   function syncShoppingMenu(){
     document.querySelectorAll('#shopping-menu, #mobile-shopping-menu').forEach(menu=>{
       const state='nested-shopping-v2-'+Boolean(listedCounts);
@@ -108,15 +117,27 @@
         for(const [name,href] of children){const link=document.createElement('a');link.textContent=name;link.href=href;markEmpty(link,name,tileListingCount(link));submenu.append(link);}
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
         branch.append(button,submenu);menu.append(branch);
-        button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&event.detail>0?true:submenu.hidden));
-        branch.addEventListener('mouseenter',()=>{if(hoverMenus())openShoppingBranch(branch,true);});
-        branch.addEventListener('keydown',event=>{
-          if(['Escape','ArrowLeft'].includes(event.key)&&!submenu.hidden){event.preventDefault();event.stopPropagation();openShoppingBranch(branch,false);button.focus();}
-          else if(event.target===button&&['ArrowRight','ArrowDown'].includes(event.key)){event.preventDefault();openShoppingBranch(branch,true);submenu.querySelector('a')?.focus();}
-        });
+        bindCategoryBranch(branch);
       }
       const note=document.createElement('p');note.className='shopping-availability-note';note.innerHTML='<span aria-hidden="true"></span>Red dot = No items listed yet.';menu.append(note);
       menu.dataset.unifiedShopping=state;
+    });
+  }
+  function syncLaborAppliances(){
+    if(!window.APPLIANCE_LABOR_GROUPS)return;
+    document.querySelectorAll('#labor-menu,#mobile-labor-menu').forEach(menu=>{
+      if(menu.dataset.applianceSubmenu)return;
+      const original=menu.querySelector('a[href="/installation.html#labor-category-appliances"]');if(!original)return;
+      bindShoppingHover(menu);
+      const branch=document.createElement('div');branch.className='shopping-branch';
+      const button=document.createElement('button');button.type='button';button.className='shopping-category-toggle';button.textContent='Appliances';
+      const arrow=document.createElement('span');arrow.textContent='›';arrow.setAttribute('aria-hidden','true');arrow.className='shopping-submenu-arrow';button.append(arrow);
+      const submenu=document.createElement('nav');submenu.className='shopping-submenu';submenu.id=menu.id+'-appliances';submenu.hidden=true;submenu.setAttribute('aria-label','Appliance installation and labor');
+      button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
+      for(const group of window.APPLIANCE_LABOR_GROUPS.slice().sort((a,b)=>a.label.localeCompare(b.label))){
+        const link=document.createElement('a');link.textContent=group.label;link.href='/installation.html?appliance='+encodeURIComponent(group.id)+'#labor-category-appliances';submenu.append(link);
+      }
+      branch.append(button,submenu);original.replaceWith(branch);bindCategoryBranch(branch);menu.dataset.applianceSubmenu='true';
     });
   }
   function tileListingCount(tile){
@@ -172,8 +193,8 @@
       }
     });
   }
-  syncShoppingMenu();syncTileAvailability();connectSearchForms();
-  document.addEventListener('DOMContentLoaded',()=>{syncShoppingMenu();syncTileAvailability();connectSearchForms();});
-  new MutationObserver(()=>{syncShoppingMenu();syncTileAvailability();connectSearchForms();}).observe(document.body,{childList:true,subtree:true});
+  syncShoppingMenu();syncLaborAppliances();syncTileAvailability();connectSearchForms();
+  document.addEventListener('DOMContentLoaded',()=>{syncShoppingMenu();syncLaborAppliances();syncTileAvailability();connectSearchForms();});
+  new MutationObserver(()=>{syncShoppingMenu();syncLaborAppliances();syncTileAvailability();connectSearchForms();}).observe(document.body,{childList:true,subtree:true});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.nav-menu').forEach(m=>{m.classList.remove('open');m.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');});});
 })();

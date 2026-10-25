@@ -23,6 +23,7 @@
 .labor-line{scroll-margin-top:110px}
 .labor-line.labor-target{background:#f2f7fc;border-left:3px solid var(--blue)}
 @media(max-width:550px){.labor-section{padding:8px 12px}.labor-section>summary{font-size:19px}.labor-group>summary{font-size:16px}}
+.labor-room select{padding:10px 12px;border:1px solid #b7c5d1;border-radius:5px;max-width:100%;font:inherit}.labor-group[hidden]{display:none!important}
 </style>
 </head>
 <body data-page="labor-catalog">
@@ -330,6 +331,21 @@ for(const c of catalog)for(const g of c.groups)for(const tasks of Object.values(
 for(const g of bath.groups)for(const tasks of Object.values(g.actions))for(const t of tasks){
  if(t.id==='bath-patch'||t.id==='bath-drywall-replace')Object.assign(t,{status:'calculator',priceText:'Repair and finishing: $175 up to 2 × 2 ft; $275 up to 4 × 4 ft; $450 up to 4 × 8 ft.',note:'Uses the established drywall repair prices.',calculatorUrl:'/installation.html#labor-category-drywall'});
 }
+// Consolidate appliance services after all approved rates and scopes are applied.
+const applianceEntries=appliance.groups.flatMap(g=>Object.entries(g.actions).flatMap(([mode,tasks])=>tasks.map(task=>({mode,task}))));
+for(const g of catalog.find(c=>c.id==='kitchen').groups)for(const mode of Object.keys(g.actions)){
+ const moved=g.actions[mode].filter(t=>/garbage disposal/i.test(t.label));
+ applianceEntries.push(...moved.map(task=>({mode,task})));
+ g.actions[mode]=g.actions[mode].filter(t=>!moved.includes(t));
+}
+applianceEntries.push({mode:'Services',task:{id:'refrigerator-no-water',label:'Refrigerator installation without a water connection',price:null,status:'pending',unit:'each',note:'Labor only. No water connection; in-person quote required.'}});
+const applianceGroups=new Map(window.APPLIANCE_LABOR_GROUPS.map(p=>[p.id,{id:'appliance-'+p.id,applianceKey:p.id,label:p.label,actions:{}}]));
+for(const {mode,task} of applianceEntries){
+ const definition=window.APPLIANCE_LABOR_GROUPS.find(p=>p.match.test(task.label));
+ if(!definition)throw Error('Appliance labor group missing: '+task.label);
+ const group=applianceGroups.get(definition.id);(group.actions[mode]??=[]).push(task);
+}
+appliance.groups=[...applianceGroups.values()].filter(g=>Object.keys(g.actions).length).sort((a,b)=>a.label.localeCompare(b.label));
 catalog.sort((a,b)=>a.label.localeCompare(b.label));for(const c of catalog)for(const g of c.groups)for(const tasks of Object.values(g.actions))tasks.sort((a,b)=>a.label.localeCompare(b.label));
 const finishes=cabinet.groups.find(g=>g.id==='refinishing').actions.Refinish;finishes.sort((a,b)=>(a.label.startsWith('Paint')?0:1)-(b.label.startsWith('Paint')?0:1)||a.label.localeCompare(b.label));
 })();
@@ -337,7 +353,23 @@ document.addEventListener('DOMContentLoaded',()=>{
  document.body.innerHTML=header()+`<main class="labor-page"><section class="labor-hero"><div class="wrap"><div class="labor-kicker">Your project. Your choice.</div><h1>Installation / Labor</h1><p>Find the task you need and add it to your project. Bathroom work shows labor rates and, when applicable, an installed estimate including standard fixtures and supplies. Choose customer-supplied fixtures in the calculator. Other listed rates are labor only unless noted.</p></div></section><div class="wrap labor-long-list"><div class="labor-room"><label for="labor-room">Room / area</label><input id="labor-room" placeholder="e.g. Main bathroom" autocomplete="off"></div><p class="labor-note">Listed flat service charges apply as shown. A $150 minimum trip charge applies across the work on each visit. Unpriced work requires an in-person quote.</p><p><a href="/terms.html">Terms, Conditions &amp; Policies</a></p><div id="labor-all-tasks"></div><section class="labor-review"><h2>Your selected work</h2><div id="labor-review-list"></div><div class="labor-review-actions"><span class="labor-total" id="labor-review-total"></span><a class="btn primary" href="/project-cart.html">Review Project Cart</a></div></section></div></main>`+footer();
  const make=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e},byId=id=>document.getElementById(id),money=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0,maximumFractionDigits:2});
  const rows=new Map();
- function renderReview(){const items=getCart().filter(x=>x.source==='labor-catalog'),list=byId('labor-review-list');list.replaceChildren();if(!items.length)list.append(make('p','No work selected yet.','labor-empty'));items.forEach(item=>{const row=make('div',undefined,'labor-review-row'),copy=make('div'),price=make('div');copy.append(make('strong',item.room+' — '+item.fixture),make('p',item.taskLabel+' · '+item.qty+' '+item.unit));price.append(make('p',typeof item.price==='number'?(item.startingAt?'Starting at ':'')+money(item.price*item.qty):item.draftPrice?money(item.draftPrice*item.qty)+' draft · needs review':'In-person quote required'));const edit=make('button','Edit'),remove=make('button','Remove');edit.type=remove.type='button';edit.onclick=()=>{const target=rows.get(item.taskId);if(!target)return;byId('labor-room').value=item.room;target.quantity.value=item.qty;target.editing=item.lineId;target.button.textContent='Save Changes';target.row.scrollIntoView({behavior:'smooth',block:'center'});target.quantity.focus({preventScroll:true})};remove.onclick=()=>{saveCart(getCart().filter(x=>x.lineId!==item.lineId));renderReview()};price.append(edit,remove);row.append(copy,price);list.append(row)});const priced=items.filter(x=>typeof x.price==='number').reduce((sum,x)=>sum+x.price*x.qty,0),pending=items.some(x=>typeof x.price!=='number');byId('labor-review-total').textContent=items.length?(priced?'Priced labor: '+money(Math.max(150,priced))+(pending?' + quote requests':''):'In-person quote required'):'';}
+ function chooseAppliance(key){
+  const groups=[...document.querySelectorAll('#labor-category-appliances > .labor-group')];
+  const chosen=groups.find(g=>g.dataset.appliance===key);
+  const select=byId('labor-appliance');if(select)select.value=chosen?key:'';
+  groups.forEach(g=>{g.hidden=g!==chosen;g.open=g===chosen;});
+  if(chosen)byId('labor-category-appliances').open=true;
+ }
+ function revealLaborTarget(target){
+  if(!target)return;
+  const section=target.matches('.labor-section')?target:target.closest('.labor-section');
+  const group=target.matches('.labor-group')?target:target.closest('.labor-group');
+  if(group?.dataset.appliance)chooseAppliance(group.dataset.appliance);
+  else if(section?.id==='labor-category-appliances')chooseAppliance('');
+  if(section)section.open=true;if(group)group.open=true;
+ }
+
+ function renderReview(){const items=getCart().filter(x=>x.source==='labor-catalog'),list=byId('labor-review-list');list.replaceChildren();if(!items.length)list.append(make('p','No work selected yet.','labor-empty'));items.forEach(item=>{const row=make('div',undefined,'labor-review-row'),copy=make('div'),price=make('div');copy.append(make('strong',item.room+' — '+item.fixture),make('p',item.taskLabel+' · '+item.qty+' '+item.unit));price.append(make('p',typeof item.price==='number'?(item.startingAt?'Starting at ':'')+money(item.price*item.qty):item.draftPrice?money(item.draftPrice*item.qty)+' draft · needs review':'In-person quote required'));const edit=make('button','Edit'),remove=make('button','Remove');edit.type=remove.type='button';edit.onclick=()=>{const target=rows.get(item.taskId);if(!target)return;byId('labor-room').value=item.room;target.quantity.value=item.qty;target.editing=item.lineId;target.button.textContent='Save Changes';revealLaborTarget(target.row);target.row.scrollIntoView({behavior:'smooth',block:'center'});target.quantity.focus({preventScroll:true})};remove.onclick=()=>{saveCart(getCart().filter(x=>x.lineId!==item.lineId));renderReview()};price.append(edit,remove);row.append(copy,price);list.append(row)});const priced=items.filter(x=>typeof x.price==='number').reduce((sum,x)=>sum+x.price*x.qty,0),pending=items.some(x=>typeof x.price!=='number');byId('labor-review-total').textContent=items.length?(priced?'Priced labor: '+money(Math.max(150,priced))+(pending?' + quote requests':''):'In-person quote required'):'';}
  const list=byId('labor-all-tasks');
  // Give each installation category a real picture-card shortcut, while keeping
  // all existing approved service rates and add-to-cart controls unchanged.
@@ -363,7 +395,13 @@ document.addEventListener('DOMContentLoaded',()=>{
    link.append(img,make('strong',category.label));link.addEventListener('click',()=>{const target=document.getElementById('labor-category-'+category.id);if(target)target.open=true;});pictureNav.append(link);
  });
  list.before(pictureNav);
- LABOR_CATALOG.forEach(category=>{const section=make('details',undefined,'labor-section');section.id='labor-category-'+category.id;section.append(make('summary',category.label,'labor-category-heading'));if(category.id==='appliances')section.append(make('p','LABOR ONLY — appliance purchase, cords, connection parts and other materials are not included. Prices assume existing compatible hookups; built-ins require an existing compatible opening. New plumbing, electrical, gas or ventilation work requires a separate quote unless specifically listed. Drywall repair is not included.','labor-note'));category.groups.forEach(group=>{const groupEl=category.groups.length>1?make('details',undefined,'labor-group'):section;if(groupEl!==section){groupEl.append(make('summary',group.label,'labor-group-heading'));section.append(groupEl);}Object.entries(group.actions).forEach(([mode,tasks])=>tasks.forEach(task=>{const row=make('div',undefined,'labor-line'),copy=make('div',undefined,'labor-line-copy'),price=make('div',undefined,'labor-line-price');row.id='labor-task-'+task.id;copy.append(make('span',mode,'labor-action-label'),make('strong',task.label));if(task.note)copy.append(make('small',task.note));if(task.status==='calculator'){const link=make('a','Calculate','btn primary');link.href=task.calculatorUrl||'/calculators.html?material=flooring&labor=1';link.onclick=()=>{link.href+='&room='+encodeURIComponent(byId('labor-room').value);};price.textContent=task.priceText||'';price.style.whiteSpace='pre-line';row.append(copy,price,link);groupEl.append(row);return;}
+ LABOR_CATALOG.forEach(category=>{const section=make('details',undefined,'labor-section');section.id='labor-category-'+category.id;section.append(make('summary',category.label,'labor-category-heading'));if(category.id==='appliances')section.append(make('p','LABOR ONLY — appliance purchase, cords, connection parts and other materials are not included. Prices assume existing compatible hookups; built-ins require an existing compatible opening. New plumbing, electrical, gas or ventilation work requires a separate quote unless specifically listed. Drywall repair is not included.','labor-note'));if(category.id==='appliances'){
+ const picker=make('div',undefined,'labor-room'),label=make('label','Appliance'),select=make('select');label.htmlFor='labor-appliance';select.id='labor-appliance';
+ const prompt=make('option','Select an appliance');prompt.value='';select.append(prompt);
+ category.groups.forEach(g=>{const option=make('option',g.label);option.value=g.applianceKey;select.append(option);});
+ select.addEventListener('change',()=>chooseAppliance(select.value));picker.append(label,select);section.append(picker,make('p','Choose an appliance to see its installation, removal and related services.','labor-note'));
+ }
+ category.groups.forEach(group=>{const groupEl=category.groups.length>1?make('details',undefined,'labor-group'):section;if(groupEl!==section){groupEl.append(make('summary',group.label,'labor-group-heading'));section.append(groupEl);if(group.applianceKey){groupEl.id='labor-appliance-'+group.applianceKey;groupEl.dataset.appliance=group.applianceKey;groupEl.hidden=true;}}Object.entries(group.actions).forEach(([mode,tasks])=>tasks.forEach(task=>{const row=make('div',undefined,'labor-line'),copy=make('div',undefined,'labor-line-copy'),price=make('div',undefined,'labor-line-price');row.id='labor-task-'+task.id;copy.append(make('span',mode,'labor-action-label'),make('strong',task.label));if(task.note)copy.append(make('small',task.note));if(task.status==='calculator'){const link=make('a','Calculate','btn primary');link.href=task.calculatorUrl||'/calculators.html?material=flooring&labor=1';link.onclick=()=>{link.href+='&room='+encodeURIComponent(byId('labor-room').value);};price.textContent=task.priceText||'';price.style.whiteSpace='pre-line';row.append(copy,price,link);groupEl.append(row);return;}
  price.append(make('strong',task.status==='approved'&&typeof task.price==='number'?(task.startingAt?'Starting at ':'')+money(task.price)+' / '+task.unit:'In-person quote required'));const control=make('div',undefined,'labor-line-controls'),label=make('label','Qty'),quantity=make('input');quantity.type='number';quantity.min=task.unit==='hours'?'0.25':'1';quantity.step=task.unit==='hours'?'0.25':['linear foot','sq. ft.'].includes(task.unit)?'any':'1';quantity.value='1';quantity.setAttribute('aria-label',task.label+' quantity');label.append(quantity);const button=make('button',task.status==='approved'?'Add to Cart':'Add for In-person Quote','btn primary');button.type='button';const status=make('div','','labor-line-status');status.setAttribute('role','status');if(task.tieredDoorRemoval)quantity.addEventListener('input',()=>{price.firstChild.textContent=money(doorRemovalRate(Number(quantity.value)))+' / door';});if(task.tieredRemoval)quantity.addEventListener('input',()=>{price.firstChild.textContent=money(cabinetRemovalRate(Number(quantity.value)))+' / cabinet';});const state={row,quantity,button,editing:null};rows.set(task.id,state);button.onclick=()=>{const room=byId('labor-room').value.trim(),qty=Number(quantity.value);if(!room){status.textContent='Enter the room / area above.';byId('labor-room').focus();return;}if(!Number.isFinite(qty)||qty<=0||(!['hours','linear foot','sq. ft.'].includes(task.unit)&&!Number.isInteger(qty))){status.textContent='Enter a valid quantity.';quantity.focus();return;}let cart=getCart();if(state.editing)cart=cart.filter(x=>x.lineId!==state.editing);const lineId=room+'|'+task.id,entry={source:'labor-catalog',lineId,...(task.removalGroup?{removalGroup:task.removalGroup}:{}),categoryId:category.id,groupId:group.id,fixture:group.label,room,mode,taskId:task.id,taskLabel:task.label+(task.startingAt?' — starting at':''),unit:task.unit,name:room+': '+task.label+(task.startingAt?' — starting at':''),startingAt:!!task.startingAt,type:task.status==='approved'?'Labor':'Service',qty,...(task.status==='approved'?{price:task.tieredRemoval?cabinetRemovalRate(qty):task.tieredDoorRemoval?doorRemovalRate(qty):task.price}:{}),...(task.status!=='approved'?{quoteRequired:true}:{})};const existing=cart.findIndex(x=>x.source==='labor-catalog'&&x.lineId===lineId);if(existing>=0)cart[existing]=entry;else cart.push(entry);saveCart(cart);state.editing=null;button.textContent=task.status==='approved'?'Add to Cart':'Add for In-person Quote';status.textContent=task.status==='approved'?'Added to cart.':'Added for an in-person quote.';renderReview()};control.append(label,button);row.append(copy,price,control,status);groupEl.append(row);}));});list.append(section);});
   const service=new URLSearchParams(location.search).get('service');
   let target=null;
@@ -373,13 +411,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     target=matches[0]||null;
   }
   const hashTarget=location.hash?document.getElementById(decodeURIComponent(location.hash.slice(1))):null;
-  const focus=target||hashTarget;
-  if(focus){
-    const section=focus.matches('.labor-section')?focus:focus.closest('.labor-section');
-    if(section)section.open=true;
-    const group=focus.closest('.labor-group');if(group)group.open=true;
-    requestAnimationFrame(()=>focus.scrollIntoView({block:'start'}));
-  }
+  const applianceKey=new URLSearchParams(location.search).get('appliance');
+  const applianceTarget=applianceKey?[...document.querySelectorAll('[data-appliance]')].find(g=>g.dataset.appliance===applianceKey):null;
+  const focus=target||applianceTarget||hashTarget;
+  if(focus){revealLaborTarget(focus);requestAnimationFrame(()=>focus.scrollIntoView({block:'start'}));}
+  window.addEventListener('hashchange',()=>{const focus=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(focus){revealLaborTarget(focus);focus.scrollIntoView({block:'start'});}});
   renderReview();updateCartCount();initNavMenus();
 });
 </script>
