@@ -43,5 +43,21 @@ export const retailCatalog = [
     "priceCents": 18622,
     "priceCheckedAt": "2026-10-25",
     "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "1865001516143628288",
+    "department": "appliances",
+    "name": "VEVOR 4 L Compact Mini Fridge — 6-Can",
+    "image": "https://d2qc09rl1gfuof.cloudfront.net/product/MNBXHSSLPTM4LMFLZ/mini-fridge-a100-2.4-m.jpg",
+    "category": "Refrigerators",
+    "supplierUrl": "https://cjdropshipping.com/product/vevor-mini-fridge-4-liter-6-can-small-refrigerator-for-beverage-skincare-cosmetic-ac-dc-cooler-warmer-mute-portable-tiny-fridge-for-bedroom-office-dorm-desk-car-travel-etl-certified-black-p-1865001516143628288.html"
+  },
+  {
+    "id": "1864999840129110016",
+    "department": "appliances",
+    "name": "VEVOR 10 L Portable Mini Beverage Fridge — 12-Can",
+    "image": "https://img.vevorstatic.com/es/MNBXJCX10LBK00001V1/goods_img_big-v1/mini-fridge-m100-1.2.jpg?format=webp&timestamp=1629104875000",
+    "category": "Refrigerators",
+    "supplierUrl": "https://cjdropshipping.com/product/vevor-mini-fridge-for-bedroom-10-liter-12-can-portable-fridges-luxury-small-beverage-refrigerator-for-skincare-food-breast-milk-chill-ac-dc-cooler-warmer-for-office-dorm-car-black-p-1864999840129110016.html"
   }
 ];
