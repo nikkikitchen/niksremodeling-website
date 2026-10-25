@@ -121,21 +121,35 @@ Object.assign(PROJECT_CATALOG['themed-rooms'],{image:'/assets/kids-room.jpg'});
 Object.assign(PROJECT_CATALOG['entry-mudroom'],{image:'/assets/approved-493d744bf5f7.jpg'});
 Object.assign(PROJECT_CATALOG.lighting,{image:'/assets/pendant-lighting.jpg'});
 
+// Exactly one source for every grouped Projects picture card and flyout link.
+window.projectGroupChoices=group=>{
+ const themed=group==='themed-rooms',custom=group==='custom';
+ const entries=Object.entries(PROJECT_CATALOG)
+   .filter(([id,p])=>custom?p.customGroup:themed?p.themedGroup:(p.exterior||p.outdoorGroup)&&id!=='concrete')
+   .map(([id,p])=>({title:p.title,href:'/project.html?project='+encodeURIComponent(id),image:p.image,intro:p.intro}));
+ if(custom)entries.push({
+   title:'Other Ideas',href:'/project.html?project=custom&customWork=1',
+   image:PROJECT_CATALOG.custom.image,intro:'Tell us about your one-of-a-kind project.'
+ });
+ if(!themed&&!custom)entries.push({
+   title:'Patios, Walkways & Concrete',href:'/project.html?project=concrete&outdoorWork=1',
+   image:'/assets/patio-concrete.webp',intro:'Concrete, paving, walkways, porches & outdoor surfaces.'
+ });
+ return entries.sort((a,b)=>a.title.localeCompare(b.title));
+};
 window.renderCustomProjects=()=>window.renderOutdoorProjects('custom');
 window.renderThemedRooms=()=>window.renderOutdoorProjects(true);
 window.renderOutdoorProjects=(themed=false)=>{
  document.body.innerHTML=header()+'<main class="wrap section"><a class="project-back" href="/#projects">← All Projects</a><h1>'+ (themed==='custom'?'More Ideas':themed?'Themed Rooms':'Outdoor Projects') +'</h1><p class="lead">'+(themed==='custom'?'Choose a finish or feature to make your space your own.':themed?'Choose a room to explore ideas and plan your work.':'Choose an outdoor area to explore ideas and plan your work.')+'</p><div class="tile-grid project-grid" id="outdoor-project-grid"></div></main>'+footer();
- const choices=Object.entries(PROJECT_CATALOG).filter(([id,p])=>themed==='custom'?p.customGroup:themed?p.themedGroup:(p.exterior||p.outdoorGroup)&&id!=='concrete');
- if(themed==='custom')choices.push(['custom&customWork=1',{...PROJECT_CATALOG.custom,title:'Other Ideas',intro:'Tell us about your one-of-a-kind project.'}]);
- if(!themed)choices.push(['concrete&outdoorWork=1',{...PROJECT_CATALOG.concrete,title:'Patios, Walkways & Concrete',image:'/assets/patio-concrete.webp',intro:'Concrete, paving, walkways, porches & outdoor surfaces.'}]);
+ const group=themed==='custom'?'custom':themed?'themed-rooms':'concrete';
  const grid=document.getElementById('outdoor-project-grid');
- choices.sort((a,b)=>a[1].title.localeCompare(b[1].title)).forEach(([id,p])=>{
-  const a=document.createElement('a');a.className='tile added-room-tile';a.href='/project.html?project='+id;
-  const img=document.createElement('img');img.src=p.image;img.alt=p.title;img.loading='lazy';
-  const text=document.createElement('span');text.textContent=p.title;const small=document.createElement('small');small.textContent=p.intro;text.append(small);a.append(img,text);
-  
-  grid.append(a);
- });
+ for(const item of window.projectGroupChoices(group)){
+   const a=document.createElement('a');a.className='tile added-room-tile';a.href=item.href;
+   const img=document.createElement('img');img.src=item.image;img.alt=item.title;img.loading='lazy';
+   const text=document.createElement('span');text.textContent=item.title;
+   const small=document.createElement('small');small.textContent=item.intro;text.append(small);a.append(img,text);
+   grid.append(a);
+ }
  updateCartCount();
 };
 
@@ -211,23 +225,8 @@ function buildProjectDropdowns(){
  const projectLink=(id,params)=>'/project.html?project='+encodeURIComponent(id)+(params?'&'+params:'');
  function choicesFor(id,label){
    const choices=[['View '+label,projectLink(id)]];
-   if(id==='themed-rooms'){
-     const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>p.themedGroup).map(([child])=>child);
-     childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title));
-     for(const child of childIds){
-       const name=child==='fitness-wellness'?'Workout / Fitness Room':PROJECT_CATALOG[child].title;
-       choices.push([name,projectLink(child)]);
-     }
-   }else if(id==='concrete'){
-     const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>child!==id&&(p.exterior||p.outdoorGroup)).map(([child])=>child);
-     for(const child of childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title)))
-       choices.push([PROJECT_CATALOG[child].title,projectLink(child)]);
-     choices.push(['Patios, Walkways & Concrete',projectLink('concrete','outdoorWork=1')]);
-   }else if(id==='custom'){
-     const childIds=Object.entries(PROJECT_CATALOG).filter(([child,p])=>p.customGroup).map(([child])=>child);
-     for(const child of childIds.sort((a,b)=>PROJECT_CATALOG[a].title.localeCompare(PROJECT_CATALOG[b].title)))
-       choices.push([PROJECT_CATALOG[child].title,projectLink(child)]);
-     choices.push(['Other Ideas',projectLink('custom','customWork=1')]);
+   if(['themed-rooms','concrete','custom'].includes(id)){
+     for(const item of window.projectGroupChoices(id))choices.push([item.title,item.href]);
    }else if(id==='room-additions'){
      for(const name of ['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'])
        choices.push([name,projectLink(id,'additionType='+encodeURIComponent(name))]);
