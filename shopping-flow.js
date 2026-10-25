@@ -9,10 +9,10 @@
 .shopping-branch{position:relative}.shopping-category-toggle{position:relative;display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;border:0;background:transparent;padding:12px 16px;text-align:left;font-family:inherit;font-size:14px;font-weight:700;line-height:1.3;color:inherit;cursor:pointer;border-radius:6px}
 .shopping-category-toggle:hover,.shopping-category-toggle:focus-visible,.shopping-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}
 .shopping-category-toggle.shopping-empty{padding-left:32px}.shopping-category-toggle.shopping-empty::before{content:"";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:9px;height:9px;background:#d71920;border-radius:50%}
-.shopping-submenu{position:fixed;left:var(--shopping-submenu-left,0px);top:var(--shopping-submenu-top,0px);width:290px;max-width:calc(100vw - 24px);max-height:var(--shopping-submenu-height,65vh);overflow-y:auto;background:#fff;border:1px solid #dfe5ea;border-radius:8px;padding:8px;box-shadow:0 14px 36px #1423321f;z-index:110}
+.shopping-submenu{position:fixed;left:var(--shopping-submenu-left,0px);top:var(--shopping-submenu-top,16px);width:290px;max-width:calc(100vw - 24px);height:var(--shopping-submenu-height,calc(100dvh - 32px));max-height:calc(100dvh - 32px);overflow-y:auto;background:#fff;border:1px solid #dfe5ea;border-radius:8px;padding:8px;box-shadow:0 14px 36px #1423321f;z-index:110}
 .shopping-flyout-left .shopping-submenu{left:var(--shopping-submenu-left,0px);right:auto}
 .shopping-submenu a{white-space:normal!important;line-height:1.4}
-@media(max-width:900px),(hover:none){#shopping-menu,#mobile-shopping-menu,#labor-menu,#mobile-labor-menu{overflow-y:auto!important;overflow-x:hidden!important;max-height:65vh!important;min-width:0}.shopping-submenu,.shopping-flyout-left .shopping-submenu{position:static;width:auto;max-width:none;max-height:none;overflow:visible;margin:0 4px 8px 14px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none;padding:0 0 0 6px}.shopping-category-toggle{min-height:44px}.shopping-category-toggle[aria-expanded="true"] .shopping-submenu-arrow{transform:rotate(90deg)}}`;
+@media(max-width:900px),(hover:none){#shopping-menu,#mobile-shopping-menu,#labor-menu,#mobile-labor-menu{overflow-y:auto!important;overflow-x:hidden!important;max-height:65vh!important;min-width:0}.shopping-submenu,.shopping-flyout-left .shopping-submenu{position:static;width:auto;max-width:none;height:auto!important;max-height:none;overflow:visible;margin:0 4px 8px 14px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none;padding:0 0 0 6px}.shopping-category-toggle{min-height:44px}.shopping-category-toggle[aria-expanded="true"] .shopping-submenu-arrow{transform:rotate(90deg)}}`;
   document.head.append(style);
   window.searchProjects=function(e){e.preventDefault();const term=e.target.querySelector('input').value.trim().toLowerCase(),grid=document.getElementById('projects');if(!grid){location.href='/?search='+encodeURIComponent(term)+'#projects';return false;}grid.querySelectorAll('.tile').forEach(t=>t.hidden=!t.textContent.toLowerCase().includes(term));grid.scrollIntoView({behavior:'smooth'});return false;};
   function connect(){
@@ -88,14 +88,14 @@
   function positionShoppingSubmenu(branch){
     const menu=branch.parentElement,submenu=branch.querySelector('.shopping-submenu');
     if(!hoverMenus()||window.innerWidth<=900)return;
-    const bounds=menu.getBoundingClientRect(),row=branch.getBoundingClientRect();
+    const bounds=menu.getBoundingClientRect();
     const width=Math.min(290,window.innerWidth-24);
-    const height=Math.min(submenu.scrollHeight||520,window.innerHeight-32);
-    const top=Math.max(16,Math.min(row.top,window.innerHeight-height-16));
+    // Every department opens a full-height flyout, even near the bottom.
+    const top=16;
     const left=bounds.right+width>window.innerWidth-12?bounds.left-width+10:bounds.right-10;
     submenu.style.setProperty('--shopping-submenu-left',Math.max(12,Math.min(left,window.innerWidth-width-12))+'px');
     submenu.style.setProperty('--shopping-submenu-top',top+'px');
-    submenu.style.setProperty('--shopping-submenu-height',(window.innerHeight-top-16)+'px');
+    submenu.style.setProperty('--shopping-submenu-height',Math.max(120,window.innerHeight-32)+'px');
   }
   function bindShoppingHover(menu){
     const wrapper=menu.parentElement;
