@@ -1,4 +1,4 @@
-// Preview-only CJ catalog search. Does NOT offer checkout or expose supplier cost.
+// U.S. warehouse candidates. Each product still needs a variant stock check.
 const CJ_BASE = 'https://developers.cjdropshipping.com/api2.0/v1';
 let tokenCache = { accessToken: '', validUntil: 0 };
 
@@ -41,6 +41,11 @@ export async function onRequestGet({ request, env = {} }) {
     endpoint.searchParams.set('keyWord', keyword);
     endpoint.searchParams.set('page', String(page));
     endpoint.searchParams.set('size', '12');
+    endpoint.searchParams.set('countryCode', 'US');
+    endpoint.searchParams.set('verifiedWarehouse', '1');
+    endpoint.searchParams.set('startWarehouseInventory', '1');
+    endpoint.searchParams.set('orderBy', '4');
+    endpoint.searchParams.set('sort', 'desc');
     const response = await fetch(endpoint, { headers: { 'CJ-Access-Token': token } });
     if (!response.ok) throw new Error('CJ catalog HTTP error');
     const result = await response.json();
