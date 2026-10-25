@@ -78,14 +78,14 @@ async function detailView(target,id,department){
   target.querySelector('#retail-retry').addEventListener('click',()=>detailView(target,id,department));
  }
 }
-export async function mountCatalog(target,{department,material,type}={}){
+export async function mountCatalog(target,{department,material,type,installKeyword}={}){
  if(!document.querySelector('link[href^="/store.css"]')){
   const css=document.createElement('link');css.rel='stylesheet';css.href='/store.css?v='+encodeURIComponent(assetVersion);document.head.append(css);
  }
  const params=new URLSearchParams(location.search),id=params.get('product'),category=params.get('category');
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
- const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material));
+ const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
  const seen=new Set(saved.map(p=>p.id)),names=new Set(saved.map(p=>p.name.toLowerCase())),images=new Set(saved.map(p=>p.image));
  target.innerHTML=saved.map(p=>card(p)).join('')||'<p class="empty" role="status">Checking available products…</p>';
  await priceCards(target);
@@ -112,7 +112,7 @@ export async function mountCatalog(target,{department,material,type}={}){
    seen.add(candidateId);names.add(name.toLowerCase());images.add(image);
   }catch{ /* Never advertise items whose current U.S. stock cannot be checked. */ }
  }
- const keyword=type?({'LVP':'vinyl flooring','Luxury Vinyl Plank (LVP)':'vinyl flooring','Hardwood':'hardwood flooring','Laminate':'laminate flooring','Floor Tile':'floor tile','Underlayment':'floor underlayment'}[type]||type):material?materialSearch[material]:category?categorySearch[category]:({appliances:'refrigerator',cabinets:'storage cabinet',tools:'electric drill',materials:'wall panel',supplies:'construction adhesive'}[department]);
+ const keyword=installKeyword||(type?({'LVP':'vinyl flooring','Luxury Vinyl Plank (LVP)':'vinyl flooring','Hardwood':'hardwood flooring','Laminate':'laminate flooring','Floor Tile':'floor tile','Underlayment':'floor underlayment'}[type]||type):material?materialSearch[material]:category?categorySearch[category]:({appliances:'refrigerator',cabinets:'storage cabinet',tools:'electric drill',materials:'wall panel',supplies:'construction adhesive'}[department]));
  if(keyword){try{
   const r=await fetch('/api/cj-products?keyword='+encodeURIComponent(keyword));const d=await r.json();if(!r.ok)throw Error('Unavailable');
   for(const p of (d.products||[]).filter(p=>matchesListing(p.name,keyword)).slice(0,6)){
