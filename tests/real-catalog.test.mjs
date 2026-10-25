@@ -98,3 +98,16 @@ test('category searches omit overseas inventory and unrelated sample-like result
   assert.match(cards[0].textContent,/\$50.00/);assert.equal(cards[0].dataset.verified,'true');
  }finally{Object.assign(globalThis,old);dom.window.close();}
 });
+
+test('equipment shopping categories match actual installable appliances',()=>{
+ const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const source=readFileSync(new URL('../real-products.js',import.meta.url),'utf8');
+ const labor=readFileSync(new URL('../installation.html',import.meta.url),'utf8');
+ for(const name of ['Beverage Taps','Kegerators','Coffee Systems']){
+   assert.ok(app.includes('"'+name+'"')||app.includes("'"+name+"'"),name+' has a Shopping picture category');
+   assert.ok(source.includes("'"+name+"':"),name+' uses live supplier search');
+   assert.ok(app.includes("'"+name+"':[]"),name+' cannot accidentally inherit unrelated demo products');
+ }
+ assert.match(labor,/labor-shop-equipment/);
+ assert.match(labor,/category=\x27\+encodeURIComponent\(shopCategory\)/);
+});

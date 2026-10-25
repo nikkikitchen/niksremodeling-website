@@ -8,6 +8,7 @@ export function availableVariants(detail){
  return (detail.variants||[]).filter(v=>v.id&&Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0);
 }
 const categorySearch={
+ 'Beverage Taps':'beer tower','Coffee Systems':'espresso machine','Kegerators':'kegerator',
  'Refrigerators':'refrigerator','Gas Ranges':'gas range','Electric Ranges':'electric stove',
  'Wall Ovens & Cooktops':'cooktop','Dishwashers':'dishwasher','Microwaves & Hoods':'microwave',
  'Washers & Electric Dryers':'washing machine','Gas Dryers':'gas dryer','Cords & Connections':'appliance power cord',
@@ -26,6 +27,13 @@ const materialSearch={'flooring':'vinyl flooring','tile-stone':'ceramic tile','d
 export function matchesListing(name,keyword){
  const n=String(name).toLowerCase();
  if(/nail art|rhinestone|diamond painting|dollhouse|miniature|toy|cartoon|magnet|conversion|replacement parts|refrigerator (?:magnet|organizer|divider)/i.test(n))return false;
+ // Keep cleaning kits, drip pans, portable coffee makers and unrelated accessories
+ // out of the equipment categories; supplier prices/US stock must still verify.
+ if(keyword==='kegerator'&&!/\bkegerator\b/.test(n))return false;
+ if(keyword==='kegerator'&&/\b(clean|cleaner|cleaning|drip tray|pan|cover|replacement|kit only)\b/.test(n))return false;
+ if(keyword==='beer tower'&&!/\b(beer|draft|keg)\b/.test(n))return false;
+ if(keyword==='beer tower'&&/\b(cleaner|cleaning|drip tray|decal|sticker|table sign)\b/.test(n))return false;
+ if(keyword==='espresso machine'&&/\b(portable|camping|cordless|toy|cleaner|cleaning|descaler|filter only|pod holder|cups|spare parts)\b/.test(n))return false;
  if(['refrigerator','dishwasher','washing machine','range hood','microwave','gas dryer','electric stove','cooktop'].includes(keyword)){
   if(/\b(cleaner|cleaning|tablets|detergent|stickers?|emblems?|pedestal|stand|organizer|divider|holder|container|repair|bender|pump|backsplash)\b|dishwasher[ -]safe|hood filters|wall shield|mobile base|knife set|bowl set|plate set|frying pan/i.test(n))return false;
  }

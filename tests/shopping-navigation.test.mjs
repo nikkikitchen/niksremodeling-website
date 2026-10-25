@@ -40,3 +40,11 @@ for(const page of ['appliances','cabinets','tools'])test(page+' product links op
   assert.ok(doc.querySelector('main .products'));
  }finally{dom.window.close();}
 });
+
+test('new beverage and coffee shopping categories have distinct appliance destinations',()=>{
+ const app=readFileSync('app.js','utf8');
+ for(const name of ['Beverage Taps','Coffee Systems','Kegerators']){
+  assert.ok(app.includes('SHOP_GUIDES=')&&app.includes('"'+name+'"'),name+' menu and picture card');
+  assert.ok(app.includes("'"+name+"':[]"),name+' category filter');
+ }
+});
