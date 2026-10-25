@@ -213,12 +213,15 @@ function buildProjectDropdowns(){
  style.textContent=[
  '#projects-menu.projects-mega,#mobile-projects-menu.projects-mega{box-sizing:border-box;width:270px;min-width:240px;max-width:calc(100vw - 20px);max-height:var(--project-menu-height,65vh)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:6px;overscroll-behavior:contain;z-index:120}',
  '.projects-mega .project-branch{position:relative}',
- '.projects-mega .project-category-toggle{display:flex;width:100%;min-height:39px;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border:0;border-radius:6px;background:transparent;color:inherit;text-align:left;font:700 13px/1.3 Arial,sans-serif;cursor:pointer}',
- '.projects-mega .project-category-toggle:hover,.projects-mega .project-category-toggle:focus-visible,.projects-mega .project-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}',
+ '.projects-mega .project-branch-row{display:flex;align-items:stretch;min-height:41px;border-radius:6px}',
+ 'nav.nav .projects-mega .project-branch-row>.project-category-link{display:flex;flex:1 1 auto;min-width:0;align-items:center;padding:9px 4px 9px 12px;border-radius:6px;color:inherit;text-align:left;font:700 13px/1.3 Arial,sans-serif;text-decoration:none}',
+ '.projects-mega .project-category-toggle{display:flex;flex:0 0 37px;min-width:37px;align-items:center;justify-content:center;padding:6px;border:0;border-radius:6px;background:transparent;color:inherit;font:700 20px/1 Arial,sans-serif;cursor:pointer}',
+ '.projects-mega .project-branch-row:hover,.projects-mega .project-branch-row:focus-within{background:#e8f1fa;color:#073c70}',
+ '.projects-mega .project-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}',
  '.projects-mega .project-submenu{position:fixed;top:var(--project-submenu-top,12px);left:var(--project-submenu-left,280px);box-sizing:border-box;width:min(290px,calc(100vw - 24px));max-height:var(--project-submenu-height,70vh);overflow-y:auto;padding:8px;background:white;border:1px solid #dfe5ea;border-radius:8px;box-shadow:0 14px 36px #1423321f;z-index:121;overscroll-behavior:contain}',
  '.projects-mega .project-submenu a{display:block;white-space:normal!important;padding:9px 12px;line-height:1.35}',
  '.projects-mega>a{font-weight:700}',
- '@media(max-width:820px),(hover:none){nav.nav .mobile-top-nav #mobile-projects-menu.projects-mega{position:fixed!important;top:var(--project-menu-top,auto)!important;left:10px!important;right:10px!important;width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:var(--project-menu-height,65vh)!important}.projects-mega .project-submenu{position:static!important;width:auto!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0 4px 8px 12px;padding:0 0 0 6px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none}.projects-mega .project-category-toggle{min-height:46px;font-size:14px}}'
+ '@media(max-width:820px),(hover:none){nav.nav .mobile-top-nav #mobile-projects-menu.projects-mega{position:fixed!important;top:var(--project-menu-top,auto)!important;left:10px!important;right:10px!important;width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:var(--project-menu-height,65vh)!important}.projects-mega .project-submenu{position:static!important;width:auto!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0 4px 8px 12px;padding:0 0 0 6px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none}.projects-mega .project-category-toggle{min-height:46px;font-size:20px}nav.nav .mobile-top-nav .projects-mega .project-branch-row>.project-category-link{display:flex!important;flex:1 1 auto!important;min-height:46px!important;align-items:center!important;line-height:1.3!important;font-weight:700!important;padding:10px 12px!important}}'
  ].join('');
  document.getElementById(style.id)?.remove();document.head.append(style);
  const hover=()=>window.innerWidth>820&&!!window.matchMedia?.('(hover:hover)').matches;
@@ -267,13 +270,15 @@ function buildProjectDropdowns(){
    const link=(label,url)=>{const a=document.createElement('a');a.href=url;a.textContent=label;return a};
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
-     const button=document.createElement('button');button.type='button';button.className='project-category-toggle';button.setAttribute('aria-expanded','false');
-     const title=document.createElement('span');title.textContent=label;
-     const arrow=document.createElement('span');arrow.setAttribute('aria-hidden','true');arrow.textContent='›';button.append(title,arrow);
+     const row=document.createElement('div');row.className='project-branch-row';
+     const primary=link(label,projectLink(id));primary.className='project-category-link';
+     const button=document.createElement('button');button.type='button';button.className='project-category-toggle';
+     button.setAttribute('aria-expanded','false');button.setAttribute('aria-label','Show '+label+' choices');
+     button.textContent='›';row.append(primary,button);
      const nav=document.createElement('nav');nav.className='project-submenu';nav.hidden=true;nav.setAttribute('aria-label',label+' options');
      const items=choicesFor(id,label);
      for(const [name,url] of items)nav.append(link(name,url));
-     branch.append(button,nav);menu.append(branch);
+     branch.append(row,nav);menu.append(branch);
      button.addEventListener('click',()=>{fit(menu);button.getAttribute('aria-expanded')==='true'?close(menu):open(menu,branch)});
      button.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowDown'){
        event.preventDefault();if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);
