@@ -87,3 +87,27 @@ test('returning to Shopping before the hover grace period keeps the submenu open
   assert.equal(w.location.href,'https://niksremodeling.com/appliances.html');
  }finally{dom.window.close();}
 });
+
+test('long desktop menus scroll and lower flyouts stay inside the viewport',async()=>{
+ const dom=await open(true);
+ try{
+  const w=dom.window;
+  Object.defineProperty(w,'innerWidth',{value:1200,configurable:true});
+  Object.defineProperty(w,'innerHeight',{value:600,configurable:true});
+  const menu=w.document.getElementById('shopping-menu');
+  const branch=menu.querySelector('.shopping-branch');
+  const submenu=branch.querySelector('nav');
+  menu.getBoundingClientRect=()=>({top:160,left:800,right:1040});
+  branch.getBoundingClientRect=()=>({top:530});
+  Object.defineProperty(submenu,'scrollHeight',{value:900});
+  branch.dispatchEvent(new w.MouseEvent('mouseenter'));
+  assert.equal(menu.style.getPropertyValue('--shopping-menu-height'),'424px');
+  assert.equal(submenu.style.getPropertyValue('--shopping-submenu-top'),'16px');
+  assert.equal(submenu.style.getPropertyValue('--shopping-submenu-left'),'520px');
+  assert.equal(submenu.style.getPropertyValue('--shopping-submenu-height'),'568px');
+  Object.defineProperty(w,'innerHeight',{value:400,configurable:true});
+  w.dispatchEvent(new w.Event('resize'));
+  assert.equal(menu.style.getPropertyValue('--shopping-menu-height'),'224px');
+  assert.equal(submenu.style.getPropertyValue('--shopping-submenu-height'),'368px');
+ }finally{dom.window.close();}
+});
