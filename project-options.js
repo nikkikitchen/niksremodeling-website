@@ -323,7 +323,10 @@
     if(id==='concrete'&&!new URLSearchParams(location.search).has('outdoorWork')){window.renderOutdoorProjects();return;}
     // Structural room additions require a site visit and never use a made-up flat price.
     if(id==='room-additions'){
-      document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="Home extension under construction" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>Room Additions</h1><p>Add a bedroom, family room, sunroom or other living space.</p></div></section><section class="section"><div class="wrap"><p class="lead">Foundations, structural connections, framing, roofing, utilities, permits and finishes must be reviewed on site before pricing.</p>${customQuoteMarkup(project.title)}</div></section></main>`+footer();
+      const requestedAddition=new URLSearchParams(location.search).get('additionType');
+      const additionTypes=['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'];
+      const additionTitle=additionTypes.includes(requestedAddition)?requestedAddition:'Room Additions';
+      document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="Home extension under construction" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${additionTitle}</h1><p>Add a bedroom, family room, sunroom or other living space.</p></div></section><section class="section"><div class="wrap"><p class="lead">Foundations, structural connections, framing, roofing, utilities, permits and finishes must be reviewed on site before pricing.</p>${requestedAddition&&additionTypes.includes(requestedAddition)?'<p class="calc-note"><strong>Selected project:</strong> '+additionTitle+'</p>':''}${customQuoteMarkup(additionTitle)}</div></section></main>`+footer();
       updateCartCount();return;
     }
     if(isCustomLabel(project.title)){renderCustomQuotePage(project.title);return;}
