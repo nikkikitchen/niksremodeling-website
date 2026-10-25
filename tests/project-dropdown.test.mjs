@@ -27,7 +27,7 @@ test('desktop and mobile Projects dropdowns contain every visible project pictur
   }
   const visibilityStyle=doc.getElementById('expanded-projects-menu-style');
   assert.ok(visibilityStyle,'Projects menus need the full-height two-column layout');
-  assert.match(visibilityStyle.textContent,/grid-template-columns:repeat\\(2,minmax\\(0,1fr\\)\\)/);
+  assert.ok(visibilityStyle.textContent.includes('grid-template-columns:repeat(2,minmax(0,1fr))'));
   for(const id of ['projects-menu','mobile-projects-menu']){
     const menu=doc.getElementById(id);
     assert.ok(menu,id+' is missing');
