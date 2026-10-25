@@ -636,9 +636,11 @@ function cartCheckoutSummary(items){
  const packagedSupplies=packaged.reduce((sum,x)=>sum+Number(x.internalCosts.supplies)*(Number(x.packageQuantity)||Number(x.qty)||1),0);
  const standalone=items.filter(x=>x.hiddenFromCustomer&&Number.isFinite(Number(x.price))&&Number(x.price)>=0);
  const standaloneSupplies=standalone.reduce((sum,x)=>sum+Number(x.price)*(Number(x.qty)||1),0);
- const supplyEstimate=packagedSupplies+standaloneSupplies;
- const hasSupplyEstimate=packaged.length>0||standalone.length>0;
- const pendingSupplies=items.some(x=>x.hiddenFromCustomer&&x.pricingPending)||items.some(x=>x.source==='supplier-retail'&&x.suppliesRequested&&!x.installationRequested);
+ const laborCatalogSupplies=items.filter(x=>x.source==='labor-catalog'&&x.supplyPackage&&Number.isFinite(Number(x.supplyPackage.price)));
+ const laborCatalogTotal=laborCatalogSupplies.reduce((sum,x)=>sum+Number(x.supplyPackage.price)*(Number(x.qty)||1),0);
+ const supplyEstimate=packagedSupplies+standaloneSupplies+laborCatalogTotal;
+ const hasSupplyEstimate=packaged.length>0||standalone.length>0||laborCatalogSupplies.length>0;
+ const pendingSupplies=items.some(x=>x.hiddenFromCustomer&&x.pricingPending)||items.some(x=>x.source==='supplier-retail'&&x.suppliesRequested&&!x.installationRequested)||items.some(x=>x.source==='labor-catalog'&&['Labor','Service'].includes(x.type)&&!x.supplyPackage);
  const suppliesLabel=hasSupplyEstimate?money(supplyEstimate)+(pendingSupplies?' + additional supplies to confirm':''):'Price to be confirmed';
  const payableSubtotal=amount+supplyEstimate;
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
