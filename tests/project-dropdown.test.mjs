@@ -127,6 +127,7 @@ test('Arrow tap expands flyout, mouse hover opens it and keyboard navigation is 
   // A lower category with a small number of options keeps the same height as
   // an upper category and moves upward instead of losing options.
   Object.defineProperty(long,'scrollHeight',{value:180,configurable:true});
+  first.dispatchEvent(new w.MouseEvent('mouseenter'));
   last.dispatchEvent(new w.MouseEvent('mouseenter'));
   assert.equal(long.style.getPropertyValue('--project-submenu-height'),'180px');
   assert.equal(long.style.getPropertyValue('--project-submenu-top'),'458px');
