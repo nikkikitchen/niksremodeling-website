@@ -61,9 +61,9 @@ test('the remaining approved voice-review prices are present and door discounts 
 
 test('original labor price table tracks final October 24 approvals',()=>{
  const html=readFileSync('installation.html','utf8');
- const match=html.match(/const rates=(\\{[^\\n]+\\});\\nconst catalog=window\\.LABOR_CATALOG;/);
- assert.ok(match,'The original rates must be readable and centrally reviewed.');
- const rates=JSON.parse(match[1]);
+ const ratesLine=html.split(String.fromCharCode(10)).find(line=>line.startsWith('const rates='));
+ assert.ok(ratesLine,'The original rates must be readable and centrally reviewed.');
+ const rates=JSON.parse(ratesLine.slice('const rates='.length,-1));
  const expected={
   appliances:{'Microwave/oven combination installation':650},
   electrical:{
@@ -100,9 +100,9 @@ test('original labor price table tracks final October 24 approvals',()=>{
   }
  }
  const app=readFileSync('app.js','utf8');
- const bathMatch=app.match(/window\\.BATHROOM_PACKAGES=(\\[[^\\n]+\\]);/);
- assert.ok(bathMatch);
- const packages=JSON.parse(bathMatch[1]);
+ const bathLine=app.split(String.fromCharCode(10)).find(line=>line.startsWith('window.BATHROOM_PACKAGES='));
+ assert.ok(bathLine);
+ const packages=JSON.parse(bathLine.slice('window.BATHROOM_PACKAGES='.length,-1));
  for(const [id,price] of Object.entries({'toilet-install':150,'smart-toilet-install':750,'vanity-install':300,'faucet-replace':150,'vanity-light-replace':150}))
   assert.equal(packages.find(item=>item.id===id)?.labor,price,'Bathroom package '+id);
 });
