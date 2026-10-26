@@ -403,5 +403,14 @@ export const retailCatalog = [
   "priceCents": 29513,
   "priceCheckedAt": "2026-10-26",
   "category": "Wall & Upper Cabinets"
+},
+{
+  "id": "2062079592039481346",
+  "department": "cabinets",
+  "name": "18-Inch Bathroom Vanity Cabinet with Sink and Adjustable Shelf",
+  "image": "https://cf.cjdropshipping.com/17804448/dbc048fe-962c-467f-8ed3-9c1a2be518f9.jpg",
+  "priceCents": 25254,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Bathroom Vanities"
 }
 ];
