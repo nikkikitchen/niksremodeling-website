@@ -34,7 +34,7 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
    assert.deepEqual([...appliance.querySelectorAll('a')].map(a=>a.textContent),["Beverage Equipment", "Built-In Microwaves", "Coffee Systems", "Cords & Connections", "Dishwashers", "Double Wall Ovens", "Dryer Vent Kits", "Electric Cooktops", "Electric Dryers", "Electric Ranges", "Fireplace Inserts", "Garbage Disposals", "Gas Cooktops", "Gas Dryers", "Gas Ranges", "Microwave/Oven Combos", "Microwaves & Hoods", "Over-Range Microwaves", "Refrigerators", "Single Wall Ovens", "Stacked Washer/Dryer Sets", "Trash Compactors", "Wall Ovens & Cooktops", "Warming Drawers", "Washers & Electric Dryers"].sort((a,b)=>a.localeCompare(b)));
    assert.match(appliance.querySelector('a[href*="Dishwashers"]').href,/appliances\.html\?category=Dishwashers#catalog-products$/);
    assert.equal(appliance.querySelector('a[href*="Dishwashers"]').classList.contains('shopping-empty'),false);
-   assert.equal(appliance.querySelector('a[href*="Gas%20Ranges"]').classList.contains('shopping-empty'),true);
+   assert.equal(appliance.querySelector('a[href*="Gas%20Ranges"]').classList.contains('shopping-empty'),false,'Gas ranges now contain verified supplier listings');
    for(const branch of menu.querySelectorAll(':scope > .shopping-branch')){
     const entries=[...branch.querySelectorAll('.shopping-submenu a')];assert.ok(entries.length>=6);
     assert.equal(new Set(entries.map(a=>a.href)).size,entries.length);
