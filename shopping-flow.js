@@ -248,6 +248,9 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       return words.length>0&&words.every(word=>name.includes(word));
     }).length;
   }
+  // Bathroom's 12 stocked-product previews live in bathroom-shop.js, not retail-catalog.js.
+  // Include those products when deciding whether to display an empty-category red dot.
+  const bathroomPublishedCounts={faucets:4,lighting:4,ventilation:4};
   function tileListingCount(tile){
     if(!listedCounts||!tile)return null;
     // Material choices on detail pages carry their product type in the card heading.
@@ -273,6 +276,11 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     if(url.pathname==='/project.html')return null;
     const department=departmentByPath[url.pathname];
     if(!department||department==='custom')return null;
+    if(department==='bathroom'){
+      const type=url.searchParams.get('type'),model=url.searchParams.get('model');
+      const curated=type?(model?0:bathroomPublishedCounts[type]||0):12;
+      return curated+retailListings.filter(p=>p.department==='bathroom'&&(!type||p.type===type)&&(!model||p.model===model)).length;
+    }
     if(department==='furniture'){
       const category=url.searchParams.get('category');
       return furnitureListings.filter(p=>!category||furnitureCategoryMatch(p,category)).length;
