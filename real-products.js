@@ -1,5 +1,91 @@
 const assetVersion=new URL(import.meta.url).searchParams.get('v')||'item-preview-20261025';
 const {retailCatalog}=await import('./retail-catalog.js?v='+encodeURIComponent(assetVersion));
+const otherCandidates=[
+ {
+  "id": "1895403578650173442",
+  "name": "VEVOR 7-in-1 WiFi Weather Station",
+  "image": "https://cf.cjdropshipping.com/2dc5699a-3c29-42ae-9469-72c438cdec5a.jpg",
+  "category": "Weather Stations",
+  "department": "other"
+ },
+ {
+  "id": "1866317511508512768",
+  "name": "VEVOR Wireless Weather Station",
+  "image": "https://cf.cjdropshipping.com/cea54a1a-0652-4414-8ed6-b07953ca3671.jpg",
+  "category": "Weather Stations",
+  "department": "other"
+ },
+ {
+  "id": "1939497398590070785",
+  "name": "Wireless Weather Station with Indoor/Outdoor Sensor",
+  "image": "https://cf.cjdropshipping.com/31fb0479-0ad0-444a-bff7-c9196508327b.jpg",
+  "category": "Weather Stations",
+  "department": "other"
+ },
+ {
+  "id": "1976906004078157826",
+  "name": "IP44 Waterproof Wireless Doorbell",
+  "image": "https://cf.cjdropshipping.com/791949c0-d084-415d-aa51-bbf251f87a71.png",
+  "category": "Doorbells",
+  "department": "other"
+ },
+ {
+  "id": "1941426779125358594",
+  "name": "Wireless Smart Video Doorbell Intercom",
+  "image": "https://cf.cjdropshipping.com/e5982a7e-ffe5-42dd-aa38-b90d92433d9b.png",
+  "category": "Doorbells",
+  "department": "other"
+ },
+ {
+  "id": "2001464568861663234",
+  "name": "2K Wireless Video Doorbell with Night Vision",
+  "image": "https://cf.cjdropshipping.com/17660160/f84ca115-9b8d-4570-b62d-72eec021afbf.jpg",
+  "category": "Doorbells",
+  "department": "other"
+ },
+ {
+  "id": "1849681100705517568",
+  "name": "VEVOR Retractable Garden Water Hose Reel",
+  "image": "https://cf.cjdropshipping.com/44f5da26-4ee7-4566-a993-080f633dc977.jpg",
+  "category": "Garden Hose Reels",
+  "department": "other"
+ },
+ {
+  "id": "2001893418949980162",
+  "name": "84-Foot Wall-Mounted Garden Hose Reel",
+  "image": "https://cf.cjdropshipping.com/17661024/9939f2b1-679a-4ae2-bac1-5502ba272c35.jpg",
+  "category": "Garden Hose Reels",
+  "department": "other"
+ },
+ {
+  "id": "1992975637810016258",
+  "name": "Heavy-Duty 300-Foot Hose Reel Cart",
+  "image": "https://cf.cjdropshipping.com/17639424/c92c9e85-412b-44d0-8a4b-03f3fef0a85e.jpg",
+  "category": "Garden Hose Reels",
+  "department": "other"
+ },
+ {
+  "id": "2001853555240382465",
+  "name": "Large Dog Door for Sliding Glass Doors",
+  "image": "https://cf.cjdropshipping.com/17661024/159e3a52-b6f8-43d3-a41f-1d7e536d9a32.jpg",
+  "category": "Pet Doors",
+  "department": "other"
+ },
+ {
+  "id": "2001853311429685249",
+  "name": "Small Dog Door for Sliding Glass Doors",
+  "image": "https://cf.cjdropshipping.com/17661024/b44081b6-2a3c-4c23-9e12-3ab34f312104.jpg",
+  "category": "Pet Doors",
+  "department": "other"
+ },
+ {
+  "id": "2001918224323883010",
+  "name": "Adjustable RV Screen Door Pet Protector",
+  "image": "https://cf.cjdropshipping.com/17661024/f66758ef-1179-4e14-a58c-0f089acf049c.jpg",
+  "category": "Pet Doors",
+  "department": "other"
+ }
+];
 const {priceCards}=await import('./store-cards.js?v='+encodeURIComponent(assetVersion));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>(c/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
@@ -51,7 +137,7 @@ function card(p,current=false){
  return `<article class="card store-card" data-product="${esc(p.id)}" data-category="${esc(p.category)}" data-verified="${current}" ${priced?'data-saved-price="'+p.priceCents+'" data-price-checked="'+esc(p.priceCheckedAt)+'"':''}><a href="${itemLink(p)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><h3>${esc(p.name)}</h3><p class="store-card-price">${price}</p><p class="store-card-stock" role="status" aria-live="polite" data-state="unknown">Stock not confirmed</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
 async function detailView(target,id,department){
- const saved=retailCatalog.find(p=>p.id===id&&p.department===department);
+ const saved=retailCatalog.find(p=>p.id===id&&p.department===department)||otherCandidates.find(p=>p.id===id&&department==='other');
  const pageTitle=document.getElementById('retail-page-title');
  const setTitle=name=>{document.title=name+" | Nik's Remodeling";if(pageTitle)pageTitle.textContent=name;};
  const preview=message=>saved?`<article class="store-product"><img src="${esc(saved.image)}" alt="${esc(saved.name)}"><div>${pageTitle?'':'<h2>'+esc(saved.name)+'</h2>'}<p class="price">Last checked price: from ${money(saved.priceCents)}</p><p>Price checked ${esc(saved.priceCheckedAt)}. Shipping, tax and installation extra.</p><p role="status">${message}</p></div></article>`:`<p role="status">${message}</p>`;
@@ -105,32 +191,13 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
  if(department==='other'){
-  // A supplier search result is a real product candidate, NOT a purchasable offer.
-  // Only detailView can add to cart after a fresh U.S.-warehouse variant check.
   if(id&&/^[0-9]{19}$/.test(id)){
    target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');
    return detailView(target,id,department);
   }
-  const searches=[['Weather Stations','weather station',/weather station/i],['Doorbells','wireless doorbell',/doorbell/i],['Garden Hose Reels','garden hose reel',/hose reel|hose cart/i],['Pet Doors','pet door',/pet door|dog door|cat door/i]];
-  const seen=new Set();let shown=0;
-  target.innerHTML='<p id="other-discovery-status" role="status">Finding supplier products…</p><div id="other-live-grid" class="store-card-grid"></div>';
-  const grid=target.querySelector('#other-live-grid'),status=target.querySelector('#other-discovery-status');
-  for(const [group,keyword,match] of searches){
-   try{
-    const response=await fetch('/api/cj-products?keyword='+encodeURIComponent(keyword),{cache:'no-store'});
-    if(!response.ok)continue;
-    const data=await response.json();let inGroup=0;
-    for(const p of data.products||[]){
-     if(inGroup>=3||shown>=12)break;
-     const productId=String(p.id||''),name=String(p.name||''),image=String(p.image||'');
-     if(!/^[0-9]{19}$/.test(productId)||!image.startsWith('https://')||!match.test(name)||seen.has(productId)||!(Number(p.stock)>0))continue;
-     seen.add(productId);inGroup++;shown++;
-     grid.insertAdjacentHTML('beforeend','<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(productId)+'"><img src="'+esc(image)+'" alt="'+esc(name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(group)+'</p><h3>'+esc(name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier listing found · U.S. variant stock and delivery must be verified before cart</p><span class="btn primary">View item</span></div></a></article>');
-    }
-    status.textContent=shown+' products found. Current price and exact U.S. inventory are checked when you open an item.';
-   }catch{status.textContent=shown?shown+' products found. More supplier results are temporarily unavailable.':'Supplier search is temporarily unavailable. Please retry shortly.';}
-  }
-  if(!shown)status.textContent='Supplier search is temporarily unavailable. No products can be added without verified stock and price.';
+  // Real CJ catalog items with actual supplier photographs, never invented prices.
+  // A current US-warehouse variant check is mandatory before any cart add.
+  target.innerHTML=otherCandidates.map(p=>'<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(p.id)+'"><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(p.category)+'</p><h3>'+esc(p.name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier product · Price, U.S. stock and shipping must be verified before cart</p><span class="btn primary">View item</span></div></a></article>').join('');
   return;
  }
  const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
