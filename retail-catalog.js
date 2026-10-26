@@ -88,5 +88,59 @@ export const retailCatalog = [
     "priceCents": 17594,
     "priceCheckedAt": "2026-10-26",
     "category": "Beverage Taps"
+  },
+  {
+    "id": "1988920624246984705",
+    "department": "appliances",
+    "name": "15-Bar Espresso Machine with Grinder",
+    "image": "https://cf.cjdropshipping.com/17629920/edddaa82-6128-435b-a9aa-a6efa6bd9dcc.jpg",
+    "priceCents": 25271,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Coffee Systems"
+  },
+  {
+    "id": "2001491011423412225",
+    "department": "appliances",
+    "name": "Programmable 12-Cup Drip Coffee Maker",
+    "image": "https://cf.cjdropshipping.com/17660160/c7cc2414-9067-4335-b8fc-01a7c1e68f9b.jpg",
+    "priceCents": 4634,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Coffee Systems"
+  },
+  {
+    "id": "2001516430088445954",
+    "department": "appliances",
+    "name": "24-Cup Commercial Drip Coffee Brewer",
+    "image": "https://cf.cjdropshipping.com/17660160/7bb46fdd-ebbc-4e62-af63-4acd20a335f9.jpg",
+    "priceCents": 32390,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Coffee Systems"
+  },
+  {
+    "id": "2036380481344372737",
+    "department": "appliances",
+    "name": "30-Cup Commercial Coffee Urn — Automatic Temperature",
+    "image": "https://cf.cjdropshipping.com/17743104/16d11375-fae1-4c3e-9f77-be6dbd0ee57a.jpg",
+    "priceCents": 5174,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Coffee Systems"
+  },
+  {
+    "id": "2036380831049629697",
+    "department": "appliances",
+    "name": "40-Cup Commercial Coffee Urn — Automatic Temperature",
+    "image": "https://cf.cjdropshipping.com/17743104/f132d8a0-e48f-4f79-99a9-15a8bc03f509.jpg",
+    "priceCents": 5390,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Coffee Systems"
+  },
+  {
+    "id": "2001217556465512450",
+    "department": "appliances",
+    "name": "40-Cup Commercial Coffee Urn — Steel Liner",
+    "image": "https://cf.cjdropshipping.com/17659296/6726b8ec-cf2a-4a55-80ac-357095c1b967.jpg",
+    "priceCents": 6254,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Coffee Systems"
   }
 ];
