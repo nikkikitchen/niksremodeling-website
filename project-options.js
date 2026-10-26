@@ -335,6 +335,10 @@
     if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
     if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
     if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
+    if(id==='entry-mudroom'||id==='entryways'){
+      const section=document.querySelector('.project-section-title');
+      section?.insertAdjacentHTML('beforebegin','<p class="calc-note"><a class="btn outline" href="/other.html?category=Doorbells">Shop Doorbells</a> — wireless and video doorbells for the entryway.</p>');
+    }
     // Kitchens holds cabinet planning plus a route to the actual cabinet catalog.
     if(id==='kitchen-pantry' || id==='kitchen-remodel'){
       const title=document.querySelector('.project-section-title');
