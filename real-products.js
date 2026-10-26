@@ -65,8 +65,19 @@ async function detailView(target,id,department){
   update();$('retail-option').addEventListener('change',update);
   const syncInstallation=()=>{const installed=$('retail-install').checked;$('retail-supplies-choice').style.display=installed?'none':'block';if(installed)$('retail-supplies').checked=false;};
   $('retail-install').addEventListener('change',syncInstallation);syncInstallation();
-  $('retail-add').addEventListener('click',()=>{
-   const v=chosen(),cart=getCart();const existing=cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
+  $('retail-add').addEventListener('click',async()=>{
+   const button=$('retail-add'),status=$('retail-status');button.disabled=true;status.textContent='Rechecking current U.S. warehouse price and stock…';
+   let v=chosen();
+   try{
+    const reply=await fetch('/api/store-product?product='+encodeURIComponent(id),{cache:'no-store'});
+    if(!reply.ok)throw Error('Supplier unavailable');
+    const fresh=await reply.json();
+    const selected=availableVariants(fresh).find(x=>String(x.id)===String(v.id));
+    if(!selected)throw Error('Selected option not currently available');
+    v=selected;
+   }catch{status.textContent='Stock or price could not be verified. Nothing was added to cart.';button.disabled=false;return;}
+   button.disabled=false;
+   const cart=getCart();const existing=cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
    if(existing){existing.qty=Math.min(99,(Number(existing.qty)||1)+1);existing.price=v.priceCents/100;existing.installationRequested=existing.installationRequested||$('retail-install').checked;existing.suppliesRequested=existing.suppliesRequested||$('retail-supplies').checked;}
    else cart.push({name:name+' — '+(v.name||v.sku),type:'Product',source:'supplier-retail',productId:id,variantId:String(v.id),sku:v.sku,qty:1,price:v.priceCents/100,priceVerifiedAt:new Date().toISOString(),shippingAndTaxNotIncluded:true,installationRequested:$('retail-install').checked,suppliesRequested:$('retail-supplies').checked});
    saveCart(cart);$('retail-status').innerHTML='Added to your cart. <a href="/project-cart.html">Review cart and project options</a>. Shipping and tax are calculated before payment.';
