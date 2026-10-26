@@ -1,14 +1,5 @@
 export const retailCatalog = [
   {
-    "id": "2031612090609999873",
-    "department": "appliances",
-    "name": "5-Liter Compact Mini Refrigerator — White",
-    "image": "https://cf.cjdropshipping.com/dbc98288-72b9-4c62-a776-222814ff7375.png",
-    "priceCents": 4817,
-    "priceCheckedAt": "2026-10-25",
-    "category": "Refrigerators"
-  },
-  {
     "id": "1947993324614938626",
     "department": "cabinets",
     "name": "Tall Storage Cabinet with Drawers",
@@ -52,5 +43,14 @@ export const retailCatalog = [
     "priceCents": 18622,
     "priceCheckedAt": "2026-10-25",
     "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "2031612090609999873",
+    "department": "appliances",
+    "name": "5-Liter Compact Mini Refrigerator — White",
+    "image": "https://cf.cjdropshipping.com/dbc98288-72b9-4c62-a776-222814ff7375.png",
+    "priceCents": 4817,
+    "priceCheckedAt": "2026-10-25",
+    "category": "Refrigerators"
   }
 ];
