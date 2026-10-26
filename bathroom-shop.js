@@ -174,7 +174,19 @@ document.addEventListener('DOMContentLoaded',async()=>{
   {id:'2096972386499059713',type:'faucets',name:'Waterfall Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/beac733de34b4f79a519092f5c7d212d.jpg',price:26323},
   {id:'2001529158386499586',type:'ventilation',name:'110 CFM Quiet Bathroom Exhaust Fan',image:'https://cf.cjdropshipping.com/17660160/b9820608-f57d-4f0f-95b1-a0e1f40a13c1.jpg',price:4754},
   {id:'2001510513150238722',type:'ventilation',name:'Bathroom Exhaust Fan with Color-Changing Lights',image:'https://cf.cjdropshipping.com/17660160/6f12bb79-94da-446e-b368-f5798018e374.jpg',price:6470},
-  {id:'2001529529031913473',type:'ventilation',name:'110 CFM Bathroom Exhaust Fan with Heater',image:'https://cf.cjdropshipping.com/17660160/8098903e-cf79-4107-8c59-38ff6f01adea.jpg',price:7767}
+  {id:'2001529529031913473',type:'ventilation',name:'110 CFM Bathroom Exhaust Fan with Heater',image:'https://cf.cjdropshipping.com/17660160/8098903e-cf79-4107-8c59-38ff6f01adea.jpg',price:7767},
+  {id:'2096651468360417281',type:'faucets',name:'Wall-Mounted Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/706543093696488296a93c52c8ce2007.jpg',price:13066},
+  {id:'2096650668951240706',type:'faucets',name:'Brushed Nickel Two-Handle Centerset Vanity Faucet',image:'https://cf.cjdropshipping.com/doba-import/737db48d74174c70b655ac0c182d7210.jpg',price:6610},
+  {id:'2096917313077141506',type:'faucets',name:'Single-Handle Vanity Bathroom Faucet',image:'https://cf.cjdropshipping.com/doba-import/94b2d391cf27426cb795cf66dc8b8d48.jpg',price:10004},
+  {id:'2096662179543285761',type:'faucets',name:'Oil-Rubbed Bronze Widespread Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/62592afbe58c42aaae0ef17309309425.jpg',price:8453},
+  {id:'1947620280964136961',type:'lighting',name:'42-Inch Rustic Six-Light Bathroom Vanity Light',image:'https://cf.cjdropshipping.com/8fa0b7be-1901-4eb7-b72a-8b160126fb56.png',price:11921},
+  {id:'2045344721718841346',type:'lighting',name:'31-Inch Modern Four-Light Bathroom Vanity Sconce',image:'https://cf.cjdropshipping.com/17764704/578ea56f-f056-4a7e-a2e5-e2474bc67b54.jpg',price:10806},
+  {id:'2042119302410190850',type:'lighting',name:'24-Inch Three-Light Black Vanity Wall Sconce',image:'https://cf.cjdropshipping.com/17b1fd9a-89d2-4656-b188-25da5081fabd.png',price:11226},
+  {id:'2045351556676947969',type:'lighting',name:'45-Inch Modern Six-Light LED Vanity Light',image:'https://cf.cjdropshipping.com/17764704/fb20b7f2-011d-4e48-8c79-d3cee927fdae.jpg',price:11508},
+  {id:'2001504349855391745',type:'ventilation',name:'80 CFM Low-Noise Bathroom Exhaust Fan',image:'https://cf.cjdropshipping.com/17660160/883beefa-7cfb-49c3-b788-d33197f4c096.jpg',price:3296},
+  {id:'2001503833896173570',type:'ventilation',name:'110 CFM Low-Noise Bathroom Ventilation Fan',image:'https://cf.cjdropshipping.com/17660160/2640fb6f-5cfa-483e-bbfa-90ba7d6718b0.jpg',price:5174},
+  {id:'2001511583781941249',type:'ventilation',name:'80 CFM Bathroom Exhaust Fan with LED Light',image:'https://cf.cjdropshipping.com/17660160/e904e9a1-9258-47d1-844d-14bfa4142857.jpg',price:5390},
+  {id:'2001510938970615809',type:'ventilation',name:'Adjustable-CFM Bathroom Exhaust Fan with LED Light',image:'https://cf.cjdropshipping.com/17660160/3bf7f5d9-0a2a-449a-abbd-f039588169a6.jpg',price:5498}
  ];
  if(toiletHub)return;
  if(product){
