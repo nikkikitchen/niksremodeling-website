@@ -277,7 +277,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
   for(const p of batch){
    if(seenIds.has(p.id)||seenNames.has(normalized(p.name))||seenImages.has(p.image))continue;
    try{
-    const result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
+    let result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
+    // Supplier API intermittently returns 503; retry once before hiding a valid item.
+    if(result.status===503)result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
     if(!result.ok)throw Error('Stock unavailable');
     const detail=await result.json(),variants=bathVerified(detail);
     if(!variants||!bathroomMatch(detail.name,kind)||(toiletModel&&toiletStyleFor(detail.name)!==toiletModel))continue;
