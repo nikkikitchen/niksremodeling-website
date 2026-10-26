@@ -246,7 +246,23 @@ document.addEventListener('DOMContentLoaded',async()=>{
   return;
  }
  const grid=document.getElementById('bath-products'),status=document.getElementById('bath-status');
- const seenIds=new Set(),seenNames=new Set(),seenImages=new Set();
+ // Last-verified catalog entries remain visible when live supplier search times out.
+ // Prices are clearly dated; details/cart still require a fresh US stock check.
+ const bathroomSaved=[
+  {id:'2096917349794078722',type:'faucets',name:'Single-Handle Bathroom Vanity Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/e1d2c45530304759aee3765a73e42921.jpg',price:7767},
+  {id:'2096656741040947202',type:'faucets',name:'Two-Handle Centerset Bathroom Sink Faucet with Drain',image:'https://cf.cjdropshipping.com/doba-import/97364e3f0c914e4aa3854c8e1fdebb88.jpg',price:5726},
+  {id:'2096916661072584706',type:'faucets',name:'Single-Handle Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/20accfa2eaab482f91ea2d2b74d7b88e.jpg',price:8426},
+  {id:'2004469127873077249',type:'lighting',name:'24-Inch Three-Light Bathroom Vanity Sconce',image:'https://cf.cjdropshipping.com/1ab7e0e6-9330-4c9e-afa3-db0e764b496b.png',price:9522},
+  {id:'1947604343984668673',type:'lighting',name:'20-Inch Two-Light Bathroom Wall Sconce',image:'https://cf.cjdropshipping.com/f4cd213e-a8c6-434d-9e00-36eeedbb47a7.png',price:8258},
+  {id:'2001924466316451842',type:'lighting',name:'24-Inch LED Bathroom Vanity Light Bar',image:'https://cf.cjdropshipping.com/17661024/974434a4-f905-470c-a847-e8f1f439e353.jpg',price:3791},
+  {id:'2001504264391147521',type:'ventilation',name:'Bathroom Exhaust Fan, Adjustable 50/80/110 CFM',image:'https://cf.cjdropshipping.com/17660160/9e34cf36-f4ab-4540-81ef-ecef59302077.jpg',price:5174}
+ ];
+ const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel);
+ grid.insertAdjacentHTML('beforeend',savedVisible.map(p=>{
+  const href='/bathroom.html?'+new URLSearchParams({type:p.type,product:p.id});
+  return '<article class="store-card"><a href="'+bathEsc(href)+'"><img loading="lazy" src="'+bathEsc(p.image)+'" alt="'+bathEsc(p.name)+'"><div class="store-card-copy"><p class="store-card-category">'+bathEsc(bathroomNames[p.type])+'</p><h3>'+bathEsc(p.name)+'</h3><p class="store-card-price">Last checked: from '+bathMoney(p.price)+'</p><p class="store-card-note">Price checked October 26, 2026 · Confirm current U.S. stock and price · Shipping and tax extra</p><span class="btn primary">View item</span></div></a></article>';
+ }).join(''));
+ const seenIds=new Set(savedVisible.map(p=>p.id)),seenNames=new Set(savedVisible.map(p=>p.name.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim())),seenImages=new Set(savedVisible.map(p=>p.image));
  // Curated fixture discovery queue. IDs are NOT offers: every card below still
  // requires a current priced US-warehouse variant from /api/store-product.
  // This keeps relevant fixtures discoverable when supplier search ranks accessories first.
@@ -306,7 +322,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   }
   return {added,failures};
  }
- let total=0,errors=0;
+ let total=savedVisible.length,errors=0;
  // Featured supplier product ID is only a lookup hint, never a stock or price claim.
  // Its card is added only after a fresh US warehouse inventory AND retail price check.
  // The product detail page checks both again before anything can enter the cart.
