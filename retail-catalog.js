@@ -52,5 +52,14 @@ export const retailCatalog = [
     "priceCents": 4817,
     "priceCheckedAt": "2026-10-25",
     "category": "Refrigerators"
+  },
+  {
+    "id": "2100020215538368513",
+    "department": "appliances",
+    "name": "4.5 cu. ft. Mini Refrigerator with Freezer — White",
+    "image": "https://cf.cjdropshipping.com/doba-import/ee7f1bf269044a91acab06ba57666e79.jpg",
+    "priceCents": 34999,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Refrigerators"
   }
 ];
