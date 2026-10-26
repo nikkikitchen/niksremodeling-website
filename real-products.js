@@ -104,6 +104,24 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  const params=new URLSearchParams(location.search),id=params.get('product'),requestedCategory=params.get('category'),category=['Beverage Taps','Kegerators'].includes(requestedCategory)?'Beverage Equipment':requestedCategory;
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
+ if(department==='other'){
+  // Supplier candidates are not priced offers. Display only products with
+  // currently verified U.S. stock, price and actual supplier photographs.
+  const candidates=['1679818494889697280','2408010946381618200','1714560598207373312','1377522867369021440','1849681100705517568','1889601440136085505','2410160604541626000','2406160745241615500','1768182338095157248','1387323725799624704','1889912347079864322','1902619551725940737'];
+  target.innerHTML='<p role="status">Checking miscellaneous supplier inventory…</p>';
+  const results=await Promise.all(candidates.map(async id=>{
+   try{
+    const response=await fetch('/api/store-product?product='+encodeURIComponent(id),{cache:'no-store'});
+    if(!response.ok)return null;
+    const data=await response.json(),variants=availableVariants(data);
+    if(!variants.length||!data.name||!/^https:\\/\\//.test(data.image||variants[0].image||''))return null;
+    return {id,department:'other',name:data.name,image:data.image||variants[0].image,category:'Other Products',priceCents:Math.min(...variants.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)};
+   }catch{return null;}
+  }));
+  const available=results.filter(Boolean);
+  target.innerHTML=available.length?available.map(p=>card(p,true)).join(''):'<p role="status">No miscellaneous products have confirmed U.S. stock right now. Please check back for new listings.</p>';
+  return;
+ }
  const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
  // On the unfiltered Appliances landing page, surface installed beverage equipment first
  // instead of burying taps below refrigerator and coffee listings.
