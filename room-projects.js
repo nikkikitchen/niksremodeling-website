@@ -320,3 +320,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
  observer.observe(document.body,{childList:true,subtree:true});
 });
+
+// Home-page rendering can replace the nav after DOMContentLoaded. A second
+// idempotent pass on load keeps the Projects menu consistent everywhere.
+window.addEventListener('load',()=>buildProjectDropdowns());
