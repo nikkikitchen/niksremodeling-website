@@ -135,5 +135,6 @@ export async function mountCatalog(target,{department,material,type,installKeywo
    }catch{}
   }
  }catch{}}
+ await priceCards(target); // Update newly discovered product cards, including archived inventory decisions.
  if(!target.querySelector('[data-product]'))target.innerHTML='<p class="empty">No confirmed products are available in this category yet. Please check back.</p>';
 }
