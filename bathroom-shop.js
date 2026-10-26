@@ -269,11 +269,33 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
  const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel);
+ async function updateBathroomStock(){
+  const jobs=[...savedVisible];
+  async function worker(){
+   while(jobs.length){
+    const p=jobs.shift(),node=grid.querySelector('[data-bath-stock="'+p.id+'"]');
+    if(!node)continue;
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+    try{
+     const r=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store',signal:controller.signal});
+     if(!r.ok)throw Error('Unverified');
+     const d=await r.json();
+     if(d.warehouseCountry!=='US'||typeof d.inStockUS!=='boolean'||!Array.isArray(d.variants))throw Error('Unverified');
+     const count=d.variants.reduce((n,v)=>n+Math.max(0,Number(v.usStock)||0),0);
+     node.textContent='In stock (U.S.): '+count;
+     node.dataset.state=count>0?'available':'out';
+    }catch{node.textContent='Stock not confirmed';node.dataset.state='unknown';}
+    finally{clearTimeout(timer);}
+   }
+  }
+  await Promise.all([worker(),worker(),worker()]);
+ }
  if(savedVisible.length){status.textContent='Showing '+savedVisible.length+' bathroom products with last-checked prices. Open a product to confirm current U.S. stock.';const emptyHelp=document.querySelector('.bath-plan-fallback');if(emptyHelp)emptyHelp.hidden=true;}
  grid.insertAdjacentHTML('beforeend',savedVisible.map(p=>{
   const href='/bathroom.html?'+new URLSearchParams({type:p.type,product:p.id});
-  return '<article class="store-card"><a href="'+bathEsc(href)+'"><img loading="lazy" src="'+bathEsc(p.image)+'" alt="'+bathEsc(p.name)+'"><div class="store-card-copy"><p class="store-card-category">'+bathEsc(bathroomNames[p.type])+'</p><h3>'+bathEsc(p.name)+'</h3><p class="store-card-price">Last checked: from '+bathMoney(p.price)+'</p><p class="store-card-note">Price checked October 26, 2026 · Confirm current U.S. stock and price · Shipping and tax extra</p><span class="btn primary">View item</span></div></a></article>';
+  return '<article class="store-card"><a href="'+bathEsc(href)+'"><img loading="lazy" src="'+bathEsc(p.image)+'" alt="'+bathEsc(p.name)+'"><div class="store-card-copy"><p data-bath-stock="'+bathEsc(p.id)+'" role="status" class="store-card-stock" data-state="unknown">Checking U.S. stock…</p><p class="store-card-category">'+bathEsc(bathroomNames[p.type])+'</p><h3>'+bathEsc(p.name)+'</h3><p class="store-card-price">Last checked: from '+bathMoney(p.price)+'</p><p class="store-card-note">Price checked October 26, 2026 · Confirm current U.S. stock and price · Shipping and tax extra</p><span class="btn primary">View item</span></div></a></article>';
  }).join(''));
+ updateBathroomStock();
  const seenIds=new Set(savedVisible.map(p=>p.id)),seenNames=new Set(savedVisible.map(p=>p.name.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim())),seenImages=new Set(savedVisible.map(p=>p.image));
  // Curated fixture discovery queue. IDs are NOT offers: every card below still
  // requires a current priced US-warehouse variant from /api/store-product.
