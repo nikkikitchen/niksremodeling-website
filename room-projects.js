@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const menus=[document.getElementById('projects-menu'),document.getElementById('mobile-projects-menu')].filter(Boolean);
   if(menus.some(menu=>menu.dataset.projectMenuReady!=='true'))buildProjectDropdowns();
  });
- observer.observe(document.body,{childList:true,subtree:true});
+ observer.observe(document.documentElement,{childList:true,subtree:true});
 });
 
 // Home-page rendering can replace the nav after DOMContentLoaded. A second
