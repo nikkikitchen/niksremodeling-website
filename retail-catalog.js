@@ -251,335 +251,251 @@ export const retailCatalog = [
     "department": "appliances",
     "category": "Beverage Equipment"
   },
-{
-  "id": "2084905431941939202",
-  "department": "appliances",
-  "name": "12-Inch Two-Burner Built-In Induction Cooktop",
-  "image": "https://cf.cjdropshipping.com/17858880/9a2391d3-3be4-46f7-a193-379b12591fd0.jpg",
-  "priceCents": 12950,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall Ovens & Cooktops"
-},
-{
-  "id": "1952786002980601858",
-  "department": "appliances",
-  "name": "30-Inch Five-Burner Electric Glass Cooktop",
-  "image": "https://cf.cjdropshipping.com/8617bbda-b54e-4983-a681-417c96f57909.jpg",
-  "priceCents": 22930,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall Ovens & Cooktops"
-},
-{
-  "id": "1952765853670014977",
-  "department": "appliances",
-  "name": "30-Inch Four-Burner Electric Glass Cooktop",
-  "image": "https://cf.cjdropshipping.com/a6fe878e-90da-4e41-8455-9131155f7d84.jpg",
-  "priceCents": 19820,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall Ovens & Cooktops"
-},
-{
-  "id": "1993022697276620801",
-  "department": "appliances",
-  "name": "24-Inch Built-In Electric Single Wall Oven",
-  "image": "https://cf.cjdropshipping.com/17639424/c1f578e0-80a6-417c-ac5b-12d36999956a.jpg",
-  "priceCents": 40646,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall Ovens & Cooktops"
-},
-{
-  "id": "1998934422786334722",
-  "department": "appliances",
-  "name": "30-Inch Under-Cabinet Range Hood — 250 CFM",
-  "image": "https://cf.cjdropshipping.com/17654112/64775ecd-18b7-4292-b718-def4b0a74f8a.jpg",
-  "priceCents": 14780,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Microwaves & Hoods"
-},
-{
-  "id": "1998933646168330241",
-  "department": "appliances",
-  "name": "30-Inch Built-In Range Hood Insert — 600 CFM",
-  "image": "https://cf.cjdropshipping.com/17654112/63ff8645-8aaa-4101-861c-84fe746c4ca2.jpg",
-  "priceCents": 22169,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Microwaves & Hoods"
-},
-{
-  "id": "2100060197753835521",
-  "department": "appliances",
-  "name": "3.22 Cu. Ft. Compact Electric Laundry Dryer — 7 Modes",
-  "image": "https://cf.cjdropshipping.com/doba-import/6aa065f8b57541148332d41c53158c81.jpg",
-  "priceCents": 57481,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Washers & Electric Dryers"
-},
-{
-  "id": "1953118592263114754",
-  "department": "appliances",
-  "name": "30-Inch Five-Burner Stainless Steel Gas Cooktop",
-  "image": "https://cf.cjdropshipping.com/f519a715-14be-4f32-9bc0-496a40851f23.jpg",
-  "priceCents": 19646,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall Ovens & Cooktops"
-},
-{
-  "id": "1998932945511763970",
-  "department": "appliances",
-  "name": "Under-Cabinet Stainless Steel Range Hood — 230 CFM",
-  "image": "https://cf.cjdropshipping.com/17654112/b727def7-a647-417b-b509-a3eea732ae80.jpg",
-  "priceCents": 14926,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Microwaves & Hoods"
-},
-{
-  "id": "1992929083926167554",
-  "department": "appliances",
-  "name": "Commercial Four-Burner Countertop Gas Range",
-  "image": "https://cf.cjdropshipping.com/17639424/20d5672f-ee68-4455-909f-9a6bb8326cba.jpg",
-  "priceCents": 58310,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Gas Ranges"
-},
-{
-  "id": "1953134790539333633",
-  "department": "appliances",
-  "name": "12-Inch Two-Burner Stainless Steel Gas Cooktop",
-  "image": "https://cf.cjdropshipping.com/be80320a-aab2-4a84-bb9a-c9174338823e.jpg",
-  "priceCents": 9062,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall Ovens & Cooktops"
-},
-{
-  "id": "2056628643315499010",
-  "department": "appliances",
-  "name": "Compact Top-Load Automatic Washing Machine with Spin Cycle",
-  "image": "https://cf.cjdropshipping.com/3c4b8618-3db4-48ce-8cc9-eab0037f34f4.png",
-  "priceCents": 19193,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Washers & Electric Dryers"
-},
-{
-  "id": "1992928918367924226",
-  "department": "appliances",
-  "name": "Commercial Single-Burner Countertop Gas Range",
-  "image": "https://cf.cjdropshipping.com/17639424/41992afc-2019-4565-8fa9-b296bf619ac4.jpg",
-  "priceCents": 47510,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Gas Ranges"
-},
-{
-  "id": "1998933236104486914",
-  "department": "appliances",
-  "name": "30/36-Inch Wall-Mount Stainless Steel Range Hood — 700 CFM",
-  "image": "https://cf.cjdropshipping.com/17654112/615c2740-76a9-422e-ad9a-f1c2553ef772.jpg",
-  "priceCents": 31036,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Microwaves & Hoods"
-},
-{
-  "id": "1909114817890877441",
-  "department": "cabinets",
-  "name": "10-Pack 3-Inch Square Kitchen Cabinet Drawer Pulls",
-  "image": "https://cf.cjdropshipping.com/88fbb6f5-3ac2-4d0e-aba6-eefe1c70dcbd.jpg",
-  "priceCents": 1456,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Hardware"
-},
-{
-  "id": "1993021857753120769",
-  "department": "cabinets",
-  "name": "30-Inch White Shaker Ready-to-Assemble Kitchen Base Cabinet",
-  "image": "https://cf.cjdropshipping.com/17639424/e8ec788b-93e5-4cc9-83bf-32a4ded1c174.jpg",
-  "priceCents": 15110,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Base Cabinets"
-},
-{
-  "id": "2046514992616464385",
-  "department": "cabinets",
-  "name": "24-Inch White Shaker Double-Door Wall Cabinet with Soft-Close Doors",
-  "image": "https://cf.cjdropshipping.com/17767296/e5dbf6e7-f34c-4b74-bfa2-425b8c1aedfc.jpg",
-  "priceCents": 29513,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Wall & Upper Cabinets"
-},
-{
-  "id": "2062079592039481346",
-  "department": "cabinets",
-  "name": "18-Inch Bathroom Vanity Cabinet with Sink and Adjustable Shelf",
-  "image": "https://cf.cjdropshipping.com/17804448/dbc048fe-962c-467f-8ed3-9c1a2be518f9.jpg",
-  "priceCents": 25254,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Bathroom Vanities"
-},
-{
-  "id": "1956577654308847618",
-  "department": "tools",
-  "name": "20V SDS Plus Cordless Rotary Hammer Drill Kit",
-  "image": "https://cf.cjdropshipping.com/51f5a643-6ee0-47fe-8a41-ff48f9e2f80b.jpg",
-  "priceCents": 5425,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Power Tools"
-},
-{
-  "id": "2100416588045733890",
-  "department": "tools",
-  "name": "3-in-1 Brushless Cordless Impact Wrench, Drill and Screwdriver",
-  "image": "https://cf.cjdropshipping.com/doba-import/aeee7928a1504816b5b1eb2b5b06daa2.jpg",
-  "priceCents": 9827,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Drills & Impacts"
-},
-{
-  "id": "2085270212241428481",
-  "department": "tools",
-  "name": "400W Brushless Random Orbital Sander — 5/6-Inch, 7 Speeds",
-  "image": "https://cf.cjdropshipping.com/17859744/72c14c9a-68be-4c91-af51-df6c16446465.jpg",
-  "priceCents": 13598,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Power Tools"
-},
-{
-  "id": "1908816726840504322",
-  "department": "tools",
-  "name": "VEVOR 900W Variable-Speed Drywall Sander with Self-Suction",
-  "image": "https://cf.cjdropshipping.com/46535818-cd5b-4a83-8bc4-2f49306b9eae.jpg",
-  "priceCents": 11654,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Power Tools"
-},
-{
-  "id": "2001203482880552961",
-  "department": "tools",
-  "name": "Portable Variable-Speed 5-Inch Band Saw with Removable Base",
-  "image": "https://cf.cjdropshipping.com/17659296/ab6918c7-3ddb-4f5b-8ddd-395d8936d6a0.jpg",
-  "priceCents": 20510,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Power Tools"
-},
-{
-  "id": "2001914348123385858",
-  "department": "materials",
-  "material": "flooring",
-  "name": "400 Sq. Ft. 3mm Laminate Floor Underlayment with Vapor Barrier",
-  "image": "https://cf.cjdropshipping.com/17661024/0e727963-8919-4f74-8b05-6e7f2e94fa39.jpg",
-  "priceCents": 11654,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Underlayment"
-},
-{
-  "id": "2034840272154693634",
-  "department": "materials",
-  "material": "flooring",
-  "name": "20-Pack Acacia Hardwood Interlocking Outdoor Deck Tiles — 12-Inch",
-  "image": "https://cf.cjdropshipping.com/994da985-a66f-4bc8-96d2-9c309bcd7c1c.png",
-  "priceCents": 9504,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Outdoor Flooring"
-},
-{
-  "id": "2097153597406208002",
-  "department": "materials",
-  "material": "flooring",
-  "name": "48-Pack Waterproof Wood-Look Vinyl Plank Flooring — Gray, 36 Sq. Ft.",
-  "image": "https://cf.cjdropshipping.com/doba-import/e39a5eea5cf44cac8dbcaab8a23743cd.jpg",
-  "priceCents": 18815,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Luxury Vinyl Plank (LVP)"
-},
-{
-  "id": "1864564628698058752",
-  "department": "materials",
-  "material": "flooring",
-  "name": "VEVOR 36-Pack 6 x 36-Inch Peel-and-Stick Vinyl Floor Tiles — Natural Wood",
-  "image": "https://cf.cjdropshipping.com/89affe7d-5569-4882-819a-55e1a4958fbd.jpg",
-  "priceCents": 8306,
-  "priceCheckedAt": "2026-10-26",
-  "category": "Luxury Vinyl Plank (LVP)"
-},
-{
-  "id": "1679818494889697280",
-  "department": "other",
-  "name": "Plastic Pet Access Door",
-  "image": "/assets/approved-4de99f88049f.jpg",
-  "category": "Pet & Entry"
-},
-{
-  "id": "2408010946381618200",
-  "department": "other",
-  "name": "Color Weather Station Clock",
-  "image": "/assets/approved-a11ab0fcd37f.jpg",
-  "category": "Weather & Monitoring"
-},
-{
-  "id": "1714560598207373312",
-  "department": "other",
-  "name": "Wireless Outdoor Doorbell",
-  "image": "/assets/lighting-card.jpg",
-  "category": "Doorbells"
-},
-{
-  "id": "1377522867369021440",
-  "department": "other",
-  "name": "Fireproof Document Organizer",
-  "image": "/assets/approved-8a9d216224b8.jpg",
-  "category": "Document Protection"
-},
-{
-  "id": "1849681100705517568",
-  "department": "other",
-  "name": "VEVOR Retractable Garden Hose Reel",
-  "image": "/assets/approved-a11ab0fcd37f.jpg",
-  "category": "Yard Accessories"
-},
-{
-  "id": "1889601440136085505",
-  "department": "other",
-  "name": "Wall-Mount Swivel Hose Reel",
-  "image": "/assets/approved-a11ab0fcd37f.jpg",
-  "category": "Yard Accessories"
-},
-{
-  "id": "2410160604541626000",
-  "department": "other",
-  "name": "Timed Mobile Phone Lock Box",
-  "image": "/assets/approved-8a9d216224b8.jpg",
-  "category": "Specialty Storage"
-},
-{
-  "id": "2406160745241615500",
-  "department": "other",
-  "name": "Video Doorbell with Night Vision",
-  "image": "/assets/lighting-card.jpg",
-  "category": "Doorbells"
-},
-{
-  "id": "1768182338095157248",
-  "department": "other",
-  "name": "Wireless Waterproof Doorbell Set",
-  "image": "/assets/lighting-card.jpg",
-  "category": "Doorbells"
-},
-{
-  "id": "1387323725799624704",
-  "department": "other",
-  "name": "Pet Self-Opener Door Accessory",
-  "image": "/assets/approved-4de99f88049f.jpg",
-  "category": "Pet & Entry"
-},
-{
-  "id": "1889912347079864322",
-  "department": "other",
-  "name": "VEVOR Wheeled Garden Hose Cart",
-  "image": "/assets/approved-a11ab0fcd37f.jpg",
-  "category": "Yard Accessories"
-},
-{
-  "id": "1902619551725940737",
-  "department": "other",
-  "name": "Heavy-Duty Steel Garden Hose Cart",
-  "image": "/assets/approved-a11ab0fcd37f.jpg",
-  "category": "Yard Accessories"
-}
+  {
+    "id": "2084905431941939202",
+    "department": "appliances",
+    "name": "12-Inch Two-Burner Built-In Induction Cooktop",
+    "image": "https://cf.cjdropshipping.com/17858880/9a2391d3-3be4-46f7-a193-379b12591fd0.jpg",
+    "priceCents": 12950,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall Ovens & Cooktops"
+  },
+  {
+    "id": "1952786002980601858",
+    "department": "appliances",
+    "name": "30-Inch Five-Burner Electric Glass Cooktop",
+    "image": "https://cf.cjdropshipping.com/8617bbda-b54e-4983-a681-417c96f57909.jpg",
+    "priceCents": 22930,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall Ovens & Cooktops"
+  },
+  {
+    "id": "1952765853670014977",
+    "department": "appliances",
+    "name": "30-Inch Four-Burner Electric Glass Cooktop",
+    "image": "https://cf.cjdropshipping.com/a6fe878e-90da-4e41-8455-9131155f7d84.jpg",
+    "priceCents": 19820,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall Ovens & Cooktops"
+  },
+  {
+    "id": "1993022697276620801",
+    "department": "appliances",
+    "name": "24-Inch Built-In Electric Single Wall Oven",
+    "image": "https://cf.cjdropshipping.com/17639424/c1f578e0-80a6-417c-ac5b-12d36999956a.jpg",
+    "priceCents": 40646,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall Ovens & Cooktops"
+  },
+  {
+    "id": "1998934422786334722",
+    "department": "appliances",
+    "name": "30-Inch Under-Cabinet Range Hood — 250 CFM",
+    "image": "https://cf.cjdropshipping.com/17654112/64775ecd-18b7-4292-b718-def4b0a74f8a.jpg",
+    "priceCents": 14780,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "1998933646168330241",
+    "department": "appliances",
+    "name": "30-Inch Built-In Range Hood Insert — 600 CFM",
+    "image": "https://cf.cjdropshipping.com/17654112/63ff8645-8aaa-4101-861c-84fe746c4ca2.jpg",
+    "priceCents": 22169,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "2100060197753835521",
+    "department": "appliances",
+    "name": "3.22 Cu. Ft. Compact Electric Laundry Dryer — 7 Modes",
+    "image": "https://cf.cjdropshipping.com/doba-import/6aa065f8b57541148332d41c53158c81.jpg",
+    "priceCents": 57481,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Washers & Electric Dryers"
+  },
+  {
+    "id": "1953118592263114754",
+    "department": "appliances",
+    "name": "30-Inch Five-Burner Stainless Steel Gas Cooktop",
+    "image": "https://cf.cjdropshipping.com/f519a715-14be-4f32-9bc0-496a40851f23.jpg",
+    "priceCents": 19646,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall Ovens & Cooktops"
+  },
+  {
+    "id": "1998932945511763970",
+    "department": "appliances",
+    "name": "Under-Cabinet Stainless Steel Range Hood — 230 CFM",
+    "image": "https://cf.cjdropshipping.com/17654112/b727def7-a647-417b-b509-a3eea732ae80.jpg",
+    "priceCents": 14926,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "1992929083926167554",
+    "department": "appliances",
+    "name": "Commercial Four-Burner Countertop Gas Range",
+    "image": "https://cf.cjdropshipping.com/17639424/20d5672f-ee68-4455-909f-9a6bb8326cba.jpg",
+    "priceCents": 58310,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Gas Ranges"
+  },
+  {
+    "id": "1953134790539333633",
+    "department": "appliances",
+    "name": "12-Inch Two-Burner Stainless Steel Gas Cooktop",
+    "image": "https://cf.cjdropshipping.com/be80320a-aab2-4a84-bb9a-c9174338823e.jpg",
+    "priceCents": 9062,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall Ovens & Cooktops"
+  },
+  {
+    "id": "2056628643315499010",
+    "department": "appliances",
+    "name": "Compact Top-Load Automatic Washing Machine with Spin Cycle",
+    "image": "https://cf.cjdropshipping.com/3c4b8618-3db4-48ce-8cc9-eab0037f34f4.png",
+    "priceCents": 19193,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Washers & Electric Dryers"
+  },
+  {
+    "id": "1992928918367924226",
+    "department": "appliances",
+    "name": "Commercial Single-Burner Countertop Gas Range",
+    "image": "https://cf.cjdropshipping.com/17639424/41992afc-2019-4565-8fa9-b296bf619ac4.jpg",
+    "priceCents": 47510,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Gas Ranges"
+  },
+  {
+    "id": "1998933236104486914",
+    "department": "appliances",
+    "name": "30/36-Inch Wall-Mount Stainless Steel Range Hood — 700 CFM",
+    "image": "https://cf.cjdropshipping.com/17654112/615c2740-76a9-422e-ad9a-f1c2553ef772.jpg",
+    "priceCents": 31036,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "1909114817890877441",
+    "department": "cabinets",
+    "name": "10-Pack 3-Inch Square Kitchen Cabinet Drawer Pulls",
+    "image": "https://cf.cjdropshipping.com/88fbb6f5-3ac2-4d0e-aba6-eefe1c70dcbd.jpg",
+    "priceCents": 1456,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Hardware"
+  },
+  {
+    "id": "1993021857753120769",
+    "department": "cabinets",
+    "name": "30-Inch White Shaker Ready-to-Assemble Kitchen Base Cabinet",
+    "image": "https://cf.cjdropshipping.com/17639424/e8ec788b-93e5-4cc9-83bf-32a4ded1c174.jpg",
+    "priceCents": 15110,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Base Cabinets"
+  },
+  {
+    "id": "2046514992616464385",
+    "department": "cabinets",
+    "name": "24-Inch White Shaker Double-Door Wall Cabinet with Soft-Close Doors",
+    "image": "https://cf.cjdropshipping.com/17767296/e5dbf6e7-f34c-4b74-bfa2-425b8c1aedfc.jpg",
+    "priceCents": 29513,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Wall & Upper Cabinets"
+  },
+  {
+    "id": "2062079592039481346",
+    "department": "cabinets",
+    "name": "18-Inch Bathroom Vanity Cabinet with Sink and Adjustable Shelf",
+    "image": "https://cf.cjdropshipping.com/17804448/dbc048fe-962c-467f-8ed3-9c1a2be518f9.jpg",
+    "priceCents": 25254,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Bathroom Vanities"
+  },
+  {
+    "id": "1956577654308847618",
+    "department": "tools",
+    "name": "20V SDS Plus Cordless Rotary Hammer Drill Kit",
+    "image": "https://cf.cjdropshipping.com/51f5a643-6ee0-47fe-8a41-ff48f9e2f80b.jpg",
+    "priceCents": 5425,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Power Tools"
+  },
+  {
+    "id": "2100416588045733890",
+    "department": "tools",
+    "name": "3-in-1 Brushless Cordless Impact Wrench, Drill and Screwdriver",
+    "image": "https://cf.cjdropshipping.com/doba-import/aeee7928a1504816b5b1eb2b5b06daa2.jpg",
+    "priceCents": 9827,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Drills & Impacts"
+  },
+  {
+    "id": "2085270212241428481",
+    "department": "tools",
+    "name": "400W Brushless Random Orbital Sander — 5/6-Inch, 7 Speeds",
+    "image": "https://cf.cjdropshipping.com/17859744/72c14c9a-68be-4c91-af51-df6c16446465.jpg",
+    "priceCents": 13598,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Power Tools"
+  },
+  {
+    "id": "1908816726840504322",
+    "department": "tools",
+    "name": "VEVOR 900W Variable-Speed Drywall Sander with Self-Suction",
+    "image": "https://cf.cjdropshipping.com/46535818-cd5b-4a83-8bc4-2f49306b9eae.jpg",
+    "priceCents": 11654,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Power Tools"
+  },
+  {
+    "id": "2001203482880552961",
+    "department": "tools",
+    "name": "Portable Variable-Speed 5-Inch Band Saw with Removable Base",
+    "image": "https://cf.cjdropshipping.com/17659296/ab6918c7-3ddb-4f5b-8ddd-395d8936d6a0.jpg",
+    "priceCents": 20510,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Power Tools"
+  },
+  {
+    "id": "2001914348123385858",
+    "department": "materials",
+    "material": "flooring",
+    "name": "400 Sq. Ft. 3mm Laminate Floor Underlayment with Vapor Barrier",
+    "image": "https://cf.cjdropshipping.com/17661024/0e727963-8919-4f74-8b05-6e7f2e94fa39.jpg",
+    "priceCents": 11654,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Underlayment"
+  },
+  {
+    "id": "2034840272154693634",
+    "department": "materials",
+    "material": "flooring",
+    "name": "20-Pack Acacia Hardwood Interlocking Outdoor Deck Tiles — 12-Inch",
+    "image": "https://cf.cjdropshipping.com/994da985-a66f-4bc8-96d2-9c309bcd7c1c.png",
+    "priceCents": 9504,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Outdoor Flooring"
+  },
+  {
+    "id": "2097153597406208002",
+    "department": "materials",
+    "material": "flooring",
+    "name": "48-Pack Waterproof Wood-Look Vinyl Plank Flooring — Gray, 36 Sq. Ft.",
+    "image": "https://cf.cjdropshipping.com/doba-import/e39a5eea5cf44cac8dbcaab8a23743cd.jpg",
+    "priceCents": 18815,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Luxury Vinyl Plank (LVP)"
+  },
+  {
+    "id": "1864564628698058752",
+    "department": "materials",
+    "material": "flooring",
+    "name": "VEVOR 36-Pack 6 x 36-Inch Peel-and-Stick Vinyl Floor Tiles — Natural Wood",
+    "image": "https://cf.cjdropshipping.com/89affe7d-5569-4882-819a-55e1a4958fbd.jpg",
+    "priceCents": 8306,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Luxury Vinyl Plank (LVP)"
+  }
 ];
