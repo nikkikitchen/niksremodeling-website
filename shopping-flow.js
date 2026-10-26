@@ -194,7 +194,8 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
         }
         // Specialty shopping groups have no matching retail-catalog department.
         const count=listedCounts?.[department];
-        markEmpty(button,label,count===undefined&&children.length&&childCounts.every(n=>n===0)?0:count);
+        // Unknown inventory must not be presented as confirmed empty.
+        markEmpty(button,label,count===undefined?null:count);
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
         branch.append(button,submenu);menu.append(branch);
         bindCategoryBranch(branch);
@@ -265,7 +266,11 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     // Specialty links were skipped before, leaving unlisted goods without dots.
     if(url.pathname==='/shop-installed.html'){
       const id=url.searchParams.get('item');
-      return id?installedListingCount(installableById[id]):null;
+      // A keyword miss is not proof that the destination has no inventory.
+      // Never show a red empty marker unless the source can verify it.
+      if(!id||!installableById[id])return null;
+      const matching=installedListingCount(installableById[id]);
+      return matching>0?matching:null;
     }
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
