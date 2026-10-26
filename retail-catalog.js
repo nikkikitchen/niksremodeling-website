@@ -412,5 +412,14 @@ export const retailCatalog = [
   "priceCents": 25254,
   "priceCheckedAt": "2026-10-26",
   "category": "Bathroom Vanities"
+},
+{
+  "id": "1956577654308847618",
+  "department": "tools",
+  "name": "20V SDS Plus Cordless Rotary Hammer Drill Kit",
+  "image": "https://cf.cjdropshipping.com/51f5a643-6ee0-47fe-8a41-ff48f9e2f80b.jpg",
+  "priceCents": 5425,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Power Tools"
 }
 ];
