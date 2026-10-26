@@ -385,5 +385,14 @@ export const retailCatalog = [
   "priceCents": 1456,
   "priceCheckedAt": "2026-10-26",
   "category": "Hardware"
+},
+{
+  "id": "1993021857753120769",
+  "department": "cabinets",
+  "name": "30-Inch White Shaker Ready-to-Assemble Kitchen Base Cabinet",
+  "image": "https://cf.cjdropshipping.com/17639424/e8ec788b-93e5-4cc9-83bf-32a4ded1c174.jpg",
+  "priceCents": 15110,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Base Cabinets"
 }
 ];
