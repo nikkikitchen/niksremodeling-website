@@ -70,5 +70,14 @@ export const retailCatalog = [
     "priceCents": 6309,
     "priceCheckedAt": "2026-10-26",
     "category": "Beverage Taps"
+  },
+  {
+    "id": "1992915023801270274",
+    "department": "appliances",
+    "name": "Dual-Tap Full-Size Beer Kegerator — Black",
+    "image": "https://cf.cjdropshipping.com/17639424/b352a119-fd69-453c-98be-c2f0b0621c46.jpg",
+    "priceCents": 72350,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Kegerators"
   }
 ];
