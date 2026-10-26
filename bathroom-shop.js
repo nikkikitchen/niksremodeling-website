@@ -268,7 +268,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Last-verified catalog entries remain visible when live supplier search times out.
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
- const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel);
+ const archiveIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(data=>new Set(Object.entries(data.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
+ const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel&&!archiveIds.has(p.id));
  async function updateBathroomStock(){
   const jobs=[...savedVisible];
   async function worker(){
@@ -326,7 +327,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const batch=row.pending.splice(0,bathroomStartingIds[kind]?4:(type==='all'?2:5));
   let added=0,failures=0;
   for(const p of batch){
-   if(seenIds.has(p.id)||seenNames.has(normalized(p.name))||seenImages.has(p.image))continue;
+   if(archiveIds.has(p.id)||seenIds.has(p.id)||seenNames.has(normalized(p.name))||seenImages.has(p.image))continue;
    try{
     let result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
     // Supplier API intermittently returns 503; retry once before hiding a valid item.
@@ -364,6 +365,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  async function loadVerifiedSmartToilet(){
   if(type!=='toilets'||toiletModel!=='smart')return;
   const id='2046529401898950658';
+  if(archiveIds.has(id))return;
   try{
    const reply=await fetch('/api/store-product?product='+id,{cache:'no-store'});
    if(!reply.ok)return;
