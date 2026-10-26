@@ -107,7 +107,7 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  if(department==='other'){
   // A supplier search result is a real product candidate, NOT a purchasable offer.
   // Only detailView can add to cart after a fresh U.S.-warehouse variant check.
-  if(id&&/^\\d{19}$/.test(id)){
+  if(id&&/^[0-9]{19}$/.test(id)){
    target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');
    return detailView(target,id,department);
   }
