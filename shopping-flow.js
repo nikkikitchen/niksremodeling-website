@@ -64,9 +64,9 @@
   ]).then(([{catalog,inCategory,categories},{retailCatalog}])=>{
     furnitureCategories=categories||{};
     furnitureListings=catalog;retailListings=retailCatalog;furnitureCategoryMatch=inCategory;
-    listedCounts={furniture:catalog.length};
+    listedCounts={furniture:catalog.length,bathroom:24};
     for(const department of Object.values(departmentByPath)){
-      if(department!=='furniture'&&department!=='custom')listedCounts[department]=retailCatalog.filter(p=>p.department===department).length;
+      if(department!=='furniture'&&department!=='custom'&&department!=='bathroom')listedCounts[department]=retailCatalog.filter(p=>p.department===department).length;
     }
     syncShoppingMenu();syncTileAvailability();
   }).catch(()=>{});
