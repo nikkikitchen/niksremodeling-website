@@ -257,7 +257,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     if(tile.matches('.material-option-card')){
       const material=document.body.dataset.material;
       const type=tile.querySelector('h3')?.textContent.trim();
-      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&p.materialType===type).length;
+      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length || null;
     }
     if(!tile.href)return null;
     const url=new URL(tile.href,location.href);
@@ -270,7 +270,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
       const type=url.searchParams.get('type');
-      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type)).length;
+      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length || null;
     }
     // Project planning/in-person quotes are services, not empty retail shelves.
     if(url.pathname==='/project.html')return null;
