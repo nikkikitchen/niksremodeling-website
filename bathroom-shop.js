@@ -210,7 +210,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
   {id:'2056258889654075394',type:'accessories',name:'Brushed-Aluminum Framed Bathroom Mirror',image:'https://cf.cjdropshipping.com/a1afd423-a5f2-41a0-877f-20d808f0fa9f.jpg',price:4892},
   {id:'2056266457894522881',type:'accessories',name:'Round Metal-Frame Bathroom Wall Mirror',image:'https://cf.cjdropshipping.com/53d70a00-d7d1-4643-a4f0-38451582ce74.jpg',price:4350},
   {id:'2102729802804068354',type:'accessories',name:'Dimmable LED Lighted Bathroom Vanity Mirror',image:'https://cf.cjdropshipping.com/doba-import/c519da78ef1b4306a0da5db44f74d0f7.jpg',price:6317},
-  {id:'2009089016871485442',type:'accessories',name:'Arched Smart Anti-Fog LED Bathroom Mirror',image:'https://cf.cjdropshipping.com/6d16dff8-4b88-4dc8-a4c4-661bb955cbaf.jpg',price:8888}
+  {id:'2009089016871485442',type:'accessories',name:'Arched Smart Anti-Fog LED Bathroom Mirror',image:'https://cf.cjdropshipping.com/6d16dff8-4b88-4dc8-a4c4-661bb955cbaf.jpg',price:8888},
+  {id:'2030206788611174402',type:'bathtubs',name:'59-Inch Acrylic Freestanding Soaking Bathtub',image:'https://cf.cjdropshipping.com/17728416/267b8277-3b54-4e99-8ca5-577531d49846.jpg',price:97511},
+  {id:'2045063087912226818',type:'bathtubs',name:'59-Inch Stone Resin Freestanding Soaking Bathtub',image:'https://cf.cjdropshipping.com/17763840/34705a71-7d2d-48c0-b44b-1c105e034245.jpg',price:185516},
+  {id:'2001492466284863490',type:'showerBases',name:'60-by-36-Inch Acrylic Shower Pan Base',image:'https://cf.cjdropshipping.com/17660160/c954dc3c-c150-4bdb-bf70-9f25282c63de.jpg',price:42110}
  ];
  if(toiletHub)return;
  if(product){
