@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Check this supplier-confirmed item directly; search ranking often buries fixtures behind cleaners.
  await loadVerifiedSmartToilet();
  // Start with the four main fixtures in All Bathroom, keeping supplier calls modest.
- await fetchBatch(type==='all'?searches.slice(0,4):searches);
+ await fetchBatch(type==='all'?[...searches.slice(0,4),'faucets','lighting','ventilation']:searches);
  let position=type==='all'?4:0;
  const more=document.getElementById('bath-more'),btn=document.createElement('button');
  btn.className='btn outline';btn.textContent=type==='all'?'Load more bathroom items':'Load more '+(toiletModel?toiletStyleNames[toiletModel]:selectedCategory);btn.type='button';
