@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   return '<article class="store-card"><a href="'+bathEsc(href)+'"><img loading="lazy" src="'+bathEsc(p.image)+'" alt="'+bathEsc(p.name)+'"><div class="store-card-copy"><p data-bath-stock="'+bathEsc(p.id)+'" role="status" class="store-card-stock" data-state="unknown">Checking U.S. stock…</p><p class="store-card-category">'+bathEsc(bathroomNames[p.type])+'</p><h3>'+bathEsc(p.name)+'</h3><p class="store-card-price">Last checked: from '+bathMoney(p.price)+'</p><p class="store-card-note">Price checked October 26, 2026 · Confirm current U.S. stock and price · Shipping and tax extra</p><span class="btn primary">View item</span></div></a></article>';
  }).join(''));
  updateBathroomStock();
+ setInterval(()=>{if(!document.hidden&&grid.isConnected)updateBathroomStock();},15*60*1000);
  const seenIds=new Set(savedVisible.map(p=>p.id)),seenNames=new Set(savedVisible.map(p=>p.name.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim())),seenImages=new Set(savedVisible.map(p=>p.image));
  // Curated fixture discovery queue. IDs are NOT offers: every card below still
  // requires a current priced US-warehouse variant from /api/store-product.
