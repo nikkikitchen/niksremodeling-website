@@ -45,7 +45,7 @@ function card(p,current=false){
  const priced=Number.isSafeInteger(p.priceCents)&&p.priceCents>0;
  const price=priced?(current?'From ':'Last checked: from ')+money(p.priceCents):'Price confirmation needed';
  const note=priced?(current?'U.S. warehouse stock checked':'Price checked '+esc(p.priceCheckedAt)+' · Confirm current price and stock'):'Awaiting current supplier price and U.S. availability';
- return `<article class="card store-card" data-product="${esc(p.id)}" data-category="${esc(p.category)}" data-verified="${current}" ${priced?'data-saved-price="'+p.priceCents+'" data-price-checked="'+esc(p.priceCheckedAt)+'"':''}><a href="${itemLink(p)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><h3>${esc(p.name)}</h3><p class="store-card-price">${price}</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
+ return `<article class="card store-card" data-product="${esc(p.id)}" data-category="${esc(p.category)}" data-verified="${current}" ${priced?'data-saved-price="'+p.priceCents+'" data-price-checked="'+esc(p.priceCheckedAt)+'"':''}><a href="${itemLink(p)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><h3>${esc(p.name)}</h3><p class="store-card-price">${price}</p><p class="store-card-stock" role="status" aria-live="polite" data-state="unknown">Stock not confirmed</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
 async function detailView(target,id,department){
  const saved=retailCatalog.find(p=>p.id===id&&p.department===department);
