@@ -394,5 +394,14 @@ export const retailCatalog = [
   "priceCents": 15110,
   "priceCheckedAt": "2026-10-26",
   "category": "Base Cabinets"
+},
+{
+  "id": "2046514992616464385",
+  "department": "cabinets",
+  "name": "24-Inch White Shaker Double-Door Wall Cabinet with Soft-Close Doors",
+  "image": "https://cf.cjdropshipping.com/17767296/e5dbf6e7-f34c-4b74-bfa2-425b8c1aedfc.jpg",
+  "priceCents": 29513,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall & Upper Cabinets"
 }
 ];
