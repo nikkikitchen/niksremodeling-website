@@ -269,6 +269,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
  const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel);
+ if(savedVisible.length){status.textContent='Showing '+savedVisible.length+' bathroom products with last-checked prices. Open a product to confirm current U.S. stock.';const emptyHelp=document.querySelector('.bath-plan-fallback');if(emptyHelp)emptyHelp.hidden=true;}
  grid.insertAdjacentHTML('beforeend',savedVisible.map(p=>{
   const href='/bathroom.html?'+new URLSearchParams({type:p.type,product:p.id});
   return '<article class="store-card"><a href="'+bathEsc(href)+'"><img loading="lazy" src="'+bathEsc(p.image)+'" alt="'+bathEsc(p.name)+'"><div class="store-card-copy"><p class="store-card-category">'+bathEsc(bathroomNames[p.type])+'</p><h3>'+bathEsc(p.name)+'</h3><p class="store-card-price">Last checked: from '+bathMoney(p.price)+'</p><p class="store-card-note">Price checked October 26, 2026 · Confirm current U.S. stock and price · Shipping and tax extra</p><span class="btn primary">View item</span></div></a></article>';
