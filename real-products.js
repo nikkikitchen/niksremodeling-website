@@ -105,21 +105,32 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
  if(department==='other'){
-  // Supplier candidates are not priced offers. Display only products with
-  // currently verified U.S. stock, price and actual supplier photographs.
-  const candidates=['1679818494889697280','2408010946381618200','1714560598207373312','1377522867369021440','1849681100705517568','1889601440136085505','2410160604541626000','2406160745241615500','1768182338095157248','1387323725799624704','1889912347079864322','1902619551725940737'];
-  target.innerHTML='<p role="status">Checking miscellaneous supplier inventory…</p>';
-  const results=await Promise.all(candidates.map(async id=>{
+  // A supplier search result is a real product candidate, NOT a purchasable offer.
+  // Only detailView can add to cart after a fresh U.S.-warehouse variant check.
+  if(id&&/^\\d{19}$/.test(id)){
+   target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');
+   return detailView(target,id,department);
+  }
+  const searches=[['Weather Stations','weather station',/weather station/i],['Doorbells','wireless doorbell',/doorbell/i],['Garden Hose Reels','garden hose reel',/hose reel|hose cart/i],['Pet Doors','pet door',/pet door|dog door|cat door/i]];
+  const seen=new Set();let shown=0;
+  target.innerHTML='<p id="other-discovery-status" role="status">Finding supplier products…</p><div id="other-live-grid" class="store-card-grid"></div>';
+  const grid=target.querySelector('#other-live-grid'),status=target.querySelector('#other-discovery-status');
+  for(const [group,keyword,match] of searches){
    try{
-    const response=await fetch('/api/store-product?product='+encodeURIComponent(id),{cache:'no-store'});
-    if(!response.ok)return null;
-    const data=await response.json(),variants=availableVariants(data);
-    if(!variants.length||!data.name||!String(data.image||variants[0].image||'').startsWith('https://'))return null;
-    return {id,department:'other',name:data.name,image:data.image||variants[0].image,category:'Other Products',priceCents:Math.min(...variants.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)};
-   }catch{return null;}
-  }));
-  const available=results.filter(Boolean);
-  target.innerHTML=available.length?available.map(p=>card(p,true)).join(''):'<p role="status">No miscellaneous products have confirmed U.S. stock right now. Please check back for new listings.</p>';
+    const response=await fetch('/api/cj-products?keyword='+encodeURIComponent(keyword),{cache:'no-store'});
+    if(!response.ok)continue;
+    const data=await response.json();let inGroup=0;
+    for(const p of data.products||[]){
+     if(inGroup>=3||shown>=12)break;
+     const productId=String(p.id||''),name=String(p.name||''),image=String(p.image||'');
+     if(!/^\\d{19}$/.test(productId)||!/^https:\\/\\//.test(image)||!match.test(name)||seen.has(productId)||!(Number(p.stock)>0))continue;
+     seen.add(productId);inGroup++;shown++;
+     grid.insertAdjacentHTML('beforeend','<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(productId)+'"><img src="'+esc(image)+'" alt="'+esc(name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(group)+'</p><h3>'+esc(name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier listing found · U.S. variant stock and delivery must be verified before cart</p><span class="btn primary">View item</span></div></a></article>');
+    }
+    status.textContent=shown+' products found. Current price and exact U.S. inventory are checked when you open an item.';
+   }catch{status.textContent=shown?shown+' products found. More supplier results are temporarily unavailable.':'Supplier search is temporarily unavailable. Please retry shortly.';}
+  }
+  if(!shown)status.textContent='Supplier search is temporarily unavailable. No products can be added without verified stock and price.';
   return;
  }
  const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
