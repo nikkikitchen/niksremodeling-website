@@ -26,7 +26,7 @@
 
   // Every page (including catalog pages with late-rendered headers) gets one
   // compact Shopping menu. All links go to the same project and product routes.
-  const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Tools","/products.html"]];
+  const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Tools","/products.html"],["Other","/other.html"]];
 
   // Retail equipment/material choices complement (never change) approved labor prices.
   // No unverified item receives a sale price until inventory/variants are confirmed.
@@ -55,7 +55,7 @@
     });
   }
 
-  const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools'};
+  const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/other.html':'other'};
   let listedCounts=null, furnitureListings=[], retailListings=[], bathroomListings=[], furnitureCategoryMatch=null, furnitureCategories={};
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
   Promise.all([
@@ -77,6 +77,7 @@
     if(page==='furniture')return Object.entries(furnitureCategories).map(([key,name])=>[name,'/furniture.html?category='+encodeURIComponent(key)]);
     if(page==='bathroom')return [['toilets','Toilets'],['bathtubs','Bathtubs'],['vanities','Vanities & Sinks'],['showers','Stand-up Showers'],['showerBases','Shower Pans & Bases'],['showerDoors','Shower Doors'],['faucets','Bathroom Faucets'],['lighting','Bathroom Lighting'],['ventilation','Ventilation & Fans'],['accessories','Mirrors & Accessories']].map(([key,name])=>[name,'/bathroom.html?type='+key]).concat(extraMenuLinks.bathroom);
     if(page==='materials'&&typeof MATERIAL_DETAIL_PAGES!=='undefined')return Object.entries(MATERIAL_DETAIL_PAGES).map(([key,p])=>[p.title,'/material-'+key+'.html']);
+    if(page==='other')return [['Browse All Other Products','/other.html']];
     if(typeof SHOP_GUIDES!=='undefined')return (SHOP_GUIDES[page]||[]).map(([name])=>[name,department+'?category='+encodeURIComponent(name)+'#catalog-products']).concat(extraMenuLinks[page]||[]);
     return [];
   }
