@@ -12,7 +12,7 @@ export function cardHtml(p){
 const activeChecks=new WeakSet();
 const archivedIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(d=>new Set(Object.entries(d.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
 export async function priceCards(container){
- if(!activeChecks.has(container)){
+ if(!activeChecks.has(container)&&typeof window!=='undefined'){
   activeChecks.add(container);
   setInterval(()=>{if(container.isConnected&&document.visibilityState!=='hidden')priceCards(container);},15*60*1000);
  }
