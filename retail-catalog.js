@@ -331,5 +331,23 @@ export const retailCatalog = [
   "priceCents": 14926,
   "priceCheckedAt": "2026-10-26",
   "category": "Microwaves & Hoods"
+},
+{
+  "id": "1992929083926167554",
+  "department": "appliances",
+  "name": "Commercial Four-Burner Countertop Gas Range",
+  "image": "https://cf.cjdropshipping.com/17639424/20d5672f-ee68-4455-909f-9a6bb8326cba.jpg",
+  "priceCents": 58310,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Gas Ranges"
+},
+{
+  "id": "1953134790539333633",
+  "department": "appliances",
+  "name": "12-Inch Two-Burner Stainless Steel Gas Cooktop",
+  "image": "https://cf.cjdropshipping.com/be80320a-aab2-4a84-bb9a-c9174338823e.jpg",
+  "priceCents": 9062,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall Ovens & Cooktops"
 }
 ];
