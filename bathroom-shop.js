@@ -162,12 +162,29 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '<p>Product prices exclude delivery, tax and installation. Online payment is not yet available.</p>'+planWithoutProduct+projectControls)+
    '</main>'+footer();
  updateCartCount();initNavMenus();
+ const bathroomSaved=[
+  {id:'2096917349794078722',type:'faucets',name:'Single-Handle Bathroom Vanity Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/e1d2c45530304759aee3765a73e42921.jpg',price:7767},
+  {id:'2096656741040947202',type:'faucets',name:'Two-Handle Centerset Bathroom Sink Faucet with Drain',image:'https://cf.cjdropshipping.com/doba-import/97364e3f0c914e4aa3854c8e1fdebb88.jpg',price:5726},
+  {id:'2096916661072584706',type:'faucets',name:'Single-Handle Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/20accfa2eaab482f91ea2d2b74d7b88e.jpg',price:8426},
+  {id:'2004469127873077249',type:'lighting',name:'24-Inch Three-Light Bathroom Vanity Sconce',image:'https://cf.cjdropshipping.com/1ab7e0e6-9330-4c9e-afa3-db0e764b496b.png',price:9522},
+  {id:'1947604343984668673',type:'lighting',name:'20-Inch Two-Light Bathroom Wall Sconce',image:'https://cf.cjdropshipping.com/f4cd213e-a8c6-434d-9e00-36eeedbb47a7.png',price:8258},
+  {id:'2001924466316451842',type:'lighting',name:'24-Inch LED Bathroom Vanity Light Bar',image:'https://cf.cjdropshipping.com/17661024/974434a4-f905-470c-a847-e8f1f439e353.jpg',price:3791},
+  {id:'2001504264391147521',type:'ventilation',name:'Bathroom Exhaust Fan, Adjustable 50/80/110 CFM',image:'https://cf.cjdropshipping.com/17660160/9e34cf36-f4ab-4540-81ef-ecef59302077.jpg',price:5174},
+  {id:'2100541805733785601',type:'lighting',name:'Three-Light Clear Glass Bathroom Vanity Sconce',image:'https://cf.cjdropshipping.com/doba-import/ddc9e483ea8f44a0abaa107f4dcfcaeb.jpg',price:6460},
+  {id:'2096972386499059713',type:'faucets',name:'Waterfall Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/beac733de34b4f79a519092f5c7d212d.jpg',price:26323},
+  {id:'2001529158386499586',type:'ventilation',name:'110 CFM Quiet Bathroom Exhaust Fan',image:'https://cf.cjdropshipping.com/17660160/b9820608-f57d-4f0f-95b1-a0e1f40a13c1.jpg',price:4754},
+  {id:'2001510513150238722',type:'ventilation',name:'Bathroom Exhaust Fan with Color-Changing Lights',image:'https://cf.cjdropshipping.com/17660160/6f12bb79-94da-446e-b368-f5798018e374.jpg',price:6470},
+  {id:'2001529529031913473',type:'ventilation',name:'110 CFM Bathroom Exhaust Fan with Heater',image:'https://cf.cjdropshipping.com/17660160/8098903e-cf79-4107-8c59-38ff6f01adea.jpg',price:7767}
+ ];
  if(toiletHub)return;
  if(product){
   const root=document.getElementById('bath-detail');
   if(!/^[\w-]{8,64}$/.test(product)){root.textContent='Item unavailable.';return;}
+  const savedItem=bathroomSaved.find(p=>p.id===product);
+  if(savedItem)root.innerHTML='<article class="store-product"><img src="'+bathEsc(savedItem.image)+'" alt="'+bathEsc(savedItem.name)+'"><div><h2>'+bathEsc(savedItem.name)+'</h2><p>Last checked: from '+bathMoney(savedItem.price)+' on October 26, 2026</p><p>Confirming current supplier availability. Payment and cart selection will appear only if the live stock check succeeds.</p></div></article>';
   try{
-   const resp=await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store'});
+   let resp=await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store'});
+   if(resp.status===503)resp=await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store'});
    if(!resp.ok)throw Error('Product cannot be verified currently.');
    const detail=await resp.json();
    const variants=bathVerified(detail);
@@ -242,26 +259,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
        ' = '+bathMoney(quote.productCents+quote.deliveryCents)+' before applicable tax. Payment not yet available.';
     }catch(e){target.textContent=e.message||'Unable to verify delivery.';}
    });
-  }catch(e){root.textContent=e.message||'Unable to verify product.';}
+  }catch(e){if(savedItem){const p=root.querySelector('article div:last-child');if(p)p.insertAdjacentHTML('beforeend','<p role="status">Current supplier stock cannot be confirmed. This item is not available to add to the cart until the check succeeds.</p>');}else root.textContent=e.message||'Unable to verify product.';}
   return;
  }
  const grid=document.getElementById('bath-products'),status=document.getElementById('bath-status');
  // Last-verified catalog entries remain visible when live supplier search times out.
  // Prices are clearly dated; details/cart still require a fresh US stock check.
- const bathroomSaved=[
-  {id:'2096917349794078722',type:'faucets',name:'Single-Handle Bathroom Vanity Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/e1d2c45530304759aee3765a73e42921.jpg',price:7767},
-  {id:'2096656741040947202',type:'faucets',name:'Two-Handle Centerset Bathroom Sink Faucet with Drain',image:'https://cf.cjdropshipping.com/doba-import/97364e3f0c914e4aa3854c8e1fdebb88.jpg',price:5726},
-  {id:'2096916661072584706',type:'faucets',name:'Single-Handle Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/20accfa2eaab482f91ea2d2b74d7b88e.jpg',price:8426},
-  {id:'2004469127873077249',type:'lighting',name:'24-Inch Three-Light Bathroom Vanity Sconce',image:'https://cf.cjdropshipping.com/1ab7e0e6-9330-4c9e-afa3-db0e764b496b.png',price:9522},
-  {id:'1947604343984668673',type:'lighting',name:'20-Inch Two-Light Bathroom Wall Sconce',image:'https://cf.cjdropshipping.com/f4cd213e-a8c6-434d-9e00-36eeedbb47a7.png',price:8258},
-  {id:'2001924466316451842',type:'lighting',name:'24-Inch LED Bathroom Vanity Light Bar',image:'https://cf.cjdropshipping.com/17661024/974434a4-f905-470c-a847-e8f1f439e353.jpg',price:3791},
-  {id:'2001504264391147521',type:'ventilation',name:'Bathroom Exhaust Fan, Adjustable 50/80/110 CFM',image:'https://cf.cjdropshipping.com/17660160/9e34cf36-f4ab-4540-81ef-ecef59302077.jpg',price:5174},
-  {id:'2100541805733785601',type:'lighting',name:'Three-Light Clear Glass Bathroom Vanity Sconce',image:'https://cf.cjdropshipping.com/doba-import/ddc9e483ea8f44a0abaa107f4dcfcaeb.jpg',price:6460},
-  {id:'2096972386499059713',type:'faucets',name:'Waterfall Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/beac733de34b4f79a519092f5c7d212d.jpg',price:26323},
-  {id:'2001529158386499586',type:'ventilation',name:'110 CFM Quiet Bathroom Exhaust Fan',image:'https://cf.cjdropshipping.com/17660160/b9820608-f57d-4f0f-95b1-a0e1f40a13c1.jpg',price:4754},
-  {id:'2001510513150238722',type:'ventilation',name:'Bathroom Exhaust Fan with Color-Changing Lights',image:'https://cf.cjdropshipping.com/17660160/6f12bb79-94da-446e-b368-f5798018e374.jpg',price:6470},
-  {id:'2001529529031913473',type:'ventilation',name:'110 CFM Bathroom Exhaust Fan with Heater',image:'https://cf.cjdropshipping.com/17660160/8098903e-cf79-4107-8c59-38ff6f01adea.jpg',price:7767}
- ];
+
  const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel);
  grid.insertAdjacentHTML('beforeend',savedVisible.map(p=>{
   const href='/bathroom.html?'+new URLSearchParams({type:p.type,product:p.id});
