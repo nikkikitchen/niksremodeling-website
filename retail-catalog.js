@@ -322,5 +322,14 @@ export const retailCatalog = [
   "priceCents": 19646,
   "priceCheckedAt": "2026-10-26",
   "category": "Wall Ovens & Cooktops"
+},
+{
+  "id": "1998932945511763970",
+  "department": "appliances",
+  "name": "Under-Cabinet Stainless Steel Range Hood — 230 CFM",
+  "image": "https://cf.cjdropshipping.com/17654112/b727def7-a647-417b-b509-a3eea732ae80.jpg",
+  "priceCents": 14926,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Microwaves & Hoods"
 }
 ];
