@@ -22,8 +22,9 @@ export async function priceCards(container){
   const note=card.querySelector('.store-card-note');
   let stock=card.querySelector('.store-card-stock');
   if(!stock){stock=document.createElement('p');stock.className='store-card-stock';stock.setAttribute('aria-live','polite');note.before(stock);}
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),9000);
   try{
-   const r=await fetch('/api/store-product?product='+encodeURIComponent(card.dataset.product));
+   const r=await fetch('/api/store-product?product='+encodeURIComponent(card.dataset.product),{cache:'no-store',signal:controller.signal});
    const p=await r.json();
    const prices=(p.variants||[]).filter(v=>Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0).map(v=>v.priceCents);
    if(!r.ok||p.warehouseCountry!=='US'||!Array.isArray(p.variants))throw Error('Unconfirmed US warehouse stock');
@@ -43,7 +44,7 @@ export async function priceCards(container){
    const saved=Number(card.dataset.savedPrice);
    label.textContent=Number.isSafeInteger(saved)&&saved>0?'Last checked: from '+money(saved):'Price confirmation needed';
    note.textContent=(saved>0?'Price checked '+card.dataset.priceChecked+' · Confirm current price and stock':'Contact us for current price and availability')+' · Shipping & tax extra';
-  }
+  }finally{clearTimeout(timer);}
  }
 }
 export function renderRoomCards(container,category){
