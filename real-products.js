@@ -114,7 +114,7 @@ export async function mountCatalog(target,{department,material,type,installKeywo
     const response=await fetch('/api/store-product?product='+encodeURIComponent(id),{cache:'no-store'});
     if(!response.ok)return null;
     const data=await response.json(),variants=availableVariants(data);
-    if(!variants.length||!data.name||!/^https:\\/\\//.test(data.image||variants[0].image||''))return null;
+    if(!variants.length||!data.name||!String(data.image||variants[0].image||'').startsWith('https://'))return null;
     return {id,department:'other',name:data.name,image:data.image||variants[0].image,category:'Other Products',priceCents:Math.min(...variants.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)};
    }catch{return null;}
   }));
