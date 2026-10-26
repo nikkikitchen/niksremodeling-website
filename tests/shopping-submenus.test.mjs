@@ -1,3 +1,4 @@
+import {bathroomCatalog} from '../bathroom-catalog.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -11,10 +12,11 @@ async function open(hover=false){
  const script=text=>{const node=w.document.createElement('script');node.textContent=text;w.document.body.append(node);};
  script(readFileSync('app.js','utf8'));script(readFileSync('room-projects.js','utf8'));
  w.eval('document.body.innerHTML=header()');
- w.__furniture={catalog,categories,inCategory};w.__retail={retailCatalog};
+ w.__furniture={catalog,categories,inCategory};w.__retail={retailCatalog};w.__bathroom={bathroomCatalog};
  script(readFileSync('shopping-flow.js','utf8')
   .replace("import('/store-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__furniture)")
-  .replace("import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__retail)"));
+  .replace("import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__retail)")
+  .replace("import('/bathroom-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__bathroom)"));
  await new Promise(r=>setTimeout(r,40));return dom;
 }
 
