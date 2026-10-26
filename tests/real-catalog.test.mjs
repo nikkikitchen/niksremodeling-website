@@ -42,6 +42,7 @@ test('a real product detail transfers the chosen supplier variant and retail pri
   const target=document.querySelector('main');await mountCatalog(target,{department:'cabinets'});
   const select=document.getElementById('retail-option');select.value='black';select.dispatchEvent(new dom.window.Event('change'));
   document.getElementById('retail-add').click();
+  await new Promise(resolve=>setTimeout(resolve,0));
   assert.equal(cart.length,1);assert.equal(cart[0].variantId,'black');assert.equal(cart[0].sku,'REAL-BLACK');assert.equal(cart[0].price,90);
   assert.equal(cart[0].shippingAndTaxNotIncluded,true);
  }finally{Object.assign(globalThis,old);dom.window.close();}
