@@ -1,3 +1,4 @@
+import {bathroomCatalog} from '../bathroom-catalog.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -7,12 +8,13 @@ import {retailCatalog} from '../retail-catalog.js';
 
 const source=readFileSync(new URL('../shopping-flow.js',import.meta.url),'utf8')
  .replace("import('/store-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__furniture)")
- .replace("import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__retail)");
+ .replace("import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__retail)")
+  .replace("import('/bathroom-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve(window.__bathroom)");
 const tick=()=>new Promise(r=>setTimeout(r,15));
 const tile=(id,href)=>`<a id="${id}" class="photo-category-tile" href="${href}"><img alt=""><span><strong>${id}</strong></span></a>`;
 function open(html){
  const dom=new JSDOM('<body>'+html+'</body>',{url:'https://niksremodeling.com/appliances.html',runScripts:'outside-only'});
- dom.window.__furniture={catalog,inCategory};dom.window.__retail={retailCatalog};dom.window.eval(source);return dom;
+ dom.window.__furniture={catalog,inCategory};dom.window.__retail={retailCatalog};dom.window.__bathroom={bathroomCatalog};w.__bathroom={bathroomCatalog};dom.window.eval(source);return dom;
 }
 
 test('picture tiles distinguish populated subcategories from empty ones across shopping',async()=>{
