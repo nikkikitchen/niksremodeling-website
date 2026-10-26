@@ -90,7 +90,7 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  const params=new URLSearchParams(location.search),id=params.get('product'),category=params.get('category');
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
- const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
+ const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category||(department==='appliances'&&category==='Kegerators'&&p.category==='Beverage Taps'))&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
  // On the unfiltered Appliances landing page, surface installed beverage equipment first
  // instead of burying taps below refrigerator and coffee listings.
  if(department==='appliances'&&!category&&!installKeyword){
