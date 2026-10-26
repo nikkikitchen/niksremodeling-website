@@ -277,5 +277,14 @@ export const retailCatalog = [
   "priceCents": 19820,
   "priceCheckedAt": "2026-10-26",
   "category": "Wall Ovens & Cooktops"
+},
+{
+  "id": "1993022697276620801",
+  "department": "appliances",
+  "name": "24-Inch Built-In Electric Single Wall Oven",
+  "image": "https://cf.cjdropshipping.com/17639424/c1f578e0-80a6-417c-ac5b-12d36999956a.jpg",
+  "priceCents": 40646,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall Ovens & Cooktops"
 }
 ];
