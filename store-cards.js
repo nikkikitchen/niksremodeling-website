@@ -24,7 +24,12 @@ export async function priceCards(container){
    const r=await fetch('/api/store-product?product='+encodeURIComponent(card.dataset.product));
    const p=await r.json();
    const prices=(p.variants||[]).filter(v=>Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0).map(v=>v.priceCents);
-   if(!r.ok||!prices.length||!p.inStockUS||p.warehouseCountry!=='US')throw Error('No confirmed U.S. stock');
+   if(!r.ok||p.warehouseCountry!=='US'||!Array.isArray(p.variants))throw Error('Unconfirmed US warehouse stock');
+   if(!prices.length||!p.inStockUS){
+    stock.textContent='In stock (U.S.): 0';stock.dataset.state='out';card.dataset.verified='false';
+    label.textContent='Currently out of stock';note.textContent='No confirmed U.S. stock · Shipping & tax extra';
+    continue;
+   }
    label.textContent=(new Set(prices).size>1?'From ':'')+money(Math.min(...prices));
    stock.textContent='In stock (U.S.): '+p.variants.reduce((n,v)=>n+Math.max(0,Number(v.usStock)||0),0);
    stock.dataset.state='available';
