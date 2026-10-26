@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
-const files = ['inventory-status.json', 'real-products.js', 'retail-catalog.js', 'bathroom-catalog.js', 'store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'product-search.html', 'product-search.js', 'shopping.html', 'shop-installed.html', 'shop-installed.js', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
+const files = ['inventory-status.json', 'real-products.js', 'retail-catalog.js', 'bathroom-catalog.js', 'store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'product-search.html', 'product-search.js', 'shopping.html', 'other.html', 'shop-installed.html', 'shop-installed.js', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
   'furniture.html', 'bathroom.html', 'appliances.html', 'cabinets.html', 'installation.html', 'terms.html', 'labor-price-review.html', 'labor-price-chart.html', 'room-labor.html',
   'calculators.html', 'project-cart.html', 'material-flooring.html', 'material-tile-stone.html', 'material-drywall.html', 'material-lumber.html', 'material-trim-molding.html', 'material-paint-finishes.html', 'material-insulation.html', 'material-roofing.html', 'material-siding-exterior.html', 'material-doors-windows.html', 'material-concrete-masonry.html', 'styles.css', 'app.js', 'project-calculator-options.js', 'calculator-simple-flow.js', 'project-options.js',
   '_headers', '.nojekyll'];
@@ -36,9 +36,9 @@ for (const file of integrityPages) {
 for (const file of browserScripts) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'pipe'});
 const shoppingSource=readFileSync(new URL('../shopping.html',import.meta.url),'utf8');
 if (shoppingSource.includes('http-equiv="refresh"') ||
-    (shoppingSource.match(/class="photo-category-tile"/g)||[]).length !== 6 ||
+    (shoppingSource.match(/class="photo-category-tile"/g)||[]).length !== 7 ||
     shoppingSource.includes('/project.html?project=custom'))
-  throw Error('Shopping must have six product-only picture cards, with no custom project category.');
+  throw Error('Shopping must have seven product-only picture cards, with no custom project category.');
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
 const access=projectSource.match(/accessibility:\{interior:\[([^\]]+)\],exterior:\[([^\]]+)\]\}/);
 if (!access || /'(?:doors|floor|lighting|concrete|stairs|framing)'/.test(access[1]+access[2]))
