@@ -194,7 +194,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
           markEmpty(link,name,count);submenu.append(link);
         }
         // Specialty shopping groups have no matching retail-catalog department.
-        const count=listedCounts?.[department];
+        const count=department==='other'?null:listedCounts?.[department];
         // Unknown inventory must not be presented as confirmed empty.
         markEmpty(button,label,count===undefined?null:count);
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
@@ -271,9 +271,11 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     }
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
+      // Material type links are navigation into a searchable supplier catalog.
+      // An empty saved list does not prove the destination lacks products.
       const type=url.searchParams.get('type');
       const matches=retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length;
-      return matches>0?matches:null;
+      return matches||null;
     }
     // Project planning/in-person quotes are services, not empty retail shelves.
     if(url.pathname==='/project.html')return null;
