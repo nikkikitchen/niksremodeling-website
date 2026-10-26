@@ -79,5 +79,14 @@ export const retailCatalog = [
     "priceCents": 72350,
     "priceCheckedAt": "2026-10-26",
     "category": "Kegerators"
+  },
+  {
+    "id": "1992983344353558529",
+    "department": "appliances",
+    "name": "Dual-Tap Stainless Steel Beer Tower Conversion Kit",
+    "image": "https://cf.cjdropshipping.com/17639424/299d37dc-f299-4cd3-9896-0040b595a822.jpg",
+    "priceCents": 17594,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Beverage Taps"
   }
 ];
