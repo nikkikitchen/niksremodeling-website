@@ -196,5 +196,59 @@ export const retailCatalog = [
     "priceCents": 10466,
     "priceCheckedAt": "2026-10-26",
     "category": "Garage Storage Cabinets"
+  },
+  {
+    "id": "2003344133462077442",
+    "name": "4-Door White Kitchen Pantry",
+    "image": "https://cf.cjdropshipping.com/17664480/fdd09b20-4dc9-4c5f-9ea1-1fa8d0ee327c.jpg",
+    "priceCents": 16506,
+    "priceCheckedAt": "2026-10-26",
+    "department": "cabinets",
+    "category": "Pantry & Tall Cabinets"
+  },
+  {
+    "id": "2003343334919000066",
+    "name": "63-inch Brown Kitchen Pantry",
+    "image": "https://cf.cjdropshipping.com/17664480/b64e36ed-12e1-41df-bb22-07e30fb5c05f.jpg",
+    "priceCents": 21629,
+    "priceCheckedAt": "2026-10-26",
+    "department": "cabinets",
+    "category": "Pantry & Tall Cabinets"
+  },
+  {
+    "id": "2003352382854811649",
+    "name": "White Kitchen Pantry with Door Shelves",
+    "image": "https://cf.cjdropshipping.com/17664480/1b4887bb-fd5f-4abc-be48-8bc95ea8c317.jpg",
+    "priceCents": 11623,
+    "priceCheckedAt": "2026-10-26",
+    "department": "cabinets",
+    "category": "Pantry & Tall Cabinets"
+  },
+  {
+    "id": "2034258550370521090",
+    "name": "Farmhouse Sideboard with Barn Doors",
+    "image": "https://cf.cjdropshipping.com/17737920/c3ce8c2f-01c1-4748-9e21-793026550ed2.jpg",
+    "priceCents": 13942,
+    "priceCheckedAt": "2026-10-26",
+    "department": "cabinets",
+    "category": "Storage Cabinets"
+  },
+  {
+    "id": "2096636345457606657",
+    "name": "Kitchen Sideboard & Coffee Bar Cabinet",
+    "image": "https://cf.cjdropshipping.com/doba-import/e0e9ce48650a4d658b60116fb864b99d.jpg",
+    "priceCents": 26574,
+    "priceCheckedAt": "2026-10-26",
+    "department": "cabinets",
+    "category": "Storage Cabinets"
+  },
+  {
+    "id": "1992915068682805249",
+    "name": "Dual-Tap Full-Size Kegerator — Alternate Model",
+    "image": "https://cf.cjdropshipping.com/17639424/735254b1-589c-40cb-b429-97d46a1d3981.jpg",
+    "priceCents": 62491,
+    "priceCheckedAt": "2026-10-26",
+    "department": "appliances",
+    "category": "Kegerators"
   }
 ];
