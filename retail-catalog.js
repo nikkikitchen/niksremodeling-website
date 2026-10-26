@@ -142,5 +142,32 @@ export const retailCatalog = [
     "priceCents": 6254,
     "priceCheckedAt": "2026-10-26",
     "category": "Coffee Systems"
+  },
+  {
+    "id": "2087070332347478018",
+    "department": "appliances",
+    "name": "Portable Countertop Dishwasher — 5 Programs",
+    "image": "https://cf.cjdropshipping.com/giga-import/1e8a81420de346a386b2d836b24767b2.jpg",
+    "priceCents": 43867,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Dishwashers"
+  },
+  {
+    "id": "1998933487875973122",
+    "department": "appliances",
+    "name": "30-inch Under-Cabinet Range Hood — 600 CFM",
+    "image": "https://cf.cjdropshipping.com/17654112/b77803ef-5b23-4eff-97f3-cc39972a9aea.jpg",
+    "priceCents": 23794,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "1998934121762377729",
+    "department": "appliances",
+    "name": "30-inch Convertible Range Hood — 450 CFM",
+    "image": "https://cf.cjdropshipping.com/17654112/b2b36d51-27d3-4c49-9c95-8773a42c5931.jpg",
+    "priceCents": 21578,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Microwaves & Hoods"
   }
 ];
