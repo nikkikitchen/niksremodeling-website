@@ -208,9 +208,20 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const select=document.getElementById('bath-variant');
    const price=document.getElementById('bath-price');
    select.addEventListener('change',()=>{price.textContent=bathMoney(variants.find(v=>v.id===select.value).priceCents);document.getElementById('bath-quote').textContent='';});
-   document.getElementById('bath-add-cart').addEventListener('click',()=>{
-     const variant=variants.find(v=>String(v.id)===select.value);
-     const feedback=document.getElementById('bath-cart-status');
+   document.getElementById('bath-add-cart').addEventListener('click',async()=>{
+     const button=document.getElementById('bath-add-cart'),feedback=document.getElementById('bath-cart-status');
+     button.disabled=true;feedback.textContent='Rechecking current U.S. stock and price…';
+     let variant=variants.find(v=>String(v.id)===select.value);
+     try{
+       const response=await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store'});
+       if(!response.ok)throw Error('Unavailable');
+       const fresh=await response.json();
+       const inStock=bathVerified(fresh);
+       const freshVariant=inStock?.find(v=>String(v.id)===String(variant?.id));
+       if(!freshVariant)throw Error('Out of stock');
+       variant=freshVariant;
+     }catch{feedback.textContent='Supplier stock is not confirmed. Nothing was added to your cart.';button.disabled=false;return;}
+     button.disabled=false;
      if(!variant||!Number.isSafeInteger(variant.priceCents)||variant.priceCents<=0||Number(variant.usStock)<=0){
        feedback.textContent='That option is not available at a verified price right now.';
        return;
