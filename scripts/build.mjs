@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
-const files = ['inventory-status.json', 'real-products.js', 'retail-catalog.js', 'store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'product-search.html', 'product-search.js', 'shopping.html', 'shop-installed.html', 'shop-installed.js', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
+const files = ['inventory-status.json', 'real-products.js', 'retail-catalog.js', 'bathroom-catalog.js', 'store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'product-search.html', 'product-search.js', 'shopping.html', 'shop-installed.html', 'shop-installed.js', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
   'furniture.html', 'bathroom.html', 'appliances.html', 'cabinets.html', 'installation.html', 'terms.html', 'labor-price-review.html', 'labor-price-chart.html', 'room-labor.html',
   'calculators.html', 'project-cart.html', 'material-flooring.html', 'material-tile-stone.html', 'material-drywall.html', 'material-lumber.html', 'material-trim-molding.html', 'material-paint-finishes.html', 'material-insulation.html', 'material-roofing.html', 'material-siding-exterior.html', 'material-doors-windows.html', 'material-concrete-masonry.html', 'styles.css', 'app.js', 'project-calculator-options.js', 'calculator-simple-flow.js', 'project-options.js',
   '_headers', '.nojekyll'];
@@ -13,6 +13,11 @@ const files = ['inventory-status.json', 'real-products.js', 'retail-catalog.js',
 // unrelated accessibility choices, or broken browser scripts. A failed build
 // keeps the previous working Cloudflare Pages deployment serving customers.
 const integrityPages = ['app.js','real-products.js','retail-catalog.js','room-projects.js','project-options.js','project-calculator-options.js','calculator-steps.js','shopping-flow.js','shop-installed.js','shop-installed.html','bathroom-shop.js','store.js','product-search.js','index.html','shopping.html','installation.html'];
+// Keep JavaScript module dependencies in the published build; otherwise a missing
+// module can silently stop stock-marker initialization on every shopping page.
+for(const required of ['bathroom-catalog.js','retail-catalog.js','store-catalog.js']){
+ if(!files.includes(required))throw Error('Missing published Shopping catalog module: '+required);
+}
 const browserScripts = integrityPages.filter(file=>file.endsWith('.js'));
 const availablePages = new Set(files.filter(file=>file.endsWith('.html')));
 let testedPhotos=0,testedLinks=0;
