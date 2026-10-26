@@ -61,5 +61,14 @@ export const retailCatalog = [
     "priceCents": 34999,
     "priceCheckedAt": "2026-10-26",
     "category": "Refrigerators"
+  },
+  {
+    "id": "1993033437579866113",
+    "department": "appliances",
+    "name": "Triple-Tap Stainless Steel Draft Beer Tower with Tubing and Faucets",
+    "image": "https://cf.cjdropshipping.com/17639424/f6fb41ac-34f8-4679-91f1-389c65fd1385.jpg",
+    "priceCents": 6309,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Beverage Taps"
   }
 ];
