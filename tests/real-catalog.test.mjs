@@ -103,7 +103,7 @@ test('equipment shopping categories match actual installable appliances',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const source=readFileSync(new URL('../real-products.js',import.meta.url),'utf8');
  const labor=readFileSync(new URL('../installation.html',import.meta.url),'utf8');
- for(const name of ['Beverage Taps','Kegerators','Coffee Systems']){
+ for(const name of ['Beverage Equipment','Coffee Systems']){
    assert.ok(app.includes('"'+name+'"')||app.includes("'"+name+"'"),name+' has a Shopping picture category');
    assert.ok(source.includes("'"+name+"':"),name+' uses live supplier search');
    assert.ok(app.includes("'"+name+"':[]"),name+' cannot accidentally inherit unrelated demo products');
