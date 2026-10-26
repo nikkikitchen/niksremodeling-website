@@ -255,11 +255,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
   function tileListingCount(tile){
     if(!listedCounts||!tile)return null;
     // Material choices on detail pages carry their product type in the card heading.
-    if(tile.matches('.material-option-card')){
-      const material=document.body.dataset.material;
-      const type=tile.querySelector('h3')?.textContent.trim();
-      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length || null;
-    }
+    if(tile.matches('.material-option-card'))return null; // These are material/planning choices, not verified retail shelves.
     if(!tile.href)return null;
     const url=new URL(tile.href,location.href);
     if(url.origin!==location.origin)return null;
@@ -275,7 +271,8 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
       const type=url.searchParams.get('type');
-      return retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length || null;
+      const matches=retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length;
+      return matches>0?matches:null;
     }
     // Project planning/in-person quotes are services, not empty retail shelves.
     if(url.pathname==='/project.html')return null;
@@ -296,7 +293,8 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
   function syncTileAvailability(){
     if(!listedCounts)return;
     document.querySelectorAll('main .photo-category-tile,main .toilet-choice-tile,main .material-option-card,main .installed-groups a').forEach(tile=>{
-      const count=tileListingCount(tile);if(count===null)return;
+      const count=tileListingCount(tile);
+      if(count===null){tile.classList.remove('shopping-tile-empty');if(tile.title==='No items listed yet')tile.removeAttribute('title');return;}
       tile.classList.toggle('shopping-tile-empty',count===0);
       if(count===0){tile.setAttribute('title','No items listed yet');}
       else if(tile.getAttribute('title')==='No items listed yet')tile.removeAttribute('title');
