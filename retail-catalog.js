@@ -477,5 +477,25 @@ export const retailCatalog = [
   "priceCents": 9504,
   "priceCheckedAt": "2026-10-26",
   "category": "Outdoor Flooring"
+},
+{
+  "id": "2097153597406208002",
+  "department": "materials",
+  "material": "flooring",
+  "name": "48-Pack Waterproof Wood-Look Vinyl Plank Flooring — Gray, 36 Sq. Ft.",
+  "image": "https://cf.cjdropshipping.com/doba-import/e39a5eea5cf44cac8dbcaab8a23743cd.jpg",
+  "priceCents": 18815,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Luxury Vinyl Plank (LVP)"
+},
+{
+  "id": "1864564628698058752",
+  "department": "materials",
+  "material": "flooring",
+  "name": "VEVOR 36-Pack 6 x 36-Inch Peel-and-Stick Vinyl Floor Tiles — Natural Wood",
+  "image": "https://cf.cjdropshipping.com/89affe7d-5569-4882-819a-55e1a4958fbd.jpg",
+  "priceCents": 8306,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Luxury Vinyl Plank (LVP)"
 }
 ];
