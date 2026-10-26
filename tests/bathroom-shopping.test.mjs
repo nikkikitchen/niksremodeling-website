@@ -1,3 +1,4 @@
+import {bathroomCatalog} from '../bathroom-catalog.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -95,7 +96,8 @@ test('featured smart toilet is displayed only with live verified U.S. stock and 
       variants:[{id:'us-white',name:'White',priceCents:69471,usStock:stock?25:0}]}
     :{products:[],totalPages:1}
   });
-  w.eval(src);
+  w.__bathroom={bathroomCatalog};
+  w.eval(src.replace("import('/bathroom-catalog.js')","Promise.resolve(window.__bathroom)"));
   await new Promise(resolve=>setTimeout(resolve,100));
   return dom;
  }
