@@ -69,7 +69,7 @@ export const retailCatalog = [
     "image": "https://cf.cjdropshipping.com/17639424/f6fb41ac-34f8-4679-91f1-389c65fd1385.jpg",
     "priceCents": 6309,
     "priceCheckedAt": "2026-10-26",
-    "category": "Beverage Taps"
+    "category": "Beverage Equipment"
   },
   {
     "id": "1992915023801270274",
@@ -78,7 +78,7 @@ export const retailCatalog = [
     "image": "https://cf.cjdropshipping.com/17639424/b352a119-fd69-453c-98be-c2f0b0621c46.jpg",
     "priceCents": 72350,
     "priceCheckedAt": "2026-10-26",
-    "category": "Kegerators"
+    "category": "Beverage Equipment"
   },
   {
     "id": "1992983344353558529",
@@ -87,7 +87,7 @@ export const retailCatalog = [
     "image": "https://cf.cjdropshipping.com/17639424/299d37dc-f299-4cd3-9896-0040b595a822.jpg",
     "priceCents": 17594,
     "priceCheckedAt": "2026-10-26",
-    "category": "Beverage Taps"
+    "category": "Beverage Equipment"
   },
   {
     "id": "1988920624246984705",
@@ -249,6 +249,6 @@ export const retailCatalog = [
     "priceCents": 62491,
     "priceCheckedAt": "2026-10-26",
     "department": "appliances",
-    "category": "Kegerators"
+    "category": "Beverage Equipment"
   }
 ];
