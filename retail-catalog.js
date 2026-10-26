@@ -367,5 +367,14 @@ export const retailCatalog = [
   "priceCents": 47510,
   "priceCheckedAt": "2026-10-26",
   "category": "Gas Ranges"
+},
+{
+  "id": "1998933236104486914",
+  "department": "appliances",
+  "name": "30/36-Inch Wall-Mount Stainless Steel Range Hood — 700 CFM",
+  "image": "https://cf.cjdropshipping.com/17654112/615c2740-76a9-422e-ad9a-f1c2553ef772.jpg",
+  "priceCents": 31036,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Microwaves & Hoods"
 }
 ];
