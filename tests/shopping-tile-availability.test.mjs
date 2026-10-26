@@ -18,8 +18,8 @@ function open(html){
 }
 
 test('picture tiles distinguish populated subcategories from empty ones across shopping',async()=>{
- const populated={fridges:'/appliances.html?category=Refrigerators',dishwashers:'/appliances.html?category=Dishwashers',hoods:'/appliances.html?category=Microwaves%20%26%20Hoods',storage:'/cabinets.html?category=Storage%20Cabinets',bedroom:'/furniture.html?category=bedroom',office:'/furniture.html?category=home-office',gas:'/appliances.html?category=Gas%20Ranges',laundry:'/appliances.html?category=Washers%20%26%20Electric%20Dryers'};
- const empty={base:'/cabinets.html?category=Base%20Cabinets',outdoor:'/furniture.html?category=outdoor',decor:'/furniture.html?category=decor',toilets:'/bathroom.html?type=toilets',drywall:'/material-drywall.html'};
+ const populated={fridges:'/appliances.html?category=Refrigerators',dishwashers:'/appliances.html?category=Dishwashers',hoods:'/appliances.html?category=Microwaves%20%26%20Hoods',storage:'/cabinets.html?category=Storage%20Cabinets',bedroom:'/furniture.html?category=bedroom',office:'/furniture.html?category=home-office',base:'/cabinets.html?category=Base%20Cabinets',gas:'/appliances.html?category=Gas%20Ranges',laundry:'/appliances.html?category=Washers%20%26%20Electric%20Dryers'};
+ const empty={outdoor:'/furniture.html?category=outdoor',decor:'/furniture.html?category=decor',toilets:'/bathroom.html?type=toilets',drywall:'/material-drywall.html'};
  const dom=open('<main><div class="shop-guide-grid">'+Object.entries({...populated,...empty}).map(([id,url])=>tile(id,url)).join('')+'</div><article class="store-card"><h3>Actual merchandise</h3></article></main>');
  try{
   await tick();const doc=dom.window.document;
