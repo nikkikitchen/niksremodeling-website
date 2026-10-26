@@ -304,5 +304,14 @@ export const retailCatalog = [
   "priceCents": 22169,
   "priceCheckedAt": "2026-10-26",
   "category": "Microwaves & Hoods"
+},
+{
+  "id": "2100060197753835521",
+  "department": "appliances",
+  "name": "3.22 Cu. Ft. Compact Electric Laundry Dryer — 7 Modes",
+  "image": "https://cf.cjdropshipping.com/doba-import/6aa065f8b57541148332d41c53158c81.jpg",
+  "priceCents": 57481,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Washers & Electric Dryers"
 }
 ];
