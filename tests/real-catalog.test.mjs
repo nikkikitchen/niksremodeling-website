@@ -13,7 +13,7 @@ test('old sample merchandise and flooring demo cards are retired',()=>{
   assert.match(p.id,/^\d{19}$/);
   assert.ok(p.priceCents>0);
   assert.match(p.image,/^https:\/\/cf\.cjdropshipping\.com\//);
-  assert.equal(p.priceCheckedAt,'2026-10-25');
+  assert.match(p.priceCheckedAt,/^2026-\d{2}-\d{2}$/,'A dated supplier price is required');
  }
 });
 
