@@ -12,10 +12,10 @@ test('Shopping includes every installed trade group and individual equipment cho
  const expected=['Doors, Windows & Access','Electrical, Lighting & Smart Home','Exterior, Decks & Outdoor',
   'Flooring, Walls & Finishes','Heating, Ventilation & Audio','Kitchen & Plumbing'];
  for(const title of expected)assert.ok(groups[title]?.length>=8,title);
- assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0),69,'Only physical shippable product categories belong in Shopping');
+ assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0),70,'Only physical shippable product categories belong in Shopping');
  assert.equal(Object.values(extras).reduce((n,v)=>n+v.length,0),24);
  // Guard against the stale 72/93 expectations that previously blocked Pages builds.
- assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0)+Object.values(extras).reduce((n,v)=>n+v.length,0),93);
+ assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0)+Object.values(extras).reduce((n,v)=>n+v.length,0),94);
  assert.ok(source.includes('window.INSTALLABLE_SHOP_ITEMS=installableById'));
  assert.ok(source.includes('if(installedMenuChoices[department])return installedMenuChoices[department]'));
 });
@@ -25,7 +25,7 @@ test('every new installation shopping link resolves to its own product search de
   const id=slug(group)+'-'+slug(name);
   assert.ok(!ids.has(id),'duplicate destination '+id);ids.add(id);
   assert.ok(keyword?.trim(),name+' requires a specific verified product query');
-  assert.ok(['materials','appliances'].includes(department),name+' needs an existing shopping department');
+  assert.ok(['materials','appliances','other'].includes(department),name+' needs an existing shopping department');
  }
  for(const [department,products] of Object.entries(extras))for(const [name,keyword,target,direct] of products){
   if(direct){assert.ok(/^\/bathroom\.html\?type=/.test(direct));continue;}
