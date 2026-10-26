@@ -10,12 +10,14 @@ export function cardHtml(p){
  return `<article class="store-card" data-product="${esc(p.id)}" data-verified="${verified?'true':'false'}"${priced&&!verified?` data-saved-price="${p.priceCents}" data-price-checked="${esc(p.priceCheckedAt)}"`:''}><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-stock" aria-live="polite" data-state="unknown">Checking U.S. stock…</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
 const activeChecks=new WeakSet();
+const archivedIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(d=>new Set(Object.entries(d.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
 export async function priceCards(container){
  if(!activeChecks.has(container)){
   activeChecks.add(container);
   setInterval(()=>{if(container.isConnected&&document.visibilityState!=='hidden')priceCards(container);},15*60*1000);
  }
  for(const card of container.querySelectorAll('[data-product]')){
+  if(archivedIds.has(card.dataset.product)){card.hidden=true;continue;}
   const label=card.querySelector('.store-card-price');
   const note=card.querySelector('.store-card-note');
   let stock=card.querySelector('.store-card-stock');
