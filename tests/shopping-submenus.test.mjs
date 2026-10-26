@@ -68,7 +68,7 @@ test('red dots also cover installable-product shopping links and empty departmen
    const cabinet=menu.querySelector('a[href*="category=Storage%20Cabinets"]');
    assert.ok(cabinet&&!cabinet.classList.contains('shopping-empty'),'Populated products must not show a red dot');
    const material=menu.querySelector('a[href*="/material-flooring.html"]');
-   assert.ok(material?.classList.contains('shopping-empty'),'Unlisted material type must be marked empty');
+   assert.ok(material&&!material.classList.contains('shopping-empty'),'Stocked flooring materials must not be marked empty');
   }
  }finally{dom.window.close()}
 });
