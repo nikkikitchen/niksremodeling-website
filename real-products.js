@@ -197,7 +197,7 @@ export async function mountCatalog(target,{department,material,type,installKeywo
   }
   // Real CJ catalog items with actual supplier photographs, never invented prices.
   // A current US-warehouse variant check is mandatory before any cart add.
-  target.innerHTML=otherCandidates.map(p=>'<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(p.id)+'"><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(p.category)+'</p><h3>'+esc(p.name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier product · Price, U.S. stock and shipping must be verified before cart</p><span class="btn primary">View item</span></div></a></article>').join('');
+  target.innerHTML=otherCandidates.filter(p=>!requestedCategory||p.category===requestedCategory).map(p=>'<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(p.id)+'"><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(p.category)+'</p><h3>'+esc(p.name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier product · Price, U.S. stock and shipping must be verified before cart</p><span class="btn primary">View item</span></div></a></article>').join('');
   return;
  }
  const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
