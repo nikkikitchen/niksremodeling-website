@@ -8,7 +8,7 @@ export function availableVariants(detail){
  return (detail.variants||[]).filter(v=>v.id&&Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0);
 }
 const categorySearch={
- 'Beverage Taps':'beer tower','Coffee Systems':'espresso machine','Kegerators':'kegerator',
+ 'Beverage Equipment':'beer tower','Coffee Systems':'espresso machine','Beverage Taps':'beer tower','Kegerators':'kegerator',
  'Refrigerators':'refrigerator','Gas Ranges':'gas range','Electric Ranges':'electric stove',
  'Wall Ovens & Cooktops':'cooktop','Dishwashers':'dishwasher','Microwaves & Hoods':'microwave',
  'Washers & Electric Dryers':'washing machine','Gas Dryers':'gas dryer','Cords & Connections':'appliance power cord',
@@ -87,14 +87,14 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  if(!document.querySelector('link[href^="/store.css"]')){
   const css=document.createElement('link');css.rel='stylesheet';css.href='/store.css?v='+encodeURIComponent(assetVersion);document.head.append(css);
  }
- const params=new URLSearchParams(location.search),id=params.get('product'),category=params.get('category');
+ const params=new URLSearchParams(location.search),id=params.get('product'),requestedCategory=params.get('category'),category=['Beverage Taps','Kegerators'].includes(requestedCategory)?'Beverage Equipment':requestedCategory;
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
- const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category||(department==='appliances'&&category==='Kegerators'&&p.category==='Beverage Taps'))&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
+ const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
  // On the unfiltered Appliances landing page, surface installed beverage equipment first
  // instead of burying taps below refrigerator and coffee listings.
  if(department==='appliances'&&!category&&!installKeyword){
-  const priority={'Beverage Taps':0,'Kegerators':1};
+  const priority={'Beverage Equipment':0};
   saved.sort((a,b)=>(priority[a.category]??2)-(priority[b.category]??2));
  }
  const seen=new Set(saved.map(p=>p.id)),names=new Set(saved.map(p=>p.name.toLowerCase())),images=new Set(saved.map(p=>p.image));
@@ -103,11 +103,10 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  // Candidate IDs are not retail offers. Each item is shown only after the
  // existing product API independently confirms a priced U.S.-warehouse variant.
  const equipmentCandidates={
-  'Beverage Taps':['1993033437579866113'],
-  'Kegerators':['1992915110470656002','1992915023801270274'],
+  'Beverage Equipment':['1993033437579866113','1992983344353558529','1992915023801270274','1992915068682805249','1992915110470656002'],
   'Coffee Systems':['1997963905444204545','2104817591011717121']
  };
- const equipmentKeyword={'Beverage Taps':'beer tower','Kegerators':'kegerator','Coffee Systems':'espresso machine'}[category];
+ const equipmentKeyword={'Beverage Equipment':'beer','Coffee Systems':'espresso machine'}[category];
  for(const candidateId of (department==='appliances'?equipmentCandidates[category]||[]:[])){
   try{
    const response=await fetch('/api/store-product?product='+encodeURIComponent(candidateId),{cache:'no-store'});
