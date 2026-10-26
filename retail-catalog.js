@@ -286,5 +286,23 @@ export const retailCatalog = [
   "priceCents": 40646,
   "priceCheckedAt": "2026-10-26",
   "category": "Wall Ovens & Cooktops"
+},
+{
+  "id": "1998934422786334722",
+  "department": "appliances",
+  "name": "30-Inch Under-Cabinet Range Hood — 250 CFM",
+  "image": "https://cf.cjdropshipping.com/17654112/64775ecd-18b7-4292-b718-def4b0a74f8a.jpg",
+  "priceCents": 14780,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Microwaves & Hoods"
+},
+{
+  "id": "1998933646168330241",
+  "department": "appliances",
+  "name": "30-Inch Built-In Range Hood Insert — 600 CFM",
+  "image": "https://cf.cjdropshipping.com/17654112/63ff8645-8aaa-4101-861c-84fe746c4ca2.jpg",
+  "priceCents": 22169,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Microwaves & Hoods"
 }
 ];
