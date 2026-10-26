@@ -358,5 +358,14 @@ export const retailCatalog = [
   "priceCents": 19193,
   "priceCheckedAt": "2026-10-26",
   "category": "Washers & Electric Dryers"
+},
+{
+  "id": "1992928918367924226",
+  "department": "appliances",
+  "name": "Commercial Single-Burner Countertop Gas Range",
+  "image": "https://cf.cjdropshipping.com/17639424/41992afc-2019-4565-8fa9-b296bf619ac4.jpg",
+  "priceCents": 47510,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Gas Ranges"
 }
 ];
