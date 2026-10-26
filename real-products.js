@@ -91,6 +91,12 @@ export async function mountCatalog(target,{department,material,type,installKeywo
  target.classList.add('store-card-grid');
  if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
  const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&(!installKeyword||matchesListing(p.name,installKeyword)));
+ // On the unfiltered Appliances landing page, surface installed beverage equipment first
+ // instead of burying taps below refrigerator and coffee listings.
+ if(department==='appliances'&&!category&&!installKeyword){
+  const priority={'Beverage Taps':0,'Kegerators':1};
+  saved.sort((a,b)=>(priority[a.category]??2)-(priority[b.category]??2));
+ }
  const seen=new Set(saved.map(p=>p.id)),names=new Set(saved.map(p=>p.name.toLowerCase())),images=new Set(saved.map(p=>p.image));
  target.innerHTML=saved.map(p=>card(p)).join('')||'<p class="empty" role="status">Checking available products…</p>';
  await priceCards(target);
