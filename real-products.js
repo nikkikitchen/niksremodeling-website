@@ -37,6 +37,9 @@ export function matchesListing(name,keyword){
  if(['refrigerator','dishwasher','washing machine','range hood','microwave','gas dryer','electric stove','cooktop'].includes(keyword)){
   if(/\b(cleaner|cleaning|tablets|detergent|stickers?|emblems?|pedestal|stand|organizer|divider|holder|container|repair|bender|pump|backsplash)\b|dishwasher[ -]safe|hood filters|wall shield|mobile base|knife set|bowl set|plate set|frying pan/i.test(n))return false;
  }
+ // A gas *range* must be an actual cooking appliance, never an auto part for a Range Rover.
+ if(keyword==='gas range'&&!/(?:gas\s+(?:range|stove|oven)|(?:range|stove)\s+(?:gas|oven)|freestanding\s+gas\s+range)/i.test(n))return false;
+ if(keyword==='gas range'&&/range rover|hood lift|strut|vehicle|car part|automotive/i.test(n))return false;
  const words=keyword.toLowerCase().split(/\s+/).filter(x=>!['electric','kitchen','bathroom','wall','hand','appliance','exterior'].includes(x));
  return words.every(word=>n.includes(word));
 }
