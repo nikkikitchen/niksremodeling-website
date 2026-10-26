@@ -123,7 +123,7 @@ export async function mountCatalog(target,{department,material,type,installKeywo
     for(const p of data.products||[]){
      if(inGroup>=3||shown>=12)break;
      const productId=String(p.id||''),name=String(p.name||''),image=String(p.image||'');
-     if(!/^\\d{19}$/.test(productId)||!/^https:\\/\\//.test(image)||!match.test(name)||seen.has(productId)||!(Number(p.stock)>0))continue;
+     if(!/^[0-9]{19}$/.test(productId)||!image.startsWith('https://')||!match.test(name)||seen.has(productId)||!(Number(p.stock)>0))continue;
      seen.add(productId);inGroup++;shown++;
      grid.insertAdjacentHTML('beforeend','<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(productId)+'"><img src="'+esc(image)+'" alt="'+esc(name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(group)+'</p><h3>'+esc(name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier listing found · U.S. variant stock and delivery must be verified before cart</p><span class="btn primary">View item</span></div></a></article>');
     }
