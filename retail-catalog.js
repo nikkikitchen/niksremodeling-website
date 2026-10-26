@@ -421,5 +421,14 @@ export const retailCatalog = [
   "priceCents": 5425,
   "priceCheckedAt": "2026-10-26",
   "category": "Power Tools"
+},
+{
+  "id": "2100416588045733890",
+  "department": "tools",
+  "name": "3-in-1 Brushless Cordless Impact Wrench, Drill and Screwdriver",
+  "image": "https://cf.cjdropshipping.com/doba-import/aeee7928a1504816b5b1eb2b5b06daa2.jpg",
+  "priceCents": 9827,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Drills & Impacts"
 }
 ];
