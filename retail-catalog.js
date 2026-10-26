@@ -250,5 +250,32 @@ export const retailCatalog = [
     "priceCheckedAt": "2026-10-26",
     "department": "appliances",
     "category": "Beverage Equipment"
-  }
+  },
+{
+  "id": "2084905431941939202",
+  "department": "appliances",
+  "name": "12-Inch Two-Burner Built-In Induction Cooktop",
+  "image": "https://cf.cjdropshipping.com/17858880/9a2391d3-3be4-46f7-a193-379b12591fd0.jpg",
+  "priceCents": 12950,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall Ovens & Cooktops"
+},
+{
+  "id": "1952786002980601858",
+  "department": "appliances",
+  "name": "30-Inch Five-Burner Electric Glass Cooktop",
+  "image": "https://cf.cjdropshipping.com/8617bbda-b54e-4983-a681-417c96f57909.jpg",
+  "priceCents": 22930,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall Ovens & Cooktops"
+},
+{
+  "id": "1952765853670014977",
+  "department": "appliances",
+  "name": "30-Inch Four-Burner Electric Glass Cooktop",
+  "image": "https://cf.cjdropshipping.com/a6fe878e-90da-4e41-8455-9131155f7d84.jpg",
+  "priceCents": 19820,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall Ovens & Cooktops"
+}
 ];
