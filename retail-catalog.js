@@ -313,5 +313,14 @@ export const retailCatalog = [
   "priceCents": 57481,
   "priceCheckedAt": "2026-10-26",
   "category": "Washers & Electric Dryers"
+},
+{
+  "id": "1953118592263114754",
+  "department": "appliances",
+  "name": "30-Inch Five-Burner Stainless Steel Gas Cooktop",
+  "image": "https://cf.cjdropshipping.com/f519a715-14be-4f32-9bc0-496a40851f23.jpg",
+  "priceCents": 19646,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Wall Ovens & Cooktops"
 }
 ];
