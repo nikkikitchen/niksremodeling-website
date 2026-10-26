@@ -56,15 +56,16 @@
   }
 
   const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools'};
-  let listedCounts=null, furnitureListings=[], retailListings=[], furnitureCategoryMatch=null, furnitureCategories={};
+  let listedCounts=null, furnitureListings=[], retailListings=[], bathroomListings=[], furnitureCategoryMatch=null, furnitureCategories={};
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
   Promise.all([
     import('/store-catalog.js?v='+encodeURIComponent(availabilityVersion)),
-    import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))
-  ]).then(([{catalog,inCategory,categories},{retailCatalog}])=>{
+    import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion)),
+    import('/bathroom-catalog.js?v='+encodeURIComponent(availabilityVersion))
+  ]).then(([{catalog,inCategory,categories},{retailCatalog},{bathroomCatalog}])=>{
     furnitureCategories=categories||{};
-    furnitureListings=catalog;retailListings=retailCatalog;furnitureCategoryMatch=inCategory;
-    listedCounts={furniture:catalog.length,bathroom:51};
+    furnitureListings=catalog;retailListings=retailCatalog;bathroomListings=bathroomCatalog;furnitureCategoryMatch=inCategory;
+    listedCounts={furniture:catalog.length,bathroom:bathroomCatalog.length+retailCatalog.filter(p=>p.department==='bathroom').length};
     for(const department of Object.values(departmentByPath)){
       if(department!=='furniture'&&department!=='custom'&&department!=='bathroom')listedCounts[department]=retailCatalog.filter(p=>p.department===department).length;
     }
@@ -250,7 +251,6 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
   }
   // Bathroom's 12 stocked-product previews live in bathroom-shop.js, not retail-catalog.js.
   // Include those products when deciding whether to display an empty-category red dot.
-  const bathroomPublishedCounts={faucets:8,lighting:8,ventilation:8,vanities:8,showerDoors:8,accessories:8,bathtubs:2,showerBases:1};
   function tileListingCount(tile){
     if(!listedCounts||!tile)return null;
     // Material choices on detail pages carry their product type in the card heading.
@@ -278,7 +278,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     if(!department||department==='custom')return null;
     if(department==='bathroom'){
       const type=url.searchParams.get('type'),model=url.searchParams.get('model');
-      const curated=type?(model?0:bathroomPublishedCounts[type]||0):51;
+      const curated=bathroomListings.filter(p=>(!type||p.type===type)&&!model).length;
       return curated+retailListings.filter(p=>p.department==='bathroom'&&(!type||p.type===type)&&(!model||p.model===model)).length;
     }
     if(department==='furniture'){
