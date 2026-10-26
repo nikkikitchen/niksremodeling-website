@@ -376,5 +376,14 @@ export const retailCatalog = [
   "priceCents": 31036,
   "priceCheckedAt": "2026-10-26",
   "category": "Microwaves & Hoods"
+},
+{
+  "id": "1909114817890877441",
+  "department": "cabinets",
+  "name": "10-Pack 3-Inch Square Kitchen Cabinet Drawer Pulls",
+  "image": "https://cf.cjdropshipping.com/88fbb6f5-3ac2-4d0e-aba6-eefe1c70dcbd.jpg",
+  "priceCents": 1456,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Hardware"
 }
 ];
