@@ -13,7 +13,7 @@ test('Shopping includes every installed trade group and individual equipment cho
   'Flooring, Walls & Finishes','Heating, Ventilation & Audio','Kitchen & Plumbing'];
  for(const title of expected)assert.ok(groups[title]?.length>=8,title);
  assert.equal(Object.values(groups).reduce((n,v)=>n+v.length,0),69,'Only physical shippable product categories belong in Shopping');
- assert.equal(Object.values(extras).reduce((n,v)=>n+v.length,0),25);
+ assert.equal(Object.values(extras).reduce((n,v)=>n+v.length,0),24);
  assert.ok(source.includes('window.INSTALLABLE_SHOP_ITEMS=installableById'));
  assert.ok(source.includes('if(installedMenuChoices[department])return installedMenuChoices[department]'));
 });
