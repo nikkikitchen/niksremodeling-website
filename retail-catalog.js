@@ -430,5 +430,32 @@ export const retailCatalog = [
   "priceCents": 9827,
   "priceCheckedAt": "2026-10-26",
   "category": "Drills & Impacts"
+},
+{
+  "id": "2085270212241428481",
+  "department": "tools",
+  "name": "400W Brushless Random Orbital Sander — 5/6-Inch, 7 Speeds",
+  "image": "https://cf.cjdropshipping.com/17859744/72c14c9a-68be-4c91-af51-df6c16446465.jpg",
+  "priceCents": 13598,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Power Tools"
+},
+{
+  "id": "1908816726840504322",
+  "department": "tools",
+  "name": "VEVOR 900W Variable-Speed Drywall Sander with Self-Suction",
+  "image": "https://cf.cjdropshipping.com/46535818-cd5b-4a83-8bc4-2f49306b9eae.jpg",
+  "priceCents": 11654,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Power Tools"
+},
+{
+  "id": "2001203482880552961",
+  "department": "tools",
+  "name": "Portable Variable-Speed 5-Inch Band Saw with Removable Base",
+  "image": "https://cf.cjdropshipping.com/17659296/ab6918c7-3ddb-4f5b-8ddd-395d8936d6a0.jpg",
+  "priceCents": 20510,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Power Tools"
 }
 ];
