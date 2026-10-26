@@ -169,5 +169,32 @@ export const retailCatalog = [
     "priceCents": 21578,
     "priceCheckedAt": "2026-10-26",
     "category": "Microwaves & Hoods"
+  },
+  {
+    "id": "2077626909271822338",
+    "department": "cabinets",
+    "name": "Lockable Rolling Garage Cabinet with Pegboard",
+    "image": "https://cf.cjdropshipping.com/037f216c-dda5-470f-85f5-a3ace9894958.jpg",
+    "priceCents": 18355,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Garage Storage Cabinets"
+  },
+  {
+    "id": "2001485317433434113",
+    "department": "cabinets",
+    "name": "30-inch Lockable Garage Wall Cabinet",
+    "image": "https://cf.cjdropshipping.com/17660160/a2151cf4-d62c-4fd1-a999-bf4a4f1fc2ca.jpg",
+    "priceCents": 10466,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Garage Storage Cabinets"
+  },
+  {
+    "id": "1909112753254494210",
+    "department": "cabinets",
+    "name": "VEVOR Wall-Mounted Metal Garage Cabinet",
+    "image": "https://cf.cjdropshipping.com/173396f0-045d-4bc1-972e-608c55f7c8b4.jpg",
+    "priceCents": 10466,
+    "priceCheckedAt": "2026-10-26",
+    "category": "Garage Storage Cabinets"
   }
 ];
