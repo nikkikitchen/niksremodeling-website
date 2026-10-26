@@ -7,22 +7,32 @@ export function cardHtml(p){
  const verified=priced&&p.stockVerified===true;
  const price=priced?(verified?'From ':'Last checked: from ')+money(p.priceCents):'Price confirmation needed';
  const note=verified?'U.S. warehouse stock checked':priced?'Price checked '+esc(p.priceCheckedAt)+' · Confirm current price and stock':'Contact us for current price and availability';
- return `<article class="store-card" data-product="${esc(p.id)}" data-verified="${verified?'true':'false'}"${priced&&!verified?` data-saved-price="${p.priceCents}" data-price-checked="${esc(p.priceCheckedAt)}"`:''}><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
+ return `<article class="store-card" data-product="${esc(p.id)}" data-verified="${verified?'true':'false'}"${priced&&!verified?` data-saved-price="${p.priceCents}" data-price-checked="${esc(p.priceCheckedAt)}"`:''}><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-stock" aria-live="polite" data-state="unknown">Checking U.S. stock…</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
+const activeChecks=new WeakSet();
 export async function priceCards(container){
+ if(!activeChecks.has(container)){
+  activeChecks.add(container);
+  setInterval(()=>{if(container.isConnected&&document.visibilityState!=='hidden')priceCards(container);},15*60*1000);
+ }
  for(const card of container.querySelectorAll('[data-product]')){
   const label=card.querySelector('.store-card-price');
   const note=card.querySelector('.store-card-note');
+  let stock=card.querySelector('.store-card-stock');
+  if(!stock){stock=document.createElement('p');stock.className='store-card-stock';stock.setAttribute('aria-live','polite');note.before(stock);}
   try{
    const r=await fetch('/api/store-product?product='+encodeURIComponent(card.dataset.product));
    const p=await r.json();
    const prices=(p.variants||[]).filter(v=>Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0).map(v=>v.priceCents);
    if(!r.ok||!prices.length||!p.inStockUS||p.warehouseCountry!=='US')throw Error('No confirmed U.S. stock');
    label.textContent=(new Set(prices).size>1?'From ':'')+money(Math.min(...prices));
+   stock.textContent='In stock (U.S.): '+p.variants.reduce((n,v)=>n+Math.max(0,Number(v.usStock)||0),0);
+   stock.dataset.state='available';
    card.hidden=false;card.dataset.verified='true';
    note.textContent='U.S. warehouse stock checked · Shipping & tax extra';
   }catch{
    card.hidden=false;card.dataset.verified='false';
+   stock.textContent='Stock not confirmed';stock.dataset.state='unknown';
    const saved=Number(card.dataset.savedPrice);
    label.textContent=Number.isSafeInteger(saved)&&saved>0?'Last checked: from '+money(saved):'Price confirmation needed';
    note.textContent=(saved>0?'Price checked '+card.dataset.priceChecked+' · Confirm current price and stock':'Contact us for current price and availability')+' · Shipping & tax extra';
