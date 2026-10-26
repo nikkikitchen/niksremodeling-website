@@ -127,7 +127,33 @@ export const catalog = [
       "living-room",
       "bedroom"
     ]
-  }
+  },
+{
+  "id": "2102736546674475010",
+  "priceCents": 6738,
+  "priceCheckedAt": "2026-10-26",
+  "name": "3-Tier Nightstand with USB Charging Station",
+  "category": "bedroom",
+  "image": "https://cf.cjdropshipping.com/doba-import/fe97e7ab125c4cb1a9c0ff32f4976650.jpg",
+  "departments": [
+    "bedroom",
+    "living-room",
+    "storage"
+  ]
+},
+{
+  "id": "2097024547006210049",
+  "priceCents": 3366,
+  "priceCheckedAt": "2026-10-26",
+  "name": "Modern Arch Side Table with Storage",
+  "category": "living-room",
+  "image": "https://cf.cjdropshipping.com/doba-import/d3e97d5bde394afe8464227c7813140b.jpg",
+  "departments": [
+    "living-room",
+    "bedroom",
+    "storage"
+  ]
+}
 ];
 export const categories = {
  "bathroom":"Bathroom Furniture","bedroom":"Bedroom","decor":"Decor & Accessories",
