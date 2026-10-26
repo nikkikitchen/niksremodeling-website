@@ -457,5 +457,25 @@ export const retailCatalog = [
   "priceCents": 20510,
   "priceCheckedAt": "2026-10-26",
   "category": "Power Tools"
+},
+{
+  "id": "2001914348123385858",
+  "department": "materials",
+  "material": "flooring",
+  "name": "400 Sq. Ft. 3mm Laminate Floor Underlayment with Vapor Barrier",
+  "image": "https://cf.cjdropshipping.com/17661024/0e727963-8919-4f74-8b05-6e7f2e94fa39.jpg",
+  "priceCents": 11654,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Underlayment"
+},
+{
+  "id": "2034840272154693634",
+  "department": "materials",
+  "material": "flooring",
+  "name": "20-Pack Acacia Hardwood Interlocking Outdoor Deck Tiles — 12-Inch",
+  "image": "https://cf.cjdropshipping.com/994da985-a66f-4bc8-96d2-9c309bcd7c1c.png",
+  "priceCents": 9504,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Outdoor Flooring"
 }
 ];
