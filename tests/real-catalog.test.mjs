@@ -94,9 +94,12 @@ test('category searches omit overseas inventory and unrelated sample-like result
  };
  try{
   const target=document.querySelector('main');await mountCatalog(target,{department:'tools'});
-  const cards=target.querySelectorAll('[data-product]');assert.equal(cards.length,1);assert.equal(cards[0].dataset.product,'drill-us');
-  assert.equal(cards[0].querySelector('a').getAttribute('href'),'/products.html?product=drill-us');
-  assert.match(cards[0].textContent,/\$50.00/);assert.equal(cards[0].dataset.verified,'true');
+  const cards=[...target.querySelectorAll('[data-product]')];
+  const supplierCard=cards.find(card=>card.dataset.product==='drill-us');
+  assert.ok(supplierCard,'U.S.-verified supplier drill must be displayed alongside curated tools');
+  assert.equal(cards.some(card=>['drill-overseas','nail-art'].includes(card.dataset.product)),false);
+  assert.equal(supplierCard.querySelector('a').getAttribute('href'),'/products.html?product=drill-us');
+  assert.match(supplierCard.textContent,/\$50.00/);assert.equal(supplierCard.dataset.verified,'true');
  }finally{Object.assign(globalThis,old);dom.window.close();}
 });
 
