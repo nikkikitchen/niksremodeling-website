@@ -183,8 +183,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const savedItem=bathroomSaved.find(p=>p.id===product);
   if(savedItem)root.innerHTML='<article class="store-product"><img src="'+bathEsc(savedItem.image)+'" alt="'+bathEsc(savedItem.name)+'"><div><h2>'+bathEsc(savedItem.name)+'</h2><p>Last checked: from '+bathMoney(savedItem.price)+' on October 26, 2026</p><p>Confirming current supplier availability. Payment and cart selection will appear only if the live stock check succeeds.</p></div></article>';
   try{
-   let resp=await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store'});
-   if(resp.status===503)resp=await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store'});
+   // Bound supplier latency so an item preview never sits indefinitely on Checking.
+   const getDetail=async()=>{const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),9000);try{return await fetch('/api/store-product?product='+encodeURIComponent(product),{cache:'no-store',signal:controller.signal});}finally{clearTimeout(timeout)}};
+   let resp=await getDetail();
+   if(resp.status===503)resp=await getDetail();
    if(!resp.ok)throw Error('Product cannot be verified currently.');
    const detail=await resp.json();
    const variants=bathVerified(detail);
@@ -259,7 +261,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
        ' = '+bathMoney(quote.productCents+quote.deliveryCents)+' before applicable tax. Payment not yet available.';
     }catch(e){target.textContent=e.message||'Unable to verify delivery.';}
    });
-  }catch(e){if(savedItem){const p=root.querySelector('article div:last-child');if(p)p.insertAdjacentHTML('beforeend','<p role="status">Current supplier stock cannot be confirmed. This item is not available to add to the cart until the check succeeds.</p>');}else root.textContent=e.message||'Unable to verify product.';}
+  }catch(e){if(savedItem){const p=root.querySelector('article div:last-child');if(p){const msg=p.querySelector('[data-stock-note]');if(msg)msg.textContent='Supplier stock check did not complete. Item cannot be added to cart yet.';else p.insertAdjacentHTML('beforeend','<p role="status">Supplier stock cannot be confirmed. Please check again to select this item.</p>');}}else root.textContent=e.message||'Unable to verify product.';}
   return;
  }
  const grid=document.getElementById('bath-products'),status=document.getElementById('bath-status');
