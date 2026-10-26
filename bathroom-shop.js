@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    row.max=Math.min(100,Math.max(row.page,Number(feed.totalPages)||row.page));
    row.page++;row.exhausted=row.page>row.max;
   }
-  const batch=row.pending.splice(0,type==='all'?2:5);
+  const batch=row.pending.splice(0,bathroomStartingIds[kind]?4:(type==='all'?2:5));
   let added=0,failures=0;
   for(const p of batch){
    if(seenIds.has(p.id)||seenNames.has(normalized(p.name))||seenImages.has(p.image))continue;
