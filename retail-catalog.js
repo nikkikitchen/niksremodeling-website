@@ -349,5 +349,14 @@ export const retailCatalog = [
   "priceCents": 9062,
   "priceCheckedAt": "2026-10-26",
   "category": "Wall Ovens & Cooktops"
+},
+{
+  "id": "2056628643315499010",
+  "department": "appliances",
+  "name": "Compact Top-Load Automatic Washing Machine with Spin Cycle",
+  "image": "https://cf.cjdropshipping.com/3c4b8618-3db4-48ce-8cc9-eab0037f34f4.png",
+  "priceCents": 19193,
+  "priceCheckedAt": "2026-10-26",
+  "category": "Washers & Electric Dryers"
 }
 ];
