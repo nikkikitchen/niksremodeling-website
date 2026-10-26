@@ -247,7 +247,17 @@ document.addEventListener('DOMContentLoaded',async()=>{
  }
  const grid=document.getElementById('bath-products'),status=document.getElementById('bath-status');
  const seenIds=new Set(),seenNames=new Set(),seenImages=new Set();
- const state=new Map();
+ // Curated fixture discovery queue. IDs are NOT offers: every card below still
+ // requires a current priced US-warehouse variant from /api/store-product.
+ // This keeps relevant fixtures discoverable when supplier search ranks accessories first.
+ const bathroomStartingIds={
+  faucets:['2096917349794078722','2096972386499059713','2096656741040947202','2096916661072584706'],
+  lighting:['2100541805733785601','1947604343984668673','2004469127873077249','2001924466316451842'],
+  ventilation:['2001504264391147521','2001529158386499586','2001504349855391745','2001511583781941249']
+ };
+ const state=new Map(Object.entries(bathroomStartingIds).map(([kind,ids])=>[kind,{
+  page:1,pending:ids.map(id=>({id,name:'',image:''})),max:1,exhausted:false
+ }]));
  const searches=type==='all'?bathroomTypes.map(x=>x[0]):[type];
  const normalized=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
  async function load(kind){
