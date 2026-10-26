@@ -497,5 +497,89 @@ export const retailCatalog = [
   "priceCents": 8306,
   "priceCheckedAt": "2026-10-26",
   "category": "Luxury Vinyl Plank (LVP)"
+},
+{
+  "id": "1679818494889697280",
+  "department": "other",
+  "name": "Plastic Pet Access Door",
+  "image": "/assets/approved-4de99f88049f.jpg",
+  "category": "Pet & Entry"
+},
+{
+  "id": "2408010946381618200",
+  "department": "other",
+  "name": "Color Weather Station Clock",
+  "image": "/assets/approved-a11ab0fcd37f.jpg",
+  "category": "Weather & Monitoring"
+},
+{
+  "id": "1714560598207373312",
+  "department": "other",
+  "name": "Wireless Outdoor Doorbell",
+  "image": "/assets/lighting-card.jpg",
+  "category": "Doorbells"
+},
+{
+  "id": "1377522867369021440",
+  "department": "other",
+  "name": "Fireproof Document Organizer",
+  "image": "/assets/approved-8a9d216224b8.jpg",
+  "category": "Document Protection"
+},
+{
+  "id": "1849681100705517568",
+  "department": "other",
+  "name": "VEVOR Retractable Garden Hose Reel",
+  "image": "/assets/approved-a11ab0fcd37f.jpg",
+  "category": "Yard Accessories"
+},
+{
+  "id": "1889601440136085505",
+  "department": "other",
+  "name": "Wall-Mount Swivel Hose Reel",
+  "image": "/assets/approved-a11ab0fcd37f.jpg",
+  "category": "Yard Accessories"
+},
+{
+  "id": "2410160604541626000",
+  "department": "other",
+  "name": "Timed Mobile Phone Lock Box",
+  "image": "/assets/approved-8a9d216224b8.jpg",
+  "category": "Specialty Storage"
+},
+{
+  "id": "2406160745241615500",
+  "department": "other",
+  "name": "Video Doorbell with Night Vision",
+  "image": "/assets/lighting-card.jpg",
+  "category": "Doorbells"
+},
+{
+  "id": "1768182338095157248",
+  "department": "other",
+  "name": "Wireless Waterproof Doorbell Set",
+  "image": "/assets/lighting-card.jpg",
+  "category": "Doorbells"
+},
+{
+  "id": "1387323725799624704",
+  "department": "other",
+  "name": "Pet Self-Opener Door Accessory",
+  "image": "/assets/approved-4de99f88049f.jpg",
+  "category": "Pet & Entry"
+},
+{
+  "id": "1889912347079864322",
+  "department": "other",
+  "name": "VEVOR Wheeled Garden Hose Cart",
+  "image": "/assets/approved-a11ab0fcd37f.jpg",
+  "category": "Yard Accessories"
+},
+{
+  "id": "1902619551725940737",
+  "department": "other",
+  "name": "Heavy-Duty Steel Garden Hose Cart",
+  "image": "/assets/approved-a11ab0fcd37f.jpg",
+  "category": "Yard Accessories"
 }
 ];
