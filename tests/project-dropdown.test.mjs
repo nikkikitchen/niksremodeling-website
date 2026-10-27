@@ -6,7 +6,7 @@ import {JSDOM} from 'jsdom';
 const root=new URL('../',import.meta.url);
 const source=path=>readFileSync(new URL(path,root),'utf8');
 const approved=[
-  ['accessibility','Disability Updates'],['attic','Attic'],['basement','Basement'],
+  ['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
   ['bathrooms','Bathroom'],['bedroom-guest-room','Bedrooms'],
   ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
   ['garage','Garage'],['kitchen-pantry','Kitchens'],
@@ -81,6 +81,7 @@ test('Themed Rooms, Outdoor Projects and More Ideas flyouts match their actual p
     assert.deepEqual(sub,pageCards,'Every '+id+' flyout link and title must equal the picture-card page');
    }
    if(id==='themed-rooms'){
+    assert.ok(pageCards.some(([t,u])=>t==='Adult Room'&&u===href('adult-room')),'Adult Room must appear on the Themed Rooms page and dropdowns');
     assert.ok(pageCards.some(([t,u])=>t==="Kids' Room"&&u===href('kids-room')));
     assert.ok(pageCards.some(([t,u])=>t==='Fitness & Wellness Room'&&u===href('fitness-wellness')));
     assert.ok(pageCards.some(([t,u])=>t==='Home Theater'&&u===href('home-theater')));
@@ -133,5 +134,30 @@ test('Arrow tap expands flyout, mouse hover opens it and keyboard navigation is 
   assert.ok(Number.parseInt(long.style.getPropertyValue('--project-submenu-top'))>=12);
   assert.match(doc.getElementById('expanded-projects-menu-style').textContent,/height:var\(--project-submenu-height,auto\)/);
 
+ }finally{dom.window.close()}
+});
+
+test('Desktop and phone menus expose Adult Room and Room Additions, with expandable choices',async()=>{
+ const dom=await load();
+ try{
+  const w=dom.window,doc=w.document;
+  const staticMenu=source('app.js');
+  assert.ok(staticMenu.includes('<a href="/project.html?project=room-additions">Room Additions</a><a href="/project.html?project=themed-rooms">Themed Rooms</a><a href="/project.html?project=adult-room">Adult Room</a></div></div><div class="nav-menu"><button class="nav-toggle shopping-toggle" type="button" aria-expanded="false" aria-controls="mobile-shopping-menu">'),'Phone fallback must contain both additions and Adult Room');
+  for(const [name,width,menuId] of [['desktop',1280,'projects-menu'],['phone',390,'mobile-projects-menu']]){
+   Object.defineProperty(w,'innerWidth',{value:width,configurable:true});
+   const menu=doc.getElementById(menuId);
+   const themed=menu?.querySelector('[data-project="themed-rooms"]');
+   const addition=menu?.querySelector('[data-project="room-additions"]');
+   assert.ok(themed&&addition,name+' missing category');
+   const button=themed.querySelector('.project-category-toggle');
+   button.click();
+   const options=themed.querySelector('.project-submenu');
+   assert.equal(button.getAttribute('aria-expanded'),'true',name+' branch did not open');
+   assert.equal(options.hidden,false,name+' submenu hidden');
+   const adult=options.querySelector('a[href="/project.html?project=adult-room"]');
+   assert.ok(adult&&adult.textContent==='Adult Room',name+' Adult Room missing or wrong link');
+   assert.ok(Number.parseInt(menu.style.getPropertyValue('--project-menu-height'),10)>0,name+' menu not sized');
+   assert.deepEqual([...menu.querySelectorAll(':scope > .project-branch')].map(b=>b.dataset.project),approved.map(([id])=>id));
+  }
  }finally{dom.window.close()}
 });
