@@ -46,7 +46,7 @@ test('late-rendered room tiles and material choices receive markers without dupl
 });
 
 
-test('installable product links do not falsely imply empty stock from keyword misses',async()=>{
+test('installable category links show dots when no products are listed',async()=>{
  const html='<main><div class="installed-groups">'+
    '<section class="installed-group">'+
      '<h2>Doors, Windows & Access</h2>'+
@@ -58,13 +58,13 @@ test('installable product links do not falsely imply empty stock from keyword mi
  try{
   await tick();
   const doc=dom.window.document;
-  assert.equal(doc.getElementById('attic-access').classList.contains('shopping-tile-empty'),false);
-  assert.equal(doc.getElementById('bifold-doors').classList.contains('shopping-tile-empty'),false);
-  assert.equal(doc.querySelector('.installed-group').classList.contains('shopping-tile-empty'),false);
-  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,0);
+  assert.equal(doc.getElementById('attic-access').classList.contains('shopping-tile-empty'),true);
+  assert.equal(doc.getElementById('bifold-doors').classList.contains('shopping-tile-empty'),true);
+  assert.equal(doc.querySelector('.installed-group').classList.contains('shopping-tile-empty'),true);
+  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,1);
   doc.querySelector('.installed-group').append(doc.createElement('small'));
   await tick();
-  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,0);
+  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,1);
  }finally{dom.window.close()}
 });
 
