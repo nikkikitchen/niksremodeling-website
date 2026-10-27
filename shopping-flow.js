@@ -275,8 +275,10 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       // Material type links are navigation into a searchable supplier catalog.
       // An empty saved list does not prove the destination lacks products.
       const type=url.searchParams.get('type');
-      const matches=retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length;
-      return matches;
+      const matches=retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type||(p.name||'').toLowerCase().includes(type.toLowerCase()))).length;
+      // These pages also discover live CJ supplier listings. No saved match is
+      // unknown inventory, not proof that a customer will see zero products.
+      return matches||null;
     }
     // Project planning/in-person quotes are services, not empty retail shelves.
     if(url.pathname==='/project.html')return null;
