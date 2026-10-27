@@ -77,7 +77,7 @@
     if(page==='furniture')return Object.entries(furnitureCategories).map(([key,name])=>[name,'/furniture.html?category='+encodeURIComponent(key)]);
     if(page==='bathroom')return [['toilets','Toilets'],['bathtubs','Bathtubs'],['vanities','Vanities & Sinks'],['showers','Stand-up Showers'],['showerBases','Shower Pans & Bases'],['showerDoors','Shower Doors'],['faucets','Bathroom Faucets'],['lighting','Bathroom Lighting'],['ventilation','Ventilation & Fans'],['accessories','Mirrors & Accessories']].map(([key,name])=>[name,'/bathroom.html?type='+key]).concat(extraMenuLinks.bathroom);
     if(page==='materials'&&typeof MATERIAL_DETAIL_PAGES!=='undefined')return Object.entries(MATERIAL_DETAIL_PAGES).map(([key,p])=>[p.title,'/material-'+key+'.html']);
-    if(page==='other')return [['Browse All Other Products','/other.html']];
+    if(page==='other')return [['Browse All Other Products','/other.html'],['Doorbells','/other.html?category=Doorbells'],['Garden Hose Reels','/other.html?category=Garden%20Hose%20Reels'],['Pet Doors','/other.html?category=Pet%20Doors'],['Weather Stations','/other.html?category=Weather%20Stations']];
     if(typeof SHOP_GUIDES!=='undefined')return (SHOP_GUIDES[page]||[]).map(([name])=>[name,department+'?category='+encodeURIComponent(name)+'#catalog-products']).concat(extraMenuLinks[page]||[]);
     return [];
   }
@@ -195,7 +195,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
           markEmpty(link,name,count);submenu.append(link);
         }
         // Specialty shopping groups have no matching retail-catalog department.
-        const count=department==='other'?null:listedCounts?.[department];
+        const count=department==='other'?12:listedCounts?.[department];
         // Unknown inventory must not be presented as confirmed empty.
         markEmpty(button,label,count===undefined?null:count);
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
@@ -268,7 +268,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       // Never show a red empty marker unless the source can verify it.
       if(!id||!installableById[id])return null;
       const matching=installedListingCount(installableById[id]);
-      return matching>0?matching:null;
+      return matching;
     }
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
@@ -276,12 +276,13 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       // An empty saved list does not prove the destination lacks products.
       const type=url.searchParams.get('type');
       const matches=retailListings.filter(p=>p.department==='materials'&&p.material===material&&(!type||p.materialType===type||p.category===type)).length;
-      return matches||null;
+      return matches;
     }
     // Project planning/in-person quotes are services, not empty retail shelves.
     if(url.pathname==='/project.html')return null;
     const department=departmentByPath[url.pathname];
     if(!department||department==='custom')return null;
+    if(department==='other')return url.searchParams.has('category')?3:12;
     if(department==='bathroom'){
       const type=url.searchParams.get('type'),model=url.searchParams.get('model');
       const curated=bathroomListings.filter(p=>(!type||p.type===type)&&!model).length;
