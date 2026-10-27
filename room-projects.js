@@ -36,7 +36,7 @@ Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=im
 // Exactly the 15 picture-card Projects approved for the site's primary menu.
 // Specialty spaces, outdoor ideas and trade details are nested underneath these.
 const PROJECT_MAIN_ENTRIES=[
- ['accessibility','Disability Updates'],['attic','Attic'],['basement','Basement'],
+ ['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedrooms'],
  ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
  ['garage','Garage'],['kitchen-pantry','Kitchens'],
@@ -45,7 +45,7 @@ const PROJECT_MAIN_ENTRIES=[
  ['room-additions','Room Additions'],['themed-rooms','Themed Rooms']
 ];
 const PROJECT_MAIN_IDS=new Set(PROJECT_MAIN_ENTRIES.map(([id])=>id));
-PROJECT_CATALOG.accessibility.title='Disability Updates';
+PROJECT_CATALOG.accessibility.title='Accessibility Updates';
 const PROJECT_PAGE_APPROVED_PHOTOS={
  bathrooms:'/assets/approved-a908c20ce632.jpg',
  'bedroom-guest-room':'/assets/approved-807c60a6001a.jpg',
@@ -222,6 +222,7 @@ function buildProjectDropdowns(){
  '.projects-mega .project-category-toggle[aria-expanded="true"]{background:#e8f1fa;color:#073c70}',
  '.projects-mega .project-submenu{position:fixed;top:var(--project-submenu-top,12px);left:var(--project-submenu-left,280px);box-sizing:border-box;width:min(290px,calc(100vw - 24px));height:var(--project-submenu-height,auto);max-height:calc(100dvh - 24px);overflow-y:auto;padding:8px;background:white;border:1px solid #dfe5ea;border-radius:8px;box-shadow:0 14px 36px #1423321f;z-index:121;overscroll-behavior:contain}',
  '.projects-mega .project-submenu a{display:block;white-space:normal!important;padding:9px 12px;line-height:1.35}',
+ '.projects-mega .project-submenu[hidden]{display:none!important}',
  '.projects-mega>a{font-weight:700}',
  '@media(max-width:820px),(hover:none){nav.nav .mobile-top-nav #mobile-projects-menu.projects-mega{position:fixed!important;top:var(--project-menu-top,auto)!important;left:10px!important;right:10px!important;width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:var(--project-menu-height,65vh)!important}.projects-mega .project-submenu{position:static!important;width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0 4px 8px 12px;padding:0 0 0 6px;border:0;border-left:2px solid #dfe5ea;border-radius:0;box-shadow:none}.projects-mega .project-category-toggle{min-height:46px;font-size:20px}nav.nav .mobile-top-nav .projects-mega .project-branch-row>.project-category-link{display:flex!important;flex:1 1 auto!important;min-height:46px!important;align-items:center!important;line-height:1.3!important;font-weight:700!important;padding:10px 12px!important}}'
  ].join('');
@@ -258,6 +259,14 @@ function buildProjectDropdowns(){
  function open(menu,branch){
    const button=branch.querySelector('.project-category-toggle'),nav=branch.querySelector('.project-submenu');
    close(menu);button.setAttribute('aria-expanded','true');nav.hidden=false;
+   if(window.innerWidth<=820){
+     // Expose the first themed-room choice when opening a branch near the
+     // bottom of a scrollable phone menu.
+     (window.requestAnimationFrame||window.setTimeout)(()=>{
+       if(nav.hidden||!branch.isConnected)return;
+       (nav.querySelector('a[href*="project=adult-room"]')||nav.querySelector('a'))?.scrollIntoView?.({block:'nearest'});
+     });
+   }
    if(window.innerWidth>820){
      const box=menu.getBoundingClientRect(),line=branch.getBoundingClientRect(),width=Math.min(290,window.innerWidth-24);
      const left=box.right+width+4<=window.innerWidth?box.right+2:Math.max(8,box.left-width-2);
