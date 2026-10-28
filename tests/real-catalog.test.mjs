@@ -115,3 +115,18 @@ test('equipment shopping categories match actual installable appliances',()=>{
  assert.match(labor,/labor-shop-equipment/);
  assert.match(labor,/category=\x27\+encodeURIComponent\(shopCategory\)/);
 });
+
+test('shopping separates Tools and Supplies and does not mix outdoor tiles into Hardwood',()=>{
+ const shopping=readFileSync(new URL('../shopping.html',import.meta.url),'utf8');
+ const supplies=readFileSync(new URL('../supplies.html',import.meta.url),'utf8');
+ const flow=readFileSync(new URL('../shopping-flow.js',import.meta.url),'utf8');
+ const products=readFileSync(new URL('../real-products.js',import.meta.url),'utf8');
+ assert.match(shopping,/<strong>Tools<\/strong>/);
+ assert.match(shopping,/<strong>Supplies<\/strong>/);
+ assert.doesNotMatch(shopping,/<strong>Tools &amp; Supplies<\/strong>|<strong>Tools & Supplies<\/strong>/);
+ assert.doesNotMatch(supplies,/<strong>Tools & Equipment<\/strong>/);
+ assert.match(flow,/\["Supplies","\/supplies.html"\]/);
+ assert.match(products,/matchesRequestedType\(p\)/);
+ assert.ok(retailCatalog.some(p=>p.category==='Outdoor Flooring'),'Test includes the outdoor tile category');
+ assert.equal(retailCatalog.filter(p=>p.category==='Hardwood').some(p=>p.category==='Outdoor Flooring'),false);
+});
