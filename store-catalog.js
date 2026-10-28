@@ -162,12 +162,18 @@ export const categories = {
  "outdoor":"Outdoor Furniture","storage":"Storage & Organization"
 };
 
+/** Only genuinely child-specific items belong on Kids' Room shopping pages. */
+export function isKidsFurniture(product){
+ const name=String(product?.name||'');
+ return /\b(?:kids?|children|child|toddlers?|babies|baby|nursery|youth|juvenile|bunk[\s-]*beds?|toy[\s-]*(?:storage|chests?|boxes?|organizers?|shelves|racks?)|playroom|playhouse|montessori|cribs?|little[\s-]*(?:boys?|girls?))\b/i.test(name);
+}
+
 /** Store the item once; display it wherever customers would reasonably use it. */
 export function relatedCategories(product){
  const name=String(product?.name||'').toLowerCase();
  const out=new Set([product?.category,...(product?.departments||[])]);
  const add=(...rooms)=>rooms.forEach(room=>out.add(room));
- const kid=/\b(kids?|children|child|toddler|nursery|playroom|baby)\b/i.test(name);
+ const kid=isKidsFurniture(product);
  const bookshelf=/\b(bookcases?|bookshelves|bookshelf|shelving|shelves|shelf|book shelves?)\b/i.test(name);
  const seat=/\b(bean\s*bags?|chairs?|sofas?|couches?|recliners?|loveseats?|armchairs?)\b/i.test(name);
  const clothing=/\b(dressers?|chest of drawers|nightstands?|bedside tables?|wardrobes?|armoires?)\b/i.test(name);
@@ -184,6 +190,7 @@ export function relatedCategories(product){
  if(/\b(patio|outdoor|garden furniture)\b/i.test(name))add('outdoor');
  if(/\b(dining tables?|dining chairs?)\b/i.test(name))add('dining-room');
  if(/\b(bathroom|vanity cabinet|medicine cabinet)\b/i.test(name))add('bathroom');
+ if(!kid)out.delete('kids-room'); // A supplier's generic room tag must not turn adult furniture into kids' furniture.
  return [...out].filter(room=>Object.hasOwn(categories,room));
 }
 export function inCategory(product,category){

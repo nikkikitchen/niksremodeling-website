@@ -531,26 +531,28 @@
     // The kids' room must show child-appropriate spaces, not generic adult furniture.
     // Use approved local photography first when it fits; otherwise use distinct kids-room interiors.
     const kidsWorkPhotos={
-      ceiling:'https://images.pexels.com/photos/7045855/pexels-photo-7045855.jpeg?auto=compress&cs=tinysrgb&w=900',
-      doors:'https://images.pexels.com/photos/5692272/pexels-photo-5692272.jpeg?auto=compress&cs=tinysrgb&w=900',
+      ceiling:'https://images.pexels.com/photos/10854908/pexels-photo-10854908.jpeg?auto=compress&cs=tinysrgb&w=900',
+      doors:'https://images.pexels.com/photos/7045947/pexels-photo-7045947.jpeg?auto=compress&cs=tinysrgb&w=900',
       floor:'https://images.pexels.com/photos/5008397/pexels-photo-5008397.jpeg?auto=compress&cs=tinysrgb&w=900',
-      furniture:'https://images.pexels.com/photos/7018827/pexels-photo-7018827.jpeg?auto=compress&cs=tinysrgb&w=900',
-      lighting:'https://images.pexels.com/photos/4221413/pexels-photo-4221413.jpeg?auto=compress&cs=tinysrgb&w=900',
-      storage:'https://images.pexels.com/photos/7018835/pexels-photo-7018835.jpeg?auto=compress&cs=tinysrgb&w=900',
-      trim:'https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900',
-      walls:'https://images.pexels.com/photos/7018828/pexels-photo-7018828.jpeg?auto=compress&cs=tinysrgb&w=900'
+      furniture:'https://images.pexels.com/photos/7045846/pexels-photo-7045846.jpeg?auto=compress&cs=tinysrgb&w=900',
+      lighting:'https://images.pexels.com/photos/7166642/pexels-photo-7166642.jpeg?auto=compress&cs=tinysrgb&w=900',
+      storage:'https://images.pexels.com/photos/7028062/pexels-photo-7028062.jpeg?auto=compress&cs=tinysrgb&w=900',
+      trim:'https://images.pexels.com/photos/7045857/pexels-photo-7045857.jpeg?auto=compress&cs=tinysrgb&w=900',
+      walls:'https://images.pexels.com/photos/27604123/pexels-photo-27604123.jpeg?auto=compress&cs=tinysrgb&w=900',
+      other:'https://images.pexels.com/photos/6693324/pexels-photo-6693324.jpeg?auto=compress&cs=tinysrgb&w=900'
     };
     const workPhoto=key=>{
-      const ownPhotos=[
-        ...(id==='kids-room'&&kidsWorkPhotos[key]?[kidsWorkPhotos[key]]:[]),
+      const ownPhotos=id==='kids-room'?(kidsWorkPhotos[key]?[kidsWorkPhotos[key]]:[]):[
         ...(isBathroom?(bathroomWorkPhotos[key]||[]):[]),
         ...(specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
         ...(workPhotoChoices[key]||[]),
         ...(stockByWork[key]||[])
       ];
       const chosen=ownPhotos.find(url=>!usedWorkPhotos.has(url))
-        ||(specialtyProjectPhotos[id]||[]).find(url=>!usedWorkPhotos.has(url))
-        ||(PROJECT_CATALOG[id]?.image&&!usedWorkPhotos.has(PROJECT_CATALOG[id].image)?PROJECT_CATALOG[id].image:null);
+        ||(id==='kids-room'?null:(
+          (specialtyProjectPhotos[id]||[]).find(url=>!usedWorkPhotos.has(url))
+          ||(PROJECT_CATALOG[id]?.image&&!usedWorkPhotos.has(PROJECT_CATALOG[id].image)?PROJECT_CATALOG[id].image:null)
+        ));
       // Never repeat a photo, including the hero. If there is no suitable unique
       // photograph for a specialty task, use a labeled task-specific illustration.
       // This is preferable to a random kitchen, bathroom or repeated hero photo.

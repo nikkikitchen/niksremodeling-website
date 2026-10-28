@@ -1,5 +1,5 @@
 const assetVersion=new URL(import.meta.url).searchParams.get('v')||'us-warehouse-20261021';
-const {catalog,categories}=await import('./store-catalog.js?v='+encodeURIComponent(assetVersion));
+const {catalog,categories,inCategory,isKidsFurniture}=await import('./store-catalog.js?v='+encodeURIComponent(assetVersion));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(c/100);
 export function cardHtml(p){
@@ -48,7 +48,7 @@ export async function priceCards(container){
  }
 }
 export function renderRoomCards(container,category){
- const items=catalog.filter(p=>p.category===category).sort((a,b)=>a.name.localeCompare(b.name));
+ const items=catalog.filter(p=>inCategory(p,category)&&(category!=='kids-room'||isKidsFurniture(p))).sort((a,b)=>a.name.localeCompare(b.name));
  container.classList.add('store-card-grid');container.innerHTML=items.map(cardHtml).join('');
  return priceCards(container);
 }

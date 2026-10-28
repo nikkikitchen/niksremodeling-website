@@ -16,7 +16,7 @@ const furnitureCategoryPhotos={
 };
 
 document.addEventListener('DOMContentLoaded',async()=>{
- const {catalog,categories,inCategory,relatedCategories}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
+ const {catalog,categories,inCategory,relatedCategories,isKidsFurniture}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
  const {cardHtml,priceCards}=await import('/store-cards.js?v='+encodeURIComponent(furnitureAssetVersion));
  const params=new URLSearchParams(location.search),requestedCategory=params.get('category'),productId=params.get('product');
  const categoryAliases={"living room":"living-room","bedroom":"bedroom","dining room":"dining-room","home office":"home-office","outdoor furniture":"outdoor","décor & accessories":"decor"};
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const link=p=>'/furniture.html?category='+p.category+'&product='+p.id;
  const finish=()=>{updateCartCount();initNavMenus();};
  if(!productId){
-  const list=catalog.filter(p=>category==='kids-room'?/\b(kids?|children|child|toddler|nursery|playroom|youth|bunk bed|toy storage)\b/i.test(p.name):inCategory(p,category)).sort((a,b)=>a.name.localeCompare(b.name));
+  const list=catalog.filter(p=>category==='kids-room'?isKidsFurniture(p):inCategory(p,category)).sort((a,b)=>a.name.localeCompare(b.name));
   document.body.innerHTML=header()+`<main class="wrap section"><nav aria-label="Breadcrumb"><a href="/shopping.html">Shopping</a> → <a href="/furniture.html">Furniture</a>${categories[category]?' → '+esc(categories[category]):''}</nav><h1>${esc(categories[category]||'Furniture & Accessories')}</h1>${categories[category]?'':`<nav class="store-categories photo-store-categories" aria-label="Furniture rooms"><a class="photo-category-tile" href="/furniture.html"><img loading="lazy" src="${furnitureCategoryPhotos.all}" alt=""><span><strong>All Furniture</strong></span></a>${Object.entries(categories).map(([key,name])=>`<a class="photo-category-tile" href="/furniture.html?category=${encodeURIComponent(key)}"><img loading="lazy" src="${furnitureCategoryPhotos[key]}" alt=""><span><strong>${esc(name)}</strong></span></a>`).join('')}</nav>`}<p class="lead">Browse furniture and accessories by room. Prices include our markup; delivery and tax are extra. Dated prices are the last checked prices and need confirmation before ordering.</p><div class="store-card-grid" id="store-list">${list.map(p=>cardHtml({...p,category:categories[category]?category:p.category})).join('')}</div><p id="us-load-status" role="status" aria-live="polite">Checking U.S. warehouse inventory and prices…</p><div id="store-more"></div><p>Online payment is coming soon. Check delivery on any available item.</p></main>`+footer();
   finish();
   const grid=document.getElementById('store-list');
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   // and product ID regardless of how many categories show the item.
   const sourceRooms={
    'bedroom':['bedroom','living-room','home-office','kids-room'],
-   'kids-room':['kids-room','living-room','bedroom','home-office'],
+   'kids-room':['kids-room'],
    'living-room':['living-room','bedroom','home-office'],
    'home-office':['home-office','bedroom','storage'],
    'storage':['storage','bedroom','home-office'],
@@ -56,11 +56,19 @@ document.addEventListener('DOMContentLoaded',async()=>{
   };
   const wantedSources=selectedRoom?(sourceRooms[selectedRoom]||[selectedRoom]):
     ['living-room','bedroom','dining-room','home-office','outdoor','kids-room'];
-  const rooms=wantedSources.map(cat=>({cat,search:''}));
-  if(!selectedRoom||['bedroom','kids-room','living-room','home-office','storage'].includes(selectedRoom)){
+  const rooms=selectedRoom==='kids-room'?[
+   {cat:'kids-room',search:''},
+   {cat:'kids-room',search:'kids'},
+   {cat:'bedroom',search:'bunk bed'},
+   {cat:'bedroom',search:'toddler'},
+   {cat:'bedroom',search:'children'},
+   {cat:'storage',search:'toy storage'},
+   {cat:'kids-room',search:'bean bag'}
+  ]:wantedSources.map(cat=>({cat,search:''}));
+  if(selectedRoom!=='kids-room'&&(!selectedRoom||['bedroom','living-room','home-office','storage'].includes(selectedRoom))){
    rooms.push({cat:selectedRoom||'home-office',search:'shelving'});
   }
-  if(!selectedRoom||['bedroom','kids-room','living-room'].includes(selectedRoom)){
+  if(selectedRoom!=='kids-room'&&(!selectedRoom||['bedroom','living-room'].includes(selectedRoom))){
    rooms.push({cat:'kids-room',search:'seating'});
   }
   const states=new Map();
@@ -96,6 +104,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const batch=state.pending.splice(0,selectedRoom?4:3);
    let added=0;
    for(const p of batch){
+    if(selectedRoom==='kids-room'&&!isKidsFurniture(p))continue;
     if(seen.has(p.id)||seenNames.has(normalizeName(p.name))||seenImages.has(p.image))continue;
     try{
      const resp=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
@@ -106,6 +115,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
        Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0);
      if(!detail.inStockUS||detail.warehouseCountry!=='US'||!variants.length)continue;
      const name=detail.name||p.name;
+     if(selectedRoom==='kids-room'&&!isKidsFurniture({name}))continue;
      const normalized=normalizeName(name);
      const image=detail.image||p.image;
      const related=relatedCategories({name,category:room.cat});
@@ -142,13 +152,14 @@ document.addEventListener('DOMContentLoaded',async()=>{
   return;
  }
  let item=catalog.find(p=>p.id===productId);
+ if(category==='kids-room'&&item&&!isKidsFurniture(item))item=null;
  if(item&&categories[category]&&inCategory(item,category))item={...item,category};
  let preloaded=null;
  if(!item&&/^[\w-]{8,64}$/.test(productId)){
   try{
    const r=await fetch('/api/store-product?product='+encodeURIComponent(productId));
    const data=await r.json();
-   if(r.ok&&data.inStockUS&&data.variants?.length){
+   if(r.ok&&data.inStockUS&&data.variants?.length&&(category!=='kids-room'||isKidsFurniture(data))){
     preloaded=data;
     item={id:data.id,name:data.name,image:data.image||'',category:categories[category]?category:'bedroom'};
    }
