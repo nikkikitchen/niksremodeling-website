@@ -537,7 +537,7 @@
       furniture:'https://images.pexels.com/photos/7018827/pexels-photo-7018827.jpeg?auto=compress&cs=tinysrgb&w=900',
       lighting:'https://images.pexels.com/photos/4221413/pexels-photo-4221413.jpeg?auto=compress&cs=tinysrgb&w=900',
       storage:'https://images.pexels.com/photos/7018835/pexels-photo-7018835.jpeg?auto=compress&cs=tinysrgb&w=900',
-      trim:'/assets/idea-playground.jpg',
+      trim:'https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900',
       walls:'https://images.pexels.com/photos/7018828/pexels-photo-7018828.jpeg?auto=compress&cs=tinysrgb&w=900'
     };
     const workPhoto=key=>{
