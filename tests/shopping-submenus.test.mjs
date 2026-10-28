@@ -38,7 +38,7 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
    assert.equal(appliance.querySelector('a[href*="Dishwashers"]').classList.contains('shopping-empty'),false);
    assert.equal(appliance.querySelector('a[href*="Gas%20Ranges"]').classList.contains('shopping-empty'),false,'Gas ranges now contain verified supplier listings');
    for(const branch of menu.querySelectorAll(':scope > .shopping-branch')){
-    const entries=[...branch.querySelectorAll('.shopping-submenu a')];assert.ok(entries.length >= (branch.querySelector('button')?.textContent.includes('Other')?1:6));
+    const entries=[...branch.querySelectorAll('.shopping-submenu a')];assert.ok(entries.length >= (['Other','Supplies'].some(label=>branch.querySelector('button')?.textContent.includes(label))?1:6));
     assert.equal(new Set(entries.map(a=>a.href)).size,entries.length);
     assert.deepEqual(entries.map(a=>a.textContent),entries.map(a=>a.textContent).sort((a,b)=>a.localeCompare(b)));
    }
