@@ -9,8 +9,9 @@ const byName=name=>{
 };
 test('bookshelves appear across sensible shopping rooms using one product record',()=>{
  const bookcase=byName('10-Shelf Bookcase');
- for(const room of ['bedroom','kids-room','home-office','living-room','storage'])
+ for(const room of ['bedroom','home-office','living-room','storage'])
   assert.equal(inCategory(bookcase,room),true,room);
+ assert.equal(inCategory(bookcase,'kids-room'),false,'An adult bookcase must not be advertised as kids furniture');
  assert.equal(catalog.filter(p=>p.id===bookcase.id).length,1);
 });
 test('holiday kids beanbag is listed in bedrooms and living room as well as kids room',()=>{
