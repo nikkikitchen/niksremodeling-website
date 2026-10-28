@@ -26,7 +26,7 @@
 
   // Every page (including catalog pages with late-rendered headers) gets one
   // compact Shopping menu. All links go to the same project and product routes.
-  const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Tools","/products.html"],["Other","/other.html"]];
+  const links=[["Appliances","/appliances.html"],["Bathroom Fixtures","/bathroom.html"],["Cabinets","/cabinets.html"],["Furniture & Accessories","/furniture.html"],["Materials","/materials.html"],["Tools","/products.html"],["Tools & Supplies","/supplies.html"],["Other","/other.html"]];
 
   // Retail equipment/material choices complement (never change) approved labor prices.
   // No unverified item receives a sale price until inventory/variants are confirmed.
@@ -55,7 +55,7 @@
     });
   }
 
-  const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/other.html':'other'};
+  const departmentByPath={'/appliances.html':'appliances','/bathroom.html':'bathroom','/cabinets.html':'cabinets','/furniture.html':'furniture','/materials.html':'materials','/products.html':'tools','/supplies.html':'supplies','/other.html':'other'};
   let listedCounts=null, furnitureListings=[], retailListings=[], bathroomListings=[], furnitureCategoryMatch=null, furnitureCategories={};
   const availabilityVersion=new URL(document.currentScript?.src||location.href).searchParams.get('v')||'shopping-dots-20261025';
   Promise.all([
@@ -77,6 +77,7 @@
     if(page==='furniture')return Object.entries(furnitureCategories).map(([key,name])=>[name,'/furniture.html?category='+encodeURIComponent(key)]);
     if(page==='bathroom')return [['toilets','Toilets'],['bathtubs','Bathtubs'],['vanities','Vanities & Sinks'],['showers','Stand-up Showers'],['showerBases','Shower Pans & Bases'],['showerDoors','Shower Doors'],['faucets','Bathroom Faucets'],['lighting','Bathroom Lighting'],['ventilation','Ventilation & Fans'],['accessories','Mirrors & Accessories']].map(([key,name])=>[name,'/bathroom.html?type='+key]).concat(extraMenuLinks.bathroom);
     if(page==='materials'&&typeof MATERIAL_DETAIL_PAGES!=='undefined')return Object.entries(MATERIAL_DETAIL_PAGES).map(([key,p])=>[p.title,'/material-'+key+'.html']);
+    if(page==='supplies')return [['All Building Materials','/materials.html'],['Drywall Materials','/material-drywall.html'],['Flooring Supplies & Materials','/material-flooring.html'],['Paint & Finishing Supplies','/material-paint-finishes.html'],['Tools & Equipment','/products.html'],['Trim & Molding','/material-trim-molding.html']];
     if(page==='other')return [['Browse All Other Products','/other.html'],['Doorbells','/other.html?category=Doorbells'],['Garden Hose Reels','/other.html?category=Garden%20Hose%20Reels'],['Pet Doors','/other.html?category=Pet%20Doors'],['Weather Stations','/other.html?category=Weather%20Stations']];
     if(typeof SHOP_GUIDES!=='undefined')return (SHOP_GUIDES[page]||[]).map(([name])=>[name,department+'?category='+encodeURIComponent(name)+'#catalog-products']).concat(extraMenuLinks[page]||[]);
     return [];
@@ -195,7 +196,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
           markEmpty(link,name,count);submenu.append(link);
         }
         // Specialty shopping groups have no matching retail-catalog department.
-        const count=department==='other'?null:listedCounts?.[department];
+        const count=['other','supplies'].includes(department)?null:listedCounts?.[department];
         // Unknown inventory must not be presented as confirmed empty.
         markEmpty(button,label,count===undefined?null:count);
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
@@ -286,7 +287,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     if(url.pathname==='/project.html')return null;
     const department=departmentByPath[url.pathname];
     if(!department||department==='custom')return null;
-    if(department==='other')return null; // Searchable specialty stock cannot be inferred from a fixed count.
+    if(department==='other'||department==='supplies')return null; // Searchable specialty stock cannot be inferred from a fixed count.
     if(department==='bathroom'){
       const type=url.searchParams.get('type'),model=url.searchParams.get('model');
       const curated=bathroomListings.filter(p=>(!type||p.type===type)&&!model).length;
