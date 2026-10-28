@@ -53,14 +53,14 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
  }finally{dom.window.close();}
 });
 
-test('unlisted installable product categories have red dots',async()=>{
+test('uncertain installable categories are not falsely marked empty',async()=>{
  const dom=await open();
  try{
   for(const id of ['shopping-menu','mobile-shopping-menu']){
    const menu=dom.window.document.getElementById(id);
    const unlisted=menu.querySelector('a[href*="shop-installed.html?item=doors-windows-access-attic-access-ladders"]');
    assert.ok(unlisted,'Installable-product link must be discoverable');
-   assert.equal(unlisted.classList.contains('shopping-empty'),true,'No listed items should display a red dot');
+   assert.equal(unlisted.classList.contains('shopping-empty'),false,'Incomplete keyword matching must not claim an empty catalog');
    const emptyGroup=[...menu.querySelectorAll('.shopping-branch')].find(b=>b.querySelector('button')?.textContent.includes('Doors, Windows & Access'));
    assert.ok(emptyGroup,'Specialty department must remain navigable when some item counts are unknown');
    const quoteGroup=[...menu.querySelectorAll('.shopping-branch')].find(b=>b.querySelector('button')?.textContent.includes('Other Ideas'));
