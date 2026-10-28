@@ -63,7 +63,7 @@ test('installable category links do not claim empty inventory from keyword misse
   assert.equal(doc.getElementById('bifold-doors').classList.contains('shopping-tile-empty'),false);
   assert.equal(doc.getElementById('hardwood').classList.contains('shopping-tile-empty'),false,'Hardwood flooring must not show a false empty dot');
   assert.equal(doc.querySelector('.installed-group').classList.contains('shopping-tile-empty'),false);
-  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,1);
+  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,0);
   doc.querySelector('.installed-group').append(doc.createElement('small'));
   await tick();
   assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,0);
