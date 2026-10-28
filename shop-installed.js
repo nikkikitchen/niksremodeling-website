@@ -6,6 +6,17 @@ document.addEventListener('DOMContentLoaded',()=>{
  const item=entries[key];
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-$/,'');
+ // Take shoppers to the relevant labor category, not the generic top of the page.
+ const installationLink=item=>{
+  const department=String(item.department||'').toLowerCase();
+  const group=String(item.group||'').toLowerCase();
+  const category=department==='appliances'||group.includes('appliance')?'appliances':
+   department==='bathroom'||group.includes('bath')?'bathroom':
+   department==='lighting'||group.includes('light')?'electrical':
+   department==='doors'||group.includes('door')?'doors':
+   department==='flooring'||group.includes('floor')?'flooring':null;
+  return '/installation.html'+(category?'#labor-category-'+category:'');
+ };
  let inner='';
  if(item){
   document.title=item.name+' | Nik’s Remodeling';
@@ -13,7 +24,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    '<h1>'+esc(item.name)+'</h1><p class="installed-note">Shop '+esc(item.name.toLowerCase())+
    '. Prices and U.S.-warehouse stock must be verified before a product can be added to your cart. Equipment and installation labor are separate.</p>'+
    '<div id="installed-products" class="products" aria-live="polite"><p>Checking available products…</p></div>'+
-   '<p><a href="/installation.html" class="btn outline">Add installation labor</a></p>';
+   '<p><a href="'+esc(installationLink(item))+'" class="btn outline">View matching installation labor</a></p>';
  }else{
   inner='<a class="installed-back" href="/shopping.html">← Shopping</a><h1>Products We Install</h1>'+
    '<p class="installed-note">Choose a product type to find matching equipment or building materials. '+
