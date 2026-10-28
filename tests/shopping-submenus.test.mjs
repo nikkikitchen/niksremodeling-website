@@ -30,7 +30,7 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
     'Appliances','Bathroom Fixtures','Cabinets','Doors, Windows & Access',
     'Electrical, Lighting & Smart Home','Exterior, Decks & Outdoor',
     'Flooring, Walls & Finishes','Furniture & Accessories','Heating, Ventilation & Audio',
-    'Kitchen & Plumbing','Materials','Tools','Other'
+    'Kitchen & Plumbing','Materials','Supplies','Tools','Other'
    ]);
    const appliance=menu.querySelector('#'+id+'-appliances');
    assert.deepEqual([...appliance.querySelectorAll('a')].map(a=>a.textContent),["Beverage Equipment", "Built-In Microwaves", "Coffee Systems", "Cords & Connections", "Dishwashers", "Double Wall Ovens", "Dryer Vent Kits", "Electric Cooktops", "Electric Dryers", "Electric Ranges", "Fireplace Inserts", "Garbage Disposals", "Gas Cooktops", "Gas Dryers", "Gas Ranges", "Microwave/Oven Combos", "Microwaves & Hoods", "Over-Range Microwaves", "Refrigerators", "Single Wall Ovens", "Stacked Washer/Dryer Sets", "Trash Compactors", "Wall Ovens & Cooktops", "Warming Drawers", "Washers & Electric Dryers"].sort((a,b)=>a.localeCompare(b)));
