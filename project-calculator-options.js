@@ -101,6 +101,9 @@
     locationField.innerHTML='<label for="project-location">Location</label><select id="project-location"><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select>';
     document.getElementById('material-name').closest('.field').after(locationField);
     const projectLocation=document.getElementById('project-location');
+    // Interior is assumed unless the originating project explicitly specifies exterior.
+    projectLocation.value='interior';
+    locationField.hidden=true;
     const choices=panel.querySelector('.labor-choices');
     const calculateButton=panel.querySelector('button[onclick="calcMaterial()"]');
     for(const el of [choices,document.getElementById('misc-hours').parentElement,panel.querySelector('.delivery-choices')])calculateButton.before(el);
