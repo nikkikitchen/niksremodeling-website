@@ -172,9 +172,9 @@ export function relatedCategories(product){
  const seat=/\b(bean\s*bags?|chairs?|sofas?|couches?|recliners?|loveseats?|armchairs?)\b/i.test(name);
  const clothing=/\b(dressers?|chest of drawers|nightstands?|bedside tables?|wardrobes?|armoires?)\b/i.test(name);
  const desk=/\b(desks?|writing tables?|workstations?)\b/i.test(name);
- if(bookshelf)add('storage','bedroom','living-room','home-office','kids-room');
+ if(bookshelf)add('storage','bedroom','living-room','home-office');
  if(seat)add('living-room','bedroom');
- if(clothing)add('bedroom','storage','kids-room');
+ if(clothing)add('bedroom','storage');
  if(desk)add('home-office','bedroom');
  if(kid)add('kids-room');
  if(/\b(console tables?|entryway benches?|hallway tables?)\b/i.test(name))add('entryway','living-room');
