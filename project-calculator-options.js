@@ -155,6 +155,9 @@
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
       if(workChoices.length)names=workChoices.slice();if(currentType==='bathroom')names=window.PROJECT_WORK_OPTIONS?.[work]?.kind==='bathroom'?workChoices.slice():window.BATHROOM_PACKAGES.map(p=>p.label);
+      // Installation already selected an exact bathroom service: do not ask to pick it again.
+      const preselectedBathroomService=currentType==='bathroom'&&requested.length===1&&new URLSearchParams(location.search).get('material')==='bathroom';
+      if(preselectedBathroomService)names=requested.slice();
       if(product&&!names.includes(product))names.unshift(product);
       names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(name):projectLocation.value==='exterior'?!/^Interior (Paint|Stain|Primer|Finish)\b/i.test(name):true);
       if((currentType==='paint'&&work)||new URLSearchParams(location.search).get('project')==='accents')names=names.filter(name=>! /primer|painting prep|backer board/i.test(name));
@@ -165,6 +168,7 @@
         const box=document.createElement('input');box.type='checkbox';box.name='area-product';box.value=name;box.id='area-product-'+index;
         box.checked=requested.includes(name)||(product?name===product:false);
         label.append(box,document.createTextNode(/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));row.append(label);
+        if(preselectedBathroomService&&name===requested[0]){box.checked=true;label.hidden=true;row.prepend(Object.assign(document.createElement('strong'),{textContent:name}));}
         const settings=document.createElement('div');settings.className='area-product-settings calc-fields';
         const field=(key,title,value,placeholder='')=>{const wrap=document.createElement('div');wrap.className='field';const text=document.createElement('label');const input=document.createElement('input');input.type='number';input.min=key==='waste'?'0':'0.01';input.step='any';input.id='product-'+index+'-'+key;input.dataset.productSetting=key;input.value=value;text.htmlFor=input.id;text.textContent=title;input.placeholder=placeholder;wrap.append(text,input);settings.append(wrap)};
         if(currentType==='bathroom'){row.dataset.measure='manual';field('quantity','How many?','1');const q=settings.querySelector('input');q.min='1';q.step='1';const u=document.createElement('input');u.type='hidden';u.dataset.productSetting='unit';u.value='Pieces';settings.append(u);const n=document.createElement('p');n.className='calc-note';n.textContent=window.bathroomPackageByLabel(name).note;settings.append(n);
