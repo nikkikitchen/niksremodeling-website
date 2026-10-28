@@ -660,7 +660,7 @@ function cartShoppingChoices(items){
  const wantsInstall=interested.some(x=>x.installationRequested);
  const wantsSupplies=interested.some(x=>x.suppliesRequested&&!x.installationRequested);
  return `<section class="panel" style="margin:14px 0;padding:18px"><h3>Complete Your Project</h3>
- ${wantsInstall?'<p><strong>Installation requested.</strong> Choose your installation work so we can include the correct labor and required supplies once, using our established prices.</p><a class="btn primary" href="/installation.html">Choose Installation Options</a>':''}
+ ${wantsInstall?'<p><strong>Installation requested, not yet priced.</strong> Choose the labor service to add it to your estimate. Products are not charged twice.</p>'+[...new Set(interested.filter(x=>x.installationRequested).map(x=>({appliances:'appliances',bathroom:'bathroom',cabinets:'cabinets',doors:'doors',flooring:'flooring',lighting:'electrical'})[x.department]).filter(Boolean))].map(category=>'<a class="btn primary" style="margin:4px" href="/installation.html#labor-category-'+category+'">Choose '+category+' installation</a>').join('')+'<a class="btn outline" href="/installation.html">All installation services</a>':''}
  ${wantsSupplies?'<p><strong>Matching supplies requested.</strong> We will select the appropriate supplies for your chosen products and confirm the charge before payment. Installation is not added unless you request it.</p>':''}
  </section>`;
 }
