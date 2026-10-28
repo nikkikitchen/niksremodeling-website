@@ -258,7 +258,9 @@
     // A toilet/vanity/shower service is already an indoor bathroom job. Do not
     // trap visitors in an unnecessary Interior/Exterior question on labor links.
     if(types.value==='bathroom'){
-      if(!initialParams.has('room'))document.getElementById('material-name').value='Bathroom';
+      // Bathroom has already been selected in Installation & Labor; don't ask again.
+      document.getElementById('material-name').closest('.field').hidden=true;
+      if(!initialParams.has('room')||!document.getElementById('material-name').value.trim())document.getElementById('material-name').value='Bathroom';
       if(!['interior','exterior'].includes(initialParams.get('location'))){
         projectLocation.value='interior';
         locationField.hidden=true;
