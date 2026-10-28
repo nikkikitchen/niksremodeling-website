@@ -528,8 +528,21 @@
       'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82']
     };
     const isBathroom=id==='bathrooms'||id==='bath-remodel';
+    // The kids' room must show child-appropriate spaces, not generic adult furniture.
+    // Use approved local photography first when it fits; otherwise use distinct kids-room interiors.
+    const kidsWorkPhotos={
+      ceiling:'/assets/kids-room.jpg',
+      doors:'https://images.pexels.com/photos/7018835/pexels-photo-7018835.jpeg?auto=compress&cs=tinysrgb&w=900',
+      floor:'https://images.pexels.com/photos/5008397/pexels-photo-5008397.jpeg?auto=compress&cs=tinysrgb&w=900',
+      furniture:'https://images.pexels.com/photos/7018827/pexels-photo-7018827.jpeg?auto=compress&cs=tinysrgb&w=900',
+      lighting:'https://images.pexels.com/photos/7045855/pexels-photo-7045855.jpeg?auto=compress&cs=tinysrgb&w=900',
+      storage:'https://images.pexels.com/photos/4221413/pexels-photo-4221413.jpeg?auto=compress&cs=tinysrgb&w=900',
+      trim:'https://images.pexels.com/photos/5692272/pexels-photo-5692272.jpeg?auto=compress&cs=tinysrgb&w=900',
+      walls:'/assets/idea-playground.jpg'
+    };
     const workPhoto=key=>{
       const ownPhotos=[
+        ...(id==='kids-room'&&kidsWorkPhotos[key]?[kidsWorkPhotos[key]]:[]),
         ...(isBathroom?(bathroomWorkPhotos[key]||[]):[]),
         ...(specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
         ...(workPhotoChoices[key]||[]),
