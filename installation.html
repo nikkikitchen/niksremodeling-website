@@ -435,6 +435,15 @@ document.addEventListener('DOMContentLoaded',()=>{
  category.groups.forEach(g=>{const option=make('option',g.label);option.value=g.applianceKey;select.append(option);});
  select.addEventListener('change',()=>chooseAppliance(select.value));picker.append(label,select);section.append(picker,make('p','Choose an appliance to see its installation, removal and related services.','labor-note'));
  }
+ // Product browsing remains optional: never change labor rates or add unverified stock.
+ const matchingShopPages={appliances:'/appliances.html',bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/doors.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',painting:'/material-paint-finishes.html'};
+ if(matchingShopPages[category.id]){
+  const shop=make('a','Shop matching products (optional)','btn outline');
+  shop.href=matchingShopPages[category.id];
+  shop.setAttribute('aria-label','Shop products for '+category.label);
+  shop.style.margin='12px 0';
+  section.append(shop);
+ }
  category.groups.forEach(group=>{const groupEl=category.groups.length>1?make('details',undefined,'labor-group'):section;if(groupEl!==section){groupEl.append(make('summary',group.label,'labor-group-heading'));section.append(groupEl);groupEl.id='labor-group-'+category.id+'-'+group.id;if(group.applianceKey){groupEl.id='labor-appliance-'+group.applianceKey;groupEl.dataset.appliance=group.applianceKey;groupEl.hidden=true;}}
  if(category.id==='appliances'){
   const shoppingChoices={
