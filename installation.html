@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  select.addEventListener('change',()=>chooseAppliance(select.value));picker.append(label,select);section.append(picker,make('p','Choose an appliance to see its installation, removal and related services.','labor-note'));
  }
  // Product browsing remains optional: never change labor rates or add unverified stock.
- const matchingShopPages={appliances:'/appliances.html',bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/doors.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',painting:'/material-paint-finishes.html'};
+ const matchingShopPages={appliances:'/appliances.html',bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/shop-installed.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',painting:'/material-paint-finishes.html'};
  if(matchingShopPages[category.id]){
   const shop=make('a','Shop matching products (optional)','btn outline');
   shop.href=matchingShopPages[category.id];
