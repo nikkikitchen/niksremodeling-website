@@ -167,8 +167,8 @@ async function detailView(target,id,department){
    }catch{status.textContent='Stock or price could not be verified. Nothing was added to cart.';button.disabled=false;return;}
    button.disabled=false;
    const cart=getCart();const existing=cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
-   if(existing){existing.qty=Math.min(99,(Number(existing.qty)||1)+1);existing.price=v.priceCents/100;existing.installationRequested=existing.installationRequested||$('retail-install').checked;existing.suppliesRequested=existing.suppliesRequested||$('retail-supplies').checked;}
-   else cart.push({name:name+' — '+(v.name||v.sku),type:'Product',source:'supplier-retail',productId:id,variantId:String(v.id),sku:v.sku,qty:1,price:v.priceCents/100,priceVerifiedAt:new Date().toISOString(),shippingAndTaxNotIncluded:true,installationRequested:$('retail-install').checked,suppliesRequested:$('retail-supplies').checked});
+   if(existing){existing.department=department;existing.qty=Math.min(99,(Number(existing.qty)||1)+1);existing.price=v.priceCents/100;existing.installationRequested=existing.installationRequested||$('retail-install').checked;existing.suppliesRequested=existing.suppliesRequested||$('retail-supplies').checked;}
+   else cart.push({name:name+' — '+(v.name||v.sku),type:'Product',source:'supplier-retail',department,productId:id,variantId:String(v.id),sku:v.sku,qty:1,price:v.priceCents/100,priceVerifiedAt:new Date().toISOString(),shippingAndTaxNotIncluded:true,installationRequested:$('retail-install').checked,suppliesRequested:$('retail-supplies').checked});
    saveCart(cart);
    const installCategory=({appliances:'appliances',bathroom:'bathroom',cabinets:'cabinets',doors:'doors',flooring:'flooring',lighting:'electrical'})[department];
    const laborHref='/installation.html'+(installCategory?'#labor-category-'+installCategory:'');
