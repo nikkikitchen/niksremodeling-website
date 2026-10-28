@@ -169,7 +169,13 @@ async function detailView(target,id,department){
    const cart=getCart();const existing=cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
    if(existing){existing.qty=Math.min(99,(Number(existing.qty)||1)+1);existing.price=v.priceCents/100;existing.installationRequested=existing.installationRequested||$('retail-install').checked;existing.suppliesRequested=existing.suppliesRequested||$('retail-supplies').checked;}
    else cart.push({name:name+' — '+(v.name||v.sku),type:'Product',source:'supplier-retail',productId:id,variantId:String(v.id),sku:v.sku,qty:1,price:v.priceCents/100,priceVerifiedAt:new Date().toISOString(),shippingAndTaxNotIncluded:true,installationRequested:$('retail-install').checked,suppliesRequested:$('retail-supplies').checked});
-   saveCart(cart);$('retail-status').innerHTML='Added to your cart. <a href="/project-cart.html">Review cart and project options</a>. Shipping and tax are calculated before payment.';
+   saveCart(cart);
+   const installCategory=({appliances:'appliances',bathroom:'bathroom',cabinets:'cabinets',doors:'doors',flooring:'flooring',lighting:'electrical'})[department];
+   const laborHref='/installation.html'+(installCategory?'#labor-category-'+installCategory:'');
+   const installationNext=$('retail-install').checked
+     ? ' Installation has been requested but is not priced or added yet. <a href="'+laborHref+'">Choose installation labor</a> to add the service and see its price.'
+     : '';
+   status.innerHTML='Product added. <a href="/project-cart.html">Review cart</a>.'+installationNext+' Shipping and tax are calculated before payment.';
   });
   let quoteVersion=0;
   const clearQuote=()=>{quoteVersion++;$('retail-quote').textContent='';};
