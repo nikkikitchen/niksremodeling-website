@@ -524,7 +524,7 @@ function reconcileBathroomFixtureAllowances(cart){
 }
 function projectEstimateMarkup(items){
  items=items.filter(x=>!customEstimate(x));
- if(!items.length)return '<p>In-person quote required before pricing this work.</p>';
+ if(!items.length)return '';
  if(items.every(requiresInPersonQuote))return '<p><strong>In-person quote required</strong></p><p>Schedule a visit to price your selected work.</p>';
  const services=serviceEstimateSummary(items);
  const others=items.filter(x=>!['Labor','Service'].includes(x.type));
