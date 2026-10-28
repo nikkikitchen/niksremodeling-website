@@ -195,7 +195,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
           markEmpty(link,name,count);submenu.append(link);
         }
         // Specialty shopping groups have no matching retail-catalog department.
-        const count=department==='other'?12:listedCounts?.[department];
+        const count=department==='other'?null:listedCounts?.[department];
         // Unknown inventory must not be presented as confirmed empty.
         markEmpty(button,label,count===undefined?null:count);
         if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
@@ -268,7 +268,9 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
       // Never show a red empty marker unless the source can verify it.
       if(!id||!installableById[id])return null;
       const matching=installedListingCount(installableById[id]);
-      return matching;
+      // A keyword search is not an exhaustive inventory search. Only use it
+      // to confirm listings exist; zero matches must remain unknown.
+      return matching>0?matching:null;
     }
     const material=url.pathname.match(/^\/material-([a-z-]+)\.html$/)?.[1];
     if(material){
@@ -284,7 +286,7 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
     if(url.pathname==='/project.html')return null;
     const department=departmentByPath[url.pathname];
     if(!department||department==='custom')return null;
-    if(department==='other')return url.searchParams.has('category')?3:12;
+    if(department==='other')return null; // Searchable specialty stock cannot be inferred from a fixed count.
     if(department==='bathroom'){
       const type=url.searchParams.get('type'),model=url.searchParams.get('model');
       const curated=bathroomListings.filter(p=>(!type||p.type===type)&&!model).length;
