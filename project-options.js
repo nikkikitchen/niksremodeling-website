@@ -155,7 +155,7 @@
   crossList(['Baseboards','Crown Molding','Decorative Trim'],['lumber','trim']);
   shared.bathroom=window.BATHROOM_PACKAGES.map(p=>p.label);
   const bathWork=(title,ids)=>work(title,'bathroom',window.BATHROOM_PACKAGES.filter(p=>ids.includes(p.id)).map(p=>p.label));
-  options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','toilet-tank-repair','toilet-wax-ring','toilet-flange','toilet-remove']);
+  options.toilet=bathWork('Toilets',['toilet-install','smart-toilet-install','wall-mounted-toilet-install','toilet-tank-repair','toilet-wax-ring','toilet-flange','toilet-remove']);
   options['faucet-service']=bathWork('Vanity Faucet Replacement',['faucet-replace']);
   options.plumbing=work('Sink & Plumbing','custom',['Sink','Disposal']);
   options.vanity=bathWork('Vanity, Sink & Faucet',['vanity-install','vanity-remove','faucet-replace']);
