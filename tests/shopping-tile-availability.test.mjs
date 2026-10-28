@@ -52,6 +52,7 @@ test('installable category links do not claim empty inventory from keyword misse
      '<h2>Doors, Windows & Access</h2>'+
      '<a id="attic-access" href="/shop-installed.html?item=doors-windows-access-attic-access-ladders">Attic Access Ladders</a>'+
      '<a id="bifold-doors" href="/shop-installed.html?item=doors-windows-access-bifold-closet-doors">Bifold Closet Doors</a>'+
+     '<a id="hardwood" href="/shop-installed.html?item=flooring-walls-finishes-hardwood-flooring">Hardwood Flooring</a>'+
    '</section>'+
    '</div></main>';
  const dom=open(html);
@@ -60,6 +61,7 @@ test('installable category links do not claim empty inventory from keyword misse
   const doc=dom.window.document;
   assert.equal(doc.getElementById('attic-access').classList.contains('shopping-tile-empty'),false);
   assert.equal(doc.getElementById('bifold-doors').classList.contains('shopping-tile-empty'),false);
+  assert.equal(doc.getElementById('hardwood').classList.contains('shopping-tile-empty'),false,'Hardwood flooring must not show a false empty dot');
   assert.equal(doc.querySelector('.installed-group').classList.contains('shopping-tile-empty'),false);
   assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,1);
   doc.querySelector('.installed-group').append(doc.createElement('small'));
