@@ -833,7 +833,7 @@ function itemOptionFields(name){
  [/shiplap|tongue.*groove|reclaimed wood|wood slat|fluted wood|board.*batten|beadboard|wainscoting|geometric wood/i,[['Material','Solid wood','MDF','PVC / composite'],['Finish','Painted','Stained','Unfinished'],['Layout','Horizontal','Vertical','Patterned']]],
  [/acoustic/i,[['Style','Fabric panels','Wood slat panels','Acoustic foam'],['Mounting','Walls','Ceiling','Both']]],
  [/vent duct|vent cap/i,[['Duct size','4 inch','6 inch','Other size'],['Work needed','New installation','Replace existing']]],
- [/toilet/i,[['Bowl shape','Round','Elongated (oblong)'],['Toilet height','Standard height','Tall / comfort height']]],
+ 
  [/tile|mosaic|stone|slab/i,[['Material','Ceramic','Porcelain','Natural stone','Manufactured stone'],['Format','Individual tiles','Mosaic sheets','Large format','Slab / panel'],['Location','Floor','Wall','Backsplash','Shower / wet area','Exterior']]],
  [/hardwood/i,[['Construction','Solid hardwood','Engineered hardwood'],['Installation','Nail / staple','Glue down','Floating']]],
  [/vinyl|\blvp\b|linoleum|laminate|carpet|flooring/i,[['Flooring type','Luxury vinyl plank (LVP)','Laminate','Hardwood','Tile','Sheet vinyl / linoleum','Carpet'],['Installation','Floating','Glue down','Nail / staple']]],
