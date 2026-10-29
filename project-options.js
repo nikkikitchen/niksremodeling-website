@@ -748,47 +748,28 @@
       status.textContent='Choose what you need. Sizes and options come next.';
       card.append(status);grid.append(card);
     });
-    // Fast multi-job picker reuses the existing room work cards and calculator.
-    const quickPick=document.createElement('section');
-    quickPick.className='panel';
-    quickPick.setAttribute('aria-label','Choose multiple jobs');
-    const quickTitle=document.createElement('h2');
-    quickTitle.textContent='What would you like done?';
-    const quickHelp=document.createElement('p');
-    quickHelp.textContent='Choose all that apply.';
-    const quickChoices=document.createElement('div');
-    quickChoices.style.cssText='display:flex;flex-wrap:wrap;gap:12px;margin:12px 0';
-    const picked=new Set();
-    grid.querySelectorAll('.project-work-card').forEach(card=>{
-      const title=card.querySelector('summary span')?.textContent?.trim();
-      if(!title)return;
-      const label=document.createElement('label');
-      label.style.cssText='display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #dfe5ea;border-radius:8px;cursor:pointer';
-      const box=document.createElement('input');
-      box.type='checkbox';box.value=card.dataset.workKey;
-      box.addEventListener('change',()=>{if(box.checked)picked.add(box.value);else picked.delete(box.value);});
-      label.append(box,document.createTextNode(title));quickChoices.append(label);
-    });
-    const quickContinue=document.createElement('button');
-    quickContinue.type='button';quickContinue.className='btn primary';quickContinue.textContent='Continue';
-    quickContinue.addEventListener('click',()=>{
-      if(!picked.size){quickHelp.textContent='Choose at least one job to continue.';return;}
-      grid.querySelectorAll('.project-work-card').forEach(card=>{card.open=picked.has(card.dataset.workKey);});
-      grid.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-    quickPick.append(quickTitle,quickHelp,quickChoices,quickContinue);
-    grid.before(quickPick);
+    // The Projects dropdown already captures work selections. Never ask for the same jobs twice.
     if(fixedLocation){
       stepButtons[0].hidden=true;setStep(1);
       back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
     }
     const selectedWorks=new URLSearchParams(location.search).get('selectedWorks');
     if(selectedWorks){
-      const chosen=new Set(selectedWorks.split(',').filter(key=>/^[a-z0-9-]{1,60}$/.test(key)));
+      const cards=[...grid.querySelectorAll('.project-work-card')];
+      const available=new Set(cards.map(card=>card.dataset.workKey));
+      const chosen=new Set(selectedWorks.split(',').filter(key=>/^[a-z0-9-]{1,60}$/.test(key)&&available.has(key)));
       if(chosen.size){
         setStep(1);
-        grid.querySelectorAll('.project-work-card').forEach(card=>{card.open=chosen.has(card.dataset.workKey);});
-        quickPick.querySelectorAll('input[type="checkbox"]').forEach(box=>{box.checked=chosen.has(box.value);});
+        grid.classList.add('project-work-filtered');
+        const titles=[];
+        cards.forEach(card=>{
+          const show=chosen.has(card.dataset.workKey)&&!card.hidden;
+          card.hidden=!show;
+          card.open=show;
+          if(show)titles.push(card.querySelector('summary span')?.textContent?.trim()||card.dataset.workKey);
+        });
+        workTitle.textContent=titles.length===1?'Choose '+titles[0]+' options':'Choose options for your selected work';
+        workNote.textContent='Pick the materials or services you need for each job below. No need to choose the same work again.';
       }
     }
     const requestedWork=new URLSearchParams(location.search).get('work');
@@ -804,6 +785,11 @@
         target.append(note);
         requestAnimationFrame(()=>target.scrollIntoView({block:'center'}));
       }
+    }
+    if(grid.classList.contains('project-work-filtered')){
+      const compact=document.createElement('style');
+      compact.textContent='#project-work-grid.project-work-filtered{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}#project-work-grid.project-work-filtered .project-work-card>summary img{height:76px;object-fit:cover}';
+      document.head.append(compact);
     }
     const style=document.createElement('style');style.textContent='.project-measurement-start{margin-bottom:26px}.project-measurement-grid{display:grid;grid-template-columns:2fr 1.3fr repeat(3,1fr);gap:12px}.project-measurement-grid input,.project-measurement-grid select{width:100%;box-sizing:border-box;padding:10px}.project-section-title{margin:26px 0 10px}.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}@media(max-width:700px){.project-measurement-grid{grid-template-columns:1fr 1fr}.project-measurement-grid .field:first-child{grid-column:1/-1}}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
   };
