@@ -216,6 +216,7 @@ function buildProjectDropdowns(){
  '#projects-menu.projects-mega,#mobile-projects-menu.projects-mega{box-sizing:border-box;width:270px;min-width:240px;max-width:calc(100vw - 20px);max-height:var(--project-menu-height,65vh)!important;overflow-y:auto!important;overflow-x:hidden!important;padding:6px;overscroll-behavior:contain;z-index:120}',
  '.projects-mega .project-branch{position:relative}',
  '.projects-mega .project-branch-row{display:flex;align-items:stretch;min-height:41px;border-radius:6px}',
+ '.projects-mega .project-branch-row>.project-category-link{background:transparent;border:0;cursor:pointer}',
  'nav.nav .projects-mega .project-branch-row>.project-category-link{display:flex;flex:1 1 auto;min-width:0;align-items:center;padding:9px 4px 9px 12px;border-radius:6px;color:inherit;text-align:left;font:700 13px/1.3 Arial,sans-serif;text-decoration:none}',
  '.projects-mega .project-category-toggle{display:flex;flex:0 0 37px;min-width:37px;align-items:center;justify-content:center;padding:6px;border:0;border-radius:6px;background:transparent;color:inherit;font:700 20px/1 Arial,sans-serif;cursor:pointer}',
  '.projects-mega .project-branch-row:hover,.projects-mega .project-branch-row:focus-within{background:#e8f1fa;color:#073c70}',
@@ -253,12 +254,12 @@ function buildProjectDropdowns(){
  }
  function close(menu){
    menu.querySelectorAll('.project-category-toggle[aria-expanded="true"]').forEach(button=>{
-     button.setAttribute('aria-expanded','false');button.closest('.project-branch').querySelector('.project-submenu').hidden=true;
+     const branch=button.closest('.project-branch');button.setAttribute('aria-expanded','false');branch.querySelector('.project-category-link[aria-expanded]')?.setAttribute('aria-expanded','false');branch.querySelector('.project-submenu').hidden=true;
    });
  }
  function open(menu,branch){
    const button=branch.querySelector('.project-category-toggle'),nav=branch.querySelector('.project-submenu');
-   close(menu);button.setAttribute('aria-expanded','true');nav.hidden=false;
+   close(menu);button.setAttribute('aria-expanded','true');branch.querySelector('.project-category-link[aria-expanded]')?.setAttribute('aria-expanded','true');nav.hidden=false;
    if(window.innerWidth<=820){
      // Expose the first themed-room choice when opening a branch near the
      // bottom of a scrollable phone menu.
@@ -290,13 +291,14 @@ function buildProjectDropdowns(){
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const row=document.createElement('div');row.className='project-branch-row';
-     const primary=link(label,projectLink(id));primary.className='project-category-link';
+     const multiJob=!['themed-rooms','concrete','custom','room-additions'].includes(id);
+     const primary=multiJob?document.createElement('button'):link(label,projectLink(id));primary.className='project-category-link';
+     if(multiJob){primary.type='button';primary.textContent=label;primary.setAttribute('aria-expanded','false');primary.setAttribute('aria-label','Choose '+label+' jobs');}
      const button=document.createElement('button');button.type='button';button.className='project-category-toggle';
      button.setAttribute('aria-expanded','false');button.setAttribute('aria-label','Show '+label+' choices');
      button.textContent='›';row.append(primary,button);
      const nav=document.createElement('nav');nav.className='project-submenu';nav.hidden=true;nav.setAttribute('aria-label',label+' options');
      const items=choicesFor(id,label);
-     const multiJob=!['themed-rooms','concrete','custom','room-additions'].includes(id);
      if(multiJob){
        const hint=document.createElement('p');hint.textContent='Choose all that apply';hint.style.cssText='margin:6px 10px;font-weight:700';nav.append(hint);
        const selected=new Set();
@@ -314,9 +316,10 @@ function buildProjectDropdowns(){
      }else for(const [name,url] of items)nav.append(link(name,url));
      branch.append(row,nav);menu.append(branch);
      button.addEventListener('click',()=>{fit(menu);button.getAttribute('aria-expanded')==='true'?close(menu):open(menu,branch)});
+     if(multiJob)primary.addEventListener('click',()=>{fit(menu);button.getAttribute('aria-expanded')==='true'?close(menu):open(menu,branch)});
      button.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowDown'){
        event.preventDefault();if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);
-       nav.querySelector('a')?.focus();
+       nav.querySelector('input[type="checkbox"],a')?.focus();
      }});
      nav.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close(menu);button.focus()}});
      branch.addEventListener('mouseenter',()=>{if(hover()){if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);menu.closest('.nav-menu')?.classList.add('open')}});
