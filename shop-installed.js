@@ -10,11 +10,19 @@ document.addEventListener('DOMContentLoaded',()=>{
  const installationLink=item=>{
   const department=String(item.department||'').toLowerCase();
   const group=String(item.group||'').toLowerCase();
+  const name=String(item.name||'').toLowerCase();
   const category=department==='appliances'||group.includes('appliance')?'appliances':
    department==='bathroom'||group.includes('bath')?'bathroom':
-   department==='lighting'||group.includes('light')?'electrical':
-   department==='doors'||group.includes('door')?'doors':
-   department==='flooring'||group.includes('floor')?'flooring':null;
+   group.includes('electrical')||group.includes('lighting')?'electrical':
+   group.includes('door')||group.includes('window')?'doors':
+   group.includes('flooring')?'flooring':
+   group.includes('exterior')||group.includes('deck')||group.includes('outdoor')?'exterior':
+   group.includes('heating')||group.includes('ventilation')||group.includes('audio')?'electrical':
+   group.includes('kitchen')||group.includes('plumbing')?'kitchen':
+   name.includes('cabinet')?'cabinets':
+   name.includes('drywall')?'drywall':
+   name.includes('paint')||name.includes('wallpaper')||name.includes('stain')?'paint':
+   name.includes('baseboard')||name.includes('molding')||name.includes('casing')||name.includes('shiplap')?'carpentry':null;
   return '/installation.html'+(category?'#labor-category-'+category:'');
  };
  let inner='';
