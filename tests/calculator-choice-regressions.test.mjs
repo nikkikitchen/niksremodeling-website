@@ -103,6 +103,27 @@ test('Fixture questions match the actual selected item', async () => {
   dom.window.close();
 });
 
+test('Projects dropdown selections open only the requested work options without a second selection', async () => {
+  for (const [selection,expected] of [
+    ['ceiling',['ceiling']],
+    ['ceiling,floor,walls',['ceiling','floor','walls']]
+  ]) {
+    const dom=await openPage('project.html','?project=attic&selectedWorks='+selection);
+    try {
+      const doc=dom.window.document;
+      const all=[...doc.querySelectorAll('#project-work-grid .project-work-card')];
+      assert.ok(all.length>=8,'Attic must retain the full work catalog');
+      const visible=all.filter(card=>!card.hidden);
+      assert.deepEqual(visible.map(card=>card.dataset.workKey).sort(),expected.slice().sort());
+      assert.ok(visible.every(card=>card.open),'The selected jobs should show their options immediately');
+      assert.ok(visible.every(card=>card.querySelectorAll(':scope > label input[type="checkbox"]').length>0),'Each selected job must show its own material options');
+      assert.equal(doc.querySelector('[aria-label="Choose multiple jobs"]'),null,'Do not ask for the same selected jobs again');
+      assert.equal(doc.querySelectorAll('#project-work-grid .project-work-card:not([hidden])').length,expected.length);
+      assert.match(doc.querySelector('.project-section-title')?.textContent||'',/options/i);
+    }finally{dom.window.close();}
+  }
+});
+
 test('Custom work choices transfer to the calculator and cart', async () => {
   const specs = [
     {project: 'kids-room', work: 'lighting', room: 'Kids Room', material: 'custom', location: 'interior', materials: 'Wall Sconce'},
