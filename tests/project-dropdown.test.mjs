@@ -45,13 +45,23 @@ test('Homepage cards and both dropdowns have exactly the same fifteen project na
    assert.equal(menu.querySelectorAll(':scope > a').length,0,'Extra top-level links in Projects');
    for(const branch of branches){
     const id=branch.dataset.project;
-    assert.equal(branch.querySelector('.project-category-link')?.getAttribute('href'),href(id),'Project name must open its picture-card destination');
+    const primary=branch.querySelector('.project-category-link');
     const button=branch.querySelector('.project-category-toggle');
-    assert.ok(button?.getAttribute('aria-label').includes('choices'),'Arrow must expand subcategories');
-    const sub=[...branch.querySelectorAll('.project-submenu a')];
-    assert.ok(sub.length>=2,id+' missing relevant suboptions');
-    assert.equal(sub[0].getAttribute('href'),href(id),'First subchoice must visit the same project');
-    assert.equal(new Set(sub.map(a=>a.href)).size,sub.length,'Duplicate subchoice URL '+id);
+    assert.ok(button?.getAttribute('aria-label').includes('choices'));
+    const multiJob=!['themed-rooms','concrete','custom','room-additions'].includes(id);
+    if(multiJob){
+     assert.equal(primary.tagName,'BUTTON',id+' should expand choices without navigation');
+     const boxes=[...branch.querySelectorAll('.project-submenu input[type="checkbox"]')];
+     assert.ok(boxes.length>=2,id+' missing job checkboxes');
+     assert.equal(new Set(boxes.map(x=>x.value)).size,boxes.length);
+     assert.equal(branch.querySelectorAll('.project-submenu a').length,0,'Old job links remain');
+     assert.equal(branch.querySelector('.project-submenu button')?.textContent,'Continue');
+    }else{
+     assert.equal(primary.getAttribute('href'),href(id));
+     const links=[...branch.querySelectorAll('.project-submenu a')];
+     assert.ok(links.length>=2,id+' missing subcategories');
+     assert.equal(new Set(links.map(a=>a.href)).size,links.length);
+    }
    }
   }
  }finally{dom.window.close()}
@@ -76,7 +86,7 @@ test('Themed Rooms, Outdoor Projects and More Ideas flyouts match their actual p
    for(const menuId of ['projects-menu','mobile-projects-menu']){
     const branch=doc.querySelector('#'+menuId+' .project-branch[data-project="'+id+'"]');
     assert.ok(branch,'Missing '+id+' on '+menuId);
-    const sub=[...branch.querySelectorAll('.project-submenu a')].slice(1)
+    const sub=[...branch.querySelectorAll('.project-submenu a')]
      .map(a=>[a.textContent,a.getAttribute('href')]);
     assert.deepEqual(sub,pageCards,'Every '+id+' flyout link and title must equal the picture-card page');
    }
@@ -87,6 +97,29 @@ test('Themed Rooms, Outdoor Projects and More Ideas flyouts match their actual p
     assert.ok(pageCards.some(([t,u])=>t==='Home Theater'&&u===href('home-theater')));
    }
   }
+ }finally{dom.window.close()}
+});
+
+test('Attic checkbox selection stays within dropdown, including reopen',async()=>{
+ const dom=await load();
+ try{
+  const w=dom.window,doc=w.document,menu=doc.getElementById('mobile-projects-menu');
+  const branch=menu.querySelector('.project-branch[data-project="attic"]');
+  const primary=branch.querySelector('.project-category-link');
+  primary.click();
+  const submenu=branch.querySelector('.project-submenu');
+  assert.equal(submenu.hidden,false);
+  assert.equal(primary.getAttribute('aria-expanded'),'true');
+  assert.equal(submenu.querySelectorAll('a').length,0);
+  const framing=submenu.querySelector('input[value="framing"]');
+  const ceiling=submenu.querySelector('input[value="ceiling"]');
+  assert.ok(framing&&ceiling);
+  for(const box of [framing,ceiling]){box.checked=true;box.dispatchEvent(new w.Event('change',{bubbles:true}));}
+  assert.equal(submenu.querySelectorAll('input:checked').length,2);
+  branch.querySelector('.project-category-toggle').click();
+  assert.equal(submenu.hidden,true);
+  primary.click();
+  assert.ok(framing.checked&&ceiling.checked);
  }finally{dom.window.close()}
 });
 
