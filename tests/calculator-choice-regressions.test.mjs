@@ -160,6 +160,52 @@ test('Ceiling shows complete work options without material prices and keeps mixe
  }
 });
 
+test('Projects > Attic > Paint ceiling estimates the whole job without asking for paint again', async () => {
+ const project=await openPage('project.html','?project=attic&selectedWorks=ceiling');
+ let target;
+ try{
+  const doc=project.window.document,card=doc.querySelector('[data-work-key="ceiling"]');
+  const paint=[...card.querySelectorAll(':scope > label input')].find(box=>box.value==='Paint ceiling');
+  paint.checked=true;
+  project.window.openProjectMeasurements=url=>{target=url};
+  card.querySelector('.btn.primary').click();
+  assert.ok(target,'Ceiling Paint selection should launch the calculator');
+  const params=new URL(target,project.window.location.origin).searchParams;
+  assert.equal(params.get('material'),'paint','Paint ceiling must use measured paint rather than generic custom work');
+  assert.equal(params.get('materials'),'Interior Paint','Paint should be selected automatically');
+  assert.equal(params.get('projectMode'),'complete','Projects must be whole-job requests');
+  assert.equal(params.get('projectTasks'),'Paint ceiling');
+ }finally{project.window.close()}
+ const calc=await openPage('calculators.html',target.slice(target.indexOf('?')));
+ try{
+  const w=calc.window,doc=w.document;
+  assert.equal(doc.getElementById('material-type').value,'paint');
+  assert.equal(doc.getElementById('paint-surface-ceiling').checked,true);
+  assert.equal(doc.querySelector('[name="labor-service"][value="Installation"]').checked,true);
+  assert.equal(doc.querySelector('[name="project-option"][value="Materials"]').checked,true);
+  const rows=[...doc.querySelectorAll('[name="area-product"]:checked')].map(input=>input.value);
+  assert.deepEqual(rows,['Interior Paint'],'Do not ask for the same material again');
+  doc.getElementById('paint-ceiling-length').value='12';
+  doc.getElementById('paint-ceiling-width').value='10';
+  const condition=doc.getElementById('question-condition');if(condition)condition.value='good';
+  w.calcMaterial();
+  const error=doc.getElementById('mat-error');
+  assert.ok(error.hidden,'Ceiling paint calculator failed: '+error.textContent);
+  const estimates=w.eval('materialEstimates');
+  const item=estimates[estimates.length-1];
+  assert.equal(item.measurements.area,120);
+  assert.equal(item.products.find(p=>p.name==='Interior Paint').price,50,'Paint price and standard supplies must appear only in estimate');
+  assert.equal(item.labor.find(l=>l.service==='Installation').price,216,'Two-coat ceiling painting uses the approved $1.80/sq.ft. labor rate');
+  assert.equal(item.supplyChoices.length,0,'Paint includes standard supplies; do not charge again');
+  w.addProjectToCart();
+  const cart=w.getCart();
+  assert.equal(cart.filter(x=>x.type==='Material estimate').length,1);
+  assert.equal(cart.filter(x=>x.type==='Labor').length,1);
+  assert.equal(cart.filter(x=>x.type==='Included project costs').length,0);
+  assert.equal(cart.reduce((sum,item)=>sum+(Number(item.price)||0),0),266,'Complete ceiling project is paint, supplies once, and labor');
+ }finally{calc.window.close()}
+});
+
 test('Custom work choices transfer to the calculator and cart', async () => {
   const specs = [
     {project: 'kids-room', work: 'lighting', room: 'Kids Room', material: 'custom', location: 'interior', materials: 'Wall Sconce'},
