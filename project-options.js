@@ -785,7 +785,15 @@
       laborButton.onclick=()=>{
         const area=document.getElementById('scope-room').value.trim();
         if(!area){status.textContent='Name the room or area first.';return;}
-        const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1',service:'Installation'});
+        const chosenTasks=selected();
+        if(item.materials.length&&!chosenTasks.length){status.textContent='Choose the work you want installed first.';return;}
+        const ceilingPaintOnly=key==='ceiling'&&chosenTasks.length===1&&chosenTasks[0]==='Paint ceiling';
+        const projectMaterial=ceilingPaintOnly?'paint':item.kind;
+        const chosenMaterials=ceilingPaintOnly?[document.getElementById('scope-location').value==='exterior'?'Exterior Paint':'Interior Paint']:chosenTasks;
+        const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:projectMaterial,materials:chosenMaterials.join('|'),projectMode:'complete',embedded:'1',service:'Installation'});
+        if(key==='ceiling')params.set('projectTasks',chosenTasks.join('|'));
+        if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}
+        const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));
         for(const field of ['location','length','width','height']){
           const value=document.getElementById('scope-'+field).value;
           if(value)params.set(field,value);
