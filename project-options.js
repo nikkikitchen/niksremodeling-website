@@ -782,6 +782,15 @@
       stepButtons[0].hidden=true;setStep(1);
       back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
     }
+    const selectedWorks=new URLSearchParams(location.search).get('selectedWorks');
+    if(selectedWorks){
+      const chosen=new Set(selectedWorks.split(',').filter(key=>/^[a-z0-9-]{1,60}$/.test(key)));
+      if(chosen.size){
+        setStep(1);
+        grid.querySelectorAll('.project-work-card').forEach(card=>{card.open=chosen.has(card.dataset.workKey);});
+        quickPick.querySelectorAll('input[type="checkbox"]').forEach(box=>{box.checked=chosen.has(box.value);});
+      }
+    }
     const requestedWork=new URLSearchParams(location.search).get('work');
     if(requestedWork&&locationScopes[id]&&!document.getElementById('scope-location').value){const places=locationScopes[id];const matches=['interior','exterior'].filter(place=>places[place].includes(requestedWork));if(matches.length===1){document.getElementById('scope-location').value=matches[0];filterLocationMaterials();}}
     if(requestedWork&&/^[a-z0-9-]{1,60}$/.test(requestedWork)){
