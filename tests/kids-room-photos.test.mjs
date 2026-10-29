@@ -39,7 +39,7 @@ test('Shopping and Projects both refresh cached Kids Room scripts',()=>{
  const project=readFileSync(new URL('../project.html',import.meta.url),'utf8');
  const store=readFileSync(new URL('../store.js',import.meta.url),'utf8');
  assert.match(furniture,/store\.js\?v=kids-room-verified-20261028/);
- assert.match(project,/project-options\.js\?v=ceiling-work-options-20261029/);
+ assert.match(project,/project-options\.js\?v=complete-ceiling-paint-20261029b/);
  assert.match(store,/selectedRoom==='kids-room'&&!isKidsFurniture\(p\)/);
  assert.match(store,/selectedRoom==='kids-room'&&!isKidsFurniture\(\{name\}\)/);
 });
