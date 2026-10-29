@@ -230,7 +230,7 @@ function buildProjectDropdowns(){
  const hover=()=>window.innerWidth>820&&!!window.matchMedia?.('(hover:hover)').matches;
  const projectLink=(id,params)=>'/project.html?project='+encodeURIComponent(id)+(params?'&'+params:'');
  function choicesFor(id,label){
-   const choices=[['View '+label,projectLink(id)]];
+   const choices=[];
    if(['themed-rooms','concrete','custom'].includes(id)){
      for(const item of window.projectGroupChoices(id))choices.push([item.title,item.href]);
    }else if(id==='room-additions'){
@@ -275,7 +275,7 @@ function buildProjectDropdowns(){
      // than cutting its height shorter.
      nav.style.setProperty('--project-submenu-height','auto');
      const viewportHeight=Math.max(100,window.innerHeight-24);
-     const estimatedHeight=nav.querySelectorAll('a').length*42+16;
+     const estimatedHeight=nav.children.length*42+16;
      const naturalHeight=nav.scrollHeight||estimatedHeight;
      const panelHeight=Math.min(viewportHeight,Math.max(65,Math.ceil(naturalHeight)));
      const top=Math.max(12,Math.min(line.top,window.innerHeight-panelHeight-12));
@@ -296,7 +296,22 @@ function buildProjectDropdowns(){
      button.textContent='›';row.append(primary,button);
      const nav=document.createElement('nav');nav.className='project-submenu';nav.hidden=true;nav.setAttribute('aria-label',label+' options');
      const items=choicesFor(id,label);
-     for(const [name,url] of items)nav.append(link(name,url));
+     const multiJob=!['themed-rooms','concrete','custom','room-additions'].includes(id);
+     if(multiJob){
+       const hint=document.createElement('p');hint.textContent='Choose all that apply';hint.style.cssText='margin:6px 10px;font-weight:700';nav.append(hint);
+       const selected=new Set();
+       for(const [name,url] of items){
+         const key=new URL(url,location.href).searchParams.get('work');
+         if(!key)continue;
+         const choice=document.createElement('label');choice.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer';
+         const box=document.createElement('input');box.type='checkbox';box.value=key;
+         box.addEventListener('change',()=>{box.checked?selected.add(key):selected.delete(key)});
+         choice.append(box,document.createTextNode(name));nav.append(choice);
+       }
+       const go=document.createElement('button');go.type='button';go.className='btn primary';go.textContent='Continue';go.style.margin='10px';
+       go.addEventListener('click',()=>{if(!selected.size){hint.textContent='Choose at least one job';return;}location.href=projectLink(id,'selectedWorks='+encodeURIComponent([...selected].join(',')));});
+       nav.append(go);
+     }else for(const [name,url] of items)nav.append(link(name,url));
      branch.append(row,nav);menu.append(branch);
      button.addEventListener('click',()=>{fit(menu);button.getAttribute('aria-expanded')==='true'?close(menu):open(menu,branch)});
      button.addEventListener('keydown',event=>{if(event.key==='ArrowRight'||event.key==='ArrowDown'){
