@@ -251,7 +251,7 @@ test('Multiple selected ceiling jobs stay together and never invent a complete p
   w.calcMaterial();
   assert.ok(doc.getElementById('mat-error').hidden,doc.getElementById('mat-error').textContent);
   const estimate=w.eval('materialEstimates.at(-1)');
-  assert.deepEqual(estimate.products.map(p=>p.name),tasks,'All selected tasks need to reach the estimate');
+  assert.deepEqual(Array.from(estimate.products,p=>p.name),tasks,'All selected tasks need to reach the estimate');
   assert.ok(estimate.products.every(p=>!Number.isFinite(p.price)),'Do not invent fixture and texture retail prices');
   w.addProjectToCart();
   const cart=w.getCart();
