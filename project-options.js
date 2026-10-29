@@ -139,6 +139,8 @@
   // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
   // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
+  // Attic flooring supports structural decking without a padded-underlayment choice.
+  const atticFloorMaterials=['Plywood','OSB & Sheathing'];
   options.shower.materials=['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile','Shower Base','Shower Valve / Head','Shower Glass'];
   options.backsplash.materials=['Backsplash Tile','Ceramic Tile','Glass Tile','Mosaic Tile','Natural Stone','Porcelain Tile'];
   // Shopping categories overlap by use without changing project-specific work choices.
@@ -415,6 +417,7 @@
     }
     setStep(0);
     const grid=document.getElementById('project-work-grid');
+    if(id==='attic')options.floor.materials=[...new Set([...atticFloorMaterials,...options.floor.materials.filter(name=>!/padding|underlayment/i.test(name))])];
     if(id==='bathrooms'||id==='bath-remodel'){
       const shortcuts=document.createElement('nav');
       shortcuts.className='project-product-links';
@@ -724,6 +727,23 @@
       const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
       plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
+      // Same project calculator, measurements and cart; no trip to a separate labor page.
+      const laborButton=document.createElement('button');
+      laborButton.type='button';
+      laborButton.className='btn outline project-add-labor';
+      laborButton.textContent='Add Installation & Labor';
+      laborButton.onclick=()=>{
+        const area=document.getElementById('scope-room').value.trim();
+        if(!area){status.textContent='Name the room or area first.';return;}
+        const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1',service:'Installation'});
+        for(const field of ['location','length','width','height']){
+          const value=document.getElementById('scope-'+field).value;
+          if(value)params.set(field,value);
+        }
+        localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));
+        openProjectMeasurements('/calculators.html?'+params.toString());
+      };
+      card.append(laborButton);
       plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
       status.textContent='Choose what you need. Sizes and options come next.';
       card.append(status);grid.append(card);
