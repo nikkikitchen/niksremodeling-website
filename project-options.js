@@ -604,7 +604,7 @@
 
 
     function filterLocationMaterials(){const location=document.getElementById('scope-location').value;const allowed=locationScopes[id]?.[location];if(allowed){grid.querySelectorAll('[data-work-key]').forEach(card=>{card.hidden=!allowed.includes(card.dataset.workKey);if(card.hidden){card.open=false;card.querySelectorAll('input[type="checkbox"]:checked').forEach(box=>{box.checked=false;});}});workTitle.textContent=location==='exterior'?'Choose Exterior Work':'Choose Interior Work';}grid.querySelectorAll('.room-supply-choice').forEach(label=>{const input=label.querySelector('input');if(!input)return;const mismatch=location==='interior'?/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(input.value):location==='exterior'?/^Interior (Paint|Stain|Primer|Finish)\b/i.test(input.value):false;label.hidden=mismatch;if(mismatch)input.checked=false;});}
-    const saveDraft=()=>{const selected={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll(':scope > label input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({locationChosen:!!document.getElementById('scope-location').value,room:document.getElementById('scope-room').value,selected,...Object.fromEntries(['scope-location','scope-length','scope-width','scope-height'].map(id=>[id,document.getElementById(id).value]))}))}catch{}};
+    const saveDraft=()=>{const selected={},preparation={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll(':scope > label input:checked')].map(x=>x.value);preparation[card.dataset.workKey]=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({preparation,locationChosen:!!document.getElementById('scope-location').value,room:document.getElementById('scope-room').value,selected,...Object.fromEntries(['scope-location','scope-length','scope-width','scope-height'].map(id=>[id,document.getElementById(id).value]))}))}catch{}};
     ['scope-room','scope-location','scope-length','scope-width','scope-height'].forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
@@ -748,7 +748,7 @@
           card.addEventListener('toggle',load);load();
         }
       }
-      if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);}
+      if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);extras.addEventListener('change',saveDraft);}
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
       if(key==='ceiling'){
         const note=document.createElement('p');note.className='calc-note';
@@ -765,6 +765,7 @@
           subheading.textContent=group;subheading.style.cssText='font-size:1rem;margin:18px 0 8px';
           card.append(subheading);
         }if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));card.append(label)});
+      card.querySelectorAll('.finish-preparation input[type="checkbox"]').forEach(box=>{box.checked=!!draft.preparation?.[key]?.includes(box.value);box.addEventListener('change',saveDraft);});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
       const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
