@@ -301,17 +301,27 @@ function buildProjectDropdowns(){
      const items=choicesFor(id,label);
      if(multiJob){
        const hint=document.createElement('p');hint.textContent='Choose all that apply';hint.style.cssText='margin:6px 10px;font-weight:700';nav.append(hint);
-       const selected=new Set();
        for(const [name,url] of items){
          const key=new URL(url,location.href).searchParams.get('work');
          if(!key)continue;
          const choice=document.createElement('label');choice.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer';
          const box=document.createElement('input');box.type='checkbox';box.value=key;
-         box.addEventListener('change',()=>{box.checked?selected.add(key):selected.delete(key)});
          choice.append(box,document.createTextNode(name));nav.append(choice);
        }
-       const go=document.createElement('button');go.type='button';go.className='btn primary';go.textContent='Continue';go.style.margin='10px';
-       go.addEventListener('click',()=>{if(!selected.size){hint.textContent='Choose at least one job';return;}location.href=projectLink(id,'selectedWorks='+encodeURIComponent([...selected].join(',')));});
+       // Read live checkbox state when Continue is tapped, instead of relying
+       // on a separate Set that can go out of sync on touch devices.
+       const go=document.createElement('a');go.className='btn primary project-continue';go.textContent='Continue';go.style.margin='10px';
+       const selectedJobs=()=>[...nav.querySelectorAll('input[type="checkbox"]:checked')].map(box=>box.value);
+       const updateContinue=()=>{
+         const jobs=selectedJobs();
+         go.href=jobs.length?projectLink(id,'selectedWorks='+encodeURIComponent(jobs.join(','))):projectLink(id);
+         return jobs;
+       };
+       nav.addEventListener('change',event=>{if(event.target.matches('input[type="checkbox"]'))updateContinue();});
+       go.addEventListener('click',event=>{
+         if(!updateContinue().length){event.preventDefault();hint.textContent='Choose at least one job';}
+       });
+       updateContinue();
        nav.append(go);
      }else for(const [name,url] of items)nav.append(link(name,url));
      branch.append(row,nav);menu.append(branch);
