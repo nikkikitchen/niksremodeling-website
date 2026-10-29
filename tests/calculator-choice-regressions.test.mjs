@@ -188,6 +188,14 @@ test('Projects > Attic > Paint ceiling estimates the whole job without asking fo
   doc.getElementById('paint-ceiling-length').value='12';
   doc.getElementById('paint-ceiling-width').value='10';
   const condition=doc.getElementById('question-condition');if(condition)condition.value='good';
+  // A paint finish is optional to decide now, but the calculator requires a
+  // choice or "Help me choose" before estimating a material purchase.
+  for(const select of doc.querySelectorAll('.area-product [data-item-option]')){
+    if(select.tagName==='SELECT'&&!select.value){
+      const answer=[...select.options].find(option=>option.value==='Help me choose')||[...select.options].find(option=>option.value);
+      if(answer)select.value=answer.value;
+    }
+  }
   w.calcMaterial();
   const error=doc.getElementById('mat-error');
   assert.ok(error.hidden,'Ceiling paint calculator failed: '+error.textContent);
