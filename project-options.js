@@ -748,6 +748,36 @@
       status.textContent='Choose what you need. Sizes and options come next.';
       card.append(status);grid.append(card);
     });
+    // Fast multi-job picker reuses the existing room work cards and calculator.
+    const quickPick=document.createElement('section');
+    quickPick.className='panel';
+    quickPick.setAttribute('aria-label','Choose multiple jobs');
+    const quickTitle=document.createElement('h2');
+    quickTitle.textContent='What would you like done?';
+    const quickHelp=document.createElement('p');
+    quickHelp.textContent='Choose all that apply.';
+    const quickChoices=document.createElement('div');
+    quickChoices.style.cssText='display:flex;flex-wrap:wrap;gap:12px;margin:12px 0';
+    const picked=new Set();
+    grid.querySelectorAll('.project-work-card').forEach(card=>{
+      const title=card.querySelector('summary span')?.textContent?.trim();
+      if(!title)return;
+      const label=document.createElement('label');
+      label.style.cssText='display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #dfe5ea;border-radius:8px;cursor:pointer';
+      const box=document.createElement('input');
+      box.type='checkbox';box.value=card.dataset.workKey;
+      box.addEventListener('change',()=>{if(box.checked)picked.add(box.value);else picked.delete(box.value);});
+      label.append(box,document.createTextNode(title));quickChoices.append(label);
+    });
+    const quickContinue=document.createElement('button');
+    quickContinue.type='button';quickContinue.className='btn primary';quickContinue.textContent='Continue';
+    quickContinue.addEventListener('click',()=>{
+      if(!picked.size){quickHelp.textContent='Choose at least one job to continue.';return;}
+      grid.querySelectorAll('.project-work-card').forEach(card=>{card.open=picked.has(card.dataset.workKey);});
+      grid.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    quickPick.append(quickTitle,quickHelp,quickChoices,quickContinue);
+    grid.before(quickPick);
     if(fixedLocation){
       stepButtons[0].hidden=true;setStep(1);
       back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
