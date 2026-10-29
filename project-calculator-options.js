@@ -161,6 +161,13 @@
       // Installation already selected an exact bathroom service: do not ask to pick it again.
       const preselectedBathroomService=currentType==='bathroom'&&requested.length===1&&new URLSearchParams(location.search).get('material')==='bathroom';
       if(preselectedBathroomService)names=requested.slice();
+      // A project card has already identified the selected material; never show
+      // the full catalog again when continuing that same work.
+      const selectedProjectMaterial=!!work&&requested.length>0&&new URLSearchParams(location.search).has('project');
+      if(selectedProjectMaterial)names=requested.slice();
+      if(new URLSearchParams(location.search).get('project')==='attic'&&work==='floor'&&requested.some(name=>/^(Plywood|OSB & Sheathing)$/i.test(name))){
+        names=names.filter(name=>!/padding|underlayment|backer board/i.test(name));
+      }
       if(product&&!names.includes(product))names.unshift(product);
       names=names.filter(name=>projectLocation.value==='interior'?!/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(name):projectLocation.value==='exterior'?!/^Interior (Paint|Stain|Primer|Finish)\b/i.test(name):true);
       if((currentType==='paint'&&work)||new URLSearchParams(location.search).get('project')==='accents')names=names.filter(name=>! /primer|painting prep|backer board/i.test(name));
@@ -172,6 +179,7 @@
         box.checked=requested.includes(name)||(product?name===product:false);
         label.append(box,document.createTextNode(/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));row.append(label);
         if(preselectedBathroomService&&name===requested[0]){box.checked=true;label.hidden=true;row.prepend(Object.assign(document.createElement('strong'),{textContent:name}));}
+        else if(selectedProjectMaterial&&requested.includes(name)){box.checked=true;label.hidden=true;row.prepend(Object.assign(document.createElement('strong'),{textContent:'Selected: '+name}));}
         const settings=document.createElement('div');settings.className='area-product-settings calc-fields';
         const field=(key,title,value,placeholder='')=>{const wrap=document.createElement('div');wrap.className='field';const text=document.createElement('label');const input=document.createElement('input');input.type='number';input.min=key==='waste'?'0':'0.01';input.step='any';input.id='product-'+index+'-'+key;input.dataset.productSetting=key;input.value=value;text.htmlFor=input.id;text.textContent=title;input.placeholder=placeholder;wrap.append(text,input);settings.append(wrap)};
         if(currentType==='bathroom'){row.dataset.measure='manual';field('quantity','How many?','1');const q=settings.querySelector('input');q.min='1';q.step='1';const u=document.createElement('input');u.type='hidden';u.dataset.productSetting='unit';u.value='Pieces';settings.append(u);const n=document.createElement('p');n.className='calc-note';n.textContent=window.bathroomPackageByLabel(name).note;settings.append(n);
@@ -196,7 +204,7 @@
            else if(['accessibility','fireplaces'].includes(new URLSearchParams(location.search).get('project'))&&['Linear feet','Square feet'].includes(unit.value)){quantity.value='';quantity.placeholder='Size of this item or surface';}
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
-        itemOptionFields(name).forEach(({label:title,values},optionIndex)=>{
+        (selectedProjectMaterial&&/^(Plywood|OSB & Sheathing)$/i.test(name)?[]:itemOptionFields(name)).forEach(({label:title,values},optionIndex)=>{
           const wrap=document.createElement('div');wrap.className='field';
           if(title==='Color change'){const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.id='product-'+index+'-option-'+optionIndex;box.dataset.itemOption=title;box.value='Yes';label.append(box,document.createTextNode(' Color change'));wrap.append(label);settings.append(wrap);return;}
           const label=document.createElement('label'),select=document.createElement('select');
@@ -319,8 +327,9 @@
     const create = (tag, text, className) => { const el=document.createElement(tag); if(text)el.textContent=text; if(className)el.className=className; return el; };
     function renderQuestions(saved = {}) {
       questionBox.replaceChildren();
-      floorField.hidden = types.value !== 'flooring';
-      const group = [...(questions[key()] || [])];
+      const atticDecking=initialParams.get('project')==='attic'&&initialParams.get('work')==='floor'&&/^(Plywood|OSB & Sheathing)$/i.test((initialParams.get('materials')||'').split('|')[0]);
+      floorField.hidden = types.value !== 'flooring'||atticDecking;
+      const group = atticDecking?[]:[...(questions[key()] || [])];
       if(new URLSearchParams(location.search).get('project')==='accents'&&!group.some(q=>q[0]==='condition'))group.push(['condition','Does this surface need prep or repairs?',[['good','Ready for installation'],['repair','Needs prep / repairs'],unsure]]);
       if(!group.length) { questionBox.append(create('p','Tell us the measured quantity below. We’ll help confirm the supplies for this item.','calc-note')); return; }
       questionBox.append(create('h3','Project details'));
