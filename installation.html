@@ -104,7 +104,7 @@ const glass=bath.groups.find(g=>g.id==='glass');
 glass.actions.Install=glass.actions.Replace.map(t=>({...t,id:t.id+'-install',label:t.label.replace('Replace','Install'),note:'Glass-door installation only; removal, tile and waterproofing separate.'}));
 glass.actions.Replace=[{id:'glass-replace',label:'Replace shower door',price:null,note:'Removal and replacement scope to confirm.',status:'pending',unit:'each'}];
 
-</script><script src="/app.js?v=nav-mobile-20261024d"></script><script src="/room-projects.js?v=projects-nav-20261024"></script>
+</script><script src="/app.js?v=nav-mobile-20261024d"></script><script src="/room-projects.js?v=projects-checkbox-20261029b"></script>
 <script>
 // One shared price source for the labor page and every calculator.
 const bathCategory=LABOR_CATALOG.find(c=>c.id==='bathroom');
