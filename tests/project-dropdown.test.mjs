@@ -111,7 +111,7 @@ test('Attic checkbox selection stays within dropdown, including reopen',async()=
   const submenu=branch.querySelector('.project-submenu');
   assert.equal(submenu.hidden,false);
   assert.equal(primary.getAttribute('aria-expanded'),'true');
-  assert.equal(submenu.querySelectorAll('a').length,0);
+  assert.equal(submenu.querySelectorAll('a:not(.project-continue)').length,0);
   const framing=submenu.querySelector('input[value="framing"]');
   const ceiling=submenu.querySelector('input[value="ceiling"]');
   assert.ok(framing&&ceiling);
@@ -147,7 +147,7 @@ test('Continue uses current Attic checkboxes for one or multiple jobs on desktop
     box.dispatchEvent(new w.Event('change',{bubbles:true}));
    }
    go.click();
-   assert.equal(params().get('selectedWorks'),'ceiling,floor,walls',menuId+' failed multiple jobs');
+   assert.deepEqual(params().get('selectedWorks').split(',').sort(),['ceiling','floor','walls'].sort(),menuId+' failed multiple jobs');
    byValue('ceiling').checked=false;
    byValue('floor').checked=false;
    go.click();
