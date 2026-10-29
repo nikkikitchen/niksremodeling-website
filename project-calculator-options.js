@@ -131,7 +131,7 @@
      if(measurementHelp){const note=document.createElement('p');note.className='calc-note';note.textContent=measurementHelp;materialDetails.prepend(note);}
     const materialChoice = document.getElementById('material-choice');
     const quantityMethod = document.getElementById('quantity-method');
-    const detailsNote=document.createElement('small');detailsNote.className='calc-note';detailsNote.textContent='Optional: include package coverage, size, color, or product name here.';document.getElementById('material-description').after(detailsNote);
+    const detailsInput=document.getElementById('material-description');detailsInput.placeholder='Optional: package coverage, size, color, or product name';
     const materialCategories = WORK_MATERIAL_CATEGORIES;
     function syncMaterialChoice() {
       const selected=[...document.querySelectorAll('[name="area-product"]:checked')];
