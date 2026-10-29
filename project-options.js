@@ -793,6 +793,10 @@
         const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:projectMaterial,materials:chosenMaterials.join('|'),projectMode:'complete',embedded:'1',service:'Installation'});
         if(key==='ceiling')params.set('projectTasks',chosenTasks.join('|'));
         if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}
+        // Match the main planning button: reopen this room's existing estimate instead of adding duplicate work.
+        let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}
+        const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);
+        if(previous?.roomId)params.set('editRoom',previous.roomId);
         const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));
         for(const field of ['location','length','width','height']){
           const value=document.getElementById('scope-'+field).value;
