@@ -124,6 +124,42 @@ test('Projects dropdown selections open only the requested work options without 
   }
 });
 
+test('Ceiling shows complete work options without material prices and keeps mixed choices together', async () => {
+ for(const project of ['attic','bathrooms','bedroom-guest-room']){
+  const dom=await openPage('project.html','?project='+project+'&selectedWorks=ceiling');
+  try{
+   const w=dom.window,doc=w.document,card=doc.querySelector('[data-work-key="ceiling"]');
+   assert.ok(card&&!card.hidden,project+' must show Ceiling work');
+   const choices=workCard(doc,'ceiling');
+   for(const task of ['Paint ceiling','Prime ceiling','Add ceiling texture (orange peel / knockdown)',
+    'Remove popcorn ceiling texture','Repair / patch ceiling drywall',
+    'Install / replace ceiling drywall','Install recessed ceiling lights',
+    'Install / replace ceiling light','Install / replace ceiling fan',
+    'Add / replace ceiling insulation','Install / repair attic access hatch or ladder']){
+    assert.ok(choices.includes(task),project+' missing '+task);
+   }
+   assert.ok(choices.length>=20,'Ceiling needs comprehensive work choices');
+   assert.equal(new Set(choices).size,choices.length,'Do not repeat Ceiling tasks');
+   assert.equal(card.querySelectorAll('.ceiling-work-heading').length,4,'Group ceiling work to keep the list readable');
+   assert.doesNotMatch(card.textContent,/\$50\s*\/\s*gallon|supplies included/i,'Do not sell materials in the work picker');
+   const chosen=['Paint ceiling','Add ceiling texture (orange peel / knockdown)','Install recessed ceiling lights'];
+   for(const name of chosen){
+    const box=[...card.querySelectorAll(':scope > label input[type="checkbox"]')].find(input=>input.value===name);
+    assert.ok(box,project+' missing '+name);box.checked=true;
+   }
+   let target='';
+   w.openProjectMeasurements=url=>{target=url};
+   card.querySelector('.btn.primary').click();
+   assert.ok(target,'Selected ceiling work must proceed to project calculator');
+   const params=new URL(target,w.location.origin).searchParams;
+   assert.equal(params.get('project'),project);
+   assert.equal(params.get('work'),'ceiling');
+   assert.equal(params.get('material'),'custom','Mixed ceiling tasks must not use paint-only calculation');
+   assert.deepEqual(params.get('materials').split('|'),chosen);
+  }finally{dom.window.close();}
+ }
+});
+
 test('Custom work choices transfer to the calculator and cart', async () => {
   const specs = [
     {project: 'kids-room', work: 'lighting', room: 'Kids Room', material: 'custom', location: 'interior', materials: 'Wall Sconce'},
