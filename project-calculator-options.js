@@ -131,6 +131,7 @@
      if(measurementHelp){const note=document.createElement('p');note.className='calc-note';note.textContent=measurementHelp;materialDetails.prepend(note);}
     const materialChoice = document.getElementById('material-choice');
     const quantityMethod = document.getElementById('quantity-method');
+    const detailsNote=document.createElement('small');detailsNote.className='calc-note';detailsNote.textContent='Optional: include package coverage, size, color, or product name here.';document.getElementById('material-description').after(detailsNote);
     const materialCategories = WORK_MATERIAL_CATEGORIES;
     function syncMaterialChoice() {
       const selected=[...document.querySelectorAll('[name="area-product"]:checked')];
@@ -190,7 +191,7 @@
         else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
           row.dataset.measure='paint';field('coats','Coats',/primer/i.test(name)?'1':'2');field('coverage','Coverage (sq. ft. per gallon)',/primer/i.test(name)?'300':'350');
         }else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&! /trim|bullnose|schluter/i.test(name)&&!work?.startsWith('accent-')&&/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|plywood|osb|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
-          row.dataset.measure='area';field('waste','Waste allowance (%)','10');field('coverage','Coverage per package (sq. ft., optional)','','From product label');
+          row.dataset.measure='area';field('waste','Waste allowance (%)','15');field('coverage','Coverage per package (sq. ft., optional)','','From product label');settings.querySelectorAll('.field').forEach(field=>field.hidden=true);
         }else{
           row.dataset.measure='manual';field('quantity',/baseboard|molding|casing|trim|quarter round|crown/i.test(name)?'Length to cover (linear feet)':'How many items?','1','Enter amount');
           const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.textContent='Unit';const unit=document.createElement('select');unit.id='product-'+index+'-unit';unit.dataset.productSetting='unit';label.htmlFor=unit.id;
@@ -247,7 +248,7 @@
       questionBox.hidden=known||!type||service||type==='refinish';
       showMaterialFields();
       if(known||!type||service)document.querySelectorAll('.material-fields').forEach(el=>el.hidden=true);
-      floorField.hidden=type!=='flooring';
+      floorField.hidden=type!=='flooring'||(initialParams.get('work')==='floor'&&!!initialParams.get('materials'));
       if(type==='refinish'){document.querySelectorAll('.material-fields').forEach(el=>el.hidden=el!==cabinetFields);}
       CABINET_WORK_OPTIONS.filter(x=>x.fields.length).forEach(option=>{document.getElementById('cabinet-'+option.key+'-details').hidden=!document.getElementById('cabinet-'+option.key).checked});
     }
@@ -329,10 +330,10 @@
     function renderQuestions(saved = {}) {
       questionBox.replaceChildren();
       const atticDecking=initialParams.get('project')==='attic'&&initialParams.get('work')==='floor'&&/^(Plywood|OSB & Sheathing)$/i.test((initialParams.get('materials')||'').split('|')[0]);
-      floorField.hidden = types.value !== 'flooring'||atticDecking;
+      floorField.hidden = types.value !== 'flooring'||atticDecking||(initialParams.get('work')==='floor'&&!!initialParams.get('materials'));
       const group = atticDecking?[]:[...(questions[key()] || [])];
       if(new URLSearchParams(location.search).get('project')==='accents'&&!group.some(q=>q[0]==='condition'))group.push(['condition','Does this surface need prep or repairs?',[['good','Ready for installation'],['repair','Needs prep / repairs'],unsure]]);
-      if(!group.length) { questionBox.append(create('p','Tell us the measured quantity below. We’ll help confirm the supplies for this item.','calc-note')); return; }
+      if(!group.length) { return; }
       questionBox.append(create('h3','Project details'));
       const grid = create('div', '', 'calc-fields');
       group.forEach(([id,label,options]) => {
