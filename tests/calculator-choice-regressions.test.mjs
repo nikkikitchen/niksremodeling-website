@@ -214,6 +214,52 @@ test('Projects > Attic > Paint ceiling estimates the whole job without asking fo
  }finally{calc.window.close()}
 });
 
+test('Multiple selected ceiling jobs stay together and never invent a complete price', async () => {
+ const project=await openPage('project.html','?project=attic&selectedWorks=ceiling');
+ let url='';
+ const tasks=['Paint ceiling','Add ceiling texture (orange peel / knockdown)','Install recessed ceiling lights'];
+ try{
+  const w=project.window,card=w.document.querySelector('[data-work-key="ceiling"]');
+  for(const task of tasks){
+   const box=[...card.querySelectorAll(':scope > label input')].find(input=>input.value===task);
+   assert.ok(box,'Missing ceiling task '+task);box.checked=true;
+  }
+  w.openProjectMeasurements=target=>url=target;
+  card.querySelector('.btn.primary').click();
+  assert.ok(url);
+  const p=new URL(url,w.location.origin).searchParams;
+  assert.deepEqual(p.get('materials').split('|'),tasks);
+  assert.equal(p.get('projectMode'),'complete');
+  assert.equal(p.get('material'),'custom','Mixed work cannot be represented as paint materials alone');
+ }finally{project.window.close()}
+ const calc=await openPage('calculators.html',url.slice(url.indexOf('?')));
+ try {
+  const w=calc.window,doc=w.document;
+  const rows=[...doc.querySelectorAll('.area-product')];
+  const selected=rows.filter(row=>row.querySelector('[name="area-product"]')?.checked);
+  assert.deepEqual(selected.map(row=>row.querySelector('[name="area-product"]').value),tasks);
+  for(const row of selected){
+   for(const select of row.querySelectorAll('[data-item-option]')){
+    if(select.tagName==='SELECT'&&!select.value){
+      const chosen=[...select.options].find(opt=>opt.value==='Help me choose')||[...select.options].find(opt=>opt.value);
+      if(chosen)select.value=chosen.value;
+    }
+   }
+  }
+  assert.equal(doc.querySelector('[name="project-option"][value="Materials"]').checked,true);
+  assert.equal(doc.querySelector('[name="labor-service"][value="Installation"]').checked,true);
+  w.calcMaterial();
+  assert.ok(doc.getElementById('mat-error').hidden,doc.getElementById('mat-error').textContent);
+  const estimate=w.eval('materialEstimates.at(-1)');
+  assert.deepEqual(estimate.products.map(p=>p.name),tasks,'All selected tasks need to reach the estimate');
+  assert.ok(estimate.products.every(p=>!Number.isFinite(p.price)),'Do not invent fixture and texture retail prices');
+  w.addProjectToCart();
+  const cart=w.getCart();
+  for(const task of tasks)assert.ok(cart.some(item=>item.name.includes(task)),task+' missing from cart');
+  assert.ok(cart.some(item=>item.type==='Material estimate'&&!Number.isFinite(item.price)),'Unpriced work must remain a quote request');
+ }finally{calc.window.close()}
+});
+
 test('Custom work choices transfer to the calculator and cart', async () => {
   const specs = [
     {project: 'kids-room', work: 'lighting', room: 'Kids Room', material: 'custom', location: 'interior', materials: 'Wall Sconce'},
