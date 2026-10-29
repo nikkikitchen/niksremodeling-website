@@ -54,8 +54,9 @@ test('Homepage cards and both dropdowns have exactly the same fifteen project na
      const boxes=[...branch.querySelectorAll('.project-submenu input[type="checkbox"]')];
      assert.ok(boxes.length>=2,id+' missing job checkboxes');
      assert.equal(new Set(boxes.map(x=>x.value)).size,boxes.length);
-     assert.equal(branch.querySelectorAll('.project-submenu a').length,0,'Old job links remain');
-     assert.equal(branch.querySelector('.project-submenu button')?.textContent,'Continue');
+     assert.equal(branch.querySelectorAll('.project-submenu a:not(.project-continue)').length,0,'Old job links remain');
+     assert.equal(branch.querySelector('.project-submenu a.project-continue')?.textContent,'Continue');
+     assert.equal(branch.querySelector('.project-submenu button'),null,'Use a real mobile-friendly Continue link');
     }else{
      assert.equal(primary.getAttribute('href'),href(id));
      const links=[...branch.querySelectorAll('.project-submenu a')];
@@ -120,6 +121,43 @@ test('Attic checkbox selection stays within dropdown, including reopen',async()=
   assert.equal(submenu.hidden,true);
   primary.click();
   assert.ok(framing.checked&&ceiling.checked);
+ }finally{dom.window.close()}
+});
+
+test('Continue uses current Attic checkboxes for one or multiple jobs on desktop and phone',async()=>{
+ const dom=await load();
+ try{
+  const w=dom.window,doc=w.document;
+  for(const menuId of ['projects-menu','mobile-projects-menu']){
+   const branch=doc.querySelector('#'+menuId+' .project-branch[data-project="attic"]');
+   const nav=branch.querySelector('.project-submenu'),go=nav.querySelector('.project-continue');
+   const boxes=[...nav.querySelectorAll('input[type="checkbox"]')];
+   const byValue=value=>boxes.find(x=>x.value===value);
+   const params=()=>new URL(go.href).searchParams;
+   // Prevent jsdom trying a real navigation, while still running the Continue click.
+   go.addEventListener('click',event=>event.preventDefault(),true);
+   branch.querySelector('.project-category-link').click();
+   assert.equal(nav.hidden,false);
+   byValue('ceiling').checked=true;
+   go.click();
+   assert.equal(params().get('project'),'attic');
+   assert.equal(params().get('selectedWorks'),'ceiling',menuId+' failed single selection without a change event');
+   for(const value of ['floor','walls']){
+    const box=byValue(value);box.checked=true;
+    box.dispatchEvent(new w.Event('change',{bubbles:true}));
+   }
+   go.click();
+   assert.equal(params().get('selectedWorks'),'ceiling,floor,walls',menuId+' failed multiple jobs');
+   byValue('ceiling').checked=false;
+   byValue('floor').checked=false;
+   go.click();
+   assert.equal(params().get('selectedWorks'),'walls',menuId+' failed after deselecting jobs');
+   byValue('walls').checked=false;
+   const event=new w.MouseEvent('click',{bubbles:true,cancelable:true});
+   go.dispatchEvent(event);
+   assert.equal(event.defaultPrevented,true,'Empty selection must not navigate');
+   assert.match(nav.textContent,/Choose at least one job/);
+  }
  }finally{dom.window.close()}
 });
 
