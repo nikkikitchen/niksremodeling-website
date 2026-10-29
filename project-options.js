@@ -135,7 +135,36 @@
   ['flooring','tile'].forEach(kind=>{shared[kind]=[...new Set([...shared[kind],'Underlayment','Backer Board'])]});
   Object.values(options).forEach(option=>{if(shared[option.kind])option.materials=shared[option.kind].filter(name=>name!=='Other material')});
   // Finish selections stay separate from structural and preparation products.
-  ['ceiling','walls'].forEach(key=>options[key].materials=['Interior Paint','Exterior Paint','Wallpaper','Wall Panels','Specialty Coatings']);
+  // The Ceiling card is a work planner, not a paint shopping list. Keep a
+  // complete ceiling checklist in one place so visitors don't have to guess
+  // whether lighting, texture, repairs, or insulation lives elsewhere.
+  const ceilingWorkGroups=[
+    ['Paint & Texture',[
+      'Paint ceiling','Prime ceiling','Skim coat / smooth ceiling',
+      'Add ceiling texture (orange peel / knockdown)',
+      'Remove popcorn ceiling texture','Repair water stains / damaged ceiling finish'
+    ]],
+    ['Drywall & Decorative Finishes',[
+      'Repair / patch ceiling drywall','Install / replace ceiling drywall',
+      'Finish ceiling drywall (tape / mud / sand)',
+      'Install beadboard / tongue-and-groove ceiling',
+      'Install decorative ceiling panels / tiles',
+      'Build tray / coffered ceiling','Install crown molding / ceiling trim'
+    ]],
+    ['Lighting & Fixtures',[
+      'Install / replace ceiling light','Install recessed ceiling lights',
+      'Install pendant / chandelier','Install / replace ceiling fan',
+      'Install ceiling speakers','Install smoke / carbon monoxide detector'
+    ]],
+    ['Insulation, Ventilation & Access',[
+      'Add / replace ceiling insulation','Install / replace ceiling exhaust fan',
+      'Install / repair attic access hatch or ladder',
+      'Install skylight / sun tunnel'
+    ]]
+  ];
+  options.ceiling=work('Ceiling','custom',ceilingWorkGroups.flatMap(([,tasks])=>tasks));
+  options.ceiling.groups=ceilingWorkGroups;
+  options.walls.materials=['Interior Paint','Exterior Paint','Wallpaper','Wall Panels','Specialty Coatings'];
   // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
   // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
@@ -721,11 +750,25 @@
       }
       if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);}
       const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
-      item.materials.forEach(name=>{if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint — $50/gallon, supplies included':name));card.append(label)});
+      if(key==='ceiling'){
+        const note=document.createElement('p');note.className='calc-note';
+        note.textContent='Choose any ceiling work you need. Pricing and supplies come later in the estimate.';
+        card.append(note);
+      }
+      const ceilingGroupFor=name=>key==='ceiling'?item.groups?.find(([,tasks])=>tasks.includes(name))?.[0]:null;
+      let lastCeilingGroup='';
+      item.materials.forEach(name=>{
+        const group=ceilingGroupFor(name);
+        if(group&&group!==lastCeilingGroup){
+          lastCeilingGroup=group;
+          const subheading=document.createElement('h3');subheading.className='ceiling-work-heading';
+          subheading.textContent=group;subheading.style.cssText='font-size:1rem;margin:18px 0 8px';
+          card.append(subheading);
+        }if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));card.append(label)});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
       const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
-      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent='Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
+      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent=key==='ceiling'?'Choose one or more ceiling tasks.':'Choose one or more materials.';return;}const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:item.kind,materials:selected().join('|'),embedded:'1'});if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}let saved=[];try{saved=JSON.parse(localStorage.getItem('niks-material-estimates-v1')||'[]')}catch{}const previous=saved.find(x=>x.projectScopeKey===id+'|'+area.trim().toLowerCase()+'|'+key);if(previous)params.set('editRoom',previous.roomId);for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
       card.append(plan);
       // Same project calculator, measurements and cart; no trip to a separate labor page.
       const laborButton=document.createElement('button');
