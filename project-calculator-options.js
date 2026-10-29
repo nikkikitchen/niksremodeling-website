@@ -189,14 +189,15 @@
         else if(currentType==='refinish'){row.dataset.measure='cabinet';const note=document.createElement('p');note.className='calc-note';note.textContent='Material quantity confirmed from cabinet sizes and finish.';settings.append(note);}
         else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&/paint|primer|stain|sealer|clear finish|specialty coating/i.test(name)&&!/prep|compound/i.test(name)){
           row.dataset.measure='paint';field('coats','Coats',/primer/i.test(name)?'1':'2');field('coverage','Coverage (sq. ft. per gallon)',/primer/i.test(name)?'300':'350');
-        }else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&! /trim|bullnose|schluter/i.test(name)&&!work?.startsWith('accent-')&&/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
+        }else if(['paint','flooring','tile','drywall','lumber','concrete'].includes(currentType)&&! /trim|bullnose|schluter/i.test(name)&&!work?.startsWith('accent-')&&/floor|vinyl|linoleum|hardwood|laminate|carpet|tile|stone|plywood|osb|underlayment|backer|drywall|wall panel|waterproofing|membrane/i.test(name)&&!/grout|setting|fixture|compound/i.test(name)){
           row.dataset.measure='area';field('waste','Waste allowance (%)','10');field('coverage','Coverage per package (sq. ft., optional)','','From product label');
         }else{
-          row.dataset.measure='manual';field('quantity','Quantity needed','1','Enter quantity');
+          row.dataset.measure='manual';field('quantity',/baseboard|molding|casing|trim|quarter round|crown/i.test(name)?'Length to cover (linear feet)':'How many items?','1','Enter amount');
           const wrap=document.createElement('div');wrap.className='field';const label=document.createElement('label');label.textContent='Unit';const unit=document.createElement('select');unit.id='product-'+index+'-unit';unit.dataset.productSetting='unit';label.htmlFor=unit.id;
           ['Pieces','Bags','Boxes','Gallons','Linear feet','Rolls','Sheets','Square feet','Cubic yards'].forEach(name=>{const option=document.createElement('option');option.textContent=name;unit.append(option)});wrap.append(label,unit);settings.append(wrap);
           const quantity=settings.querySelector('[data-product-setting=quantity]');
           if(/trim|molding|baseboard|casing|bullnose|schluter|handrail/i.test(name))unit.value='Linear feet';
+          if(/baseboard|molding|casing|trim|quarter round|crown/i.test(name)){wrap.hidden=true;const perimeterLength=Number(new URLSearchParams(location.search).get('length'));const perimeterWidth=Number(new URLSearchParams(location.search).get('width'));if(perimeterLength>0&&perimeterWidth>0)quantity.value=String(2*(perimeterLength+perimeterWidth));}
           else if(/paint|primer|stain|sealer|finish/i.test(name))unit.value='Gallons';
           else if(/wallpaper/i.test(name))unit.value='Rolls';
           else if(/stone|veneer|wall panel|backer|siding|tile|slab/i.test(name))unit.value='Square feet';
