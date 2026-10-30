@@ -736,7 +736,7 @@ document.querySelectorAll('.nav-toggle').forEach(button=>button.addEventListener
 document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();initNavMenus();
  if(['materials','material-detail','calculators','material-prices'].includes(page)){
   const script=document.createElement('script');
-  script.src='/material-prices.js?v=approved-reference-20261030';
+  script.src='/material-prices.js?v='+encodeURIComponent(retailAssetVersion);
   script.defer=true;
   document.body.append(script);
  }
