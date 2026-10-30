@@ -133,7 +133,7 @@ test('Ceiling shows complete work options without material prices and keeps mixe
    const choices=workCard(doc,'ceiling');
    for(const task of ['Paint ceiling','Prime ceiling','Add ceiling texture (orange peel / knockdown)',
     'Remove popcorn ceiling texture','Repair / patch ceiling drywall',
-    'Install / replace ceiling drywall','Install recessed ceiling lights',
+    'Install ceiling drywall','Install recessed ceiling lights',
     'Install / replace ceiling light','Install / replace ceiling fan',
     'Add / replace ceiling insulation','Install / repair attic access hatch or ladder']){
     assert.ok(choices.includes(task),project+' missing '+task);
@@ -318,7 +318,7 @@ test('Installation supplies are charged once with labor and never added to mater
 });
 
 test('Ceiling dimensions calculate sheets and gallons; customer materials preserves labor',async()=>{
- const tasks=['Install / replace ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'];
+ const tasks=['Install ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'];
  const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',materials:tasks.join('|'),projectTasks:tasks.join('|'),embedded:'1',projectMode:'complete'});
  const dom=await openPage('calculators.html',query);
  for(let attempt=0;attempt<20&&!dom.window.document.getElementById('customer-provides-materials');attempt++)await new Promise(resolve=>setTimeout(resolve,50));
@@ -349,7 +349,7 @@ test('Calculator keeps installation supplies pricing out of customer-facing text
 
 test('Known ceiling drywall and primer labor never forces an in-person quote for unpriced materials', async () => {
  for (const [task,expected,product] of [
-  ['Install / replace ceiling drywall',450,'Drywall'],
+  ['Install ceiling drywall',450,'Drywall'],
   ['Prime ceiling',129.6,'Primer']
  ]) {
   const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',projectTasks:task,materials:task,embedded:'1',projectMode:'complete'});
@@ -379,6 +379,48 @@ test('Known ceiling drywall and primer labor never forces an in-person quote for
    assert.ok(cart.filter(x=>x.type==='Labor')[0].price>0);
   }finally{dom.window.close();}
  }
+});
+
+test('Ceiling installation is labeled separately from drywall repair throughout every project and calculator',async()=>{
+  for(const project of ['attic','bathrooms','bedroom-guest-room']){
+    const dom=await openPage('project.html','?project='+project+'&selectedWorks=ceiling');
+    try{
+      const options=workCard(dom.window.document,'ceiling');
+      assert.ok(options.includes('Install ceiling drywall'),project+' missing installation');
+      assert.ok(options.includes('Repair / patch ceiling drywall'),project+' missing repair');
+      assert.ok(!options.includes('Install / replace ceiling drywall'),project+' must not combine installation and repair');
+    }finally{dom.window.close();}
+  }
+  const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',projectTasks:'Install ceiling drywall',materials:'Install ceiling drywall',embedded:'1',projectMode:'complete'});
+  const dom=await openPage('calculators.html',query);
+  try{
+    const w=dom.window,d=w.document;
+    d.getElementById('ceiling-job-length').value='12';
+    d.getElementById('ceiling-job-width').value='12';
+    w.calcMaterial();
+    assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+    const item=w.eval('materialEstimates.at(-1)');
+    assert.equal(item.labor.length,1);
+    assert.equal(item.labor[0].scope,'Install ceiling drywall');
+    assert.equal(item.labor[0].price,450,'Installation remains $90 per estimated 4x8 ceiling sheet');
+    assert.ok(!item.labor[0].scope.includes('replace'));
+    assert.equal(item.products.find(x=>x.name==='Drywall').quantity,6);
+  }finally{dom.window.close();}
+});
+
+test('Prior ceiling drywall installation links retain their installation rate and new label',async()=>{
+  const oldTask='Install / replace ceiling drywall';
+  const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',projectTasks:oldTask,materials:oldTask,embedded:'1',projectMode:'complete'});
+  const dom=await openPage('calculators.html',query);
+  try{
+    const w=dom.window,d=w.document;
+    d.getElementById('ceiling-job-length').value='12';
+    d.getElementById('ceiling-job-width').value='12';
+    w.calcMaterial();
+    assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+    assert.equal(w.eval('materialEstimates.at(-1).labor[0].scope'),'Install ceiling drywall');
+    assert.equal(w.eval('materialEstimates.at(-1).labor[0].price'),450);
+  }finally{dom.window.close();}
 });
 
 test('Attic ceiling drywall patch uses approved small, medium and large repair labor instead of requiring a new quote',async()=>{

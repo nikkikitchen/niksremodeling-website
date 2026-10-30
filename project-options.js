@@ -145,7 +145,7 @@
       'Remove popcorn ceiling texture','Repair water stains / damaged ceiling finish'
     ]],
     ['Drywall & Decorative Finishes',[
-      'Repair / patch ceiling drywall','Install / replace ceiling drywall',
+      'Repair / patch ceiling drywall','Install ceiling drywall',
       'Finish ceiling drywall (tape / mud / sand)',
       'Install beadboard / tongue-and-groove ceiling',
       'Install decorative ceiling panels / tiles',

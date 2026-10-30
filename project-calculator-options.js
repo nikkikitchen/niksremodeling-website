@@ -274,8 +274,8 @@
     const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select one';types.prepend(placeholder);
     [['bathroom','Bathroom Work'],['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
     const initialParams=new URLSearchParams(location.search);
-    const ceilingTasks=(initialParams.get('projectTasks')||initialParams.get('materials')||'').split('|').filter(Boolean);
-    const measuredCeiling=()=>new URLSearchParams(location.search).get('work')==='ceiling'&&ceilingTasks.length>0&&ceilingTasks.every(task=>['Repair / patch ceiling drywall','Install / replace ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'].includes(task));
+    const ceilingTasks=(initialParams.get('projectTasks')||initialParams.get('materials')||'').split('|').filter(Boolean).map(task=>task==='Install / replace ceiling drywall'?'Install ceiling drywall':task);
+    const measuredCeiling=()=>new URLSearchParams(location.search).get('work')==='ceiling'&&ceilingTasks.length>0&&ceilingTasks.every(task=>['Repair / patch ceiling drywall','Install ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'].includes(task));
     const ceilingDimensions=document.createElement('section');
     ceilingDimensions.className='field';ceilingDimensions.hidden=!measuredCeiling();
     ceilingDimensions.innerHTML='<h3>Ceiling measurements</h3><div class="calc-fields"><div class="field"><label for="ceiling-job-length">Ceiling length (ft)</label><input id="ceiling-job-length" type="number" min="1" step="1"></div><div class="field"><label for="ceiling-job-width">Ceiling width (ft)</label><input id="ceiling-job-width" type="number" min="1" step="1"></div></div><p class="calc-note">We calculate the sheets and gallons. Estimates use 4 × 8 drywall sheets with 15% extra, one primer coat at 300 sq. ft. per gallon, and two paint coats at 350 sq. ft. per gallon. Actual coverage depends on the product and surface.</p><p id="ceiling-quantity-preview" role="status"></p>';
@@ -293,7 +293,7 @@
       if(!patchOnly&&(!Number.isFinite(length)||!Number.isFinite(width)||length<=0||width<=0||!Number.isInteger(length)||!Number.isInteger(width)))throw Error('Enter ceiling length and width in whole feet.');
       const area=patchOnly?repairAreas[patchSize]:length*width;
       const products=[];
-      if(ceilingTasks.includes('Install / replace ceiling drywall'))products.push({name:'Drywall',quantity:Math.ceil(area*1.15/32),unit:'sheets',area,detail:'4 × 8 sheets; 15% extra allowance.'});
+      if(ceilingTasks.includes('Install ceiling drywall'))products.push({name:'Drywall',quantity:Math.ceil(area*1.15/32),unit:'sheets',area,detail:'4 × 8 sheets; 15% extra allowance.'});
       if(ceilingTasks.includes('Prime ceiling'))products.push({name:'Primer',quantity:Math.ceil(area/300),unit:'gallons',area,detail:'One coat; 300 sq. ft. per gallon.'});
       if(ceilingTasks.includes('Paint ceiling'))products.push({name:'Paint',quantity:Math.ceil(area*2/350),unit:'gallons',area,detail:'Two coats; 350 sq. ft. per gallon.'});
       if(patchSelected)products.push({name:'Drywall patch materials',quantity:1,unit:'repair',area:repairAreas[patchSize],detail:'Repair materials to confirm for selected patch size.'});
@@ -498,7 +498,7 @@
       if(measuredCeiling()){
         try{
           const plan=ceilingPlan();
-          const rates={'Install / replace ceiling drywall':'hang','Finish ceiling drywall (tape / mud / sand)':'finish','Prime ceiling':'prime','Paint ceiling':'paint2'};
+          const rates={'Install ceiling drywall':'hang','Finish ceiling drywall (tape / mud / sand)':'finish','Prime ceiling':'prime','Paint ceiling':'paint2'};
           const patchRates={small:210,medium:330,large:540};
           const labor=ceilingTasks.map(task=>({service:'Installation',scope:task,quantity:1,unit:'scope',price:task==='Repair / patch ceiling drywall'?patchRates[plan.patchSize]:roomLaborQuote(0,rates[task],plan.area).amount,fixedPackage:true}));
           materialEstimates.push({type:'ceiling',title:'Ceiling work',result:plan.products.map(x=>x.name+': '+x.quantity+' '+x.unit).join(' · '),detail:plan.area+' sq. ft. ceiling',measurements:{area:plan.area,length:plan.length,width:plan.width},products:plan.products,labor,projectTasks:ceilingTasks.slice(),projectOptions:selectedProjectOptions(),deliveryTypes:selectedDeliveryTypes()});
