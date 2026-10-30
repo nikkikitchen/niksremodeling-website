@@ -280,7 +280,18 @@ const textureMatchingTiers=(surface,prefix)=>{
    note:'Labor only, one prepared patch. Drywall repair, primer and paint extra. Full-surface texture is separate; larger areas need an estimate.'
  }));
 };
-const textureGroup=drywallCategory.groups.find(g=>g.id==='texture');
+let textureGroup=drywallCategory.groups.find(g=>g.id==='texture');
+if(!textureGroup){
+ // The approved drywall catalog rebuilds its groups, so restore full-surface
+ // texture work separately instead of assuming the old generic group survives.
+ textureGroup={id:'texture',label:'Texture — matching patches or entire surfaces',actions:{
+   Apply:[
+     {id:'texture-wall',label:'Texture entire wall (no matching required)',price:null,status:'pending',unit:'sq. ft.',note:'Full-surface texturing is not priced as a repair patch. Get measurements for an accurate quote.'},
+     {id:'texture-ceiling',label:'Texture entire ceiling (no matching required)',price:null,status:'pending',unit:'sq. ft.',note:'Full-ceiling application does not require patch matching. Get ceiling measurements for a separate estimate.'}
+   ],Repair:[]
+ }};
+ drywallCategory.groups.push(textureGroup);
+}
 textureGroup.actions.Repair=[...textureMatchingTiers('wall','texture-match-wall'),...textureMatchingTiers('ceiling','texture-match-ceiling')];
 const textureInstall=textureGroup.actions.Apply.find(t=>t.id==='texture-ceiling');
 if(textureInstall)textureInstall.label='Texture entire ceiling (no matching required)';
