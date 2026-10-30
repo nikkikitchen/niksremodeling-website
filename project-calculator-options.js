@@ -208,14 +208,26 @@
            else if(['accessibility','fireplaces'].includes(new URLSearchParams(location.search).get('project'))&&['Linear feet','Square feet'].includes(unit.value)){quantity.value='';quantity.placeholder='Size of this item or surface';}
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
+        // Floating-floor pad belongs to the project questions, not a second
+        // product setting. Shopping still retains its product-specific options.
+        const lvpOrLaminate=currentType==='flooring'&&/luxury vinyl|\blvp\b|vinyl plank|laminate/i.test(name);
         (selectedProjectMaterial&&/^(Plywood|OSB & Sheathing)$/i.test(name)?[]:itemOptionFields(name))
-          .filter(({label:title})=>!(title==='Location'&&/tile|stone/i.test(name)&&(initialParams.get('work')==='floor'||addingTileElsewhere)))
+          .filter(({label:title})=>!(lvpOrLaminate&&title==='Padding')&&!(title==='Location'&&/tile|stone/i.test(name)&&(initialParams.get('work')==='floor'||addingTileElsewhere)))
           .forEach(({label:title,values},optionIndex)=>{
           const wrap=document.createElement('div');wrap.className='field';
           if(title==='Color change'){const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.id='product-'+index+'-option-'+optionIndex;box.dataset.itemOption=title;box.value='Yes';label.append(box,document.createTextNode(' Color change'));wrap.append(label);settings.append(wrap);return;}
           const label=document.createElement('label'),select=document.createElement('select');
           select.id='product-'+index+'-option-'+optionIndex;select.dataset.itemOption=title;label.htmlFor=select.id;label.textContent=title;
           ['',...values].forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value||'Choose one';select.append(option)});
+          // A project LVP choice already implies a normal floating install.
+          // Customers can change this to glue-down without repeating the pad question.
+          if(selectedProjectMaterial&&lvpOrLaminate&&title==='Installation'&&values.includes('Floating')){
+            select.value='Floating';
+            select.addEventListener('change',()=>{
+              floorKind.value=select.value==='Glue down'?'glue':'floating';
+              renderQuestions();
+            });
+          }
           wrap.append(label,select);settings.append(wrap);
         });
         settings.hidden=!box.checked;row.append(settings);list.append(row);
@@ -394,7 +406,12 @@
         select.id='question-'+id; select.dataset.question=id; title.htmlFor=select.id;
         const placeholder=create('option','Choose one'); placeholder.value=''; select.append(placeholder);
         options.forEach(([value,text])=>{const option=create('option',text);option.value=value;select.append(option)});
-        select.value=saved[id]||'';field.append(title,select);grid.append(field);
+        // Projects should need only measurements to continue when details are
+        // unknown; "Not sure" keeps quantities provisional rather than guessing.
+        const quickFloor=initialParams.has('project')&&initialParams.get('work')==='floor'&&
+          (initialParams.get('materials')||'').split('|').some(name=>/luxury vinyl|\blvp\b|vinyl plank|laminate/i.test(name));
+        select.value=saved[id]||(quickFloor&&['base','padding','trim'].includes(id)?'unsure':'');
+        field.append(title,select);grid.append(field);
       });
       questionBox.append(grid,create('p','Adjust these if you know. Otherwise, we’ll confirm them with you.','calc-note'));
       adjustLabels();
