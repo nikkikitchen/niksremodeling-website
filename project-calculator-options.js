@@ -378,7 +378,11 @@
       const group = atticDecking?[]:[...(questions[key()] || [])].filter(([id])=>!(floorAlreadyChosen&&id==='surface'&&key()==='tile'));
       if(new URLSearchParams(location.search).get('project')==='accents'&&!group.some(q=>q[0]==='condition'))group.push(['condition','Does this surface need prep or repairs?',[['good','Ready for installation'],['repair','Needs prep / repairs'],unsure]]);
       if(!group.length) { return; }
-      questionBox.append(create('h3','Project details'));
+      const bathroomFloorTile=['bathroom','bathrooms','bath-remodel'].includes(initialParams.get('project'))&&initialParams.get('work')==='floor'&&key()==='tile'&&!addingTileElsewhere;
+      if(bathroomFloorTile){
+        questionBox.append(create('h3','Bathroom Floor Tile'));
+        questionBox.append(create('p','Floor tile is selected. Enter the floor dimensions and answer two quick moisture and subfloor questions.','calc-note'));
+      }else questionBox.append(create('h3','Project details'));
       const grid = create('div', '', 'calc-fields');
       group.forEach(([id,label,options]) => {
         const field=create('div','','field'), title=create('label',label), select=create('select');
