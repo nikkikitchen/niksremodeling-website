@@ -185,8 +185,8 @@ test('Projects > Attic > Paint ceiling estimates the whole job without asking fo
   assert.equal(doc.querySelector('[name="project-option"][value="Materials"]').checked,true);
   const rows=[...doc.querySelectorAll('[name="area-product"]:checked')].map(input=>input.value);
   assert.deepEqual(rows,['Interior Paint'],'Do not ask for the same material again');
-  doc.getElementById('paint-ceiling-length').value='12';
-  doc.getElementById('paint-ceiling-width').value='10';
+  doc.getElementById('ceiling-job-length').value='12';
+  doc.getElementById('ceiling-job-width').value='10';
   const condition=doc.getElementById('question-condition');if(condition)condition.value='good';
   // A paint finish is optional to decide now, but the calculator requires a
   // choice or "Help me choose" before estimating a material purchase.
@@ -202,7 +202,7 @@ test('Projects > Attic > Paint ceiling estimates the whole job without asking fo
   const estimates=w.eval('materialEstimates');
   const item=estimates[estimates.length-1];
   assert.equal(item.measurements.area,120);
-  assert.equal(item.products.find(p=>p.name==='Interior Paint').price,50,'Paint price and standard supplies must appear only in estimate');
+  assert.equal(item.products.find(p=>p.name==='Paint').price,50,'Paint price and standard supplies must appear only in estimate');
   assert.equal(item.labor.find(l=>l.service==='Installation').price,216,'Two-coat ceiling painting uses the approved $1.80/sq.ft. labor rate');
   assert.equal(item.supplyChoices.length,0,'Paint includes standard supplies; do not charge again');
   w.addProjectToCart();
@@ -315,4 +315,24 @@ test('Installation supplies are charged once with labor and never added to mater
   w.addProjectToCart();
   assert.equal(w.getCart().filter(x=>x.type==='Included project costs').length,0);
   dom.window.close();
+});
+
+test('Ceiling dimensions calculate sheets and gallons; customer materials preserves labor',async()=>{
+ const tasks=['Install / replace ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'];
+ const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',materials:tasks.join('|'),projectTasks:tasks.join('|'),embedded:'1',projectMode:'complete'});
+ const dom=await openPage('calculators.html',query);
+ try{
+  const w=dom.window,doc=w.document;
+  doc.getElementById('ceiling-job-length').value='12';doc.getElementById('ceiling-job-width').value='12';
+  assert.equal(doc.getElementById('material-products').closest('[hidden]')!==null,true);
+  w.calcMaterial();assert.ok(doc.getElementById('mat-error').hidden,doc.getElementById('mat-error').textContent);
+  let item=w.eval('materialEstimates')[0];
+  assert.equal(item.products.find(x=>x.name==='Drywall').quantity,6);
+  for(const name of ['Primer','Paint']){assert.equal(item.products.find(x=>x.name===name).quantity,1);assert.equal(item.products.find(x=>x.name===name).unit,'gallons');}
+  assert.equal(item.labor.length,4);const laborTotal=item.labor.reduce((n,x)=>n+x.price,0);
+  doc.getElementById('customer-provides-materials').checked=true;w.calcMaterial();
+  item=w.eval('materialEstimates')[0];assert.equal(w.eval('materialEstimates.length'),1);
+  assert.equal(item.projectOptions.includes('Materials'),false);assert.equal(item.labor.reduce((n,x)=>n+x.price,0),laborTotal);
+  w.addProjectToCart();assert.equal(w.getCart().filter(x=>x.type==='Material estimate').length,0);assert.equal(w.getCart().filter(x=>x.type==='Labor').length,4);
+ }finally{dom.window.close();}
 });
