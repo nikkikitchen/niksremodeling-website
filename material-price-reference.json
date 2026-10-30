@@ -314,6 +314,28 @@
       "name": "Deadbolt & Entry Lockset Combo Pack",
       "unit": "combo pack",
       "price": 60.75
+    },
+    {
+      "id": 53,
+      "name": "PVA Drywall Primer (1 Gallon)",
+      "unit": "gallons",
+      "price": 21.57,
+      "retailBaseline": 15.98,
+      "retailSources": [
+        "https://www.homedepot.com/p/305981340",
+        "https://www.lowes.com/pd/Valspar-Pro-Interior-Pva-Water-Based-Wall-and-Ceiling-Primer-Actual-Net-Contents-128-fl-oz/1000380969"
+      ]
+    },
+    {
+      "id": 54,
+      "name": "Interior Bonding Primer (1 Gallon)",
+      "unit": "gallons",
+      "price": 47.22,
+      "retailBaseline": 34.98,
+      "retailSources": [
+        "https://www.homedepot.com/b/Paint-Primers/1-Gallon/Interior/N-5yc1vZbt0tZ1z17e3fZ1z1dquo",
+        "https://www.lowes.com/pd/Valspar-Interior-Exterior-Bonding-Water-based-Wall-and-Ceiling-Primer-1-Gallon/1003262814"
+      ]
     }
   ]
 }
