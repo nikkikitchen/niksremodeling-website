@@ -636,6 +636,8 @@
       }
       item.supplyChoices=(item.type==='bathroom'?[]:window.projectSupplyChoices(item)).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
+      // Price approved material allowances before either summary or cart reads this item.
+      if(!item.customerProvidesMaterials && typeof window.NIK_PRICE_PROJECT_PRODUCTS==='function')window.NIK_PRICE_PROJECT_PRODUCTS(item);
       if(item.customerProvidesMaterials)item.projectOptions=(item.projectOptions||[]).filter(x=>x!=='Materials');
       item.preparation=(sourceParams.get('preparation')||'').split('|').filter(Boolean);if(item.preparation.length){item.detail+=(item.detail?' · ':'')+'Requested: '+item.preparation.join(' and ');item.labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];item.preparation.forEach(service=>item.labor.push({service,scope:service+' for '+item.workLabel,quantity:1,unit:'scope to review'}));}item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.type==='bathroom'?[]:item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
