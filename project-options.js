@@ -165,7 +165,14 @@
   ];
   options.ceiling=work('Ceiling','custom',ceilingWorkGroups.flatMap(([,tasks])=>tasks));
   options.ceiling.groups=ceilingWorkGroups;
-  options.walls.materials=['Drywall Panels','Interior Paint','Exterior Paint','Primer','Wallpaper','Wall Panels','Specialty Coatings'];
+  options.walls.materials=[
+    'Accent Walls','Beadboard','Board & Batten','Brick Veneer','Custom Mirrors',
+    'Decorative Wall Panels','Drywall Installation','Drywall Panels','Drywall Repair & Patching',
+    'Drywall Finishing & Texture','Exterior Paint','Interior Paint','Limewash',
+    'Mirror Installation','Painted Wall Finishes','Primer','Shiplap','Specialty Coatings',
+    'Stone Veneer','Tile Walls','Venetian Plaster','Wall Panels','Wallpaper',
+    'Wainscoting','Wood Slat Walls'
+  ];
   // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
   // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
