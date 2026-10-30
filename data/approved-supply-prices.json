@@ -1,0 +1,262 @@
+{
+  "description": "Approved retail supply prices from user, already including 35% markup. Do not add another markup. Charge consumables only when needed and customer has not elected customer-supplied materials. Reusable tools are shop catalog products, not automatic job consumables.",
+  "currency": "USD",
+  "pricesIncludeMarkup": true,
+  "items": [
+    {
+      "id": 1,
+      "name": "9-in Paint Roller Frame",
+      "price": 11.48
+    },
+    {
+      "id": 2,
+      "name": "9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)",
+      "price": 18.9
+    },
+    {
+      "id": 3,
+      "name": "2.5-in Angled Sash Paint Brush (Premium Nylon/Poly)",
+      "price": 21.6
+    },
+    {
+      "id": 4,
+      "name": "Plastic Paint Tray",
+      "price": 5.4
+    },
+    {
+      "id": 5,
+      "name": "Paint Tray Liners (10-pack)",
+      "price": 12.83
+    },
+    {
+      "id": 6,
+      "name": "Canvas Drop Cloth (9-ft x 12-ft, 8oz)",
+      "price": 32.4
+    },
+    {
+      "id": 7,
+      "name": "Plastic Sheeting Roll (10-ft x 100-ft, 4-Mil)",
+      "price": 56.7
+    },
+    {
+      "id": 8,
+      "name": "Heavy-Duty Caulk Gun",
+      "price": 20.25
+    },
+    {
+      "id": 9,
+      "name": "Construction Adhesive (28 oz Large Tube)",
+      "price": 15.53
+    },
+    {
+      "id": 10,
+      "name": "Wood Glue (16 oz Bottle)",
+      "price": 12.15
+    },
+    {
+      "id": 11,
+      "name": "Spray Adhesive (13.5 oz Can)",
+      "price": 18.23
+    },
+    {
+      "id": 12,
+      "name": "Polyurethane Wood Finish (1-Quart Clear Satin)",
+      "price": 25.65
+    },
+    {
+      "id": 13,
+      "name": "Heavy-Duty Duct Tape (1.88-in x 60 yds)",
+      "price": 18.9
+    },
+    {
+      "id": 14,
+      "name": "Drywall Joint Tape (Mesh Self-Adhesive, 300 ft)",
+      "price": 15.53
+    },
+    {
+      "id": 15,
+      "name": "6-in Drywall Taping Knife",
+      "price": 13.5
+    },
+    {
+      "id": 16,
+      "name": "12-in Drywall Mud Pan (Stainless Steel)",
+      "price": 24.3
+    },
+    {
+      "id": 17,
+      "name": "Drywall Sanding Sponge (Medium/Fine, 3-pack)",
+      "price": 10.12
+    },
+    {
+      "id": 18,
+      "name": "Notched Tile Trowel (1/4-in x 1/4-in Square Notched)",
+      "price": 12.83
+    },
+    {
+      "id": 19,
+      "name": "Rubber Tile Grout Float",
+      "price": 18.9
+    },
+    {
+      "id": 20,
+      "name": "Tile Spacers (1/8-in, 500-pack)",
+      "price": 9.45
+    },
+    {
+      "id": 21,
+      "name": "Heavy-Duty Utility Knife (Retractable)",
+      "price": 14.85
+    },
+    {
+      "id": 22,
+      "name": "Utility Knife Replacement Blades (50-pack)",
+      "price": 17.55
+    },
+    {
+      "id": 23,
+      "name": "25-ft Tape Measure (1-in Wide Blade)",
+      "price": 29.7
+    },
+    {
+      "id": 24,
+      "name": "9-in Torpedo Level",
+      "price": 16.88
+    },
+    {
+      "id": 25,
+      "name": "24-in Aluminum I-Beam Level",
+      "price": 37.8
+    },
+    {
+      "id": 26,
+      "name": "Chalk Line Reel Kit with Blue Chalk",
+      "price": 14.85
+    },
+    {
+      "id": 27,
+      "name": "Carpenters Square (12-in Speed Square)",
+      "price": 18.23
+    },
+    {
+      "id": 28,
+      "name": "N95 Dust Mask Respirator (10-pack)",
+      "price": 28.35
+    },
+    {
+      "id": 29,
+      "name": "Safety Glasses (Anti-Fog, Clear)",
+      "price": 8.78
+    },
+    {
+      "id": 30,
+      "name": "Leather Work Gloves (Large, 1-pair)",
+      "price": 20.25
+    },
+    {
+      "id": 31,
+      "name": "Nitril-Coated Grip Gloves (5-pack)",
+      "price": 14.85
+    },
+    {
+      "id": 32,
+      "name": "Gel Knee Pads (Heavy-Duty)",
+      "price": 45.9
+    },
+    {
+      "id": 33,
+      "name": "Ear Plugs (Corded Foam, 10-pack)",
+      "price": 10.12
+    },
+    {
+      "id": 34,
+      "name": "16 oz Fiberglass Claw Hammer",
+      "price": 21.6
+    },
+    {
+      "id": 35,
+      "name": "15-in Flat Pry Bar (Wonder Bar)",
+      "price": 19.58
+    },
+    {
+      "id": 36,
+      "name": "4-lb Blacksmith Sledgehammer",
+      "price": 31.05
+    },
+    {
+      "id": 37,
+      "name": "Impact Rated Screwdriver Bit Set (40-Piece)",
+      "price": 39.15
+    },
+    {
+      "id": 38,
+      "name": "Twist Drill Bit Set (14-Piece)",
+      "price": 28.35
+    },
+    {
+      "id": 39,
+      "name": "Spade Drill Bit Set (6-Piece Wood Boring)",
+      "price": 18.9
+    },
+    {
+      "id": 40,
+      "name": "Bi-Metal Reciprocating Saw Blade Set (5-pack)",
+      "price": 26.33
+    },
+    {
+      "id": 41,
+      "name": "7-1/4-in 24-Tooth Circular Saw Blade",
+      "price": 16.88
+    },
+    {
+      "id": 42,
+      "name": "10-in 60-Tooth Miter Saw Blade",
+      "price": 59.4
+    },
+    {
+      "id": 43,
+      "name": "Heavy-Duty Extension Cord (50-ft, 12/3 Gauge)",
+      "price": 70.2
+    },
+    {
+      "id": 44,
+      "name": "Plastic 5-Gallon Bucket",
+      "price": 6.41
+    },
+    {
+      "id": 45,
+      "name": "5-Gallon Bucket Lid",
+      "price": 3.04
+    },
+    {
+      "id": 46,
+      "name": "Contractor Cleanup Wipes (90-count)",
+      "price": 21.6
+    },
+    {
+      "id": 47,
+      "name": "Push Broom (24-in Multi-Surface)",
+      "price": 29.7
+    },
+    {
+      "id": 48,
+      "name": "Heavy-Duty Poly D-Handle Shovel",
+      "price": 39.15
+    },
+    {
+      "id": 49,
+      "name": "Zircon Stud Finder (Edge Finding)",
+      "price": 32.4
+    },
+    {
+      "id": 50,
+      "name": "Non-Contact Voltage Tester Pen",
+      "price": 26.33
+    },
+    {
+      "id": 51,
+      "name": "Electrical Tape (Black Vinyl, 3-pack)",
+      "price": 8.1
+    }
+  ]
+}
