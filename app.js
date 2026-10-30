@@ -395,6 +395,8 @@ function calcMaterial(){
 function saveMaterialEstimates(){try{localStorage.setItem(MATERIAL_ESTIMATES_KEY,JSON.stringify(materialEstimates))}catch{}}
 function flooringLaborEstimate(item, service){
  if(service!=='Installation'||item.type!=='flooring')return null;
+ // Coatings do not use the approved plank/tile installation packages.
+ if((item.products||[]).some(p=>p.name==='Concrete Floor Paint'))return null;
  const area=Number(item.measurements?.area);if(!Number.isFinite(area)||area<=0)return null;
  const primary=(item.products||[]).find(p=>! /underlayment|backer|trim/i.test(p.name));
  const kind=/laminate/i.test(primary?.name||item.materialChoice||'')?'Laminate':item.floorKind==='tile'?'Tile':item.floorKind==='floating'?'LVP':item.floorKind==='glue'?'Glue-down':'Hardwood';

@@ -615,3 +615,27 @@ test('Bathroom flooring remembers floor tile, asks no repeat location, and offer
   assert.ok(cart.some(x=>x.name.includes('Kitchen backsplash')));
  }finally{calc.window.close();}
 });
+
+ test('Basement concrete floor paint uses coating questions and never floating-floor pricing',async()=>{
+ const project=await openPage('project.html','?project=basement&selectedWorks=floor');let target='';
+ try{const w=project.window,card=w.document.querySelector('[data-work-key="floor"]');
+ for(const box of card.querySelectorAll(':scope > label input'))box.checked=box.value==='Concrete Floor Paint';
+ w.openProjectMeasurements=url=>target=url;card.querySelector('button.btn.primary').click();
+ assert.equal(new URL(target,w.location.origin).searchParams.get('material'),'paint');
+ }finally{project.window.close();}
+ const calc=await openPage('calculators.html',target.slice(target.indexOf('?')));
+ try{const w=calc.window,d=w.document;
+ assert.equal(d.getElementById('question-padding'),null);assert.equal(d.getElementById('question-trim'),null);
+ assert.ok(d.getElementById('question-condition'));assert.ok(d.getElementById('question-wet'));
+ assert.ok(d.getElementById('paint-surface-other').checked);
+ d.getElementById('paint-other-area').value='100';
+ d.getElementById('question-condition').value='good';d.getElementById('question-wet').value='dry';
+ d.querySelector('[data-item-option="Finish"]').value='Satin';w.calcMaterial();
+ assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+ const item=w.eval('materialEstimates')[0];assert.equal(item.type,'paint');assert.equal(item.measurements.area,100);
+ assert.equal(item.products[0].name,'Concrete Floor Paint');assert.equal(item.products[0].quantity,1);
+ assert.equal(w.flooringLaborEstimate(item,'Installation'),null);
+ assert.equal(w.flooringLaborEstimate({type:'flooring',floorKind:'floating',measurements:{area:100},products:[{name:'Concrete Floor Paint'}]},'Installation'),null);
+ w.addProjectToCart();assert.ok(w.getCart().length);
+ }finally{calc.window.close();}
+ });

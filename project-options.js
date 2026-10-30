@@ -775,7 +775,8 @@
         // Projects plan the entire job. A single ceiling-paint choice must
         // enter the measured paint calculator, not the generic one-item picker.
         const ceilingPaintOnly=key==='ceiling'&&chosenTasks.length===1&&chosenTasks[0]==='Paint ceiling';
-        const projectMaterial=ceilingPaintOnly?'paint':item.kind;
+        const floorPaintOnly=key==='floor'&&chosenTasks.length===1&&chosenTasks[0]==='Concrete Floor Paint';
+        const projectMaterial=ceilingPaintOnly||floorPaintOnly?'paint':item.kind;
         const chosenMaterials=ceilingPaintOnly?[document.getElementById('scope-location').value==='exterior'?'Exterior Paint':'Interior Paint']:chosenTasks;
         const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:projectMaterial,materials:chosenMaterials.join('|'),projectMode:'complete',embedded:'1'});
         // Each click from Projects starts only the newly selected job.

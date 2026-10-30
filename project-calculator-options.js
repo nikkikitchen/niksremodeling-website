@@ -368,7 +368,12 @@
         ['base','Is the ground prepared?',[['ready','Yes'],['prep','Needs preparation'],unsure]]
       ]
     };
-    const key = () => types.value === 'tile' ? 'tile' : types.value === 'flooring' ? (floorKind.value === 'tile' ? 'tile' : floorKind.value === 'floating' ? 'floating' : 'flooring') : types.value;
+    const concreteFloorPaint=()=>types.value==='paint'&&initialParams.get('work')==='floor'&&(initialParams.get('materials')||'')==='Concrete Floor Paint';
+    questions['floor-paint']=[
+      ['condition','What shape is the concrete in?',[['good','Clean and sound'],['new','New or bare concrete'],['repair','Cracks, peeling paint or other repairs'],unsure]],
+      ['wet','Does the concrete have moisture problems?',[['dry','No known moisture problems'],['wet','Dampness or water coming through'],unsure]]
+    ];
+    const key = () => concreteFloorPaint()?'floor-paint':types.value === 'tile' ? 'tile' : types.value === 'flooring' ? (floorKind.value === 'tile' ? 'tile' : floorKind.value === 'floating' ? 'floating' : 'flooring') : types.value;
     const create = (tag, text, className) => { const el=document.createElement(tag); if(text)el.textContent=text; if(className)el.className=className; return el; };
     function renderQuestions(saved = {}) {
       questionBox.replaceChildren();
