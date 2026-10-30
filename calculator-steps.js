@@ -13,7 +13,7 @@
   const title=panel.querySelector('h2'),calculate=panel.querySelector('button[onclick="calcMaterial()"]');
   const pricingNote=document.createElement('p');pricingNote.className='calc-note';pricingNote.textContent='Pricing assumes interior work unless otherwise specified. If an on-site assessment identifies exterior work or additional requirements, any price adjustment will be discussed and approved before work begins.';summary.append(pricingNote);
   const first=new Set(['material-name','material-type'].map(id=>document.getElementById(id)?.closest('.field')).filter(Boolean));
-  const own=document.createElement('label');own.className='wizard-own';own.innerHTML='<input type="checkbox" id="customer-provides-materials"> I’ll supply materials (installation supplies stay included)';
+  const own=document.createElement('label');own.className='wizard-own';own.innerHTML='<input type="checkbox" id="customer-provides-materials"> Customer supplies materials (installation supplies stay included)';
   document.getElementById('work-services').before(own);
   const controls=document.createElement('div');controls.className='wizard-controls';controls.innerHTML='<button type="button" class="btn outline wizard-back">Back</button><button type="button" class="btn primary wizard-next">Next</button>';workspace.append(controls);
   const back=controls.firstElementChild,next=controls.lastElementChild;
