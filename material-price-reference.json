@@ -336,6 +336,28 @@
         "https://www.homedepot.com/b/Paint-Primers/1-Gallon/Interior/N-5yc1vZbt0tZ1z17e3fZ1z1dquo",
         "https://www.lowes.com/pd/Valspar-Interior-Exterior-Bonding-Water-based-Wall-and-Ceiling-Primer-1-Gallon/1003262814"
       ]
+    },
+    {
+      "id": 55,
+      "name": "Concrete Floor Paint (1 Gallon)",
+      "unit": "gallons",
+      "price": 86.37,
+      "retailBaseline": 63.98,
+      "retailSources": [
+        "https://www.lowes.com/best-sellers/paint/garage-floor-paint/4022877346",
+        "https://www.homedepot.com/p/302053521"
+      ]
+    },
+    {
+      "id": 56,
+      "name": "Liquid Tile Waterproofing Membrane (1 Gallon)",
+      "unit": "gallons",
+      "price": 104.67,
+      "retailBaseline": 77.53,
+      "retailSources": [
+        "https://www.homedepot.com/p/100169081",
+        "https://www.homedepot.com/b/Flooring-Flooring-Supplies-Surface-Prep-Waterproofing-Membranes/Red/Waterproofing-membrane/N-5yc1vZ2fkooofZ1z0mdvqZ1z0vjtq"
+      ]
     }
   ]
 }
