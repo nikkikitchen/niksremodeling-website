@@ -150,6 +150,16 @@
         main.append(section);
       }
     }else if(page==='calculators'&&typeof window.calcMaterial==='function'){
+      // An estimate can be saved before this reference asset finishes loading.
+      // Fill only missing material prices and rerender the existing quote once.
+      if(typeof materialEstimates!=='undefined'){
+        let updated=false;
+        for(const item of materialEstimates)if(applyFallbackPrices(item))updated=true;
+        if(updated){
+          if(typeof saveMaterialEstimates==='function')saveMaterialEstimates();
+          if(typeof window.renderMaterialEstimates==='function')window.renderMaterialEstimates();
+        }
+      }
       const original=window.calcMaterial;
       window.calcMaterial=function(...args){
         const result=original.apply(this,args);
