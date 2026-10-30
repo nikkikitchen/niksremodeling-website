@@ -9,7 +9,6 @@
     const legend = choicesPanel.querySelector('legend');
     legend.textContent = 'What do you need for this project?';
     const installation = choicesPanel.querySelector('[value="Installation"]').closest('label');
-    installation.append(document.createTextNode(' — needed supplies included'));
     const prep = choicesPanel.querySelector('[value="Prep"]').closest('label');
     const removalSelected = choicesPanel.querySelector('[value="Removal"]').checked;
     const makeBox = (label, name, value, description = '') => {
@@ -499,7 +498,7 @@
         if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
         const own=!!document.getElementById('customer-provides-materials')?.checked;
         const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:p.quoteRequired?null:window.bathroomPackageTotal(p,own)*x.quantity,flatService:!!p.flatService,quoteRequired:!!p.quoteRequired,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
-        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(itemSelections[x.name]?' — '+itemSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Fixture amounts are planning allowances, not verified product prices or stock. Final fixture selection and pricing are confirmed before ordering.')+' Installation supplies included. Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:selectedProjectOptions().filter(x=>['Delivery','Debris Removal'].includes(x)),deliveryTypes:selectedDeliveryTypes()});productPlans=[];
+        materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(itemSelections[x.name]?' — '+itemSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Fixture amounts are planning allowances, not verified product prices or stock. Final fixture selection and pricing are confirmed before ordering.')+' Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:selectedProjectOptions().filter(x=>['Delivery','Debris Removal'].includes(x)),deliveryTypes:selectedDeliveryTypes()});productPlans=[];
       }else if(types.value==='refinish'){
         try{materialEstimates.push(cabinetRefinishingEstimate());}catch(e){error.hidden=false;error.textContent=e.message;return;}
       }else if(['prep','misc','debris','delivery'].includes(types.value)){
@@ -564,9 +563,9 @@
         for(const labor of item.labor||[])if(labor.service==='Installation')Object.assign(labor,{price:roomLaborQuote(item.measurements.area,'hang').amount,fixedPackage:true,quantity:1,unit:'scope',scope:'Drywall installation',packageNote:'Labor only: $75 per estimated 4 × 8 sheet. Finishing separate; discounted packages available on Installation & Labor. Final sheet layout confirmed before work.'});
       }
       const paintProducts=(item.products||[]).filter(p=>/^(Interior Paint|Exterior Paint|Paint)$/.test(p.name));
-      for(const product of paintProducts){product.price=product.quantity*50;product.includesSupplies=true;product.detail+=' Paint: $50 per gallon, supplies included.';}
+      for(const product of paintProducts){product.price=product.quantity*50;product.includesSupplies=true;product.detail+=' Paint: $50 per gallon.';}
       if(!item.customerProvidesMaterials && paintProducts.length && paintProducts.length===item.products.length){item.paintPackage={...(item.paintPackage||{}),perGallon:50,includesSupplies:true};item.supplyChoices=[];item.suggestedSupplies=[];}
-      if(sourceParams.get('project')==='accents'&&sourceParams.get('work')==='accent-stone')for(const product of item.products||[]){if(['Stacked Stone','Natural Stone Veneer'].includes(product.name)&&['Square feet','sq. ft.'].includes(product.unit)){product.unitPrice=59.34;product.price=Math.round(product.quantity*5934)/100;product.includesSupplies=true;product.detail+=' Stone and installation supplies: $59.34 per sq. ft.';}}
+      if(sourceParams.get('project')==='accents'&&sourceParams.get('work')==='accent-stone')for(const product of item.products||[]){if(['Stacked Stone','Natural Stone Veneer'].includes(product.name)&&['Square feet','sq. ft.'].includes(product.unit)){product.unitPrice=59.34;product.price=Math.round(product.quantity*5934)/100;product.includesSupplies=true;product.detail+=' Stone material allowance: $59.34 per sq. ft.';}}
       if(item.products?.length&&item.products.every(p=>p.includesSupplies)&&!item.customerProvidesMaterials){item.stoneMaterialPackage=true;item.supplyChoices=[];item.suggestedSupplies=[];}
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
       editingId=item.roomId;roomStatus.textContent='Estimate ready. Review the price, then add to cart.';
@@ -697,7 +696,7 @@
       let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
       let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}
       const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.name))];
-      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Materials and labor are selected separately. Needed installation supplies are included with labor, once—even when you provide the materials.';
+      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Estimated total for selected work.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       const add=create('button',pending?'Add to Cart — Quote Required':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;

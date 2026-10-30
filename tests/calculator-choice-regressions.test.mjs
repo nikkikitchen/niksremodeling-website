@@ -337,3 +337,12 @@ test('Ceiling dimensions calculate sheets and gallons; customer materials preser
   w.addProjectToCart();assert.equal(w.getCart().filter(x=>x.type==='Material estimate').length,0);assert.equal(w.getCart().filter(x=>x.type==='Labor').length,4);
  }finally{dom.window.close();}
 });
+
+test('Calculator keeps installation supplies pricing out of customer-facing text', async () => {
+  const dom = await openPage('calculators.html');
+  const {document} = dom.window;
+  assert.doesNotMatch(document.querySelector('.labor-choices').textContent, /supplies included/i);
+  const source = readFileSync('project-calculator-options.js', 'utf8');
+  assert.doesNotMatch(source, /needed supplies included|installation supplies included|supplies included with labor|supplies included\./i);
+  dom.window.close();
+});
