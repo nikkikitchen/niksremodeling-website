@@ -53,7 +53,7 @@
     miscDetails.append(hoursLabel, hoursInput, miscTotal, minimumNote);
     choicesPanel.replaceChildren(legend, materialsChoice, installation, misc, debrisChoice, deliveryChoice, toolsChoice);
     misc.hidden=true;miscBox.disabled=true;miscBox.checked=false;
-    const miscQuoteLink=document.createElement('a');miscQuoteLink.href='/installation.html#labor-task-misc-hour';miscQuoteLink.textContent='Miscellaneous work — in-person estimate';choicesPanel.append(miscQuoteLink);
+    const miscQuoteLink=document.createElement('a');miscQuoteLink.href='/installation.html#labor-task-misc-hour';miscQuoteLink.textContent='Miscellaneous labor — $75 per hour';choicesPanel.append(miscQuoteLink);
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
@@ -463,7 +463,7 @@
     const originalCalc=window.calcMaterial;
     const originalRender=window.renderMaterialEstimates;
     window.calcMaterial=function() {
-      if(types.value==='misc'){renderCustomQuotePage('Miscellaneous work');return;}
+      // Miscellaneous labor uses the approved hourly rate rather than a generic quote screen.
       if(!measuredCeiling()&&customSelection()){const error=document.getElementById("mat-error");error.hidden=false;error.textContent="In-person quote required before pricing custom work.";showCustomQuote();return;}
       const error=document.getElementById('mat-error');error.hidden=true;
       if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}

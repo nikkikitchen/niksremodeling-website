@@ -401,3 +401,24 @@ test('Attic ceiling drywall patch uses approved small, medium and large repair l
   assert.equal(d.querySelector('.project-total-note').textContent,'Estimated total for selected work.');
  }finally{dom.window.close();}
 });
+
+test('Miscellaneous and prep labor calculate at the approved $75 hourly rate without an unnecessary visit quote',async()=>{
+ for(const [type,hours,price] of [['misc',3,225],['prep',2,150]]){
+  const query='?'+new URLSearchParams({room:'Garage',material:type,location:'interior'});
+  const dom=await openPage('calculators.html',query);
+  for(let i=0;i<20&&!dom.window.document.getElementById('customer-provides-materials');i++)await new Promise(resolve=>setTimeout(resolve,50));
+  try{
+   const w=dom.window,d=w.document;
+   assert.equal(d.getElementById('material-type').value,type);
+   assert.equal(d.getElementById('misc-hours').disabled,false);
+   d.getElementById('misc-hours').value=hours;
+   w.calcMaterial();
+   assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+   const item=w.eval('materialEstimates.at(-1)');
+   assert.equal(item.labor[0].price,price);
+   assert.doesNotMatch(d.body.textContent,/Miscellaneous work requires an in-person visit before pricing/);
+   w.addProjectToCart();
+   assert.equal(w.getCart().find(x=>x.type==='Labor')?.price,price);
+  }finally{dom.window.close();}
+ }
+});
