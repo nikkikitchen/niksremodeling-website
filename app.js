@@ -501,9 +501,13 @@ function installationSupplies(item){
 
 function includedProjectCosts(supplies){
  const list=(supplies||[]).map(s=>({...s,selected:true}));
+ // Approved, already marked-up consumables. Tools are never automatic job charges.
+ // Unmatched/conditional products remain unpriced rather than being guessed.
+ const approved=[[/^tile spacers or leveling clips$/i,9.45],[/^joint tape$/i,15.53],[/^brushes, roller covers, frame and tray$/i,18.90],[/^tray liners, stir sticks and cleanup rags$/i,12.83],[/^sanding supplies and drywall primer$/i,10.12]];
+ for(const entry of list){if(entry.price!=null||entry.unitPrice!=null)continue;const hit=approved.find(([pattern])=>pattern.test(entry.name));if(hit){entry.price=hit[1];entry.quantity=1;entry.unit='approved consumable allowance';}}
  const value=s=>s.price!==null&&s.price!==undefined&&s.price!==''?Number(s.price):s.unitPrice!==null&&s.unitPrice!==undefined&&s.unitPrice!==''&&s.quantity!==null&&s.quantity!==undefined?Number(s.unitPrice)*Number(s.quantity):NaN;
  const values=list.map(value),priced=values.filter(v=>Number.isFinite(v)&&v>=0);
- return {hiddenFromCustomer:true,supplyQuantities:list,supplyList:list.map(s=>s.name+' — '+(s.quantity==null?'quantity to confirm':s.quantity+' '+s.unit)),price:priced.reduce((a,b)=>a+b,0),pricingPending:false};
+ return {hiddenFromCustomer:true,supplyQuantities:list,supplyList:list.map(s=>s.name+' — '+(s.quantity==null?'quantity to confirm':s.quantity+' '+s.unit)),price:priced.reduce((a,b)=>a+b,0),pricingPending:priced.length<list.length};
 }
 // Replace provisional fixture allowances when matching verified toilets are in the cart.
 // This is display-only: removing a product restores the original planning allowance.
@@ -656,17 +660,17 @@ function cartCheckoutSummary(items){
  const supplyEstimate=packagedSupplies+standaloneSupplies+laborCatalogTotal;
  const hasSupplyEstimate=packaged.length>0||standalone.length>0||laborCatalogSupplies.length>0;
  const pendingSupplies=items.some(x=>x.hiddenFromCustomer&&x.pricingPending)||items.some(x=>x.source==='supplier-retail'&&x.suppliesRequested&&!x.installationRequested)||items.some(x=>x.source==='labor-catalog'&&['Labor','Service'].includes(x.type)&&!x.supplyPackage);
- const suppliesLabel=hasSupplyEstimate?money(supplyEstimate)+(pendingSupplies?' + additional supplies to confirm':''):pendingSupplies?'Price to be confirmed':'Not applicable';
- const payableSubtotal=amount+supplyEstimate;
+ const payableSubtotal=amount+standaloneSupplies+laborCatalogTotal;
+ // Package supplies are already contained in their package price; do not add again.
+ const combinedEstimatedTotal=payableSubtotal+(estimatedLabor.hasServices?estimatedLabor.total:0);
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Order Summary</h3>
- <div class="cart-item"><span>Materials &amp; merchandise subtotal</span><strong>${money(amount)}${unpriced?' + items awaiting price':''}</strong></div>
- <div class="cart-item"><span>Installation supplies</span><strong>${suppliesLabel}</strong></div>
+ <div class="cart-item"><span>Materials &amp; project costs</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
  <div class="cart-item"><span>Delivery / shipping</span><strong>Calculated before payment</strong></div>
  <div class="cart-item"><span>Sales tax</span><strong>Calculated before payment</strong></div>
  <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
- <div class="cart-item"><span><strong>Purchase subtotal (before shipping/tax)</strong></span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies? " + pending prices":""}</strong></div>
- <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before any payment, we'll confirm the exact supplies amount, delivery fee, tax, availability and total. Your installation supplies are included at the price shown. Should your project require anything beyond the standard installation, we'll discuss the options and pricing with you before proceeding. Supplies already included in a package are not charged twice. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
+ <div class="cart-item"><span><strong>Estimated combined project total</strong></span><strong>${money(combinedEstimatedTotal)}${unpriced||pendingSupplies||estimatedLabor.pending? " + pending prices":""}</strong></div>
+ <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
  </section>`;
 }
 function cartShoppingChoices(items){
