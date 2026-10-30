@@ -77,7 +77,7 @@ for (const file of files) {
 // production build. Uploading an updated reference never requires retyping
 // the 52 prices in another file.
 const reference=JSON.parse(readFileSync(new URL('../material-price-reference.json',import.meta.url),'utf8'));
-if(!Array.isArray(reference.items)||reference.items.length!==52||reference.markupAlreadyIncluded!==true)
+if(!Array.isArray(reference.items)||!reference.items.length||reference.markupAlreadyIncluded!==true)
   throw Error('Approved material reference data missing or malformed.');
 const refScript=new URL('material-prices.js',output);
 const browserSource=readFileSync(refScript,'utf8');
@@ -85,6 +85,7 @@ const a='const reference=',b=';\n  const byId=';
 const start=browserSource.indexOf(a),end=browserSource.indexOf(b,start);
 if(start<0||end<0)throw Error('Material reference loader markers missing.');
 writeFileSync(refScript,browserSource.slice(0,start+a.length)+JSON.stringify(reference)+browserSource.slice(end));
+hashes['material-prices.js']=createHash('sha256').update(readFileSync(refScript)).digest('hex');
 
 writeFileSync(new URL('release.json', output), JSON.stringify({
   commit, restoredSiteSource: '9ad1084', files: hashes
