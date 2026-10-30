@@ -68,6 +68,7 @@
       const price=priceForProduct(product);
       if(!price)continue;
       product.price=price.price;
+      if(referenceFor(product.name)?.unit==='sq ft')product.unitPrice=price.eachPrice;
       product.referencePriceId=price.referenceId;
       product.referenceOnly=true;
       product.detail=(product.detail?product.detail+' ':'')+
