@@ -733,7 +733,14 @@ function initNavMenus(){
  const cabinetMenu=document.querySelector('.nav-main[href="/cabinets.html"]')?.closest('.nav-menu')?.querySelector('.nav-dropdown');
  if(cabinetMenu&&!cabinetMenu.dataset.workOptions){cabinetMenu.dataset.workOptions='1';const heading=document.createElement('span');heading.className='nav-group-label';heading.textContent='Cabinet Work';cabinetMenu.append(heading);CABINET_WORK_OPTIONS.forEach(option=>{const link=document.createElement('a');link.textContent=option.label;link.href='/calculators.html?material=refinish&cabinetOptions='+option.key;cabinetMenu.append(link)});}
 document.querySelectorAll('.nav-toggle').forEach(button=>button.addEventListener('click',()=>{const menu=button.closest('.nav-menu'),open=!menu.classList.contains('open');document.querySelectorAll('.nav-menu.open').forEach(other=>{other.classList.remove('open');other.querySelector('.nav-toggle').setAttribute('aria-expanded','false')});menu.classList.toggle('open',open);button.setAttribute('aria-expanded',String(open))}));document.addEventListener('click',event=>{if(event.target.closest('.nav-menu'))return;document.querySelectorAll('.nav-menu.open').forEach(menu=>{menu.classList.remove('open');menu.querySelector('.nav-toggle').setAttribute('aria-expanded','false')})});document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.nav-menu.open').forEach(menu=>{menu.classList.remove('open');menu.querySelector('.nav-toggle').setAttribute('aria-expanded','false')})})}
-document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();initNavMenus()});
+document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();initNavMenus();
+ if(['materials','material-detail','calculators','material-prices'].includes(page)){
+  const script=document.createElement('script');
+  script.src='/material-prices.js?v=approved-reference-20261030';
+  script.defer=true;
+  document.body.append(script);
+ }
+});
 // Keep category lists and menus in the same order without separating photos from cards.
 function choicePosition(text){
  const label=String(text).trim();
