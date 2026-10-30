@@ -464,3 +464,33 @@ test('Miscellaneous and prep labor calculate at the approved $75 hourly rate wit
   }finally{dom.window.close();}
  }
 });
+
+test('ceiling texture matching is a patch-size quote, distinct from whole-ceiling application',async()=>{
+ for(const project of ['attic','bathrooms','bedroom-guest-room']){
+  const d=await openPage('project.html','?project='+project+'&selectedWorks=ceiling');
+  try{
+   const choices=workCard(d.window.document,'ceiling');
+   assert.ok(choices.includes('Match existing ceiling texture (patch)'));
+   assert.ok(choices.includes('Add ceiling texture (orange peel / knockdown)'));
+  }finally{d.window.close();}
+ }
+ for(const [size,expected]of [['small',180],['medium',270],['large',420]]){
+  const task='Match existing ceiling texture (patch)';
+  const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',projectTasks:task,materials:task,embedded:'1',projectMode:'complete'});
+  const dom=await openPage('calculators.html',query);
+  for(let i=0;i<20&&!dom.window.document.getElementById('customer-provides-materials');i++)await new Promise(resolve=>setTimeout(resolve,50));
+  try{
+   const w=dom.window,d=w.document;
+   assert.equal(d.querySelector('#ceiling-job-length').closest('.calc-fields').hidden,true,'Patch only should not request whole-ceiling dimensions');
+   d.getElementById('ceiling-patch-size').value=size;
+   w.calcMaterial();assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+   const item=w.eval('materialEstimates.at(-1)');assert.equal(item.labor.length,1);assert.equal(item.labor[0].price,expected);assert.equal(item.products[0].name,'Texture matching materials');
+   assert.match(d.querySelector('.project-total-note').textContent,/Material price to be confirmed/);
+   d.getElementById('customer-provides-materials').checked=true;w.calcMaterial();
+   assert.equal(d.querySelector('.project-total-note').textContent,'Estimated total for selected work.');
+   w.addProjectToCart();assert.equal(w.getCart().filter(x=>x.type==='Labor').length,1);
+  }finally{dom.window.close();}
+ }
+ const source=readFileSync('project-calculator-options.js','utf8');
+ assert.doesNotMatch(source,/['"]Add ceiling texture \(orange peel \/ knockdown\)['"]\s*:\s*(?:180|270|420)/,'Full-ceiling texturing must not be priced like patch matching');
+});

@@ -142,6 +142,7 @@
     ['Paint & Texture',[
       'Paint ceiling','Prime ceiling','Skim coat / smooth ceiling',
       'Add ceiling texture (orange peel / knockdown)',
+      'Match existing ceiling texture (patch)',
       'Remove popcorn ceiling texture','Repair water stains / damaged ceiling finish'
     ]],
     ['Drywall & Decorative Finishes',[

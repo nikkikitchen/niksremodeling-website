@@ -269,6 +269,30 @@ const ceilingPatches=[];
 for(const g of drywallCategory.groups)for(const tasks of Object.values(g.actions))for(const t of tasks)if(/wall or ceiling drywall patch/.test(t.label)){t.label=t.label.replace('wall or ceiling','wall');ceilingPatches.push({...t,id:t.id+'-ceiling',label:t.label.replace('wall drywall','ceiling drywall'),price:Math.round(t.price*1.2*100)/100,note:'Ceiling repair and finishing included. Ceiling labor is 20% higher than wall repair; priming and painting separate.'});}
 drywallCategory.groups.push({id:'ceiling-patches',label:'Ceiling drywall repairs',actions:{Repair:ceilingPatches}});
 for(const g of drywallCategory.groups)for(const mode of Object.keys(g.actions))g.actions[mode]=g.actions[mode].filter(t=>t.label!=='Water-damaged drywall repair');
+// Approved October 30: match existing texture only on a prepared patch.
+// Applying texture to an entire wall or ceiling is different work, priced separately.
+const textureMatchingTiers=(surface,prefix)=>{
+ const overhead=surface==='ceiling';
+ return [['small','up to 2 × 2 ft',150],['medium','over 2 × 2, up to 4 × 4 ft',225],['large','over 4 × 4, up to 4 × 8 ft',350]].map(([size,extent,wallPrice])=>({
+   id:prefix+'-'+size,label:(overhead?'Ceiling':'Wall')+' texture matching — '+extent,
+   price:overhead?Math.round(wallPrice*1.2):wallPrice,
+   status:'approved',unit:'patch',
+   note:'Labor only, one prepared patch. Drywall repair, primer and paint extra. Full-surface texture is separate; larger areas need an estimate.'
+ }));
+};
+const textureGroup=drywallCategory.groups.find(g=>g.id==='texture');
+textureGroup.actions.Repair=[...textureMatchingTiers('wall','texture-match-wall'),...textureMatchingTiers('ceiling','texture-match-ceiling')];
+const textureInstall=textureGroup.actions.Apply.find(t=>t.id==='texture-ceiling');
+if(textureInstall)textureInstall.label='Texture entire ceiling (no matching required)';
+const genericDrywallServices=drywallCategory.groups.find(g=>g.id==='drywall-reviewed').actions.Services;
+const genericTexture=genericDrywallServices.findIndex(t=>t.label==='Drywall texture matching');
+if(genericTexture>=0)genericDrywallServices.splice(genericTexture,1);
+if(bathSurface){
+ bathSurface.actions.Repair=bathSurface.actions.Repair.filter(t=>t.id!=='bath-texture-match');
+ bathSurface.actions.Repair.push(...textureMatchingTiers('wall','bath-texture-wall'),...textureMatchingTiers('ceiling','bath-texture-ceiling'));
+ const bathEntireCeiling=bathSurface.actions.Install.find(t=>t.id==='bath-ceiling-texture');
+ if(bathEntireCeiling)bathEntireCeiling.label='Texture entire ceiling (no matching required)';
+}
 const ceilingPackages=['hang-finish','finish-prime','hang-finish-prime','finish-prime-paint','full'].map(key=>({...roomPackageTask(key),id:'ceiling-package-'+key,label:ROOM_LABOR_SERVICES[key].label+' — walls and ceiling',priceText:[['Small',208,40],['Medium',384,144],['Large',560,250]].map(([label,area,ceiling])=>label+' example: $'+roomLaborQuote(area,key,ceiling).amount.toLocaleString()).join('\n'),note:'Labor only. Includes walls and ceiling; ceiling labor is 20% higher. Small 5 × 8, medium 12 × 12, large 10 × 25, with 8-ft walls. Enter measurements for your total.',calculatorUrl:'/room-labor.html?package='+key+'&surfaces=both'}));
 drywallCategory.groups.push({id:'wall-ceiling-packages',label:'Walls & ceiling packages',actions:{Packages:ceilingPackages}});
 catalog.find(c=>c.id==='paint').groups.push({id:'ceiling-room-paint',label:'Ceiling painting by room',actions:{Calculate:['paint1','paint2','prime'].map(key=>({...roomPackageTask(key),id:'ceiling-room-'+key,label:ROOM_LABOR_SERVICES[key].label.replace('walls','ceiling'),priceText:[['Small',40],['Medium',144],['Large',250]].map(([label,area])=>label+' example: $'+Math.max(150,roomLaborQuote(0,key,area).amount).toLocaleString()).join('\n'),note:ceilNote+' $150 minimum shared across the visit.',calculatorUrl:'/room-labor.html?package='+key+'&surfaces=ceiling'}))}});

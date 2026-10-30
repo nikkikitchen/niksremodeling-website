@@ -121,3 +121,28 @@ test('existing approved window trim and door hinge labor can be added directly w
   const cart=w.getCart();assert.equal(cart.length,2);assert.equal(w.serviceEstimateSummary(cart).total,345);
  }finally{dom.window.close();}
 });
+
+test('prepared-wall and ceiling texture matching have approved size tiers, while whole-ceiling texturing remains separate',async()=>{
+ const dom=await open('installation.html'),w=dom.window,d=w.document;
+ try{
+  const catalog=w.LABOR_CATALOG, dry=catalog.find(c=>c.id==='drywall'), bath=catalog.find(c=>c.id==='bathroom');
+  for(const [prefix,group]of [['texture-match',dry.groups.find(g=>g.id==='texture')],['bath-texture',bath.groups.find(g=>g.id==='bath-surfaces')]]){
+   const jobs=Object.values(group.actions).flat();
+   for(const [surface,prices]of [['wall',[150,225,350]],['ceiling',[180,270,420]]]){
+    for(const [i,size]of ['small','medium','large'].entries()){
+     const job=jobs.find(j=>j.id===prefix+'-'+surface+'-'+size);
+     assert.ok(job, prefix+' '+surface+' '+size);assert.equal(job.price,prices[i]);assert.equal(job.unit,'patch');
+     assert.equal(job.status,'approved');assert.match(job.label,/texture matching/i);
+    }
+   }
+  }
+  assert.ok(!dry.groups.flatMap(g=>Object.values(g.actions).flat()).some(j=>j.label==='Drywall texture matching'&&j.price===null));
+  const full=dry.groups.find(g=>g.id==='texture').actions.Apply.find(j=>j.id==='texture-ceiling');
+  assert.match(full.label,/entire ceiling/i);assert.notEqual(full.price,180);assert.equal(full.status,'pending');
+  d.getElementById('labor-room').value='Bedroom';
+  for(const [id,n]of [['texture-match-wall-small',1],['texture-match-ceiling-medium',1]]){
+   const row=d.getElementById('labor-task-'+id);assert.ok(row);row.querySelector('input').value=n;row.querySelector('button').click();
+  }
+  assert.equal(w.getCart().length,2);assert.equal(w.serviceEstimateSummary(w.getCart()).total,420);
+ }finally{dom.window.close();}
+});
