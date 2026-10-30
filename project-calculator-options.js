@@ -354,8 +354,7 @@
       tile: [
         ['surface','Where is the tile going?',[['floor','Floor'],['wall','Wall'],['shower','Shower'],unsure]],
         ['wet','Will this area get wet?',[['dry','Usually dry'],['splash','Occasional splashes'],['wet','Regularly wet'],unsure]],
-        ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing tile or another surface'],unsure]],
-        ['trim','Trim around the edges',[['yes','Include new trim, installed and painted'],['diy','I will install and finish the trim'],['no','No new trim — keep existing'],unsure]]
+        ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing tile or another surface'],unsure]]
       ],
       floating: [
         ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing flooring'],unsure]],
