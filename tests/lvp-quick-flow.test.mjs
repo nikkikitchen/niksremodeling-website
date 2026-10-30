@@ -1,0 +1,77 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync, existsSync} from 'node:fs';
+import {JSDOM} from 'jsdom';
+
+async function openPage(file, query = '') {
+  const html=readFileSync(file,'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(tag,src)=>{
+    const path=src.split('?')[0].replace(/^\//,'');
+    return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
+  });
+  const dom=new JSDOM(html,{
+    url:'https://niksremodeling.com/'+file+query,
+    runScripts:'dangerously',
+    pretendToBeVisual:true,
+    beforeParse(w){w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};w.alert=()=>{};}
+  });
+  await new Promise(resolve=>setTimeout(resolve,100));
+  return dom;
+}
+
+test('LVP from Projects asks about pad only once and accepts a two-measurement quote',async()=>{
+  const project=await openPage('project.html','?project=bathrooms&selectedWorks=floor');
+  let target='';
+  try {
+    const w=project.window,card=w.document.querySelector('[data-work-key="floor"]');
+    assert.ok(card,'Floor work must be available');
+    const inputs=[...card.querySelectorAll(':scope > label input')];
+    assert.ok(inputs.some(box=>box.value==='Luxury Vinyl Plank (LVP)'));
+    for(const box of inputs)box.checked=box.value==='Luxury Vinyl Plank (LVP)';
+    w.openProjectMeasurements=url=>target=url;
+    card.querySelector('button.btn.primary').click();
+    assert.ok(target,'LVP selection must reach the calculator');
+    assert.equal(new URL(target,w.location.origin).searchParams.get('materials'),'Luxury Vinyl Plank (LVP)');
+  } finally { project.window.close(); }
+
+  const calc=await openPage('calculators.html',target.slice(target.indexOf('?')));
+  try {
+    const w=calc.window,d=w.document;
+    const row=[...d.querySelectorAll('.area-product')].find(el=>el.querySelector('[name="area-product"]')?.value==='Luxury Vinyl Plank (LVP)');
+    assert.ok(row,'Selected LVP should be carried into calculator');
+    assert.equal(row.querySelector('[name="area-product"]').checked,true);
+    assert.equal(row.querySelector('[data-item-option="Padding"]'),null,'No second padding question in material options');
+    assert.equal(d.querySelectorAll('#question-padding').length,1,'Pad is asked once under Project details');
+    assert.equal(row.querySelector('[data-item-option="Installation"]')?.value,'Floating','Default to ordinary floating installation');
+    for(const key of ['base','padding','trim'])assert.equal(d.getElementById('question-'+key)?.value,'unsure','Uncertain details must not block the quick quote');
+    assert.equal(d.getElementById('material-name').value,'Bathroom');
+    d.getElementById('floor-length').value='12';
+    d.getElementById('floor-width').value='12';
+    d.getElementById('question-padding').value='yes';
+    d.getElementById('question-base').value='wood';
+    d.getElementById('question-trim').value='no';
+    w.calcMaterial();
+    assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+    const item=w.eval('materialEstimates')[0];
+    assert.ok(item,'Quick project estimate saved');
+    assert.equal(item.answers.padding,'yes','Pad answer is retained for supply planning');
+    assert.equal(item.products[0].name,'Luxury Vinyl Plank (LVP)');
+    assert.equal(item.products[0].options.Padding,undefined,'No conflicting second pad answer');
+    assert.equal(item.measurements.area,144);
+    assert.ok(w.flooringLaborEstimate(item,'Installation')?.amount>0,'Existing flooring labor pricing preserved');
+    w.addProjectToCart();
+    assert.ok(w.getCart().some(x=>x.type==='Labor'),'Labor reaches cart');
+  } finally { calc.window.close(); }
+});
+
+test('Changing selected LVP from floating to glue-down removes pad question',async()=>{
+  const calc=await openPage('calculators.html','?project=bathrooms&work=floor&material=flooring&room=Bathroom&location=interior&materials=Luxury%20Vinyl%20Plank%20(LVP)');
+  try {
+    const d=calc.window.document;
+    const install=d.querySelector('[data-item-option="Installation"]');
+    assert.equal(install?.value,'Floating');
+    install.value='Glue down';
+    install.dispatchEvent(new calc.window.Event('change',{bubbles:true}));
+    assert.equal(d.getElementById('floor-kind').value,'glue');
+    assert.equal(d.getElementById('question-padding'),null,'Glue-down does not use floating pad');
+  } finally {calc.window.close();}
+});
