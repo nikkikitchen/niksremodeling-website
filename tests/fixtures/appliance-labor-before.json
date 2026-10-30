@@ -1,7 +1,7 @@
 [
   {
     "id": "approved-appliances-22",
-    "label": "Built-in beverage tap / kegerator installation \u2014 starting at",
+    "label": "Built-in beverage tap / kegerator installation — starting at",
     "price": 350,
     "unit": "each",
     "status": "approved",
@@ -149,7 +149,7 @@
   {
     "id": "approved-appliances-1",
     "label": "Over-the-range microwave installation",
-    "price": 275,
+    "price": 325,
     "unit": "each",
     "status": "approved",
     "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
@@ -173,7 +173,7 @@
   {
     "id": "approved-appliances-11",
     "label": "Refrigerator installation with new water line",
-    "price": 350,
+    "price": 275,
     "unit": "each",
     "status": "approved",
     "note": "Labor only. Existing compatible connections required unless new work is specified. Built-ins require an existing compatible opening. New or relocated connections and opening alterations require an in-person quote. Materials extra; stated installation scope only."
