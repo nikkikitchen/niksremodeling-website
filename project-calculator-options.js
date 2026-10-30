@@ -354,16 +354,17 @@
       tile: [
         ['surface','Where is the tile going?',[['floor','Floor'],['wall','Wall'],['shower','Shower'],unsure]],
         ['wet','Will this area get wet?',[['dry','Usually dry'],['splash','Occasional splashes'],['wet','Regularly wet'],unsure]],
-        ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing tile or another surface'],unsure]]
+        ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing tile or another surface'],unsure]],
+        ['trim','Trim around the edges',[['yes','Include new trim, installed and painted'],['diy','I will install and finish the trim'],['no','No new trim — keep existing'],unsure]]
       ],
       floating: [
         ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing flooring'],unsure]],
         ['padding','Does the flooring have padding attached?',[['yes','Yes'],['no','No'],unsure]],
-        ['trim','Do you need new trim around the edges?',[['yes','Yes'],['no','Keep the existing trim'],unsure]]
+        ['trim','Trim around the edges',[['yes','Include new trim, installed and painted'],['diy','I will install and finish the trim'],['no','No new trim — keep existing'],unsure]]
       ],
       flooring: [
         ['base','What is underneath?',[['concrete','Concrete'],['wood','Wood'],['existing','Existing flooring'],unsure]],
-        ['trim','Do you need new trim around the edges?',[['yes','Yes'],['no','Keep the existing trim'],unsure]]
+        ['trim','Trim around the edges',[['yes','Include new trim, installed and painted'],['diy','I will install and finish the trim'],['no','No new trim — keep existing'],unsure]]
       ],
       paint: [
         ['condition','What shape is the surface in?',[['good','Good — just a new color'],['new','New or bare surface'],['repair','Needs patching'],unsure]]
@@ -410,7 +411,7 @@
         // unknown; "Not sure" keeps quantities provisional rather than guessing.
         const quickFloor=initialParams.has('project')&&initialParams.get('work')==='floor'&&
           (initialParams.get('materials')||'').split('|').some(name=>/luxury vinyl|\blvp\b|vinyl plank|laminate/i.test(name));
-        select.value=saved[id]||(quickFloor&&['base','padding','trim'].includes(id)?'unsure':'');
+        select.value=saved[id]||(id==='trim'?'yes':quickFloor&&['base','padding'].includes(id)?'unsure':'');
         field.append(title,select);grid.append(field);
       });
       questionBox.append(grid,create('p','Adjust these if you know. Otherwise, we’ll confirm them with you.','calc-note'));
@@ -592,16 +593,30 @@
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
       // Supply planning must see the one padding answer before selecting underlayment.
       item.answers=answers;
-      // Carry the selected perimeter-trim work through to review/cart, not merely to supplies.
-      if(['flooring','tile'].includes(types.value)&&answers.trim==='yes'){
+      // Floor projects include finished new baseboard trim by default.
+      // The full price is transparent and customer choices can remove labor or all trim.
+      if(['flooring','tile'].includes(types.value)&&['yes','diy'].includes(answers.trim)){
         const length=Number(document.getElementById('floor-length')?.value||sourceParams.get('length'));
         const width=Number(document.getElementById('floor-width')?.value||sourceParams.get('width'));
         const perimeter=length>0&&width>0?Math.ceil(2*(length+width)):null;
+        const customerMaterials=!!document.getElementById('customer-provides-materials')?.checked;
         item.labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];
-        if(!item.labor.some(line=>line.scope==='Install new perimeter baseboard trim')){
-          item.labor.push({service:'Installation',scope:'Install new perimeter baseboard trim',quantity:perimeter||1,unit:perimeter?'linear feet':'scope to measure',price:perimeter?Math.round(perimeter*1.25*100)/100:null,quoteRequired:!perimeter,packageNote:'New trim requested; $1.25 per linear foot installation. Trim style and finishing confirmed separately.'});
+        // 12-foot MDF baseboard pieces at the customer's approved marked-up material price.
+        if(perimeter&&!customerMaterials){
+          item.products=Array.isArray(item.products)?item.products:[];
+          if(!item.products.some(product=>product.name==='MDF Baseboard Trim (12 ft)')){
+            const quantity=Math.ceil(perimeter/12);
+            item.products.push({name:'MDF Baseboard Trim (12 ft)',quantity,unit:'pieces',unitPrice:21.60,price:Math.round(quantity*2160)/100,detail:'9/16-inch × 5-1/4-inch MDF baseboard, 12-foot lengths; material only.'});
+          }
         }
-        item.detail+=(item.detail?' · ':'')+'New perimeter trim requested'+(perimeter?' — '+perimeter+' linear feet':' — length to confirm');
+        if(answers.trim==='yes'){
+          for(const [scope,rate] of [['Install new perimeter baseboard trim',1.25],['Finish and paint new baseboard trim',1.50]]){
+            if(!item.labor.some(line=>line.scope===scope)){
+              item.labor.push({service:'Installation',scope,quantity:perimeter||1,unit:perimeter?'linear feet':'scope to measure',price:perimeter?Math.round(perimeter*rate*100)/100:null,quoteRequired:!perimeter,fixedPackage:!!perimeter,packageNote:'Perimeter allowance; openings and final trim requirements confirmed before ordering.'});
+            }
+          }
+        }
+        item.detail+=(item.detail?' · ':'')+(answers.trim==='diy'?'Customer installs and finishes new trim':'New trim installed, finished and painted')+(perimeter?' — '+perimeter+' linear feet':' — length to confirm');
       }
       item.supplyChoices=(item.type==='bathroom'?[]:window.projectSupplyChoices(item)).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
