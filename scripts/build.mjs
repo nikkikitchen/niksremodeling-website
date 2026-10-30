@@ -58,6 +58,11 @@ if (projectSource.includes("keys.includes('plumbing')&&!keys.includes('faucet-se
   throw Error('Global vanity-faucet injection has returned.');
 console.log('Site integrity passed: '+testedPhotos+' photo references, '+testedLinks+' local links, '+browserScripts.length+' JavaScript files, and 15 scoped specialty projects.');
 mkdirSync(output, { recursive: true });
+// Publish approved supply reference data alongside the existing material reference.
+const supplyReference=JSON.parse(readFileSync(new URL('../data/approved-supply-prices.json',import.meta.url),'utf8'));
+if(supplyReference.pricesIncludeMarkup!==true||supplyReference.items.length!==51||supplyReference.items.some(item=>!Number.isFinite(item.price)||item.price<=0))throw Error('Approved supply price reference invalid');
+mkdirSync(new URL('data/',output),{recursive:true});
+copyFileSync(new URL('../data/approved-supply-prices.json',import.meta.url),new URL('data/approved-supply-prices.json',output));
 cpSync(new URL('../assets/', import.meta.url), new URL('assets/', output), { recursive: true });
 const commit = process.env.CF_PAGES_COMMIT_SHA ||
   execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
@@ -87,6 +92,7 @@ if(start<0||referenceEnd<0)throw Error('Material reference loader markers missin
 writeFileSync(refScript,browserSource.slice(0,start+a.length)+JSON.stringify(reference)+browserSource.slice(referenceEnd));
 hashes['material-prices.js']=createHash('sha256').update(readFileSync(refScript)).digest('hex');
 
+hashes['data/approved-supply-prices.json']=createHash('sha256').update(readFileSync(new URL('data/approved-supply-prices.json',output))).digest('hex');
 writeFileSync(new URL('release.json', output), JSON.stringify({
   commit, restoredSiteSource: '9ad1084', files: hashes
 }, null, 2) + '\n');
