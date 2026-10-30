@@ -18,7 +18,7 @@ function priced(window,name,qty,unit,other={}){
 test('All uploaded material prices are unchanged, marked-up, and reference-only',()=>{
  const dom=simpleDom(),w=dom.window;
  assert.equal(reference.markupAlreadyIncluded,true);
- assert.equal(reference.items.length,52);
+ assert.equal(reference.items.length,56);
  assert.deepEqual(JSON.parse(JSON.stringify(w.NIK_MATERIAL_REFERENCE)),reference);
  assert.equal(w.NIK_MATERIAL_REFERENCE.items.length,52);
  assert.ok(reference.items.every(x=>x.price>0&&x.unit&&x.name));
@@ -59,7 +59,7 @@ test('Reference page displays every material alphabetically without claiming liv
  await new Promise(r=>setTimeout(r,20));
  const doc=dom.window.document;
  const rows=[...doc.querySelectorAll('.reference-material-prices tbody tr')];
- assert.equal(rows.length,52);
+ assert.equal(rows.length,56);
  const labels=rows.map(tr=>tr.firstElementChild.textContent);
  assert.deepEqual(labels,labels.slice().sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'})));
  assert.equal(doc.querySelectorAll('.reference-material-prices a[href*="checkout"]').length,0);
