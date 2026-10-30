@@ -321,6 +321,7 @@ test('Ceiling dimensions calculate sheets and gallons; customer materials preser
  const tasks=['Install / replace ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'];
  const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',materials:tasks.join('|'),projectTasks:tasks.join('|'),embedded:'1',projectMode:'complete'});
  const dom=await openPage('calculators.html',query);
+ for(let attempt=0;attempt<20&&!dom.window.document.getElementById('customer-provides-materials');attempt++)await new Promise(resolve=>setTimeout(resolve,50));
  try{
   const w=dom.window,doc=w.document;
   doc.getElementById('ceiling-job-length').value='12';doc.getElementById('ceiling-job-width').value='12';
