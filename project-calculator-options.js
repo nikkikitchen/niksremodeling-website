@@ -506,11 +506,12 @@
       if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
       for(const id of roundedMeasurements){const input=document.getElementById(id);if(input&&input.value.trim()&&!Number.isInteger(Number(input.value))&&!input.closest('[hidden]')){error.hidden=false;error.textContent='Round measurements to the nearest whole unit shown.';window.highlightMissingField(input);return;}}
       const answers={location:projectLocation.value==='exterior'?'outside':'inside'};
-      if(!measuredCeiling()&&panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
-        for(const input of questionBox.querySelectorAll('select')) {
-          if(!input.value){error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';window.highlightMissingField(input);return;}
-          answers[input.dataset.question]=input.value;
+      // Remember project answers even for labor-only estimates: trim is work, not just a supply.
+      if(!measuredCeiling())for(const input of questionBox.querySelectorAll('select')) {
+        if(!input.value&&panel.querySelector('[name="project-option"][value="Materials"]').checked&&quantityMethod.value!=='known') {
+          error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';window.highlightMissingField(input);return;
         }
+        if(input.value)answers[input.dataset.question]=input.value;
       }
       let productPlans=[];
       try{selectedDeliveryTypes();productPlans=measuredCeiling()||types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
@@ -591,6 +592,17 @@
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
       // Supply planning must see the one padding answer before selecting underlayment.
       item.answers=answers;
+      // Carry the selected perimeter-trim work through to review/cart, not merely to supplies.
+      if(['flooring','tile'].includes(types.value)&&answers.trim==='yes'){
+        const length=Number(document.getElementById('floor-length')?.value||sourceParams.get('length'));
+        const width=Number(document.getElementById('floor-width')?.value||sourceParams.get('width'));
+        const perimeter=length>0&&width>0?Math.ceil(2*(length+width)):null;
+        item.labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];
+        if(!item.labor.some(line=>line.scope==='Install new perimeter baseboard trim')){
+          item.labor.push({service:'Installation',scope:'Install new perimeter baseboard trim',quantity:perimeter||1,unit:perimeter?'linear feet':'scope to measure',price:perimeter?Math.round(perimeter*1.25*100)/100:null,quoteRequired:!perimeter,packageNote:'New trim requested; $1.25 per linear foot installation. Trim style and finishing confirmed separately.'});
+        }
+        item.detail+=(item.detail?' · ':'')+'New perimeter trim requested'+(perimeter?' — '+perimeter+' linear feet':' — length to confirm');
+      }
       item.supplyChoices=(item.type==='bathroom'?[]:window.projectSupplyChoices(item)).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
       if(item.customerProvidesMaterials)item.projectOptions=(item.projectOptions||[]).filter(x=>x!=='Materials');
