@@ -380,3 +380,24 @@ test('Known ceiling drywall and primer labor never forces an in-person quote for
   }finally{dom.window.close();}
  }
 });
+
+test('Attic ceiling drywall patch uses approved small, medium and large repair labor instead of requiring a new quote',async()=>{
+ const task='Repair / patch ceiling drywall';
+ const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',location:'interior',materials:task,projectTasks:task,embedded:'1',projectMode:'complete'});
+ const dom=await openPage('calculators.html',query);
+ for(let i=0;i<20&&!dom.window.document.getElementById('customer-provides-materials');i++)await new Promise(resolve=>setTimeout(resolve,50));
+ try {
+  const d=dom.window.document,w=dom.window;
+  assert.equal(d.querySelector('#ceiling-job-length').closest('.calc-fields').hidden,true,'Patch only should not ask for full room size');
+  for(const [size,rate] of [['small',210],['medium',330],['large',540]]){
+   d.getElementById('ceiling-patch-size').value=size;
+   w.calcMaterial();assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+   const item=w.eval('materialEstimates.at(-1)');
+   assert.equal(item.labor[0].price,rate,size+' ceiling repair labor mismatch');
+   assert.doesNotMatch(d.querySelector('.project-total-note').textContent,/In-person quote required/);
+  }
+  d.getElementById('customer-provides-materials').checked=true;
+  w.calcMaterial();
+  assert.equal(d.querySelector('.project-total-note').textContent,'Estimated total for selected work.');
+ }finally{dom.window.close();}
+});
