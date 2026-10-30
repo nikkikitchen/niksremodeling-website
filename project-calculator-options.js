@@ -415,6 +415,20 @@
         field.append(title,select);grid.append(field);
       });
       questionBox.append(grid,create('p','Adjust these if you know. Otherwise, we’ll confirm them with you.','calc-note'));
+      if(key()==='floating'){
+        const hint=create('p','','calc-note');hint.id='lvp-padding-guidance';
+        hint.setAttribute('role','status');questionBox.append(hint);
+        const updatePaddingGuidance=()=>{
+          const base=document.getElementById('question-base')?.value;
+          const pad=document.getElementById('question-padding')?.value;
+          const note=base==='concrete'?'Concrete: check slab moisture and the flooring’s required vapor barrier.':
+            base==='wood'?'Wood: do not put plastic sheeting over the wood subfloor.':
+            'Confirm the actual subfloor before deciding on moisture protection.';
+          hint.textContent=(pad==='yes'?'Attached pad: no extra cushioning. ':pad==='no'?'No attached pad: use only manufacturer-approved underlayment if required. ':'Padding needs confirmation. ')+note;
+        };
+        grid.addEventListener('change',updatePaddingGuidance);
+        updatePaddingGuidance();
+      }
       adjustLabels();
     }
     function adjustLabels() {
@@ -491,7 +505,10 @@
         if(answers.wet==='dry' && answers.surface!=='shower')items=items.filter(x=>!x.name.includes('Waterproofing'));
         if(answers.surface==='shower')items.push({name:'Shower base, drain and compatible waterproofing accessories',note:'Confirm the complete shower system and layout before ordering.',selected:true});
       }
-      if(group==='floating'&&answers.padding==='yes')items=items.filter(x=>!['Compatible underlayment','Underlayment seam tape'].includes(x.name));
+      if(group==='floating'){
+        if(answers.padding!=='no')items=items.filter(x=>!['Compatible underlayment','Underlayment seam tape'].includes(x.name));
+        if(answers.base==='wood')items=items.filter(x=>x.name!=='Moisture or vapor barrier');
+      }
       if(answers.trim==='no')items=items.filter(x=>!/Baseboard|Perimeter trim/i.test(x.name));
       if(group==='paint'&&answers.condition==='good')items=items.filter(x=>!['Primer','Patching compound or spackle'].includes(x.name));
       if(group==='lumber'&&answers.location==='inside')items=items.filter(x=>!x.name.startsWith('Sheathing'));
