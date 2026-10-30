@@ -845,10 +845,18 @@
   window.projectSupplyChoices=item=>{
     const group=estimateSupplyGroup(item),guide=SUPPLY_GUIDE[group];
     let entries=guide?.items||[...new Set((item.products||[]).flatMap(p=>materialSupplyList(p.name)))].map(name=>[name,'Confirm compatibility and package coverage.']);
-    // LVP/laminate with attached padding does not need a second padded underlay.
-    // Keep any separately required vapor/moisture barrier in the estimate.
-    if(group==='floating'&&item.answers?.padding==='yes')
-      entries=entries.filter(([name])=>!['Compatible underlayment','Underlayment seam tape'].includes(name));
+    // Do not automatically order a second cushion when attached padding is
+    // present OR unknown. If the flooring lacks pad, only the product's own
+    // instructions can determine if an extra underlayment is appropriate.
+    if(group==='floating'){
+      if(item.answers?.padding!=='no')
+        entries=entries.filter(([name])=>!['Compatible underlayment','Underlayment seam tape'].includes(name));
+      // Plastic sheeting over wood can trap moisture. A concrete moisture
+      // barrier is separate from the LVP's attached cushion and is conditional
+      // on the flooring manufacturer's concrete installation requirements.
+      if(item.answers?.base==='wood')
+        entries=entries.filter(([name])=>name!=='Moisture or vapor barrier');
+    }
     const primary=item.products?.find(p=>Number.isFinite(p.waste)&&Number.isFinite(p.area));
     const measured=primary?{...item,measurements:{...item.measurements,coverage:Number((primary.area*(1+primary.waste/100)).toFixed(8))}}:item;
     return entries.map(([name,note])=>{const estimate=group?supplyStartingQuantity(group,name,[measured]):null;return {name,note,quantity:estimate?.quantity??null,unit:estimate?.unit||'quantity / packaging to confirm',selected:false};});
