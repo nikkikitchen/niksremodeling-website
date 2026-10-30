@@ -589,10 +589,12 @@
         if(preferred){item.fixtureStylePreference=preferred;item.detail+=(item.detail?' · ':'')+'Preferred toilet style: '+preferred+' (exact fixture not yet selected)';}
       }
       const previous=oldIndex>=0?materialEstimates[oldIndex]:null;
+      // Supply planning must see the one padding answer before selecting underlayment.
+      item.answers=answers;
       item.supplyChoices=(item.type==='bathroom'?[]:window.projectSupplyChoices(item)).map(s=>{const old=previous?.supplyChoices?.find(x=>x.name===s.name);return {...old,...s,selected:true,...(old?.manualQuantity?{quantity:old.quantity,manualQuantity:true}:{})};});
       item.customerProvidesMaterials=!!document.getElementById('customer-provides-materials')?.checked;
       if(item.customerProvidesMaterials)item.projectOptions=(item.projectOptions||[]).filter(x=>x!=='Materials');
-      item.preparation=(sourceParams.get('preparation')||'').split('|').filter(Boolean);if(item.preparation.length){item.detail+=(item.detail?' · ':'')+'Requested: '+item.preparation.join(' and ');item.labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];item.preparation.forEach(service=>item.labor.push({service,scope:service+' for '+item.workLabel,quantity:1,unit:'scope to review'}));}item.answers=answers;item.form=form;item.sourceQuery=sourceQuery;
+      item.preparation=(sourceParams.get('preparation')||'').split('|').filter(Boolean);if(item.preparation.length){item.detail+=(item.detail?' · ':'')+'Requested: '+item.preparation.join(' and ');item.labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];item.preparation.forEach(service=>item.labor.push({service,scope:service+' for '+item.workLabel,quantity:1,unit:'scope to review'}));}item.form=form;item.sourceQuery=sourceQuery;
       item.suggestedSupplies=item.type==='bathroom'?[]:item.products?[]:item.type==='plan'?[]:suggestedSupplies(item,answers);
       const wallSurfaces=item.measurements?.surfaces||[];
       const standardAccentPaint=item.type==='paint'&&sourceParams.get('project')==='accents'&&wallSurfaces.length===1&&wallSurfaces[0].surface==='walls'&&wallSurfaces[0].area>0&&wallSurfaces[0].area<=96&&item.products?.length===1&&/^(Interior|Exterior) Paint$/.test(item.products[0].name)&&item.products[0].coats===2&&item.projectLocation==='interior';
