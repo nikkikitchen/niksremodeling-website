@@ -56,6 +56,7 @@ test('LVP from Projects asks about pad only once and accepts a two-measurement q
     assert.equal(item.answers.padding,'yes','Pad answer is retained for supply planning');
     assert.equal(item.products[0].name,'Luxury Vinyl Plank (LVP)');
     assert.equal(item.products[0].options.Padding,undefined,'No conflicting second pad answer');
+    assert.ok(!item.supplyChoices.some(s=>s.name==='Compatible underlayment' || s.name==='Underlayment seam tape'),'Do not include extra padded underlayment when flooring has attached pad');
     assert.equal(item.measurements.area,144);
     assert.ok(w.flooringLaborEstimate(item,'Installation')?.amount>0,'Existing flooring labor pricing preserved');
     w.addProjectToCart();
