@@ -108,3 +108,16 @@ test('original labor price table tracks final October 24 approvals',()=>{
 });
 
 test('established labor rates calculate without unnecessary in-person quotes',async()=>{const dom=await open('installation.html'),w=dom.window;try{const tasks=w.LABOR_CATALOG.flatMap(c=>c.groups.flatMap(g=>Object.values(g.actions).flat()));const expected=[['Miscellaneous labor',75,'hours'],['Demolition labor',75,'hours'],['Over-the-range microwave installation',325,'each'],['Refrigerator installation with new water line',275,'each'],['Install or replace ceiling light (existing connections)',150,'light'],['Replace recessed ceiling light (existing connections)',175,'light'],['Install cabinet lighting (existing connections)',550,'installation']];for(const[label,price,unit]of expected){const t=tasks.find(x=>x.label===label);assert.ok(t,label);assert.equal(t.price,price,label);assert.equal(t.unit,unit,label);assert.equal(t.status,'approved',label);}}finally{dom.window.close()}});
+
+test('existing approved window trim and door hinge labor can be added directly without quote requests',async()=>{
+ const dom=await open('installation.html');
+ try{const w=dom.window,d=w.document;
+  const tasks=w.LABOR_CATALOG.find(c=>c.id==='doors').groups.flatMap(g=>Object.values(g.actions).flat());
+  const checks=[['door-hinge-existing',15,'door'],['window-trim-complete',150,'window']];
+  for(const[id,price,unit]of checks){const item=tasks.find(x=>x.id===id);assert.ok(item,id);assert.equal(item.price,price);assert.equal(item.unit,unit);assert.equal(item.status,'approved');const row=d.getElementById('labor-task-'+id);assert.ok(row);assert.doesNotMatch(row.textContent,/In-person quote required/);}
+  d.getElementById('labor-room').value='Living room';
+  const hinge=d.getElementById('labor-task-door-hinge-existing');hinge.querySelector('input').value='3';hinge.querySelector('button').click();
+  const trim=d.getElementById('labor-task-window-trim-complete');trim.querySelector('input').value='2';trim.querySelector('button').click();
+  const cart=w.getCart();assert.equal(cart.length,2);assert.equal(w.serviceEstimateSummary(cart).total,345);
+ }finally{dom.window.close();}
+});
