@@ -39,7 +39,10 @@
   };
   const aliases=new Map(Object.entries(aliasIds).map(([name,id])=>[normalized(name),id]));
   function referenceFor(name){
-    return exact.get(normalized(name))||byId.get(aliases.get(normalized(name)))||null;
+    const key=normalized(name);
+    if(/^(interior|exterior|drywall|ceiling|wall|pva)? ?primer$/.test(key))return byId.get(53)||null;
+    if(/bonding primer/.test(key))return byId.get(54)||null;
+    return exact.get(key)||byId.get(aliases.get(key))||null;
   }
   function priceForProduct(product){
     if(!product||!Number.isFinite(Number(product.quantity))||Number(product.quantity)<=0)return null;
