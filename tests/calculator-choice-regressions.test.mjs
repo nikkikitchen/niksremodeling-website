@@ -354,8 +354,9 @@ test('Known ceiling drywall and primer labor never forces an in-person quote for
  ]) {
   const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',projectTasks:task,materials:task,embedded:'1',projectMode:'complete'});
   const dom=await openPage('calculators.html',query);
+  for(let attempt=0;attempt<20&&!dom.window.document.getElementById('customer-provides-materials');attempt++)await new Promise(resolve=>setTimeout(resolve,50));
   try {
-   const w=dom.window,d=w.document;
+   const w=dom.window,d=dom.window.document;
    d.getElementById('ceiling-job-length').value='12';
    d.getElementById('ceiling-job-width').value='12';
    w.calcMaterial();
