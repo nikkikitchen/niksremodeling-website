@@ -489,7 +489,7 @@ function includedProjectCosts(supplies){
  const list=(supplies||[]).map(s=>({...s,selected:true}));
  const value=s=>s.price!==null&&s.price!==undefined&&s.price!==''?Number(s.price):s.unitPrice!==null&&s.unitPrice!==undefined&&s.unitPrice!==''&&s.quantity!==null&&s.quantity!==undefined?Number(s.unitPrice)*Number(s.quantity):NaN;
  const values=list.map(value),priced=values.filter(v=>Number.isFinite(v)&&v>=0);
- return {hiddenFromCustomer:true,supplyQuantities:list,supplyList:list.map(s=>s.name+' — '+(s.quantity==null?'quantity to confirm':s.quantity+' '+s.unit)),price:priced.reduce((a,b)=>a+b,0),pricingPending:priced.length<list.length};
+ return {hiddenFromCustomer:true,supplyQuantities:list,supplyList:list.map(s=>s.name+' — '+(s.quantity==null?'quantity to confirm':s.quantity+' '+s.unit)),price:priced.reduce((a,b)=>a+b,0),pricingPending:false};
 }
 // Replace provisional fixture allowances when matching verified toilets are in the cart.
 // This is display-only: removing a product restores the original planning allowance.
@@ -531,7 +531,7 @@ function projectEstimateMarkup(items){
  const known=x=>x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price))&&Number(x.price)>=0;
  const total=services.total+others.filter(known).reduce((n,x)=>n+Number(x.price)*(Number(x.qty)||1),0);
  const pending=services.pending||others.some(x=>!known(x)||x.pricingPending);
- return `<div class="result service-estimate"><strong>${pending?'Priced portion of estimate':'Estimated project total'}: ${total.toLocaleString('en-US',{style:'currency',currency:'USD'})}</strong>${services.adjustment?`<div>Includes ${services.adjustment.toLocaleString('en-US',{style:'currency',currency:'USD'})} to meet the $150 minimum trip charge.</div>`:''}${pending?'<div>In-person quote required for items without an established price.</div>':''}</div>`;
+ return `<div class="result service-estimate"><strong>${pending?'Priced portion of estimate':'Estimated project total'}: ${total.toLocaleString('en-US',{style:'currency',currency:'USD'})}</strong>${services.adjustment?`<div>Includes ${services.adjustment.toLocaleString('en-US',{style:'currency',currency:'USD'})} to meet the $150 minimum trip charge.</div>`:''}${pending?'<div>Unpriced materials or services need price confirmation before ordering.</div>':''}</div>`;
 }
 
 function serviceEstimateMarkup(items){
@@ -596,6 +596,7 @@ function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'
 function cartPriceMarkup(x){
  if(customEstimate(x)||requiresInPersonQuote(x))return 'In-person quote required';
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
+ if(x.type==='Material estimate'&&!known)return 'Material price to be confirmed';
  const costs=x.internalCosts;
  const scope=x.fixtureAllowanceReplaced?'Labor + supplies · selected toilet priced separately':costs?(costs.fixture>0?'Materials + labor · supplies included':'Labor · supplies included'):['Labor','Service'].includes(x.type)?'Labor only':/material|suppl/i.test(x.type||'')?'Materials only':'Item only';
  return (known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
@@ -883,7 +884,7 @@ function showCustomQuote(name){let box=document.getElementById('custom-quote-req
 document.addEventListener('click',event=>{const control=event.target.closest('button,a');if(!control)return;const url=control.dataset.calcUrl||control.getAttribute('href');const card=control.closest('.card,.project-work-card');const name=card?.querySelector('h2,h3,summary')?.textContent;if((url&&/calculators.html/.test(url)&&customUrl(url))||(isCustomLabel(name)&&/calculate|add|next|options/i.test(control.textContent))){event.preventDefault();event.stopImmediatePropagation();showCustomQuote(name);}},true);
 document.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.page==='calculators'&&customUrl(location.href))renderCustomQuotePage(new URLSearchParams(location.search).get('workLabel')||'Custom work');});
 
-function requiresInPersonQuote(item){return !!item&&(item.quoteRequired||item.pricingPending||item.price===null||item.price===undefined||item.price===''||!Number.isFinite(Number(item.price)));}
+function requiresInPersonQuote(item){if(!item)return false;if(item.type==='Material estimate'&&!item.quoteRequired)return false;return !!(item.quoteRequired||item.pricingPending||item.price===null||item.price===undefined||item.price===''||!Number.isFinite(Number(item.price)));}
 
 // Owner-approved October 24, 2026. Labor only; material pricing stays separate.
 window.ROOM_LABOR_SERVICES={

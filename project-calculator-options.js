@@ -696,10 +696,11 @@
       let details=summary.querySelector('.estimate-details');if(!details){details=create('details','','estimate-details');const toggle=create('summary','View project details');details.append(toggle);const list=document.getElementById('material-results');list.before(details);details.append(list);}
       let note=summary.querySelector('.project-total-note');if(!note){note=create('p','','project-total-note calc-note');details.before(note);}
       const missingCosts=[...new Set(serviceItems.filter(x=>!known(x)||x.pricingPending).map(x=>x.name))];
-      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+'In-person quote required for: '+missingCosts.join('; ')+'. Add these items to your quote request to arrange a visit.':'Estimated total for selected work.';
+      const laborPending=services.pending;
+      note.textContent=pending?(hasPricedItems?'Estimated subtotal. ':'')+(laborPending?'In-person quote needed for work not yet priced: ':'Material price to be confirmed: ')+missingCosts.join('; ')+'.':'Estimated total for selected work.';
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
-      const add=create('button',pending?'Add to Cart — Quote Required':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
+      const add=create('button',laborPending?'Add to Cart — Labor Quote Pending':pending?'Add to Cart — Material Price Pending':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
       status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);summary.append(actions);
       document.dispatchEvent(new CustomEvent('estimate-rendered'));
 

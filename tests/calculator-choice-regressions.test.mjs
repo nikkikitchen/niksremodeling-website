@@ -309,7 +309,7 @@ test('Installation supplies are charged once with labor and never added to mater
     assert.equal(cart.find(x=>x.type==='Included project costs').price,25);
     assert.equal(cart.filter(x=>x.type==='Material estimate').length,materials?1:0);
     w.renderMaterialEstimates();
-    assert.match(w.document.querySelector('.project-total-note').textContent,/supplies are included with labor/);
+    assert.match(w.document.querySelector('.project-total-note').textContent,/Estimated total for selected work/);
   }
   item.labor=[{service:'Removal',quantity:100,unit:'sq. ft.',price:150}];
   w.addProjectToCart();
@@ -345,4 +345,37 @@ test('Calculator keeps installation supplies pricing out of customer-facing text
   const source = readFileSync('project-calculator-options.js', 'utf8');
   assert.doesNotMatch(source, /needed supplies included|installation supplies included|supplies included with labor|supplies included\./i);
   dom.window.close();
+});
+
+test('Known ceiling drywall and primer labor never forces an in-person quote for unpriced materials', async () => {
+ for (const [task,expected,product] of [
+  ['Install / replace ceiling drywall',450,'Drywall'],
+  ['Prime ceiling',129.6,'Primer']
+ ]) {
+  const query='?'+new URLSearchParams({project:'attic',work:'ceiling',room:'Attic',material:'custom',projectTasks:task,materials:task,embedded:'1',projectMode:'complete'});
+  const dom=await openPage('calculators.html',query);
+  try {
+   const w=dom.window,d=w.document;
+   d.getElementById('ceiling-job-length').value='12';
+   d.getElementById('ceiling-job-width').value='12';
+   w.calcMaterial();
+   assert.ok(d.getElementById('mat-error').hidden,task+': '+d.getElementById('mat-error').textContent);
+   const item=w.eval('materialEstimates[0]');
+   assert.equal(item.labor[0].price,expected,task+' should use its ceiling labor rate');
+   assert.ok(item.products.some(x=>x.name===product));
+   assert.match(d.querySelector('.project-total-note').textContent,/Material price to be confirmed/);
+   assert.doesNotMatch(d.querySelector('.project-total-note').textContent,/In-person quote required/);
+   assert.doesNotMatch(d.getElementById('add-project-to-cart').textContent,/Quote Required/);
+   d.getElementById('customer-provides-materials').checked=true;
+   w.calcMaterial();
+   assert.equal(w.eval('materialEstimates.length'),1);
+   assert.equal(w.eval('materialEstimates[0].labor[0].price'),expected);
+   assert.equal(d.querySelector('.project-total-note').textContent,'Estimated total for selected work.');
+   w.addProjectToCart();
+   const cart=w.getCart();
+   assert.equal(cart.filter(x=>x.type==='Material estimate').length,0);
+   assert.equal(cart.filter(x=>x.type==='Labor').length,1);
+   assert.ok(cart.filter(x=>x.type==='Labor')[0].price>0);
+  }finally{dom.window.close();}
+ }
 });
