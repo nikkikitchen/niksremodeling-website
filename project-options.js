@@ -167,9 +167,9 @@
   options.ceiling.groups=ceilingWorkGroups;
   options.walls.materials=[
     'Accent Walls','Beadboard','Board & Batten','Brick Veneer','Custom Mirrors',
-    'Decorative Wall Panels','Drywall Installation','Drywall Panels','Drywall Repair & Patching',
+    'Decorative Wall Panels','Drywall Installation','Drywall Repair & Patching',
     'Drywall Finishing & Texture','Exterior Paint','Interior Paint','Limewash',
-    'Mirror Installation','Painted Wall Finishes','Primer','Shiplap','Specialty Coatings',
+    'Primer','Shiplap','Specialty Coatings',
     'Stone Veneer','Tile Walls','Venetian Plaster','Wall Panels','Wallpaper',
     'Wainscoting','Wood Slat Walls'
   ];
