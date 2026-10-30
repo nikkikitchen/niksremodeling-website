@@ -1,0 +1,319 @@
+{
+  "description": "Nik’s Remodeling approved fallback material reference prices; use only if an existing approved material price is missing; not supplier-backed shopping listings; excludes labor/shipping/taxes",
+  "currency": "USD",
+  "markupAlreadyIncluded": true,
+  "items": [
+    {
+      "id": 1,
+      "name": "2x4x8 Stud Lumber (Standard)",
+      "unit": "each",
+      "price": 5.6
+    },
+    {
+      "id": 2,
+      "name": "4x8 Sheet of 1/2-in Drywall",
+      "unit": "sheet",
+      "price": 21.94
+    },
+    {
+      "id": 3,
+      "name": "4x8 Sheet of 15/32-in OSB Sheathing",
+      "unit": "sheet",
+      "price": 24.98
+    },
+    {
+      "id": 4,
+      "name": "4x8 Sheet of 3/4-in ACX Plywood",
+      "unit": "sheet",
+      "price": 70.2
+    },
+    {
+      "id": 5,
+      "name": "60-lb Bag of Concrete Mix",
+      "unit": "bag",
+      "price": 7.76
+    },
+    {
+      "id": 6,
+      "name": "1-Gallon Interior Flat Latex Paint",
+      "unit": "gallon",
+      "price": 48.6
+    },
+    {
+      "id": 7,
+      "name": "5-Gallon Interior Semi-Gloss Paint",
+      "unit": "5-gallon pail",
+      "price": 209.25
+    },
+    {
+      "id": 8,
+      "name": "12-3 Romex Wire (100 ft)",
+      "unit": "100-ft roll",
+      "price": 164.7
+    },
+    {
+      "id": 9,
+      "name": "14-2 Romex Wire (250 ft)",
+      "unit": "250-ft roll",
+      "price": 186.3
+    },
+    {
+      "id": 10,
+      "name": "3-Tab Asphalt Roof Shingles (Bundle)",
+      "unit": "bundle",
+      "price": 52.65
+    },
+    {
+      "id": 11,
+      "name": "Fiberglass Insulation R-13 Roll",
+      "unit": "roll",
+      "price": 51.3
+    },
+    {
+      "id": 12,
+      "name": "Vinyl Plank Flooring",
+      "unit": "sq ft",
+      "price": 3.78
+    },
+    {
+      "id": 13,
+      "name": "Porcelain Ceramic Tile",
+      "unit": "sq ft",
+      "price": 3.38
+    },
+    {
+      "id": 14,
+      "name": "MDF Baseboard Trim (9/16-in x 5-1/4-in x 12-ft)",
+      "unit": "12-ft piece",
+      "price": 21.6
+    },
+    {
+      "id": 15,
+      "name": "Prehung Interior Door (6-Panel Composite)",
+      "unit": "each",
+      "price": 168.75
+    },
+    {
+      "id": 16,
+      "name": "Exterior Steel Entry Door (Prehung)",
+      "unit": "each",
+      "price": 418.5
+    },
+    {
+      "id": 17,
+      "name": "Standard Double-Hung Vinyl Window (24x36)",
+      "unit": "each",
+      "price": 249.75
+    },
+    {
+      "id": 18,
+      "name": "1/2-in x 10-ft PEX Pipe",
+      "unit": "10-ft length",
+      "price": 7.02
+    },
+    {
+      "id": 19,
+      "name": "1/2-in x 10-ft PVC Schedule 40 Pipe",
+      "unit": "10-ft length",
+      "price": 11.14
+    },
+    {
+      "id": 20,
+      "name": "3/4-in x 10-ft Copper Pipe (Type L)",
+      "unit": "10-ft length",
+      "price": 62.1
+    },
+    {
+      "id": 21,
+      "name": "Toilet (Two-Piece 1.28 GPF)",
+      "unit": "each",
+      "price": 195.75
+    },
+    {
+      "id": 22,
+      "name": "Bathroom Vanity with Top (30-in)",
+      "unit": "each",
+      "price": 283.5
+    },
+    {
+      "id": 23,
+      "name": "Kitchen Faucet (Pull-Down Stainless Steel)",
+      "unit": "each",
+      "price": 216
+    },
+    {
+      "id": 24,
+      "name": "Stainless Steel Undermount Kitchen Sink",
+      "unit": "each",
+      "price": 297
+    },
+    {
+      "id": 25,
+      "name": "Garbage Disposal (1/2 HP)",
+      "unit": "each",
+      "price": 133.65
+    },
+    {
+      "id": 26,
+      "name": "Ceiling Fan with Light Kit (52-in)",
+      "unit": "each",
+      "price": 128.25
+    },
+    {
+      "id": 27,
+      "name": "LED Recessed Downlight (6-in, 4-pack)",
+      "unit": "4-pack",
+      "price": 45.9
+    },
+    {
+      "id": 28,
+      "name": "Decora Light Switch (10-pack)",
+      "unit": "10-pack",
+      "price": 29.7
+    },
+    {
+      "id": 29,
+      "name": "Duplex Tamper-Resistant Outlet (10-pack)",
+      "unit": "10-pack",
+      "price": 25.65
+    },
+    {
+      "id": 30,
+      "name": "20-Amp Single-Pole Circuit Breaker",
+      "unit": "each",
+      "price": 14.18
+    },
+    {
+      "id": 31,
+      "name": "Contractor Trash Bags (42-Gallon, 50-count)",
+      "unit": "50-count box",
+      "price": 43.2
+    },
+    {
+      "id": 32,
+      "name": "Construction Adhesive (10 oz Tube)",
+      "unit": "tube",
+      "price": 8.78
+    },
+    {
+      "id": 33,
+      "name": "All-Purpose Drywall Joint Compound (5-Gallon)",
+      "unit": "5-gallon pail",
+      "price": 28.35
+    },
+    {
+      "id": 34,
+      "name": "Drywall Tape (Paper, 250 ft)",
+      "unit": "250-ft roll",
+      "price": 6.75
+    },
+    {
+      "id": 35,
+      "name": "Deck Screws (#8 x 2-1/2-in, 5-lb box)",
+      "unit": "5-lb box",
+      "price": 48.6
+    },
+    {
+      "id": 36,
+      "name": "Grout (25-lb Bag)",
+      "unit": "bag",
+      "price": 30.38
+    },
+    {
+      "id": 37,
+      "name": "Tile Thinset Mortar (50-lb Bag)",
+      "unit": "bag",
+      "price": 33.75
+    },
+    {
+      "id": 38,
+      "name": "Quarter Round Molding (3/4-in x 8-ft Pine)",
+      "unit": "8-ft piece",
+      "price": 10.46
+    },
+    {
+      "id": 39,
+      "name": "1x4x8 Select Pine Board",
+      "unit": "each",
+      "price": 19.58
+    },
+    {
+      "id": 40,
+      "name": "Pressure-Treated 4x4x8 Lumber",
+      "unit": "each",
+      "price": 18.23
+    },
+    {
+      "id": 41,
+      "name": "Pressure-Treated 5/4x6x12 Decking Board",
+      "unit": "each",
+      "price": 22.28
+    },
+    {
+      "id": 42,
+      "name": "Cedar Bevel Siding",
+      "unit": "linear ft",
+      "price": 5.13
+    },
+    {
+      "id": 43,
+      "name": "Caulk (10.1 oz Silicone Tub & Tile)",
+      "unit": "tube",
+      "price": 10.12
+    },
+    {
+      "id": 44,
+      "name": "Painters Tape (1.88-in x 60 yds)",
+      "unit": "roll",
+      "price": 11.48
+    },
+    {
+      "id": 45,
+      "name": "Sandpaper Sheets (Assorted Grit, 5-pack)",
+      "unit": "5-pack",
+      "price": 8.1
+    },
+    {
+      "id": 46,
+      "name": "HVAC Pleated Air Filter (1-in, 4-pack)",
+      "unit": "4-pack",
+      "price": 59.4
+    },
+    {
+      "id": 47,
+      "name": "Programmable Wi-Fi Thermostat",
+      "unit": "each",
+      "price": 174.15
+    },
+    {
+      "id": 48,
+      "name": "Smoke & Carbon Monoxide Detector (Hardwired)",
+      "unit": "each",
+      "price": 74.25
+    },
+    {
+      "id": 49,
+      "name": "Gas Water Heater (40-Gallon Tall)",
+      "unit": "each",
+      "price": 972
+    },
+    {
+      "id": 50,
+      "name": "Sump Pump (1/2 HP Submersible)",
+      "unit": "each",
+      "price": 222.75
+    },
+    {
+      "id": 51,
+      "name": "Cabinet Knob (Classic Satin Nickel, 10-pack)",
+      "unit": "10-pack",
+      "price": 35.1
+    },
+    {
+      "id": 52,
+      "name": "Deadbolt & Entry Lockset Combo Pack",
+      "unit": "combo pack",
+      "price": 60.75
+    }
+  ]
+}
