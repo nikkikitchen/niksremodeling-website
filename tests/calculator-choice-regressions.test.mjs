@@ -551,3 +551,61 @@ test('removing the final cart item removes stale calculator drafts too',async()=
   assert.match(w.document.body.textContent,/Your project cart is empty/);
  }finally{dom.window.close();}
 });
+
+test('Bathroom flooring remembers floor tile, asks no repeat location, and offers another tile area',async()=>{
+ const project=await openPage('project.html','?project=bathrooms&selectedWorks=floor');
+ let target='';
+ try{
+  const w=project.window,card=w.document.querySelector('[data-work-key="floor"]');
+  assert.ok(card,'Bathroom floor selection must exist');
+  for(const box of card.querySelectorAll(':scope > label input'))box.checked=box.value==='Floor Tile';
+  w.openProjectMeasurements=url=>target=url;
+  card.querySelector('button.btn.primary').click();
+  assert.ok(target,'Tile selection should hand off to calculator');
+  const p=new URL(target,w.location.origin).searchParams;
+  assert.equal(p.get('work'),'floor');assert.equal(p.get('room'),'Bathroom');assert.equal(p.get('materials'),'Floor Tile');
+ }finally{project.window.close();}
+ const calc=await openPage('calculators.html',target.slice(target.indexOf('?')));
+ try{
+  const w=calc.window,d=w.document;
+  assert.equal(d.getElementById('project-location').value,'interior');
+  assert.equal(d.getElementById('project-location').closest('.field').hidden,true,'Bathroom interior location already known');
+  assert.equal(d.getElementById('floor-kind').value,'tile','Floor Tile must not select floating-floor labor questions');
+  assert.equal(d.getElementById('question-surface'),null,'Floor chosen in Projects; no second where-is-tile-going question');
+  assert.equal(d.getElementById('question-trim'),null,'Unrelated flooring trim prompt should not appear for tile');
+  assert.equal(d.getElementById('question-padding'),null,'Tile does not have floating-floor padding');
+  assert.ok(d.getElementById('question-wet')&&d.getElementById('question-base'));
+  const first=[...d.querySelectorAll('[name="area-product"]')].find(x=>x.value==='Floor Tile');
+  assert.ok(first?.checked);
+  assert.equal(first.closest('.area-product').querySelector('[data-item-option="Location"]'),null,'Do not ask tile location twice');
+  assert.ok(first.closest('.area-product').querySelector('[data-item-option="Material"]'),'Tile type still required');
+  d.getElementById('question-wet').value='splash';d.getElementById('question-base').value='wood';
+  const row=first.closest('.area-product');
+  for(const field of row.querySelectorAll('select[data-item-option]')){if(!field.value)field.value=[...field.options].find(o=>o.value==='Help me choose')?.value||[...field.options].find(o=>o.value)?.value||'';}
+  d.getElementById('floor-length').value='8';d.getElementById('floor-width').value='10';
+  w.calcMaterial();
+  assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+  assert.equal(w.eval('materialEstimates.length'),1);
+  const addMore=d.getElementById('add-tile-another-area');assert.ok(addMore,'Offer another tiled area after first estimate');
+  addMore.click();
+  assert.equal(d.getElementById('material-name').value,'','Additional tile must have a fresh room');
+  assert.equal(d.getElementById('material-name').closest('.field').hidden,false);
+  assert.equal(d.getElementById('floor-kind').value,'tile');
+  assert.ok([...d.querySelectorAll('[name="area-product"]:checked')].some(x=>x.value==='Floor Tile'),'Retain tile selection for second area');
+  assert.ok(d.getElementById('question-surface'),'Second tile area may be a wall, shower, or floor');
+  assert.equal(w.eval('materialEstimates.length'),1,'First tile quote survives optional second area');
+  d.getElementById('material-name').value='Kitchen backsplash';
+  d.getElementById('question-surface').value='wall';d.getElementById('question-wet').value='splash';d.getElementById('question-base').value='wood';
+  for(const field of d.querySelectorAll('.area-product input:checked ~ .area-product-settings select[data-item-option]')){if(!field.value)field.value=[...field.options].find(o=>o.value==='Help me choose')?.value||[...field.options].find(o=>o.value)?.value||'';}
+  d.getElementById('floor-length').value='4';d.getElementById('floor-width').value='8';
+  w.calcMaterial();
+  assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+  const estimates=w.eval('materialEstimates');
+  assert.equal(estimates.length,2,'User deliberately requested a second tile area');
+  assert.equal(new Set(estimates.map(x=>x.roomId)).size,2,'Second tile area should not overwrite first');
+  w.addProjectToCart();
+  const cart=w.getCart();
+  assert.ok(cart.some(x=>x.name.includes('Bathroom')));
+  assert.ok(cart.some(x=>x.name.includes('Kitchen backsplash')));
+ }finally{calc.window.close();}
+});

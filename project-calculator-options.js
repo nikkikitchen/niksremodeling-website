@@ -154,6 +154,9 @@
       const product=new URLSearchParams(location.search).get('product');
       if(product){const option=document.createElement('option');option.value=option.textContent=product;materialChoice.append(option);materialChoice.value=product;}
       const requested=(new URLSearchParams(location.search).get('materials')||'').split('|').filter(Boolean).map(name=>window.bathroomPackageByLabel(name)?.label||(['Knobs','Pulls','Hinges','Cabinet Hardware'].includes(name)?'Hardware':name));
+      // "Floor Tile" was chosen on the Projects page: don't accidentally
+      // fall back to floating-flooring questions such as perimeter trim/pad.
+      if(currentType==='flooring'&&requested.includes('Floor Tile'))document.getElementById('floor-kind').value='tile';
       const work=new URLSearchParams(location.search).get('work');
       const workChoices=window.PROJECT_WORK_OPTIONS?.[work]?.materials||[];
       names=[...new Set([...workChoices,...names,...requested])];
@@ -205,7 +208,9 @@
            else if(['accessibility','fireplaces'].includes(new URLSearchParams(location.search).get('project'))&&['Linear feet','Square feet'].includes(unit.value)){quantity.value='';quantity.placeholder='Size of this item or surface';}
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
-        (selectedProjectMaterial&&/^(Plywood|OSB & Sheathing)$/i.test(name)?[]:itemOptionFields(name)).forEach(({label:title,values},optionIndex)=>{
+        (selectedProjectMaterial&&/^(Plywood|OSB & Sheathing)$/i.test(name)?[]:itemOptionFields(name))
+          .filter(({label:title})=>!(title==='Location'&&initialParams.get('work')==='floor'&&/tile|stone/i.test(name)&&!addingTileElsewhere))
+          .forEach(({label:title,values},optionIndex)=>{
           const wrap=document.createElement('div');wrap.className='field';
           if(title==='Color change'){const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.id='product-'+index+'-option-'+optionIndex;box.dataset.itemOption=title;box.value='Yes';label.append(box,document.createTextNode(' Color change'));wrap.append(label);settings.append(wrap);return;}
           const label=document.createElement('label'),select=document.createElement('select');
@@ -274,6 +279,7 @@
     const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select one';types.prepend(placeholder);
     [['bathroom','Bathroom Work'],['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
     const initialParams=new URLSearchParams(location.search);
+    let addingTileElsewhere=false;
     const ceilingTasks=(initialParams.get('projectTasks')||initialParams.get('materials')||'').split('|').filter(Boolean).map(task=>task==='Install / replace ceiling drywall'?'Install ceiling drywall':task);
     const measuredCeiling=()=>new URLSearchParams(location.search).get('work')==='ceiling'&&ceilingTasks.length>0&&ceilingTasks.every(task=>['Repair / patch ceiling drywall','Match existing ceiling texture (patch)','Install ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'].includes(task));
     const ceilingDimensions=document.createElement('section');
@@ -368,7 +374,8 @@
       questionBox.replaceChildren();
       const atticDecking=initialParams.get('project')==='attic'&&initialParams.get('work')==='floor'&&/^(Plywood|OSB & Sheathing)$/i.test((initialParams.get('materials')||'').split('|')[0]);
       floorField.hidden = types.value !== 'flooring'||atticDecking||(initialParams.get('work')==='floor'&&!!initialParams.get('materials'));
-      const group = atticDecking?[]:[...(questions[key()] || [])];
+      const floorAlreadyChosen=initialParams.get('work')==='floor'&&!addingTileElsewhere;
+      const group = atticDecking?[]:[...(questions[key()] || [])].filter(([id])=>!(floorAlreadyChosen&&id==='surface'&&key()==='tile'));
       if(new URLSearchParams(location.search).get('project')==='accents'&&!group.some(q=>q[0]==='condition'))group.push(['condition','Does this surface need prep or repairs?',[['good','Ready for installation'],['repair','Needs prep / repairs'],unsure]]);
       if(!group.length) { return; }
       questionBox.append(create('h3','Project details'));
@@ -622,6 +629,24 @@
       roomStatus.textContent='New room / area';quantityMethod.value='measure';document.getElementById('known-quantity').value='';document.getElementById('material-description').value='';document.getElementById('paint-other-description').value='';updateMaterialChoices();renderQuestions();updateChoices();updateQuantityFields();showPaintSurfaceFields();
       panel.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('material-name').focus({preventScroll:true});
     }
+    function startAnotherTileArea(){
+      // Extra tile is an opt-in second area, never an automatic cart addition.
+      // Keep the first estimate, but request fresh room name and dimensions.
+      newRoom();addingTileElsewhere=true;
+      types.value='flooring';projectLocation.value='interior';locationField.hidden=true;
+      document.getElementById('material-name').closest('.field').hidden=false;
+      floorKind.value='tile';
+      updateMaterialChoices();
+      const tile=[...document.querySelectorAll('[name="area-product"]')].find(box=>box.value==='Floor Tile');
+      if(tile){tile.checked=true;syncMaterialChoice();}
+      renderQuestions();updateQuantityFields();
+      const tileRow=tile?.closest('.area-product');if(tileRow)tileRow.querySelector('.area-product-settings').hidden=false;
+      panel.querySelector('button[onclick="calcMaterial()"]').textContent='Review Estimate';
+      roomStatus.textContent='Additional tile area — where else do you need tile?';
+      const roomField=document.getElementById('material-name');
+      roomField.placeholder='Another bathroom, shower, kitchen backsplash…';
+      roomField.focus({preventScroll:true});
+    }
     function addWork(item){
       const room=item.roomName,location=item.projectLocation,form=item.form||[];
       newRoom();document.getElementById('material-name').value=room;projectLocation.value=location;locationField.hidden=!!location;
@@ -714,7 +739,14 @@
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       const add=create('button',laborPending?'Add to Cart — Labor Quote Pending':pending?'Add to Cart — Material Price Pending':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
-      status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);summary.append(actions);
+      status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);
+      const tileWork=materialEstimates.some(item=>item.type==='flooring'&&((item.products||[]).some(product=>/tile/i.test(product.name))||item.floorKind==='tile'));
+      if(tileWork){
+        const moreTile=create('button','Need tile somewhere else? Add another area','btn outline');
+        moreTile.type='button';moreTile.id='add-tile-another-area';moreTile.onclick=startAnotherTileArea;
+        actions.append(moreTile);
+      }
+      summary.append(actions);
       document.dispatchEvent(new CustomEvent('estimate-rendered'));
 
     };
