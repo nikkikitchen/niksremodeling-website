@@ -844,7 +844,11 @@
   // Reuse the calculator's supply rules and coverage assumptions for this saved work.
   window.projectSupplyChoices=item=>{
     const group=estimateSupplyGroup(item),guide=SUPPLY_GUIDE[group];
-    const entries=guide?.items||[...new Set((item.products||[]).flatMap(p=>materialSupplyList(p.name)))].map(name=>[name,'Confirm compatibility and package coverage.']);
+    let entries=guide?.items||[...new Set((item.products||[]).flatMap(p=>materialSupplyList(p.name)))].map(name=>[name,'Confirm compatibility and package coverage.']);
+    // LVP/laminate with attached padding does not need a second padded underlay.
+    // Keep any separately required vapor/moisture barrier in the estimate.
+    if(group==='floating'&&item.answers?.padding==='yes')
+      entries=entries.filter(([name])=>!['Compatible underlayment','Underlayment seam tape'].includes(name));
     const primary=item.products?.find(p=>Number.isFinite(p.waste)&&Number.isFinite(p.area));
     const measured=primary?{...item,measurements:{...item.measurements,coverage:Number((primary.area*(1+primary.waste/100)).toFixed(8))}}:item;
     return entries.map(([name,note])=>{const estimate=group?supplyStartingQuantity(group,name,[measured]):null;return {name,note,quantity:estimate?.quantity??null,unit:estimate?.unit||'quantity / packaging to confirm',selected:false};});
