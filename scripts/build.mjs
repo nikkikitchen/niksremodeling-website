@@ -82,9 +82,9 @@ if(!Array.isArray(reference.items)||!reference.items.length||reference.markupAlr
 const refScript=new URL('material-prices.js',output);
 const browserSource=readFileSync(refScript,'utf8');
 const a='const reference=',b=';\n  const byId=';
-const start=browserSource.indexOf(a),end=browserSource.indexOf(b,start);
-if(start<0||end<0)throw Error('Material reference loader markers missing.');
-writeFileSync(refScript,browserSource.slice(0,start+a.length)+JSON.stringify(reference)+browserSource.slice(end));
+const start=browserSource.indexOf(a),referenceEnd=browserSource.indexOf(b,start);
+if(start<0||referenceEnd<0)throw Error('Material reference loader markers missing.');
+writeFileSync(refScript,browserSource.slice(0,start+a.length)+JSON.stringify(reference)+browserSource.slice(referenceEnd));
 hashes['material-prices.js']=createHash('sha256').update(readFileSync(refScript)).digest('hex');
 
 writeFileSync(new URL('release.json', output), JSON.stringify({
