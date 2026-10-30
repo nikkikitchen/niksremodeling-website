@@ -447,6 +447,7 @@
     }
     setStep(0);
     const grid=document.getElementById('project-work-grid');
+    if(id==='basement')options.floor.materials.push('Concrete Floor Paint');
     if(id==='attic')options.floor.materials=[...new Set([...atticFloorMaterials,...options.floor.materials.filter(name=>!/padding|underlayment/i.test(name))])];
     if(id==='bathrooms'||id==='bath-remodel'){
       const shortcuts=document.createElement('nav');
