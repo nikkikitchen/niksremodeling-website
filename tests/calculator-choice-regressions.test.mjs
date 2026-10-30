@@ -4,7 +4,7 @@ import {readFileSync, existsSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 
 // Regression checks for mismatched work choices and broken calculator handoffs.
-async function openPage(file, query = '') {
+async function openPage(file, query = '', storage = {}) {
   const html = readFileSync(file, 'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g, (tag, src) => {
     const path = src.split('?')[0].replace(/^\//, '');
     return existsSync(path) ? '<script>' + readFileSync(path, 'utf8').replace(/<\/script/gi, '<\\/script') + '</script>' : '';
@@ -17,6 +17,7 @@ async function openPage(file, query = '') {
       window.HTMLElement.prototype.scrollIntoView = function () {};
       window.scrollTo = () => {};
       window.alert = () => {};
+      for(const [key,value] of Object.entries(storage))window.localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));
     }
   });
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -493,4 +494,60 @@ test('ceiling texture matching is a patch-size quote, distinct from whole-ceilin
  }
  const source=readFileSync('project-calculator-options.js','utf8');
  assert.doesNotMatch(source,/['"]Add ceiling texture \(orange peel \/ knockdown\)['"]\s*:\s*(?:180|270|420)/,'Full-ceiling texturing must not be priced like patch matching');
+});
+
+test('fresh basement ceiling texture work does not reload old estimates after clearing cart',async()=>{
+ const task='Match existing ceiling texture (patch)';
+ const stale=[
+  {roomId:'room-old-ceiling',roomName:'Old Attic',projectScopeKey:'attic|old attic|ceiling',type:'ceiling',title:'Ceiling work',result:'old paint',measurements:{area:250},labor:[{service:'Installation',scope:'Paint ceiling',price:450,quantity:1}]},
+  {roomId:'room-old-floor',roomName:'Old Bedroom',type:'flooring',title:'Flooring',result:'old flooring',measurements:{area:144},labor:[{service:'Installation',scope:'LVP',price:575,quantity:1}]}
+ ];
+ const oldState={'niks-material-estimates-v1':stale,'nr-cart':[]};
+ const project=await openPage('project.html','?project=basement&selectedWorks=ceiling',oldState);
+ let target='';
+ try{
+  const card=project.window.document.querySelector('[data-work-key="ceiling"]');
+  const checkbox=[...card.querySelectorAll(':scope > label input')].find(x=>x.value===task);
+  assert.ok(checkbox);checkbox.checked=true;
+  project.window.openProjectMeasurements=url=>target=url;
+  card.querySelector('button.btn.primary').click();
+  assert.ok(target,'Basement ceiling should open the calculator');
+  const params=new URL(target,project.window.location.origin).searchParams;
+  assert.ok(params.get('projectStart'),'New project must carry a fresh-session marker');
+  assert.equal(params.get('editRoom'),null,'Old work must not be reopened automatically');
+ }finally{project.window.close();}
+ const quote=await openPage('calculators.html',target.slice(target.indexOf('?')),oldState);
+ try{
+  const w=quote.window,d=w.document;
+  assert.equal(w.eval('materialEstimates.length'),0,'Fresh project must begin with no stale estimates');
+  assert.deepEqual(JSON.parse(w.localStorage.getItem('niks-material-estimates-v1')||'[]'),[]);
+  assert.equal(w.getCart().length,0);
+  d.getElementById('ceiling-patch-size').value='small';
+  w.calcMaterial();
+  assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);
+  assert.equal(w.eval('materialEstimates.length'),1,'Only the current texture work is estimated');
+  assert.equal(w.eval('materialEstimates[0].labor[0].price'),180);
+  w.addProjectToCart();
+  const cart=w.getCart();
+  assert.equal(cart.filter(x=>x.type==='Labor').length,1);
+  assert.equal(w.serviceEstimateSummary(cart).total,180);
+  assert.ok(cart.every(x=>!x.name.includes('Old Attic')&&!x.name.includes('Old Bedroom')));
+  assert.ok(cart.length<=3,'Single patch must not create nine old items');
+ }finally{quote.window.close();}
+});
+
+test('removing the final cart item removes stale calculator drafts too',async()=>{
+ const state={
+  'nr-cart':[{name:'Old Room: Paint ceiling',type:'Labor',source:'project-calculator',roomId:'previous-draft',qty:1,price:450}],
+  'niks-material-estimates-v1':[{roomId:'previous-draft',roomName:'Old Room',type:'ceiling',title:'Ceiling work',result:'old ceiling',labor:[{service:'Installation',scope:'Paint ceiling',price:450}]}]
+ };
+ const dom=await openPage('project-cart.html','',state);
+ try{
+  const w=dom.window;
+  assert.equal(w.getCart().length,1);
+  w.removeCart(0);
+  assert.equal(w.getCart().length,0);
+  assert.ok(!JSON.parse(w.localStorage.getItem('niks-material-estimates-v1')||'[]').length,'Removed items may not return');
+  assert.match(w.document.body.textContent,/Your project cart is empty/);
+ }finally{dom.window.close();}
 });
