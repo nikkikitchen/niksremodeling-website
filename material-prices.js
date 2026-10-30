@@ -39,6 +39,9 @@
     if(product.price!==undefined&&product.price!==null&&product.price!=='')return null;
     if(product.priceVerifiedAt||product.source==='supplier-retail'||product.isSample)return null;
     const ref=referenceFor(product.name);if(!ref)return null;
+    // This reference covers ceramic/porcelain tile, not natural stone.
+    if(ref.id===13&&product.options?.Material&&
+       !/ceramic|porcelain/i.test(product.options.Material))return null;
     const unit=normalized(product.unit),qty=Number(product.quantity);
     const square=['sq ft','square feet','square foot'].includes(unit);
     const pieces=['each','pieces','piece'].includes(unit);
