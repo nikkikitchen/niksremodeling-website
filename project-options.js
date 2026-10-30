@@ -782,7 +782,7 @@
       const laborButton=document.createElement('button');
       laborButton.type='button';
       laborButton.className='btn outline project-add-labor';
-      laborButton.textContent='Add Installation & Labor';
+      laborButton.textContent='Add materials';
       laborButton.onclick=()=>{
         const area=document.getElementById('scope-room').value.trim();
         if(!area){status.textContent='Name the room or area first.';return;}
