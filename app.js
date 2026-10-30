@@ -503,7 +503,7 @@ function includedProjectCosts(supplies){
  const list=(supplies||[]).map(s=>({...s,selected:true}));
  // Approved, already marked-up consumables. Tools are never automatic job charges.
  // Unmatched/conditional products remain unpriced rather than being guessed.
- const approved=[[/^tile spacers or leveling clips$/i,9.45],[/^joint tape$/i,15.53],[/^brushes, roller covers, frame and tray$/i,18.90],[/^tray liners, stir sticks and cleanup rags$/i,12.83],[/^sanding supplies and drywall primer$/i,10.12]];
+ const approved=[[/^tile spacers or leveling clips$/i,9.45],[/^joint tape$/i,15.53],[/^tray liners, stir sticks and cleanup rags$/i,12.83]];
  for(const entry of list){if(entry.price!=null||entry.unitPrice!=null)continue;const hit=approved.find(([pattern])=>pattern.test(entry.name));if(hit){entry.price=hit[1];entry.quantity=1;entry.unit='approved consumable allowance';}}
  const value=s=>s.price!==null&&s.price!==undefined&&s.price!==''?Number(s.price):s.unitPrice!==null&&s.unitPrice!==undefined&&s.unitPrice!==''&&s.quantity!==null&&s.quantity!==undefined?Number(s.unitPrice)*Number(s.quantity):NaN;
  const values=list.map(value),priced=values.filter(v=>Number.isFinite(v)&&v>=0);
