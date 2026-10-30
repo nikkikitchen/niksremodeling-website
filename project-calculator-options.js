@@ -810,7 +810,13 @@
       summary.querySelector('.project-summary-actions')?.remove();
       const actions=create('div','','project-summary-actions'),status=create('p','','calc-note');
       const add=create('button',laborPending?'Add to Cart — Labor Quote Pending':pending?'Add to Cart — Material Price Pending':'Add to Cart','btn primary');add.type='button';add.id='add-project-to-cart';add.onclick=addProjectToCart;
-      status.id='project-cart-status';status.setAttribute('role','status');actions.append(add,status);
+      status.id='project-cart-status';status.setAttribute('role','status');
+      const moreWork=create('button','+ Add More Work to This Room','btn outline');
+      moreWork.type='button';moreWork.id='add-work-same-room';
+      moreWork.onclick=()=>{const last=materialEstimates[materialEstimates.length-1];if(last)addWork(last);else newRoom();};
+      const anotherRoom=create('button','+ Add Another Room','btn outline');
+      anotherRoom.type='button';anotherRoom.id='add-another-project-room';anotherRoom.onclick=()=>newRoom();
+      actions.append(add,moreWork,anotherRoom,status);
       const tileWork=materialEstimates.some(item=>item.type==='flooring'&&((item.products||[]).some(product=>/tile/i.test(product.name))||item.floorKind==='tile'));
       if(tileWork){
         const moreTile=create('button','Need tile somewhere else? Add another area','btn outline');
