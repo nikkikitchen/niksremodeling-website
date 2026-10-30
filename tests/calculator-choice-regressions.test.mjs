@@ -593,10 +593,16 @@ test('Bathroom flooring remembers floor tile, asks no repeat location, and offer
   assert.equal(d.getElementById('floor-kind').value,'tile');
   assert.ok([...d.querySelectorAll('[name="area-product"]:checked')].some(x=>x.value==='Floor Tile'),'Retain tile selection for second area');
   assert.ok(d.getElementById('question-surface'),'Second tile area may be a wall, shower, or floor');
+  assert.equal([...d.querySelectorAll('.area-product')].find(row=>row.querySelector('[name="area-product"]:checked'))?.querySelector('[data-item-option="Location"]'),null,'Second tile area asks for location once, not twice');
   assert.equal(w.eval('materialEstimates.length'),1,'First tile quote survives optional second area');
   d.getElementById('material-name').value='Kitchen backsplash';
   d.getElementById('question-surface').value='wall';d.getElementById('question-wet').value='splash';d.getElementById('question-base').value='wood';
-  for(const field of d.querySelectorAll('.area-product input:checked ~ .area-product-settings select[data-item-option]')){if(!field.value)field.value=[...field.options].find(o=>o.value==='Help me choose')?.value||[...field.options].find(o=>o.value)?.value||'';}
+  for(const row of d.querySelectorAll('.area-product')){
+   if(!row.querySelector('[name="area-product"]:checked'))continue;
+   for(const field of row.querySelectorAll('select[data-item-option]')){
+    if(!field.value)field.value=[...field.options].find(o=>o.value==='Help me choose')?.value||[...field.options].find(o=>o.value)?.value||'';
+   }
+  }
   d.getElementById('floor-length').value='4';d.getElementById('floor-width').value='8';
   w.calcMaterial();
   assert.ok(d.getElementById('mat-error').hidden,d.getElementById('mat-error').textContent);

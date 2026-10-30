@@ -209,7 +209,7 @@
           const updateUnit=()=>{const whole=['Pieces','Bags','Boxes','Rolls','Sheets'].includes(unit.value);quantity.min=whole?'1':'0.01';quantity.step=whole?'1':'any';quantity.type='number';quantity.placeholder=whole?'1':'Enter quantity';};unit.addEventListener('change',updateUnit);updateUnit();
         }
         (selectedProjectMaterial&&/^(Plywood|OSB & Sheathing)$/i.test(name)?[]:itemOptionFields(name))
-          .filter(({label:title})=>!(title==='Location'&&initialParams.get('work')==='floor'&&/tile|stone/i.test(name)&&!addingTileElsewhere))
+          .filter(({label:title})=>!(title==='Location'&&/tile|stone/i.test(name)&&(initialParams.get('work')==='floor'||addingTileElsewhere)))
           .forEach(({label:title,values},optionIndex)=>{
           const wrap=document.createElement('div');wrap.className='field';
           if(title==='Color change'){const label=document.createElement('label'),box=document.createElement('input');box.type='checkbox';box.id='product-'+index+'-option-'+optionIndex;box.dataset.itemOption=title;box.value='Yes';label.append(box,document.createTextNode(' Color change'));wrap.append(label);settings.append(wrap);return;}
