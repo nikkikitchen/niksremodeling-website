@@ -495,7 +495,7 @@ function serviceEstimateSummary(items){
 
 function installationSupplies(item){
  const labor=Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[];
- if(!labor.some(x=>x.service==='Installation')||item.paintPackage||item.stoneMaterialPackage)return [];
+ if(item.customerProvidesMaterials||!labor.some(x=>x.service==='Installation')||item.paintPackage||item.stoneMaterialPackage)return [];
  return item.supplyChoices?.length?item.supplyChoices:(item.products||[]).flatMap(p=>(p.supplies||window.materialSupplyList(p.name)||[]).map(name=>({name,quantity:null,unit:'quantity to confirm'})));
 }
 
