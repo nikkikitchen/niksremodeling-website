@@ -219,6 +219,7 @@
       });
       syncMaterialChoice();
       syncPaintOptions();
+      if(measuredCeiling())materialDetails.hidden=true;
     }
     function syncPaintOptions(){const supplying=!!panel.querySelector('[name="project-option"][value="Materials"]:checked')&&!document.getElementById('customer-provides-materials')?.checked;panel.querySelectorAll('.area-product').forEach(row=>{const name=row.querySelector('[name="area-product"]')?.value||'';if(!/paint|stain|sealer|finish/i.test(name))return;const finish=row.querySelector('[data-item-option="Finish"]');if(finish){finish.disabled=!supplying;finish.closest('.field').hidden=!supplying;}});}
     document.addEventListener('change',syncPaintOptions);
@@ -250,6 +251,13 @@
       if(known||!type||service)document.querySelectorAll('.material-fields').forEach(el=>el.hidden=true);
       floorField.hidden=type!=='flooring'||(initialParams.get('work')==='floor'&&!!initialParams.get('materials'));
       if(type==='refinish'){document.querySelectorAll('.material-fields').forEach(el=>el.hidden=el!==cabinetFields);}
+      ceilingDimensions.hidden=!measuredCeiling();
+      if(measuredCeiling()){
+        materialDetails.hidden=true;questionBox.hidden=true;workServices.hidden=true;
+        document.querySelectorAll('.material-fields').forEach(el=>el.hidden=true);
+        document.getElementById('material-type').closest('.field').hidden=true;
+        if(initialParams.get('room'))document.getElementById('material-name').closest('.field').hidden=true;
+      }
       CABINET_WORK_OPTIONS.filter(x=>x.fields.length).forEach(option=>{document.getElementById('cabinet-'+option.key+'-details').hidden=!document.getElementById('cabinet-'+option.key).checked});
     }
     const questionBox = document.createElement('section');
@@ -267,6 +275,25 @@
     const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select one';types.prepend(placeholder);
     [['bathroom','Bathroom Work'],['prep','Prep / Repairs'],['refinish','Cabinet / Vanity Refinishing'],['misc','Miscellaneous Labor'],['debris','Debris Removal'],['delivery','Delivery']].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;types.append(option)});
     const initialParams=new URLSearchParams(location.search);
+    const ceilingTasks=(initialParams.get('projectTasks')||initialParams.get('materials')||'').split('|').filter(Boolean);
+    const measuredCeiling=()=>new URLSearchParams(location.search).get('work')==='ceiling'&&ceilingTasks.length>0&&ceilingTasks.every(task=>['Install / replace ceiling drywall','Finish ceiling drywall (tape / mud / sand)','Prime ceiling','Paint ceiling'].includes(task));
+    const ceilingDimensions=document.createElement('section');
+    ceilingDimensions.className='field';ceilingDimensions.hidden=!measuredCeiling();
+    ceilingDimensions.innerHTML='<h3>Ceiling measurements</h3><div class="calc-fields"><div class="field"><label for="ceiling-job-length">Ceiling length (ft)</label><input id="ceiling-job-length" type="number" min="1" step="1"></div><div class="field"><label for="ceiling-job-width">Ceiling width (ft)</label><input id="ceiling-job-width" type="number" min="1" step="1"></div></div><p class="calc-note">We calculate the sheets and gallons. Estimates use 4 × 8 drywall sheets with 15% extra, one primer coat at 300 sq. ft. per gallon, and two paint coats at 350 sq. ft. per gallon. Actual coverage depends on the product and surface.</p><p id="ceiling-quantity-preview" role="status"></p>';
+    materialDetails.before(ceilingDimensions);
+    for(const dimension of ['length','width'])document.getElementById('ceiling-job-'+dimension).value=initialParams.get(dimension)||'';
+    function ceilingPlan(){
+      const length=Number(document.getElementById('ceiling-job-length').value),width=Number(document.getElementById('ceiling-job-width').value);
+      if(!Number.isFinite(length)||!Number.isFinite(width)||length<=0||width<=0||!Number.isInteger(length)||!Number.isInteger(width))throw Error('Enter ceiling length and width in whole feet.');
+      const area=length*width;
+      const products=[];
+      if(ceilingTasks.includes('Install / replace ceiling drywall'))products.push({name:'Drywall',quantity:Math.ceil(area*1.15/32),unit:'sheets',area,detail:'4 × 8 sheets; 15% extra allowance.'});
+      if(ceilingTasks.includes('Prime ceiling'))products.push({name:'Primer',quantity:Math.ceil(area/300),unit:'gallons',area,detail:'One coat; 300 sq. ft. per gallon.'});
+      if(ceilingTasks.includes('Paint ceiling'))products.push({name:'Paint',quantity:Math.ceil(area*2/350),unit:'gallons',area,detail:'Two coats; 350 sq. ft. per gallon.'});
+      return {area,length,width,products};
+    }
+    ceilingDimensions.addEventListener('input',()=>{try{const p=ceilingPlan();document.getElementById('ceiling-quantity-preview').textContent=p.area+' sq. ft. — '+p.products.map(x=>x.name+': '+x.quantity+' '+x.unit).join(' · ');}catch{document.getElementById('ceiling-quantity-preview').textContent='Enter both measurements to see estimated quantities.'}});
+
     if(!initialParams.has('material')&&!initialParams.has('product'))types.value='';
     else if(['bathroom','prep','misc','delivery','debris','refinish','custom','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
@@ -430,22 +457,22 @@
     const originalRender=window.renderMaterialEstimates;
     window.calcMaterial=function() {
       if(types.value==='misc'){renderCustomQuotePage('Miscellaneous work');return;}
-      if(customSelection()){const error=document.getElementById("mat-error");error.hidden=false;error.textContent="In-person quote required before pricing custom work.";showCustomQuote();return;}
+      if(!measuredCeiling()&&customSelection()){const error=document.getElementById("mat-error");error.hidden=false;error.textContent="In-person quote required before pricing custom work.";showCustomQuote();return;}
       const error=document.getElementById('mat-error');error.hidden=true;
       if(!projectLocation.value||!types.value){error.hidden=false;error.textContent='Select Interior or Exterior and the work to add.';return;}
       if(!document.getElementById('material-name').value.trim()){error.hidden=false;error.textContent='Name the room or area first.';return;}
       for(const id of roundedMeasurements){const input=document.getElementById(id);if(input&&input.value.trim()&&!Number.isInteger(Number(input.value))&&!input.closest('[hidden]')){error.hidden=false;error.textContent='Round measurements to the nearest whole unit shown.';window.highlightMissingField(input);return;}}
       const answers={location:projectLocation.value==='exterior'?'outside':'inside'};
-      if(panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
+      if(!measuredCeiling()&&panel.querySelector('[name="project-option"][value="Materials"]').checked && quantityMethod.value !== 'known') {
         for(const input of questionBox.querySelectorAll('select')) {
           if(!input.value){error.hidden=false;error.textContent='Answer the quick questions, or choose “Not sure.”';window.highlightMissingField(input);return;}
           answers[input.dataset.question]=input.value;
         }
       }
       let productPlans=[];
-      try{selectedDeliveryTypes();productPlans=types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
+      try{selectedDeliveryTypes();productPlans=measuredCeiling()||types.value==='refinish'?[]:readAreaProducts();}catch(e){error.hidden=false;error.textContent=e.message;return;}
       const itemSelections={},selectionDetails={};
-      for(const row of document.querySelectorAll('.area-product')){
+      for(const row of measuredCeiling()?[]:document.querySelectorAll('.area-product')){
         const box=row.querySelector('[name="area-product"]');if(!box.checked)continue;
         const choices=[...row.querySelectorAll('[data-item-option]')].filter(input=>!input.disabled&&input.type!=='checkbox');
         const missing=choices.find(input=>!input.value);
@@ -461,7 +488,14 @@
         }
       }
       const form=snapshot(), last=materialEstimates[materialEstimates.length-1], sourceQuery=location.search;
-      if(types.value==='bathroom'){
+      if(measuredCeiling()){
+        try{
+          const plan=ceilingPlan();
+          const rates={'Install / replace ceiling drywall':'hang','Finish ceiling drywall (tape / mud / sand)':'finish','Prime ceiling':'prime','Paint ceiling':'paint2'};
+          const labor=ceilingTasks.map(task=>({service:'Installation',scope:task,quantity:1,unit:'scope',price:roomLaborQuote(0,rates[task],plan.area).amount,fixedPackage:true}));
+          materialEstimates.push({type:'ceiling',title:'Ceiling work',result:plan.products.map(x=>x.name+': '+x.quantity+' '+x.unit).join(' · '),detail:plan.area+' sq. ft. ceiling',measurements:{area:plan.area,length:plan.length,width:plan.width},products:plan.products,labor,projectTasks:ceilingTasks.slice(),projectOptions:selectedProjectOptions(),deliveryTypes:selectedDeliveryTypes()});
+        }catch(e){error.hidden=false;error.textContent=e.message;return;}
+      }else if(types.value==='bathroom'){
         if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
         const own=!!document.getElementById('customer-provides-materials')?.checked;
         const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:p.quoteRequired?null:window.bathroomPackageTotal(p,own)*x.quantity,flatService:!!p.flatService,quoteRequired:!!p.quoteRequired,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture}}});
@@ -531,7 +565,7 @@
       }
       const paintProducts=(item.products||[]).filter(p=>/^(Interior Paint|Exterior Paint|Paint)$/.test(p.name));
       for(const product of paintProducts){product.price=product.quantity*50;product.includesSupplies=true;product.detail+=' Paint: $50 per gallon, supplies included.';}
-      if(paintProducts.length && paintProducts.length===item.products.length){item.paintPackage={...(item.paintPackage||{}),perGallon:50,includesSupplies:true};item.supplyChoices=[];item.suggestedSupplies=[];}
+      if(!item.customerProvidesMaterials && paintProducts.length && paintProducts.length===item.products.length){item.paintPackage={...(item.paintPackage||{}),perGallon:50,includesSupplies:true};item.supplyChoices=[];item.suggestedSupplies=[];}
       if(sourceParams.get('project')==='accents'&&sourceParams.get('work')==='accent-stone')for(const product of item.products||[]){if(['Stacked Stone','Natural Stone Veneer'].includes(product.name)&&['Square feet','sq. ft.'].includes(product.unit)){product.unitPrice=59.34;product.price=Math.round(product.quantity*5934)/100;product.includesSupplies=true;product.detail+=' Stone and installation supplies: $59.34 per sq. ft.';}}
       if(item.products?.length&&item.products.every(p=>p.includesSupplies)&&!item.customerProvidesMaterials){item.stoneMaterialPackage=true;item.supplyChoices=[];item.suggestedSupplies=[];}
       if(oldIndex>=0&&oldIndex<materialEstimates.length-1){materialEstimates.pop();materialEstimates[oldIndex]=item;}
