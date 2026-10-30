@@ -165,7 +165,7 @@
   ];
   options.ceiling=work('Ceiling','custom',ceilingWorkGroups.flatMap(([,tasks])=>tasks));
   options.ceiling.groups=ceilingWorkGroups;
-  options.walls.materials=['Interior Paint','Exterior Paint','Wallpaper','Wall Panels','Specialty Coatings'];
+  options.walls.materials=['Drywall Panels','Interior Paint','Exterior Paint','Primer','Wallpaper','Wall Panels','Specialty Coatings'];
   // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
   // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
@@ -766,7 +766,7 @@
           const subheading=document.createElement('h3');subheading.className='ceiling-work-heading';
           subheading.textContent=group;subheading.style.cssText='font-size:1rem;margin:18px 0 8px';
           card.append(subheading);
-        }if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode(id==='accents'&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));card.append(label)});
+        }if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode((id==='accents'||key==='walls')&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));card.append(label)});
       card.querySelectorAll('.finish-preparation input[type="checkbox"]').forEach(box=>{box.checked=!!draft.preparation?.[key]?.includes(box.value);box.addEventListener('change',saveDraft);});
       if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
       const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
