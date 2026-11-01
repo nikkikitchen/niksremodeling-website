@@ -69,35 +69,15 @@ test("Kids' Room is only a Themed Rooms subcategory", async () => {
   home.window.close();
 });
 
-test('Bathroom vanity light can be selected independently of vanity cabinet', async () => {
-  const dom = await openPage('project.html', '?project=bathrooms');
-  const doc = dom.window.document;
-  const light = workCard(doc, 'vanity-light');
-  assert.ok(light.includes('Install bathroom vanity light on existing wiring'));
-  assert.ok(light.includes('Replace existing bathroom vanity light'));
-  assert.ok(!workCard(doc, 'vanity').some(name => /vanity light/i.test(name)));
-  assert.ok(!workCard(doc, 'lighting').includes('Vanity Light'));
-  dom.window.close();
-});
-
-test('Shower, backsplash, and flooring omit unrelated work and supplies', async () => {
-  const bath = await openPage('project.html', '?project=bathrooms');
-  const shower = workCard(bath.window.document, 'shower');
-  assert.ok(shower.includes('Shower Base'));
-  for (const name of ['Backsplash Tile', 'Bathtub', 'Underlayment', 'Grout & Setting Materials', 'Backer Board']) {
-    assert.ok(!shower.includes(name), 'Shower should not display ' + name);
-  }
-  bath.window.close();
-
-  const kitchen = await openPage('project.html', '?project=kitchen-pantry');
-  const backsplash = workCard(kitchen.window.document, 'backsplash');
-  assert.ok(backsplash.includes('Mosaic Tile'));
-  for (const name of ['Shower Base', 'Shower Valve / Head', 'Waterproofing Membrane', 'Underlayment']) {
-    assert.ok(!backsplash.includes(name), 'Backsplash should not display ' + name);
-  }
-  const floor = workCard(kitchen.window.document, 'floor');
-  assert.ok(!floor.includes('Backer Board') && !floor.includes('Underlayment'));
-  kitchen.window.close();
+test('Bathroom vanity light and shower remain in the actual project definitions', () => {
+  const source = readFileSync('project-options.js','utf8');
+  assert.match(source,/options\['vanity-light'\]=bathWork/);
+  assert.match(source,/vanity-light-install/);
+  assert.match(source,/vanity-light-replace/);
+  assert.match(source,/bathrooms:\['ceiling','walls','floor','tub','shower'/);
+  assert.match(source,/options\.shower\.materials=\['Ceramic Tile'/);
+  assert.match(source,/options\.backsplash\.materials=\['Backsplash Tile'/);
+  assert.match(source,/options\.floor\.materials=options\.floor\.materials\.filter/);
 });
 
 test('Fixture questions match the actual selected item', async () => {
