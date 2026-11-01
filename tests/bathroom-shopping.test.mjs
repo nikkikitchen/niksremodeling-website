@@ -12,8 +12,8 @@ const scope={document:{
  createElement(tag){return {tagName:tag.toUpperCase(),textContent:''};},
  head:{append(){}}
 },Intl};
-runInNewContext(src+'\nglobalThis.audit={match:bathroomMatch,verified:bathVerified,types:bathroomTypes.map(([id])=>id)};',scope);
-const {match,verified,types}=scope.audit;
+runInNewContext(src+'\nglobalThis.audit={match:bathroomMatch,verified:bathVerified,types:bathroomTypes.map(([id])=>id),toiletMatchesModel};',scope);
+const {match,verified,types,toiletMatchesModel}=scope.audit;
 
 test('bathroom storefront includes major fixture families',()=>{
  for(const key of ['toilets','bathtubs','vanities','showers','showerBases','showerDoors','faucets','lighting','ventilation','accessories'])
@@ -78,9 +78,9 @@ test('stand-up shower installation and removal are separate unpriced quotes',()=
  }
 });
 
-test('Toilets opens one catalog directly, including old style-filter links',async()=>{
+test('Shopping Toilets opens one simple choice page, with repair parts inside it',async()=>{
  const {JSDOM}=await import('jsdom');
- for(const path of ['/bathroom.html?type=toilets','/bathroom.html?type=toilets&model=round']){
+ async function open(path){
   const dom=new JSDOM('<!doctype html><html><head></head><body></body></html>',{url:'https://niksremodeling.com'+path,runScripts:'outside-only'});
   const w=dom.window;
   w.header=()=>'<header></header>';w.footer=()=>'<footer></footer>';
@@ -88,13 +88,36 @@ test('Toilets opens one catalog directly, including old style-filter links',asyn
   w.fetch=async()=>({ok:true,json:async()=>({items:{},products:[],totalPages:1})});
   w.__bathroom={bathroomCatalog};
   w.eval(src.replace("import('/bathroom-catalog.js')","Promise.resolve(window.__bathroom)"));
-  await new Promise(resolve=>setTimeout(resolve,70));
-  assert.ok(w.document.querySelector('#bath-products'),path+' should show the product grid');
-  assert.equal(w.document.querySelector('.toilet-choice-grid'),null,'No extra toilet style screen');
-  assert.equal(w.document.querySelectorAll('.toilet-choice-tile').length,0);
-  assert.equal(w.document.querySelector('h1')?.textContent,'Toilets');
-  dom.window.close();
+  await new Promise(resolve=>setTimeout(resolve,75));
+  return dom;
  }
+ const landing=await open('/bathroom.html?type=toilets');
+ try{
+  assert.equal(landing.window.document.querySelector('h1')?.textContent,'Toilets');
+  assert.equal(landing.window.document.querySelector('#bath-products'),null,'Choose type before fetching toilet products');
+  const tiles=[...landing.window.document.querySelectorAll('.toilet-choice-tile')];
+  assert.deepEqual(tiles.map(x=>x.textContent),['All Toilets','Elongated Toilets','Round Toilets','Smart Toilets','Toilet Repair Parts','Wall-Mounted Toilets']);
+  assert.match(tiles.find(x=>x.textContent==='Round Toilets').href,/type=toilets&model=round$/);
+  assert.match(tiles.find(x=>x.textContent==='Toilet Repair Parts').href,/shop-installed\.html\?item=bathroom-toilet-tank-repair-parts$/);
+ }finally{landing.window.close();}
+ for(const kind of ['all','elongated','round','smart','specialty']){
+  const dom=await open('/bathroom.html?type=toilets&model='+kind);
+  try{
+   assert.ok(dom.window.document.querySelector('#bath-products'),kind+' must lead to a product grid');
+   assert.equal(dom.window.document.querySelector('.toilet-choice-grid'),null,'No repeated chooser in selected type');
+   assert.ok(dom.window.document.querySelector('a[href="/bathroom.html?type=toilets"]'),'Back to types');
+  }finally{dom.window.close();}
+ }
+});
+
+test('toilet type choices filter real models without presenting accessories as whole toilets',()=>{
+ assert.equal(toiletMatchesModel('Round Front Two Piece Toilet','round'),true);
+ assert.equal(toiletMatchesModel('Round Front Two Piece Toilet','elongated'),false);
+ assert.equal(toiletMatchesModel('Elongated Dual Flush Ceramic Toilet','elongated'),true);
+ assert.equal(toiletMatchesModel('Smart Toilet Bidet Combo with Heated Seat','smart'),true);
+ assert.equal(toiletMatchesModel('Wall Mounted Ceramic Toilet','specialty'),true);
+ assert.equal(toiletMatchesModel('Toilet Tank Cleaner','all'),true,'All style filter never replaces the full toilet matching check');
+ assert.equal(match('Toilet Tank Cleaner','toilets'),false);
 });
 
 test('featured smart toilet is displayed only with live verified U.S. stock and a price',async()=>{
