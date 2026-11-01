@@ -725,6 +725,9 @@ function initCartShippingQuote(items){
   if(!form.reportValidity())return;
   const mine=++requestId;
   const zip=input.value.trim();
+  // Invalidate the previous quote before retrying the same ZIP, too.
+  total.textContent=initialTotal;
+  form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
   shipping.textContent='Checking shipping…';
   status.textContent='Verifying U.S. warehouse stock and freight for your cart…';
   button.disabled=true;
