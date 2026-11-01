@@ -78,6 +78,25 @@ test('stand-up shower installation and removal are separate unpriced quotes',()=
  }
 });
 
+test('Toilets opens one catalog directly, including old style-filter links',async()=>{
+ const {JSDOM}=await import('jsdom');
+ for(const path of ['/bathroom.html?type=toilets','/bathroom.html?type=toilets&model=round']){
+  const dom=new JSDOM('<!doctype html><html><head></head><body></body></html>',{url:'https://niksremodeling.com'+path,runScripts:'outside-only'});
+  const w=dom.window;
+  w.header=()=>'<header></header>';w.footer=()=>'<footer></footer>';
+  w.updateCartCount=()=>{};w.initNavMenus=()=>{};
+  w.fetch=async()=>({ok:true,json:async()=>({items:{},products:[],totalPages:1})});
+  w.__bathroom={bathroomCatalog};
+  w.eval(src.replace("import('/bathroom-catalog.js')","Promise.resolve(window.__bathroom)"));
+  await new Promise(resolve=>setTimeout(resolve,70));
+  assert.ok(w.document.querySelector('#bath-products'),path+' should show the product grid');
+  assert.equal(w.document.querySelector('.toilet-choice-grid'),null,'No extra toilet style screen');
+  assert.equal(w.document.querySelectorAll('.toilet-choice-tile').length,0);
+  assert.equal(w.document.querySelector('h1')?.textContent,'Toilets');
+  dom.window.close();
+ }
+});
+
 test('featured smart toilet is displayed only with live verified U.S. stock and a price',async()=>{
  const {JSDOM}=await import('jsdom');
  async function open(stock){
