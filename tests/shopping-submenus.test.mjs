@@ -20,7 +20,7 @@ async function open(hover=false){
  await new Promise(r=>setTimeout(r,40));return dom;
 }
 
-test('all Shopping departments have matching, alphabetical submenus with stock markers',async()=>{
+test('all Shopping departments have matching alphabetical submenus without red dots',async()=>{
  const dom=await open();
  try{
   for(const id of ['shopping-menu','mobile-shopping-menu']){
@@ -42,7 +42,9 @@ test('all Shopping departments have matching, alphabetical submenus with stock m
     assert.equal(new Set(entries.map(a=>a.href)).size,entries.length);
     assert.deepEqual(entries.map(a=>a.textContent),entries.map(a=>a.textContent).sort((a,b)=>a.localeCompare(b)));
    }
-   assert.equal(menu.lastElementChild.textContent,'Red dot = No items listed yet.');
+   assert.equal(menu.querySelectorAll('.shopping-availability-note,.shopping-tile-legend,.shopping-empty,.shopping-tile-empty').length,0,'The menu should have no red-dot indicators or legends');
+   assert.equal([...menu.querySelectorAll('[title]')].some(el=>el.title==='No items listed yet'),false);
+   assert.equal([...menu.querySelectorAll('[aria-label]')].some(el=>el.getAttribute('aria-label')?.includes('no items listed yet')),false);
    const walls=menu.querySelector('#'+id+'--shop-installed-flooring-walls-finishes');
    assert.ok(walls,'Flooring, Walls & Finishes dropdown missing');
    assert.ok([...walls.querySelectorAll('a')].some(a=>a.textContent==='Tile'),'Shopping should say Tile');
