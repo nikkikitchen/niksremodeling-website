@@ -1,3 +1,4 @@
+import {quoteDetailedFreight} from '../_lib/detailed-freight.mjs';
 import {selectConfirmedFreight, UNCONFIRMED_SHIPPING_MESSAGE} from '../_lib/verified-freight.mjs';
 import {cj,PRODUCT_ID,retailCents,square,usCjWarehouseUnits} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
@@ -16,7 +17,8 @@ export async function onRequestGet({request,env}){
  const stock=usCjWarehouseUnits(inv);
  if(stock<1)throw new Error('No confirmed U.S. warehouse stock for this option');
  const rates=await cj(env,'/logistic/freightCalculate',{startCountryCode:'US',endCountryCode:'US',zip,products:[{vid:v.vid,quantity:1}]});
- const confirmed=selectConfirmedFreight(rates);
+ const confirmed=selectConfirmedFreight(rates)
+   || await quoteDetailedFreight(env,[{product:p,variant:v,quantity:1}],zip);
  if(!confirmed)throw new Error(UNCONFIRMED_SHIPPING_MESSAGE);
  const {rate,freight:shipping}=confirmed;
  const total=retailCents(Number(v.variantSellPrice)+shipping);
