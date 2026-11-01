@@ -38,7 +38,7 @@ function freightFromDetailedRows(rows) {
   return quotes[0] || null;
 }
 
-export async function quoteDetailedFreight(env, lines, zip) {
+export async function quoteDetailedFreight(env, lines, zip, cjRequest = cj) {
   if (!/^\d{5}$/.test(String(zip)) || !Array.isArray(lines) || !lines.length) return null;
   const skuList = [], freightTrialSkuList = [];
   const prop = new Set();
@@ -80,7 +80,7 @@ export async function quoteDetailedFreight(env, lines, zip) {
     }]
   };
   try {
-    const rates=await cj(env,'/logistic/freightCalculateTip',body);
+    const rates=await cjRequest(env,'/logistic/freightCalculateTip',body);
     return freightFromDetailedRows(rates);
   } catch {
     // Fallback failure is not "free shipping": leave payment blocked.
