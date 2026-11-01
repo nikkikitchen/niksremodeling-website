@@ -360,6 +360,19 @@
     other:{interior:['other-interior','prep'],exterior:['other-exterior','prep']}
   };
   Object.entries(locationScopes).forEach(([project,places])=>{scopes[project]=[...new Set([...places.interior,...places.exterior])];});
+  // Every standard indoor room shares the same surface-work entry points.
+  // Keep specialty and outdoor projects scoped to the relevant work only.
+  const standardIndoorRooms=[
+    'bedroom-guest-room','closets-storage','dining-room','entry-mudroom',
+    'home-office','kitchen-pantry','laundry-utility','living-family-room',
+    'music-creative-studio','custom-room-ideas'
+  ];
+  standardIndoorRooms.forEach(roomId=>{
+    if(!scopes[roomId])return;
+    const core=['ceiling','walls','floor'];
+    const existing=scopes[roomId].filter(key=>!core.includes(key)&&key!=='other');
+    scopes[roomId]=[...core,...existing,...(scopes[roomId].includes('other')?['other']:[])];
+  });
   // Only bathrooms offer a vanity-faucet replacement. Adding that service to
   // every project containing plumbing incorrectly polluted pet and outdoor kitchens.
   if(!scopes.bathrooms.includes('faucet-service'))scopes.bathrooms.push('faucet-service');
