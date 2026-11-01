@@ -1,3 +1,4 @@
+import {selectConfirmedFreight, UNCONFIRMED_SHIPPING_MESSAGE} from '../_lib/verified-freight.mjs';
 import {cj, retailCents, usCjWarehouseUnits} from '../_lib/commerce.js';
 
 // Quote freight for the exact cart quantities, using verified CJ U.S. stock.
@@ -50,17 +51,12 @@ export async function onRequestPost({request, env}) {
     const rates = await cj(env, '/logistic/freightCalculate', {
       startCountryCode:'US', endCountryCode:'US', zip, products:freightProducts
     });
-    const options = (Array.isArray(rates) ? rates : []).map(rate => ({
-      ...rate,
-      freight: Number(rate.totalPostageFee ??
-        (Number(rate.logisticPrice) + Number(rate.taxesFee || 0) + Number(rate.clearanceOperationFee || 0)))
-    })).filter(rate => Number.isFinite(rate.freight) && rate.freight >= 0);
-    if (!options.length) throw Error('Delivery is not currently available for this ZIP code.');
-    options.sort((a,b) => a.freight - b.freight);
-    const best = options[0];
+    const confirmed = selectConfirmedFreight(rates);
+    if (!confirmed) throw Error(UNCONFIRMED_SHIPPING_MESSAGE);
+    const {rate:best, freight} = confirmed;
     // Match the existing store quote policy: merchandise and freight are
     // retail-priced consistently, and the customer covers supplier freight.
-    const deliveryCents = best.freight === 0 ? 0 : retailCents(best.freight);
+    const deliveryCents = retailCents(freight);
     return Response.json({
       zip, deliveryCents, units, productLines:lines.length,
       shippingMethod: best.logisticName || null,
