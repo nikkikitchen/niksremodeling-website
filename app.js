@@ -663,6 +663,11 @@ function cartCheckoutSummary(items){
  const payableSubtotal=amount+standaloneSupplies+laborCatalogTotal;
  // Package supplies are already contained in their package price; do not add again.
  const combinedEstimatedTotal=payableSubtotal+(estimatedLabor.hasServices?estimatedLabor.total:0);
+ // Only separately priced retail merchandise is included in the provisional
+ // goods tax base. Labor and project estimates are not treated as retail sales.
+ const retailGoodsCents=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&
+   Number.isFinite(Number(x.price))&&Number(x.price)>0&&!x.pricingPending)
+  .reduce((sum,x)=>sum+Math.round(Number(x.price)*100)*(Number(x.qty)||1),0);
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
@@ -674,10 +679,12 @@ function cartCheckoutSummary(items){
  <div class="cart-item"><span>Delivery, shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
  ${shippingChecker}
  ${remainingShippingPending?'<p class="calc-note">Shipping for any remaining products will be confirmed separately.</p>':''}
- <div class="cart-item"><span>Sales tax on retail items</span><strong>Awaiting address and tax-account verification</strong></div>
- <p class="calc-note">No sales tax has been added to this estimate. Retail product tax is confirmed separately from installation labor and only collected when applicable registration and the final delivery-address calculation are verified.</p>
+ <div class="cart-item"><span>Estimated sales tax on retail items</span><strong id="cart-tax-amount">${retailGoodsCents?'Awaiting verified lookup':'No retail merchandise'}</strong></div>
+ <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Sales tax is a preview only. We confirm tax obligations and the delivery address before collecting payment. Labor is excluded from this merchandise tax estimate.</p>
+ ${retailGoodsCents&&supplierShippingItems.length?'<details id="cart-tax-address-details" style="margin:10px 0"><summary>Refine tax estimate with delivery address (optional)</summary><div style="display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0"><label>Street address<br><input id="cart-tax-street" autocomplete="shipping street-address" maxlength="150"></label><label>City<br><input id="cart-tax-city" autocomplete="shipping address-level2" maxlength="80"></label><label>State (2 letters)<br><input id="cart-tax-state" autocomplete="shipping address-level1" maxlength="2" placeholder="AL"></label><button class="btn outline" type="button" id="cart-tax-refine">Update tax estimate</button></div><p class="calc-note">Uses the delivery ZIP above. No payment is taken.</p></details>':''}
+
  <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
- <div class="cart-item"><span><strong>Estimated combined project total (before tax)</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?" + shipping pending":unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?" + pending charges":""}</strong></div>
+ <div class="cart-item"><span><strong>Estimated combined project total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
  <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
  </section>`;
 }
@@ -711,6 +718,7 @@ function initCartShippingQuote(items){
   shipping.textContent='Enter ZIP to check';
   total.textContent=initialTotal;
   status.textContent='Enter your ZIP code to see estimated supplier shipping before payment.';
+  form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
  });
  form.addEventListener('submit',async event=>{
   event.preventDefault();
@@ -734,6 +742,9 @@ function initCartShippingQuote(items){
    status.textContent='Estimated supplier delivery to ZIP '+zip+' for '+result.units+' item(s)'+
     (result.shippingMethod?' via '+result.shippingMethod:'')+'. Shipping is included in the estimated total above; sales tax and any other delivery charges are not yet included.';
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
+   form.dispatchEvent(new form.ownerDocument.defaultView.CustomEvent('nr:shipping-quoted',{
+    detail:{zip,deliveryCents:result.deliveryCents}
+   }));
   }catch(error){
    if(mine!==requestId)return;
    shipping.textContent='Shipping needs confirmation';
@@ -743,7 +754,75 @@ function initCartShippingQuote(items){
  });
  if(/^\d{5}$/.test(input.value))form.requestSubmit();
 }
-function renderCart(){const c=reconcileBathroomFixtureAllowances(getCart());document.title='Review Cart | Nik\'s Remodeling';document.body.innerHTML=header()+`<main><section class="section"><div class="wrap"><h2>Review Your Cart</h2><p class="lead">Review your estimate or keep shopping.</p><p class="calc-note">Materials and labor are separate choices. When you choose installation, any needed supplies are included in the installation estimate and charged only once. Materials-only orders do not automatically include installation supplies.</p>${c.some(x=>x.fixtureAllowanceReplaced)?'<p class="calc-note">Your selected toilet price replaces the matching standard fixture allowance. Labor and required supplies stay unchanged. Delivery and tax are confirmed with your quote.</p>':''}<div class="panel"><div class="cart-list">${c.length?c.map((x,i)=>x.hiddenFromCustomer?'':`<div class="cart-item"><div><strong>${escapeCartText(x.name)}</strong><div>${escapeCartText(x.type||'Project')} item · Qty ${x.qty||1}</div></div><div class="cart-current">${cartPriceMarkup(x)}</div><button class="btn outline" onclick="removeCart(${i})">${x.source==='project-calculator'?'Remove project':'Remove'}</button></div>`).join(''):'<div class="empty">Your project cart is empty. Browse products and add items when you are ready.</div>'}</div>${c.some(x=>x.source==='bathroom-retail')?'<div class="btns"><a class="btn outline" href="/project.html?project=bathrooms'+(c.find(x=>x.source==='bathroom-retail'&&x.workKey)?.workKey?'&work='+encodeURIComponent(c.find(x=>x.source==='bathroom-retail'&&x.workKey).workKey):'')+'">Continue Bathroom Project / Add Labor</a></div>':''}${projectEstimateMarkup(c)}${c.length?`${cartShoppingChoices(c)}${cartCheckoutSummary(c)}<div class="result">Your project estimate combines priced work and required installation costs. Labor is not payable here; any incomplete pricing must be confirmed before payment.</div>${cartSchedulingMarkup(c)}<div class="btns"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a><a class="btn outline" href="/">Keep Shopping</a></div>`:''}</div>${c.length?cartSuggestionMarkup(c):''}</div></section></main>`+projectFlow('cart')+footer();updateCartCount();initCartShippingQuote(c)}
+
+function initCartTaxPreview(){
+ const form=document.getElementById('cart-shipping-form');
+ const tax=document.getElementById('cart-tax-amount');
+ const info=document.getElementById('cart-tax-status');
+ const total=document.getElementById('cart-estimated-total');
+ if(!form||!tax||!info||!total)return;
+ const retailCents=Number(total.dataset.retailCents);
+ if(!Number.isSafeInteger(retailCents)||retailCents<=0)return;
+ const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
+ const baseCents=Number(total.dataset.baseCents);
+ const otherPending=total.dataset.pending==='true'?' + pending charges':'';
+ const street=document.getElementById('cart-tax-street');
+ const city=document.getElementById('cart-tax-city');
+ const state=document.getElementById('cart-tax-state');
+ const refine=document.getElementById('cart-tax-refine');
+ let version=0,shippingCents=null,verifiedZip='';
+ function showPending(message){
+  tax.textContent='Awaiting verified calculation';
+  info.textContent=message||'Tax has not been included. Rates and collection requirements will be confirmed before payment.';
+  if(shippingCents!==null)
+   total.textContent=money(baseCents+shippingCents)+' + tax pending'+otherPending;
+ }
+ async function lookup(){
+  if(shippingCents===null||!/^\\d{5}$/.test(verifiedZip)){
+   showPending('Check shipping with your delivery ZIP first.');return;
+  }
+  const a=street?.value.trim()||'',c=city?.value.trim()||'',st=state?.value.trim().toUpperCase()||'';
+  if((a||c||st)&&(!a||!c||!/^\\w{2}$/.test(st))){
+   showPending('To refine the rate, enter the street, city, and two-letter state together.');return;
+  }
+  const mine=++version;
+  tax.textContent='Checking estimated tax…';
+  info.textContent='Checking the destination-based merchandise tax estimate. Payment remains disabled.';
+  try{
+   const response=await fetch('/api/cart-tax',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({zip:verifiedZip,merchandiseCents:retailCents,shippingCents,
+      ...(a?{address:a,city:c,state:st}:{})}),cache:'no-store'});
+   const result=await response.json();
+   if(mine!==version)return;
+   if(!response.ok||!result.estimateOnly||!Number.isSafeInteger(result.taxCents)||
+      result.taxCents<0||!['zip-upper-estimate','address-estimate'].includes(result.mode))
+    throw Error(result.error||'A verified tax estimate is not available.');
+   tax.textContent=money(result.taxCents)+' (estimate)';
+   total.textContent=money(baseCents+shippingCents+result.taxCents)+otherPending;
+   info.textContent=(result.mode==='zip-upper-estimate'
+    ?'Using the highest verified sales-tax rate within the ZIP. Full address may lower it. '
+    :'Using the verified delivery-address tax rate. ')+
+    'This is a preview only; tax registration, product taxability, and final collection still require confirmation.';
+  }catch(error){
+   if(mine!==version)return;
+   showPending((error?.message||'Verified sales-tax lookup unavailable.')+
+    ' No guessed tax was added to the total.');
+  }
+ }
+ form.addEventListener('nr:shipping-cleared',()=>{
+  version++;shippingCents=null;verifiedZip='';
+  tax.textContent='Awaiting delivery ZIP';
+  info.textContent='Enter your ZIP and check shipping to see a sales-tax estimate.';
+ });
+ form.addEventListener('nr:shipping-quoted',event=>{
+  version++;shippingCents=event.detail.deliveryCents;verifiedZip=event.detail.zip;
+  showPending('Shipping is verified. Checking estimated sales tax.');
+  lookup();
+ });
+ refine?.addEventListener('click',lookup);
+}
+function renderCart(){const c=reconcileBathroomFixtureAllowances(getCart());document.title='Review Cart | Nik\'s Remodeling';document.body.innerHTML=header()+`<main><section class="section"><div class="wrap"><h2>Review Your Cart</h2><p class="lead">Review your estimate or keep shopping.</p><p class="calc-note">Materials and labor are separate choices. When you choose installation, any needed supplies are included in the installation estimate and charged only once. Materials-only orders do not automatically include installation supplies.</p>${c.some(x=>x.fixtureAllowanceReplaced)?'<p class="calc-note">Your selected toilet price replaces the matching standard fixture allowance. Labor and required supplies stay unchanged. Delivery and tax are confirmed with your quote.</p>':''}<div class="panel"><div class="cart-list">${c.length?c.map((x,i)=>x.hiddenFromCustomer?'':`<div class="cart-item"><div><strong>${escapeCartText(x.name)}</strong><div>${escapeCartText(x.type||'Project')} item · Qty ${x.qty||1}</div></div><div class="cart-current">${cartPriceMarkup(x)}</div><button class="btn outline" onclick="removeCart(${i})">${x.source==='project-calculator'?'Remove project':'Remove'}</button></div>`).join(''):'<div class="empty">Your project cart is empty. Browse products and add items when you are ready.</div>'}</div>${c.some(x=>x.source==='bathroom-retail')?'<div class="btns"><a class="btn outline" href="/project.html?project=bathrooms'+(c.find(x=>x.source==='bathroom-retail'&&x.workKey)?.workKey?'&work='+encodeURIComponent(c.find(x=>x.source==='bathroom-retail'&&x.workKey).workKey):'')+'">Continue Bathroom Project / Add Labor</a></div>':''}${projectEstimateMarkup(c)}${c.length?`${cartShoppingChoices(c)}${cartCheckoutSummary(c)}<div class="result">Your project estimate combines priced work and required installation costs. Labor is not payable here; any incomplete pricing must be confirmed before payment.</div>${cartSchedulingMarkup(c)}<div class="btns"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a><a class="btn outline" href="/">Keep Shopping</a></div>`:''}</div>${c.length?cartSuggestionMarkup(c):''}</div></section></main>`+projectFlow('cart')+footer();updateCartCount();initCartShippingQuote(c);initCartTaxPreview()}
 function removeCart(i){const c=getCart();if(!Number.isInteger(i)||i<0||i>=c.length)return;c.splice(i,1);saveCart(c);
  // Once the user removes the last cart item, don't retain stale calculator
  // drafts that would otherwise restore deleted work into another estimate.
