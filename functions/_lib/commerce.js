@@ -27,7 +27,14 @@ export async function accessToken(env) {
 export async function cj(env, path, body) {
  const token=await accessToken(env); if(!token)throw new Error('Supplier not configured');
  const r=await fetch(CJ_BASE+path,{method:body?'POST':'GET',headers:{'CJ-Access-Token':token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
- const data=await r.json();if(!r.ok||(!data.result&&!data.success)||!data.data)throw new Error('Supplier unavailable');return data.data;
+ const data=await r.json();
+ if(!r.ok||(!data.result&&!data.success)||!data.data) {
+   // CJ throttling is temporary and must not be mistaken for an unavailable product.
+   if(r.status===429||['1600200','402','406','429'].includes(String(data?.code??'')))
+     throw new Error('Supplier rate limited');
+   throw new Error('Supplier unavailable');
+ }
+ return data.data;
 }
 export const PRODUCT_ID='1963146233541074945';
 export function retailCents(cost){if(!Number.isFinite(Number(cost))||Number(cost)<=0)throw new Error('Price unavailable');return Math.ceil(Number(cost)*135);}
