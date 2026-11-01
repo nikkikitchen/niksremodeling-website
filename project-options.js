@@ -168,7 +168,7 @@
   options.walls.materials=[
     'Accent Walls','Beadboard','Board & Batten','Brick Veneer','Custom Mirrors',
     'Decorative Wall Panels','Drywall Panels','Drywall Repair & Patching',
-    'Drywall Finishing & Texture','Exterior Paint','Interior Paint','Limewash',
+    'Drywall Finishing (Tape, Mud & Sand)','Drywall Texture','Exterior Paint','Interior Paint','Limewash',
     'Primer','Shiplap','Specialty Coatings',
     'Stone Veneer','Tile Walls','Venetian Plaster','Wall Panels','Wallpaper',
     'Wainscoting','Wood Slat Walls'
