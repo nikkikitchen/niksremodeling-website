@@ -170,15 +170,14 @@ document.addEventListener('DOMContentLoaded',async()=>{
     variants.map(v=>'<option value="'+bathEsc(v.id)+'">'+bathEsc(v.name||v.sku)+' — '+bathMoney(v.priceCents)+'</option>').join('')+
     '</select></label><p id="bath-price" class="price">'+bathMoney(variants[0].priceCents)+'</p>'+
     '<p>Item price excludes delivery, tax and installation.</p>'+
-    '<form id="bath-delivery"><label>Delivery ZIP <input id="bath-zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label> '+
-    '<button class="btn primary" type="submit">Check Delivery</button></form><p id="bath-quote" role="status"></p>'+
+    '<p class="calc-note">Shipping for all selected items is calculated once in <a href="/project-cart.html">Review Cart</a>.</p>'+
     '<p>Installation is separate. <a href="/installation.html">Browse bathroom labor</a>.</p>'+ 
     '<button type="button" class="btn primary" id="bath-add-cart">Add Selected Product to Project Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a> <a class="btn outline" href="'+projectReturn+'">Continue Bathroom Project & Add Labor</a>'+ 
     '<p id="bath-cart-status" role="status">Product price excludes delivery, tax and installation. Cart is for review, not payment.</p>'+ 
     '<p>Online checkout is currently disabled.</p></div></article>';
    const select=document.getElementById('bath-variant');
    const price=document.getElementById('bath-price');
-   select.addEventListener('change',()=>{price.textContent=bathMoney(variants.find(v=>v.id===select.value).priceCents);document.getElementById('bath-quote').textContent='';});
+   select.addEventListener('change',()=>{price.textContent=bathMoney(variants.find(v=>v.id===select.value).priceCents);});
    document.getElementById('bath-add-cart').addEventListener('click',async()=>{
      const button=document.getElementById('bath-add-cart'),feedback=document.getElementById('bath-cart-status');
      button.disabled=true;feedback.textContent='Rechecking current U.S. stock and price…';
@@ -229,20 +228,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
        ' each before delivery, tax and installation. Price and stock are rechecked before purchase.';
    });
 
-   document.getElementById('bath-zip').addEventListener('input',()=>document.getElementById('bath-quote').textContent='');
-   document.getElementById('bath-delivery').addEventListener('submit',async event=>{
-    event.preventDefault();
-    const target=document.getElementById('bath-quote');
-    target.textContent='Checking current delivery and warehouse availability…';
-    try{
-     const q=new URLSearchParams({product,variant:select.value,zip:document.getElementById('bath-zip').value});
-     const result=await fetch('/api/store-quote?'+q,{cache:'no-store'});
-     const quote=await result.json();
-     if(!result.ok||!Number.isSafeInteger(quote.productCents)||!Number.isSafeInteger(quote.deliveryCents)||Number(quote.stock)<=0)throw Error(quote.error||'Delivery unavailable.');
-     target.textContent='Item '+bathMoney(quote.productCents)+' + delivery '+bathMoney(quote.deliveryCents)+
-       ' = '+bathMoney(quote.productCents+quote.deliveryCents)+' before applicable tax. Payment not yet available.';
-    }catch(e){target.textContent=e.message||'Unable to verify delivery.';}
-   });
+
   }catch(e){if(savedItem){const p=root.querySelector('article div:last-child');if(p){const msg=p.querySelector('[data-stock-note]');if(msg)msg.textContent='Supplier stock check did not complete. Item cannot be added to cart yet.';else p.insertAdjacentHTML('beforeend','<p role="status">Supplier stock cannot be confirmed. Please check again to select this item.</p>');}}else root.textContent=e.message||'Unable to verify product.';}
   return;
  }
