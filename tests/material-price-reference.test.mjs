@@ -20,7 +20,7 @@ test('All uploaded material prices are unchanged, marked-up, and reference-only'
  assert.equal(reference.markupAlreadyIncluded,true);
  assert.equal(reference.items.length,56);
  assert.deepEqual(JSON.parse(JSON.stringify(w.NIK_MATERIAL_REFERENCE)),reference);
- assert.equal(w.NIK_MATERIAL_REFERENCE.items.length,52);
+ assert.equal(w.NIK_MATERIAL_REFERENCE.items.length,56);
  assert.ok(reference.items.every(x=>x.price>0&&x.unit&&x.name));
  assert.equal(w.NIK_MATERIAL_PRICE_FOR('Vinyl Plank Flooring').price,3.78);
  assert.equal(w.NIK_MATERIAL_PRICE_FOR('4x8 Sheet of 1/2-in Drywall').price,21.94);
