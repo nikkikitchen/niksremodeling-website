@@ -193,6 +193,15 @@ PROJECT_CATALOG['room-additions']={
 };
 
 
+// All indoor rooms get the same core services; preserve each room's specialty work.
+const CORE_ROOM_WORK=['ceiling','walls','floor','trim','doors','lighting','ventilation','prep'];
+const INDOOR_ROOM_IDS=['attic','basement','garage','bedroom-guest-room','closets-storage','dining-room','entry-mudroom','home-office','home-theater','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','kids-room','adult-room','pet-room','fitness-wellness','games-hobbies','snack-beverage','vault-safe-room'];
+INDOOR_ROOM_IDS.forEach(id=>{
+ const existing=window.ROOM_PROJECT_SCOPES[id];
+ if(!existing)return;
+ window.ROOM_PROJECT_SCOPES[id]=[...CORE_ROOM_WORK,...existing.filter(key=>!CORE_ROOM_WORK.includes(key))];
+});
+
 // Both desktop and mobile use the same 15 first-level Projects.
 function buildProjectDropdowns(){
  const workLabels={
