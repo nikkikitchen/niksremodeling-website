@@ -59,15 +59,15 @@ test('one ZIP obtains a confirmed rate for every cart item when CJ cannot quote 
   assert.equal(body.shippingMethod,'CJ individual service');
  }finally{global.fetch=original;}
 });
-test('one ZIP uses supplier verified combined shipping instead of charging individual shipping again',async()=>{
+test('mixed carts total every verified line even if CJ also offers a combined quote',async()=>{
  const original=global.fetch;
  global.fetch=mockCJ({combinedCharge:12});
  try {
   const response=await onRequestPost(context(items));
   assert.equal(response.status,200);
   const body=await response.json();
-  assert.equal(body.quoteMode,'combined');
-  assert.equal(body.deliveryCents,1620);
+  assert.equal(body.quoteMode,'separate-lines');
+  assert.equal(body.deliveryCents,8100);
  }finally{global.fetch=original;}
 });
 test('missing freight for one item identifies the item, never shows a partial or zero charge',async()=>{
