@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
-test('Basement Walls & Finishes includes drywall and custom mirrors in published project options',()=>{
+test('Walls & Finishes retains shared grouped work choices',()=>{
  const source=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
- const section=source.match(/options\.walls\.materials=\[([\s\S]*?)\];/);
- assert.ok(section,'Walls & Finishes options must exist');
+ const group=source.match(/const wallWorkGroups=\[([\s\S]*?)\n  \];/);
+ assert.ok(group,'Grouped wall work options must exist');
  for(const choice of ['Drywall Panels','Custom Mirrors','Wallpaper','Wall Panels','Interior Paint','Primer']){
-   assert.ok(section[1].includes("'"+choice+"'"),'Missing wall option: '+choice);
+   assert.ok(group[1].includes("'"+choice+"'"),'Missing wall option: '+choice);
  }
+ assert.match(source,/options\.walls\.groups=wallWorkGroups/);
  const page=readFileSync(new URL('../project.html',import.meta.url),'utf8');
- assert.match(page,/\/project-options\.js\?v=walls-finishes-20261030/);
+ assert.match(page,/\/project-options\.js\?v=room-uniform-20261101/);
 });
