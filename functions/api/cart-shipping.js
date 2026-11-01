@@ -1,3 +1,4 @@
+import {quoteDetailedFreight} from '../_lib/detailed-freight.mjs';
 import {selectConfirmedFreight, UNCONFIRMED_SHIPPING_MESSAGE} from '../_lib/verified-freight.mjs';
 import {cj, retailCents, usCjWarehouseUnits} from '../_lib/commerce.js';
 
@@ -36,6 +37,7 @@ export async function onRequestPost({request, env}) {
   try {
     const lines = [...merged.values()];
     const freightProducts = [];
+    const detailedLines = [];
     let units = 0;
     for (const line of lines) {
       const product = await cj(env, '/product/query?pid=' + encodeURIComponent(line.productId) + '&countryCode=US');
@@ -46,12 +48,14 @@ export async function onRequestPost({request, env}) {
       if (usCjWarehouseUnits(inventory) < line.quantity)
         throw Error('There is not enough confirmed U.S. warehouse stock for one of these items.');
       freightProducts.push({vid:line.variantId, quantity:line.quantity});
+      detailedLines.push({product,variant,quantity:line.quantity});
       units += line.quantity;
     }
     const rates = await cj(env, '/logistic/freightCalculate', {
       startCountryCode:'US', endCountryCode:'US', zip, products:freightProducts
     });
-    const confirmed = selectConfirmedFreight(rates);
+    const confirmed = selectConfirmedFreight(rates)
+      || await quoteDetailedFreight(env,detailedLines,zip);
     if (!confirmed) throw Error(UNCONFIRMED_SHIPPING_MESSAGE);
     const {rate:best, freight} = confirmed;
     // Match the existing store quote policy: merchandise and freight are
