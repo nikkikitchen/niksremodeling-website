@@ -165,14 +165,29 @@
   ];
   options.ceiling=work('Ceiling','custom',ceilingWorkGroups.flatMap(([,tasks])=>tasks));
   options.ceiling.groups=ceilingWorkGroups;
-  options.walls.materials=[
-    'Accent Walls','Beadboard','Board & Batten','Brick Veneer','Custom Mirrors',
-    'Decorative Wall Panels','Drywall Panels','Drywall Repair & Patching',
-    'Drywall Finishing (Tape, Mud & Sand)','Drywall Texture','Exterior Paint','Interior Paint','Limewash',
-    'Primer','Shiplap','Specialty Coatings',
-    'Stone Veneer','Tile Walls','Venetian Plaster','Wall Panels','Wallpaper',
-    'Wainscoting','Wood Slat Walls'
+  // Walls and ceilings share the same grouped work UI; wall tasks stay surface-specific.
+  const wallWorkGroups=[
+    ['Paint & Texture',[
+      'Interior Paint','Exterior Paint','Primer','Drywall Texture',
+      'Limewash','Specialty Coatings','Venetian Plaster','Wallpaper'
+    ]],
+    ['Drywall & Decorative Finishes',[
+      'Drywall Panels','Drywall Repair & Patching','Drywall Finishing (Tape, Mud & Sand)',
+      'Accent Walls','Beadboard','Board & Batten','Brick Veneer','Custom Mirrors',
+      'Decorative Wall Panels','Shiplap','Stone Veneer','Tile Walls',
+      'Wall Panels','Wainscoting','Wood Slat Walls'
+    ]],
+    ['Lighting & Fixtures',[
+      'Wall Sconce / Light Fixture','Wall-Mounted Speaker',
+      'Wall-Mounted TV / Display','Wall Mirror Installation'
+    ]],
+    ['Insulation, Ventilation & Access',[
+      'Wall Insulation','Wall Vent / Exhaust Opening',
+      'Access Panel / Wall Hatch'
+    ]]
   ];
+  options.walls.materials=wallWorkGroups.flatMap(([,tasks])=>tasks);
+  options.walls.groups=wallWorkGroups;
   // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
   // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
@@ -764,12 +779,12 @@
         note.textContent='Choose any ceiling work you need. Pricing and supplies come later in the estimate.';
         card.append(note);
       }
-      const ceilingGroupFor=name=>key==='ceiling'?item.groups?.find(([,tasks])=>tasks.includes(name))?.[0]:null;
-      let lastCeilingGroup='';
+      const workGroupFor=name=>item.groups?.find(([,tasks])=>tasks.includes(name))?.[0]||null;
+      let lastWorkGroup='';
       item.materials.forEach(name=>{
-        const group=ceilingGroupFor(name);
-        if(group&&group!==lastCeilingGroup){
-          lastCeilingGroup=group;
+        const group=workGroupFor(name);
+        if(group&&group!==lastWorkGroup){
+          lastWorkGroup=group;
           const subheading=document.createElement('h3');subheading.className='ceiling-work-heading';
           subheading.textContent=group;subheading.style.cssText='font-size:1rem;margin:18px 0 8px';
           card.append(subheading);
