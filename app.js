@@ -671,12 +671,12 @@ function cartCheckoutSummary(items){
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Order Summary</h3>
  <div class="cart-item"><span>Materials &amp; project costs</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
- <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
+ <div class="cart-item"><span>Delivery, shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
  ${shippingChecker}
  ${remainingShippingPending?'<p class="calc-note">Shipping for any remaining products will be confirmed separately.</p>':''}
  <div class="cart-item"><span>Sales tax</span><strong>Calculated before payment</strong></div>
  <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
- <div class="cart-item"><span><strong>Estimated combined project total (before tax)</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?" + pending charges":""}</strong></div>
+ <div class="cart-item"><span><strong>Estimated combined project total (before tax)</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?" + shipping pending":unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?" + pending charges":""}</strong></div>
  <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
  </section>`;
 }
@@ -699,7 +699,7 @@ function initCartShippingQuote(items){
  const total=document.getElementById('cart-estimated-total');
  const button=form.querySelector('button[type="submit"]');
  const lines=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId)
-  .map(x=>({productId:String(x.productId),variantId:String(x.variantId),quantity:Number(x.qty)||1}));
+  .map(x=>({productId:String(x.productId),variantId:String(x.variantId),quantity:Number(x.qty)||1,name:String(x.name||'').slice(0,120)}));
  const initialTotal=total.textContent;
  let requestId=0;
  try{const saved=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(saved||''))input.value=saved;}catch{}
@@ -733,7 +733,7 @@ function initCartShippingQuote(items){
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
   }catch(error){
    if(mine!==requestId)return;
-   shipping.textContent='Not yet quoted';
+   shipping.textContent='Shipping needs confirmation';
    total.textContent=initialTotal;
    status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
   }finally{if(mine===requestId)button.disabled=false;}
