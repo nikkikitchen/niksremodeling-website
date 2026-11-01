@@ -20,7 +20,16 @@ async function openPage(file, query = '', storage = {}) {
       for(const [key,value] of Object.entries(storage))window.localStorage.setItem(key,typeof value==='string'?value:JSON.stringify(value));
     }
   });
-  await new Promise(resolve => setTimeout(resolve, 100));
+  // The full project UI is assembled by scripts after the document loads.
+  // Poll for its work cards rather than using a fixed 100 ms sleep on busy CI.
+  if (file === 'project.html' && query.includes('project=')) {
+    for (let attempt = 0; attempt < 20; attempt++) {
+      if (dom.window.document.querySelector('#project-work-grid .project-work-card')) break;
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  } else {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
   return dom;
 }
 
