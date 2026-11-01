@@ -191,6 +191,14 @@
   // Shared material categories may list many products; work cards must only list the selected job's relevant finishes.
   // Installation-only consumables are included through automatic supply planning, not customer checkboxes.
   options.floor.materials=options.floor.materials.filter(name=>!/^(Underlayment|Backer Board|Grout & Setting Materials)$/i.test(name));
+  // Match the ceiling and wall card layout for flooring, too.
+  // Keep coating options separate from standard floor coverings.
+  const floorWorkGroups=[
+    ['Flooring Materials',options.floor.materials.filter(name=>!/paint|epoxy|coating/i.test(name))],
+    ['Concrete Paint & Finishes',['Concrete Floor Paint','Epoxy Floor Coating','Concrete Floor Sealer','Concrete Stain']],
+  ];
+  options.floor.groups=floorWorkGroups;
+  options.floor.materials=[...new Set(floorWorkGroups.flatMap(([,tasks])=>tasks))];
   // Attic flooring supports structural decking without a padded-underlayment choice.
   const atticFloorMaterials=['Plywood','OSB & Sheathing'];
   options.shower.materials=['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile','Shower Base','Shower Valve / Head','Shower Glass'];
@@ -469,7 +477,7 @@
     }
     setStep(0);
     const grid=document.getElementById('project-work-grid');
-    if(id==='basement')options.floor.materials.push('Concrete Floor Paint');
+    // Concrete finish choices are available in every room; the calculator checks the substrate.
     if(id==='attic')options.floor.materials=[...new Set([...atticFloorMaterials,...options.floor.materials.filter(name=>!/padding|underlayment/i.test(name))])];
     if(id==='bathrooms'||id==='bath-remodel'){
       const shortcuts=document.createElement('nav');
