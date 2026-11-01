@@ -45,6 +45,11 @@ test('all Shopping departments have matching alphabetical submenus without red d
    assert.equal(menu.querySelectorAll('.shopping-availability-note,.shopping-tile-legend,.shopping-empty,.shopping-tile-empty').length,0,'The menu should have no red-dot indicators or legends');
    assert.equal([...menu.querySelectorAll('[title]')].some(el=>el.title==='No items listed yet'),false);
    assert.equal([...menu.querySelectorAll('[aria-label]')].some(el=>el.getAttribute('aria-label')?.includes('no items listed yet')),false);
+   const bathroomMenu=menu.querySelector('#'+id+'-bathroom');
+   const toiletEntries=[...bathroomMenu.querySelectorAll('a')].filter(a=>/toilets?/i.test(a.textContent)&&!/tank repair parts/i.test(a.textContent));
+   assert.deepEqual(toiletEntries.map(a=>a.textContent),['Toilets'],'Bathroom shopping has one toilet category only');
+   assert.match(toiletEntries[0].href,/\/bathroom\.html\?type=toilets$/);
+   assert.equal([...bathroomMenu.querySelectorAll('a')].some(a=>/model=(round|elongated|smart|specialty)/.test(a.href)),false,'No duplicate toilet-style links');
    const walls=menu.querySelector('#'+id+'--shop-installed-flooring-walls-finishes');
    assert.ok(walls,'Flooring, Walls & Finishes dropdown missing');
    assert.ok([...walls.querySelectorAll('a')].some(a=>a.textContent==='Tile'),'Shopping should say Tile');
