@@ -67,13 +67,7 @@ function bathroomMatch(name,type){
  return true;
 }
 
-const toiletStyles=[
- {key:'round',name:'Standard Round',desc:'Classic round bowl and standard seat height.'},
- {key:'elongated',name:'Elongated & Comfort Height',desc:'Longer bowls and taller seating options.'},
- {key:'smart',name:'Smart Toilets',desc:'Advanced washing, bidet and comfort features.'},
- {key:'specialty',name:'Wall-Hung & Specialty',desc:'Wall-mounted and space-saving models.'}
-];
-const toiletStyleNames=Object.fromEntries(toiletStyles.map(x=>[x.key,x.name]));
+// Classify toilet models for labor/cart pricing, not navigation filters.
 function toiletStyleFor(name){
  if(!bathroomMatch(name,'toilets'))return null;
  const n=String(name).toLowerCase();
@@ -83,25 +77,9 @@ function toiletStyleFor(name){
  if(/\b(round|round[- ]?front|standard[- ]?height|short[- ]?toilet)\b/i.test(n))return 'round';
  return null;
 }
-// Real representative manufacturer/retailer product photography, not merchandise offers.
-// Each style picture is illustrative; verified supplier listings show actual sale items.
-const toiletStylePhotos={"round":{"src":"https://www.americanstandard-us.com/cdn/shop/files/53999_3332DB101CR020_2_0_CDNwebp.webp?v=1774639118&width=2000","alt":"Standard white round-front toilet, with compact bowl and floor-mounted tank"},"elongated":{"src":"https://mobileimages.lowes.com/productimages/56cbf3cf-22af-4bd9-bd4e-1e1d83b850df/67531300.jpeg","alt":"White elongated chair-height toilet with longer oval bowl and traditional tank"},"smart":{"src":"https://bathify.com/cdn/shop/files/958a89d6e426938a2ab11e8d447a8f74b99e2907_8fdc20bb-4a65-41ab-9e1a-624e051b2559.jpg?v=1759504050&width=1946","alt":"Modern white one-piece smart toilet with electronic controls and integrated bidet"},"specialty":{"src":"https://img.reuter.de/products/fg/1400x1400/fg-39899000_0.jpg","alt":"White wall-hung toilet mounted above the floor with concealed plumbing"}};
-function toiletArt(kind){
- const image=toiletStylePhotos[kind];
- if(!image)return '';
- return '<img src="'+bathEsc(image.src)+'" alt="'+bathEsc(image.alt)+'" loading="lazy" decoding="async">';
-}
-function toiletStyleTiles(qs){
- return '<div class="toilet-choice-grid">'+toiletStyles.map(style=>{
-   const params=new URLSearchParams(qs);params.set('type','toilets');params.set('model',style.key);params.delete('product');
-   return '<a class="toilet-choice-tile" href="/bathroom.html?'+bathEsc(params.toString())+'">'+
-     '<span class="toilet-choice-art">'+toiletArt(style.key)+'</span><strong>'+bathEsc(style.name)+
-     '</strong><small>'+bathEsc(style.desc)+'</small><span class="toilet-choice-action">Explore style →</span></a>';
- }).join('')+'</div>';
-}
-const toiletStyleCSS=document.createElement('style');
-toiletStyleCSS.textContent='.toilet-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin:24px 0 28px}.toilet-choice-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 14px;border:1px solid #dde5eb;border-radius:12px;background:#fff;box-shadow:0 4px 16px #16202a0a;transition:box-shadow .15s,border-color .15s}.toilet-choice-tile:hover,.toilet-choice-tile:focus-visible{border-color:#0b5aa6;box-shadow:0 6px 18px #16202a18}.toilet-choice-art{display:grid;place-items:center;width:100%;height:147px;background:#f3f7f9;border-radius:9px}.toilet-choice-art img{width:100%;height:100%;max-height:147px;object-fit:contain;object-position:center;border-radius:8px}.toilet-choice-tile strong{font-size:1.05rem;text-align:center}.toilet-choice-tile small{text-align:center;color:#50606b;line-height:1.4;min-height:40px}.toilet-choice-action{color:#0b5aa6;font-weight:700;margin-top:auto}.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.toilet-back-link{display:inline-block;margin-bottom:10px}';
-document.head.append(toiletStyleCSS);
+const projectReturnStyle=document.createElement('style');
+projectReturnStyle.textContent='.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}';
+document.head.append(projectReturnStyle);
 const planningStyle=document.createElement('style');
 planningStyle.textContent='.bath-plan-fallback{margin:22px 0;padding:18px 20px;background:#f2f7fa;border:1px solid #cbdbe6;border-radius:10px}.bath-plan-fallback p{margin:0 0 12px;max-width:650px;line-height:1.5}.bath-plan-fallback .btn{display:inline-flex;white-space:normal;text-align:center}';
 document.head.append(planningStyle);
@@ -117,7 +95,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const params=new URLSearchParams(location.search);
  const type=bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
- const toiletModel=type==='toilets'&&toiletStyleNames[params.get('model')]?params.get('model'):null;
+ // Historical model-specific links now open the full Toilets selection.
  const projectId=['bathrooms','bath-remodel'].includes(params.get('project'))?params.get('project'):null;
  const projectWork=/^[a-z0-9-]{1,60}$/.test(params.get('work')||'')?params.get('work'):null;
  const fromProject=!!projectId&&params.get('fromProject')==='1';
@@ -132,9 +110,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const planningWork=bathWorkByType[type]||'';
  const planningParams=new URLSearchParams({project:'bathrooms'});
  if(planningWork)planningParams.set('work',planningWork);
- if(toiletModel)planningParams.set('toiletStyle',toiletModel);
  const planningUrl='/project.html?'+planningParams.toString();
- const planWithoutProduct='<div class="bath-plan-fallback"><p>No verified product yet? You can still plan the work and request a quote. Stock and product prices are not assumed.</p><a class="btn primary" href="'+bathEsc(planningUrl)+'">'+(type==='toilets'?(toiletModel?'Plan '+bathEsc(toiletStyleNames[toiletModel])+' / Request Quote':'Plan Toilet Installation / Request Quote'):'Plan '+bathEsc(selectedCategory)+' / Request Quote')+'</a></div>';
+ const planWithoutProduct='<div class="bath-plan-fallback"><p>No verified product yet? You can still plan the work and request a quote. Stock and product prices are not assumed.</p><a class="btn primary" href="'+bathEsc(planningUrl)+'">'+(type==='toilets'?'Plan Toilet Installation / Request Quote':'Plan '+bathEsc(selectedCategory)+' / Request Quote')+'</a></div>';
 
  const tabs='<nav class="store-categories photo-store-categories" aria-label="Bathroom fixture categories">'+
    '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
@@ -142,20 +119,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '</nav>';
  const base='<main class="wrap section"><nav aria-label="Breadcrumb">'+
    (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
-   '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(toiletModel?toiletStyleNames[toiletModel]:selectedCategory))+'</h1>'+
-   '<p class="lead">'+(type==='toilets'?'Choose a toilet style to explore available models.':'Choose products and see prices when items are available.')+'</p>'+
+   '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(selectedCategory))+'</h1>'+
+   '<p class="lead">'+(type==='toilets'?'Browse all available toilet models in one place.':'Choose products and see prices when items are available.')+'</p>'+
    projectControls+(type!=='all'?'':tabs);
- const toiletHub=type==='toilets'&&!toiletModel&&!product;
- const chosenStyle=type==='toilets'&&toiletModel;
- const indexParams=new URLSearchParams(params);
- indexParams.delete('model');indexParams.delete('product');
- const allStylesBack=chosenStyle?'<a class="btn outline toilet-back-link" href="/bathroom.html?'+
-   bathEsc(indexParams.toString())+'">← All Toilet Styles</a>':'';
- document.body.innerHTML=header()+base+(toiletHub?
-   '<h2>Choose Your Toilet Style</h2>'+toiletStyleTiles(params)+
-   '<p class="calc-note">Representative toilet photos illustrate the four styles, not items currently for sale. Exact fixture prices appear only when supplier stock and pricing are verified.</p>'+planWithoutProduct:
-   product?'<div id="bath-detail" role="status">Checking product options and price…</div>':
-   allStylesBack+'<h2>'+bathEsc(chosenStyle?toiletStyleNames[toiletModel]:(bathroomNames[type]||'Browse Bathroom'))+'</h2>'+
+ document.body.innerHTML=header()+base+(product?
+   '<div id="bath-detail" role="status">Checking product options and price…</div>':
+   '<h2>'+bathEsc(bathroomNames[type]||'Browse Bathroom')+'</h2>'+
    '<div class="store-card-grid" id="bath-products"></div>'+
    '<p id="bath-status" role="status">Loading available products…</p>'+
    '<div id="bath-more"></div>'+
@@ -163,7 +132,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '</main>'+footer();
  updateCartCount();initNavMenus();
  const {bathroomCatalog:bathroomSaved}=await import('/bathroom-catalog.js');
- if(toiletHub)return;
  if(product){
   const root=document.getElementById('bath-detail');
   if(!/^[\w-]{8,64}$/.test(product)){root.textContent='Item unavailable.';return;}
@@ -179,7 +147,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const variants=bathVerified(detail);
    if(!variants)throw Error('This product has no verified U.S. warehouse stock or current price.');
    if(type!=='all'&&!bathroomMatch(detail.name,type))throw Error('Product does not belong to this bathroom category.');
-   if(toiletModel&&toiletStyleFor(detail.name)!==toiletModel)throw Error('This item is not listed under the selected toilet style.');
    const image=/^https:\/\//.test(detail.image||'')?detail.image:'';
    root.innerHTML='<article class="store-product"><div><img alt="'+bathEsc(detail.name)+'" src="'+bathEsc(image)+'" loading="lazy"></div>'+
     '<div><h2>'+bathEsc(detail.name)+'</h2><label>Available in-stock option <select id="bath-variant">'+
@@ -221,7 +188,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
        existing.projectId=existing.projectId||projectId||'bathrooms';
        existing.workKey=existing.workKey||projectWork||null;
        existing.bathroomFixtureType=type;
-       if(type==='toilets')existing.toiletStyle=toiletModel||toiletStyleFor(detail.name)||null;
+       if(type==='toilets')existing.toiletStyle=toiletStyleFor(detail.name)||null;
      }else{
        cart.push({
          name:detail.name+' — '+(variant.name||variant.sku||'Selected option'),
@@ -230,7 +197,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
          projectId:projectId||'bathrooms',
          workKey:projectWork,
          bathroomFixtureType:type,
-         ...(type==='toilets'?{toiletStyle:toiletModel||toiletStyleFor(detail.name)||null}:{}),
+         ...(type==='toilets'?{toiletStyle:toiletStyleFor(detail.name)||null}:{}),
          productId:product,
          variantId:String(variant.id),
          sku:variant.sku||'',
@@ -267,7 +234,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
  const archiveIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(data=>new Set(Object.entries(data.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
- const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!toiletModel&&!archiveIds.has(p.id));
+ const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id));
  async function updateBathroomStock(){
   const jobs=[...savedVisible];
   async function worker(){
@@ -318,7 +285,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const request=await fetch('/api/us-furniture?'+q,{cache:'no-store'});
    if(!request.ok)throw Error('Supplier search unavailable');
    const feed=await request.json();
-   row.pending=(feed.products||[]).filter(p=>bathroomMatch(p.name,kind)&&(!toiletModel||toiletStyleFor(p.name)===toiletModel));
+   row.pending=(feed.products||[]).filter(p=>bathroomMatch(p.name,kind));
    row.max=Math.min(100,Math.max(row.page,Number(feed.totalPages)||row.page));
    row.page++;row.exhausted=row.page>row.max;
   }
@@ -332,12 +299,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(result.status===503)result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
     if(!result.ok)throw Error('Stock unavailable');
     const detail=await result.json(),variants=bathVerified(detail);
-    if(!variants||!bathroomMatch(detail.name,kind)||(toiletModel&&toiletStyleFor(detail.name)!==toiletModel))continue;
+    if(!variants||!bathroomMatch(detail.name,kind))continue;
     const name=detail.name,image=detail.image||p.image;
     if(seenIds.has(p.id)||seenNames.has(normalized(name))||seenImages.has(image))continue;
     const price=Math.min(...variants.map(v=>v.priceCents));
     const detailParams=new URLSearchParams({type:kind,product:p.id});
-    if(toiletModel)detailParams.set('model',toiletModel);
     if(fromProject){
       detailParams.set('fromProject','1');
       detailParams.set('project',projectId);
@@ -361,7 +327,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Its card is added only after a fresh US warehouse inventory AND retail price check.
  // The product detail page checks both again before anything can enter the cart.
  async function loadVerifiedSmartToilet(){
-  if(type!=='toilets'||toiletModel!=='smart')return;
+  if(type!=='toilets')return;
   const id='2046529401898950658';
   if(archiveIds.has(id))return;
   try{
@@ -372,7 +338,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    const name=String(detail.name||''),image=String(detail.image||'');
    if(!/^https:\/\//.test(image)||seenIds.has(id)||seenNames.has(normalized(name))||seenImages.has(image))return;
    const price=Math.min(...variants.map(v=>v.priceCents));
-   const query=new URLSearchParams({type:'toilets',model:'smart',product:id});
+   const query=new URLSearchParams({type:'toilets',product:id});
    if(fromProject){query.set('fromProject','1');query.set('project',projectId);if(projectWork)query.set('work',projectWork);}
    const card=document.createElement('article');card.className='store-card';
    card.innerHTML='<a href="/bathroom.html?'+bathEsc(query.toString())+'"><img loading="lazy" src="'+bathEsc(image)+'" alt="'+bathEsc(name)+'">'+
@@ -393,7 +359,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   }
   status.textContent=total?
    'Showing '+total+' available '+(total===1?'product.':'products.'):
-   (toiletModel?'No '+toiletStyleNames[toiletModel].toLowerCase()+' models listed yet.':'No products listed in this category yet.');
+   'No products listed in this category yet.';
  }
  // Check this supplier-confirmed item directly; search ranking often buries fixtures behind cleaners.
  await loadVerifiedSmartToilet();
@@ -401,7 +367,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  await fetchBatch(type==='all'?[...searches.slice(0,4),'faucets','lighting','ventilation']:searches);
  let position=type==='all'?4:0;
  const more=document.getElementById('bath-more'),btn=document.createElement('button');
- btn.className='btn outline';btn.textContent=type==='all'?'Load more bathroom items':'Load more '+(toiletModel?toiletStyleNames[toiletModel]:selectedCategory);btn.type='button';
+ btn.className='btn outline';btn.textContent=type==='all'?'Load more bathroom items':'Load more '+selectedCategory;btn.type='button';
  more.appendChild(btn);
  btn.addEventListener('click',async()=>{
   btn.disabled=true;status.textContent='Loading more products…';
