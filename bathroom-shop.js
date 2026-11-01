@@ -77,12 +77,20 @@ function toiletStyleFor(name){
  if(/\b(round|round[- ]?front|standard[- ]?height|short[- ]?toilet)\b/i.test(n))return 'round';
  return null;
 }
+const toiletChoices=[
+ ['all','All Toilets'],['elongated','Elongated Toilets'],['round','Round Toilets'],
+ ['smart','Smart Toilets'],['parts','Toilet Repair Parts'],['specialty','Wall-Mounted Toilets']
+];
+const toiletMatchesModel=(name,model)=>!model||model==='all'||toiletStyleFor(name)===model;
 const projectReturnStyle=document.createElement('style');
 projectReturnStyle.textContent='.project-shopping-return{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}';
 document.head.append(projectReturnStyle);
 const planningStyle=document.createElement('style');
 planningStyle.textContent='.bath-plan-fallback{margin:22px 0;padding:18px 20px;background:#f2f7fa;border:1px solid #cbdbe6;border-radius:10px}.bath-plan-fallback p{margin:0 0 12px;max-width:650px;line-height:1.5}.bath-plan-fallback .btn{display:inline-flex;white-space:normal;text-align:center}';
 document.head.append(planningStyle);
+const toiletChoiceStyle=document.createElement('style');
+toiletChoiceStyle.textContent='.toilet-choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0}.toilet-choice-tile{display:flex;min-height:112px;padding:20px;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:#153b5a;background:#f5f9fc;border:1px solid #d1dce7;border-radius:12px;font-size:18px;font-weight:700}.toilet-choice-tile:hover,.toilet-choice-tile:focus-visible{background:#e8f2fb;border-color:#24629a;outline-offset:3px}';
+document.head.append(toiletChoiceStyle);
 
 
 const bathEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -95,7 +103,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const params=new URLSearchParams(location.search);
  const type=bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
- // Historical model-specific links now open the full Toilets selection.
+ const toiletModel=type==='toilets'&&toiletChoices.some(([id])=>id!=='parts'&&id===params.get('model'))?params.get('model'):null;
+ const choosingToilet=type==='toilets'&&!toiletModel&&!product;
  const projectId=['bathrooms','bath-remodel'].includes(params.get('project'))?params.get('project'):null;
  const projectWork=/^[a-z0-9-]{1,60}$/.test(params.get('work')||'')?params.get('work'):null;
  const fromProject=!!projectId&&params.get('fromProject')==='1';
@@ -113,6 +122,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const planningUrl='/project.html?'+planningParams.toString();
  const planWithoutProduct='<div class="bath-plan-fallback"><p>No verified product yet? You can still plan the work and request a quote. Stock and product prices are not assumed.</p><a class="btn primary" href="'+bathEsc(planningUrl)+'">'+(type==='toilets'?'Plan Toilet Installation / Request Quote':'Plan '+bathEsc(selectedCategory)+' / Request Quote')+'</a></div>';
 
+ const toiletChoiceHref=id=>{
+  if(id==='parts')return '/shop-installed.html?item=bathroom-toilet-tank-repair-parts';
+  const q=new URLSearchParams({type:'toilets',model:id});
+  if(fromProject){q.set('fromProject','1');q.set('project',projectId);if(projectWork)q.set('work',projectWork);}
+  return '/bathroom.html?'+q.toString();
+ };
+ const toiletChoiceMarkup='<nav class="toilet-choice-grid" aria-label="Choose toilet type">'+toiletChoices.map(([id,label])=>'<a class="toilet-choice-tile" href="'+bathEsc(toiletChoiceHref(id))+'">'+bathEsc(label)+'</a>').join('')+'</nav>';
  const tabs='<nav class="store-categories photo-store-categories" aria-label="Bathroom fixture categories">'+
    '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
    bathroomTypes.map(([key,label])=>'<a class="photo-category-tile" href="/bathroom.html?type='+key+'"><img src="'+bathroomCategoryPhotos[key]+'" alt="" loading="lazy"><span><strong>'+bathEsc(label)+'</strong></span></a>').join('')+
@@ -120,17 +136,18 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const base='<main class="wrap section"><nav aria-label="Breadcrumb">'+
    (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
    '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(selectedCategory))+'</h1>'+
-   '<p class="lead">'+(type==='toilets'?'Browse all available toilet models in one place.':'Choose products and see prices when items are available.')+'</p>'+
-   projectControls+(type!=='all'?'':tabs);
- document.body.innerHTML=header()+base+(product?
+   '<p class="lead">'+(type==='toilets'?(choosingToilet?'Choose the type of toilet or repair part you need.':'Browse products for the selected toilet type.'):'Choose products and see prices when items are available.')+'</p>'+
+   projectControls+(type!=='all'?'':tabs)+(type==='toilets'&&toiletModel?'<p><a href="/bathroom.html?type=toilets">← All toilet types</a></p>':'');
+ document.body.innerHTML=header()+base+(choosingToilet?toiletChoiceMarkup:product?
    '<div id="bath-detail" role="status">Checking product options and price…</div>':
-   '<h2>'+bathEsc(bathroomNames[type]||'Browse Bathroom')+'</h2>'+
+   '<h2>'+bathEsc(type==='toilets'?(toiletChoices.find(([id])=>id===toiletModel)?.[1]||'Toilets'):(bathroomNames[type]||'Browse Bathroom'))+'</h2>'+
    '<div class="store-card-grid" id="bath-products"></div>'+
    '<p id="bath-status" role="status">Loading available products…</p>'+
    '<div id="bath-more"></div>'+
    '<p>Product prices exclude delivery, tax and installation. Online payment is not yet available.</p>'+planWithoutProduct+projectControls)+
    '</main>'+footer();
  updateCartCount();initNavMenus();
+ if(choosingToilet)return;
  const {bathroomCatalog:bathroomSaved}=await import('/bathroom-catalog.js');
  if(product){
   const root=document.getElementById('bath-detail');
@@ -234,7 +251,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
  const archiveIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(data=>new Set(Object.entries(data.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
- const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id));
+ const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id)&&(type!=='toilets'||toiletMatchesModel(p.name,toiletModel)));
  async function updateBathroomStock(){
   const jobs=[...savedVisible];
   async function worker(){
@@ -299,7 +316,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(result.status===503)result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
     if(!result.ok)throw Error('Stock unavailable');
     const detail=await result.json(),variants=bathVerified(detail);
-    if(!variants||!bathroomMatch(detail.name,kind))continue;
+    if(!variants||!bathroomMatch(detail.name,kind)||(kind==='toilets'&&!toiletMatchesModel(detail.name,toiletModel)))continue;
     const name=detail.name,image=detail.image||p.image;
     if(seenIds.has(p.id)||seenNames.has(normalized(name))||seenImages.has(image))continue;
     const price=Math.min(...variants.map(v=>v.priceCents));
@@ -327,7 +344,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Its card is added only after a fresh US warehouse inventory AND retail price check.
  // The product detail page checks both again before anything can enter the cart.
  async function loadVerifiedSmartToilet(){
-  if(type!=='toilets')return;
+  if(type!=='toilets'||(toiletModel!=='all'&&toiletModel!=='smart'))return;
   const id='2046529401898950658';
   if(archiveIds.has(id))return;
   try{
