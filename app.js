@@ -706,6 +706,8 @@ function initCartShippingQuote(items){
  try{const saved=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(saved||''))input.value=saved;}catch{}
  input.addEventListener('input',()=>{
   requestId++;
+  // Cancel the pending quote visually too: an old response must not strand the button disabled.
+  button.disabled=false;
   shipping.textContent='Enter ZIP to check';
   total.textContent=initialTotal;
   status.textContent='Enter your ZIP code to see estimated supplier shipping before payment.';
