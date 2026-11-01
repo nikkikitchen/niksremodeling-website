@@ -17,34 +17,29 @@ function open(html){
  dom.window.__furniture={catalog,inCategory};dom.window.__retail={retailCatalog};dom.window.__bathroom={bathroomCatalog};dom.window.eval(source);return dom;
 }
 
-test('picture tiles distinguish populated subcategories from empty ones across shopping',async()=>{
- const populated={fridges:'/appliances.html?category=Refrigerators',dishwashers:'/appliances.html?category=Dishwashers',hoods:'/appliances.html?category=Microwaves%20%26%20Hoods',storage:'/cabinets.html?category=Storage%20Cabinets',bedroom:'/furniture.html?category=bedroom',office:'/furniture.html?category=home-office',base:'/cabinets.html?category=Base%20Cabinets',gas:'/appliances.html?category=Gas%20Ranges',laundry:'/appliances.html?category=Washers%20%26%20Electric%20Dryers'};
- const empty={outdoor:'/furniture.html?category=outdoor',decor:'/furniture.html?category=decor'};
- const dom=open('<main><div class="shop-guide-grid">'+Object.entries({...populated,...empty}).map(([id,url])=>tile(id,url)).join('')+'</div><article class="store-card"><h3>Actual merchandise</h3></article></main>');
+test('all shopping picture tiles remain unmarked regardless of inventory',async()=>{
+ const categories={fridges:'/appliances.html?category=Refrigerators',dishwashers:'/appliances.html?category=Dishwashers',outdoor:'/furniture.html?category=outdoor',decor:'/furniture.html?category=decor'};
+ const dom=open('<main><div class="shop-guide-grid">'+Object.entries(categories).map(([id,url])=>tile(id,url)).join('')+'</div><article class="store-card"><h3>Actual merchandise</h3></article></main>');
  try{
   await tick();const doc=dom.window.document;
-  for(const id of Object.keys(populated))assert.equal(doc.getElementById(id).classList.contains('shopping-tile-empty'),false,id);
-  for(const id of Object.keys(empty))assert.equal(doc.getElementById(id).classList.contains('shopping-tile-empty'),true,id);
+  for(const id of Object.keys(categories))assert.equal(doc.getElementById(id).classList.contains('shopping-tile-empty'),false,id);
+  assert.equal(doc.querySelectorAll('.shopping-tile-legend,.shopping-availability-note').length,0);
   assert.equal(doc.querySelector('.store-card').classList.contains('shopping-tile-empty'),false);
-  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,1);
-  assert.equal(doc.querySelector('.shopping-tile-legend').textContent,'Red dot = No items listed yet.');
  }finally{dom.window.close();}
 });
 
-test('late-rendered room tiles and material choices receive markers without duplicate notes',async()=>{
+test('late-rendered room and material tiles never receive red dots or legends',async()=>{
  const dom=open('<main></main>');
  try{
-  await tick();const doc=dom.window.document;doc.body.dataset.material='flooring';
+  await tick();const doc=dom.window.document;
   doc.querySelector('main').innerHTML='<div class="photo-store-categories">'+tile('kids','/furniture.html?category=kids-room')+tile('dining','/furniture.html?category=dining-room')+'</div><div class="material-detail-grid"><article class="material-option-card"><h3>Hardwood</h3><a href="/material-flooring.html?type=Hardwood">Choose Hardwood</a></article></div>';
   await tick();
-  assert.equal(doc.getElementById('kids').classList.contains('shopping-tile-empty'),false);
-  assert.equal(doc.getElementById('dining').classList.contains('shopping-tile-empty'),true);
-  assert.equal(doc.querySelector('.material-option-card').classList.contains('shopping-tile-empty'),false);
+  assert.equal(doc.querySelectorAll('.shopping-tile-empty').length,0);
+  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,0);
   doc.querySelector('main').append(doc.createElement('div'));await tick();
-  assert.equal(doc.querySelectorAll('.shopping-tile-legend').length,1);
+  assert.equal(doc.querySelectorAll('.shopping-tile-empty,.shopping-tile-legend').length,0);
  }finally{dom.window.close();}
 });
-
 
 test('installable category links do not claim empty inventory from keyword misses',async()=>{
  const html='<main><div class="installed-groups">'+
