@@ -54,18 +54,32 @@ export async function onRequestPost({request, env}) {
   try {
     const lines = [...merged.values()];
     const details = [];
+    const unavailable = [];
     let units = 0;
+    // Inspect all products so one failed item doesn't hide the rest.
+    // Display names are never used for inventory, cost, or pricing.
     for (const line of lines) {
-      const product = await cj(env, '/product/query?pid=' + encodeURIComponent(line.productId) + '&countryCode=US');
-      const variant = (product.variants || []).find(v => String(v.vid) === line.variantId);
-      if (!variant || !(Number(variant.variantSellPrice) > 0))
-        throw Error('One product option is no longer available.');
-      const inventory = await cj(env, '/product/stock/queryByVid?vid=' + encodeURIComponent(line.variantId));
-      if (usCjWarehouseUnits(inventory) < line.quantity)
-        throw Error('There is not enough confirmed U.S. warehouse stock for one of these items.');
-      details.push({product, variant, quantity:line.quantity});
-      units += line.quantity;
+      const displayName = String(raw.find(x=>String(x.productId)===line.productId
+        && String(x.variantId)===line.variantId)?.name||'Product '+line.productId).slice(0,120);
+      try {
+        const product = await cj(env, '/product/query?pid=' + encodeURIComponent(line.productId) + '&countryCode=US');
+        const variant = (product.variants || []).find(v => String(v.vid) === line.variantId);
+        if (!variant || !(Number(variant.variantSellPrice) > 0))
+          throw Error('Option is no longer available from the supplier');
+        const inventory = await cj(env, '/product/stock/queryByVid?vid=' + encodeURIComponent(line.variantId));
+        if (usCjWarehouseUnits(inventory) < line.quantity)
+          throw Error('Insufficient confirmed U.S. warehouse stock');
+        details.push({product, variant, quantity:line.quantity, displayName, productId:line.productId});
+        units += line.quantity;
+      } catch(e) {
+        unavailable.push({name:displayName, reason:e.message==='Supplier unavailable'
+          ? 'Supplier data unavailable' : e.message});
+      }
     }
+    if(unavailable.length)
+      return Response.json({error:'Shipping cannot be completed until supplier availability is verified for: '+
+        unavailable.map(x=>x.name).join('; ')+'.', unavailable},
+        {status:503,headers});
 
     // First ask CJ to price the full cart together (possibly a lower rate).
     const allProducts = details.map(({variant,quantity}) => ({vid:variant.vid, quantity}));
@@ -80,14 +94,21 @@ export async function onRequestPost({request, env}) {
       quoteMode = 'separate-lines';
       freight = 0;
       const methods = new Set();
+      const unquoted = [];
       for (const detail of details) {
         const result = await freightQuote(env, zip,
           [{vid:detail.variant.vid, quantity:detail.quantity}], [detail]);
-        if (!result || !(Number(result.freight) > 0))
-          throw Error(UNCONFIRMED_SHIPPING_MESSAGE);
+        if (!result || !(Number(result.freight) > 0)) {
+          unquoted.push({name:detail.displayName,reason:'CJ has not provided a verified freight rate'});
+          continue;
+        }
         freight += result.freight;
         if (result.rate?.logisticName) methods.add(result.rate.logisticName);
       }
+      if (unquoted.length)
+        return Response.json({error:'CJ could not confirm shipping to '+zip+' for: '+
+          unquoted.map(x=>x.name).join('; ')+'. No partial shipping total was added.',
+          unavailable:unquoted}, {status:503,headers});
       shippingMethod = methods.size === 1 ? [...methods][0] : null;
     }
     if (!Number.isFinite(freight) || freight <= 0)
