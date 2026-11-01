@@ -59,7 +59,7 @@
       'Shower Enclosures':'/assets/showers-card.png','Shower Doors':'/assets/tile-shower.jpg'
     };
     if(specific[name])return specific[name];
-    if(group==='Materials')return shopPhoto('materials',name);
+    if(group==='Materials')return ({'Flooring':'/assets/flooring-card.jpg','Tile & Stone':'/assets/project-stone-real.jpg','Paint & Finishes':'/assets/wallpaper-card.jpg','Drywall':'/assets/catalog-8.jpg','Lumber':'/assets/arches-columns.jpg','Doors & Windows':'/assets/entryways-card.jpg','Trim & Molding':'/assets/approved-e9fee5a04016.jpg','All Materials':'/assets/flooring-card.jpg'})[name]||'/assets/flooring-card.jpg';
     return {Bathroom:'/assets/approved-a908c20ce632.jpg',Cabinets:'/assets/approved-9bfcb89f7800.jpg',Furniture:'/assets/approved-4822ff53e23f.jpg',Tools:'/assets/approved-d2807423c8f0.jpg'}[group]||'/assets/approved-b5c632fcfbc0.jpg';
   }
   function matched(query){
