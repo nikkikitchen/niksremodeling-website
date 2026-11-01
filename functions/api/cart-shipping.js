@@ -2,14 +2,35 @@ import {quoteDetailedFreight} from '../_lib/detailed-freight.mjs';
 import {selectConfirmedFreight, UNCONFIRMED_SHIPPING_MESSAGE} from '../_lib/verified-freight.mjs';
 import {cj, retailCents, usCjWarehouseUnits} from '../_lib/commerce.js';
 
+// CJ's free tier can be limited to one request per second. Each cart item
+// requires multiple supplier calls. Pace and retry transient supplier failures.
+const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function cartSupplierRequests(env) {
+  const interval=env.CJ_CART_REQUEST_SPACING_MS==='0'?0:1100;
+  let lastStarted=0;
+  return async (_env,path,body)=>{
+    for(let attempt=0;attempt<3;attempt++) {
+      const remaining=Math.max(0,lastStarted+interval-Date.now());
+      if(remaining)await delay(remaining);
+      lastStarted=Date.now();
+      try{return await cj(env,path,body);}
+      catch(error) {
+        const transient=error?.message==='Supplier rate limited'||error?.message==='Supplier unavailable';
+        if(!transient||attempt===2)throw error;
+        if(interval)await delay(interval*(attempt+1));
+      }
+    }
+  };
+}
+
 // One delivery ZIP for the full cart. Ask CJ for a combined freight rate first.
 // When the supplier cannot price mixed products in one request, obtain an
 // individually verified rate for EVERY product line (at its actual quantity)
 // and sum those supplier rates. Never silently omit a line or treat an
 // ambiguous supplier zero as free shipping. This is a quote, not checkout.
-async function freightQuote(env, zip, products, details) {
+async function freightQuote(env, zip, products, details, cjRequest) {
   try {
-    const rates = await cj(env, '/logistic/freightCalculate', {
+    const rates = await cjRequest(env, '/logistic/freightCalculate', {
       startCountryCode: 'US', endCountryCode: 'US', zip, products
     });
     const verified = selectConfirmedFreight(rates);
@@ -17,7 +38,7 @@ async function freightQuote(env, zip, products, details) {
   } catch {
     // CJ may reject a mixed-product shipment. Try its detailed calculator.
   }
-  return quoteDetailedFreight(env, details, zip);
+  return quoteDetailedFreight(env, details, zip, cjRequest);
 }
 
 export async function onRequestPost({request, env}) {
@@ -52,6 +73,7 @@ export async function onRequestPost({request, env}) {
     } else merged.set(key, {productId, variantId, quantity});
   }
   try {
+    const cjRequest=cartSupplierRequests(env);
     const lines = [...merged.values()];
     const details = [];
     const unavailable = [];
@@ -62,23 +84,23 @@ export async function onRequestPost({request, env}) {
       const displayName = String(raw.find(x=>String(x.productId)===line.productId
         && String(x.variantId)===line.variantId)?.name||'Product '+line.productId).slice(0,120);
       try {
-        const product = await cj(env, '/product/query?pid=' + encodeURIComponent(line.productId) + '&countryCode=US');
+        const product = await cjRequest(env, '/product/query?pid=' + encodeURIComponent(line.productId) + '&countryCode=US');
         const variant = (product.variants || []).find(v => String(v.vid) === line.variantId);
         if (!variant || !(Number(variant.variantSellPrice) > 0))
           throw Error('Option is no longer available from the supplier');
-        const inventory = await cj(env, '/product/stock/queryByVid?vid=' + encodeURIComponent(line.variantId));
+        const inventory = await cjRequest(env, '/product/stock/queryByVid?vid=' + encodeURIComponent(line.variantId));
         if (usCjWarehouseUnits(inventory) < line.quantity)
           throw Error('Insufficient confirmed U.S. warehouse stock');
         details.push({product, variant, quantity:line.quantity, displayName, productId:line.productId});
         units += line.quantity;
       } catch(e) {
         unavailable.push({name:displayName, reason:e.message==='Supplier unavailable'
-          ? 'Supplier data unavailable' : e.message});
+          ? 'Supplier temporarily unavailable' : e.message});
       }
     }
     if(unavailable.length)
       return Response.json({error:'Shipping cannot be completed until supplier availability is verified for: '+
-        unavailable.map(x=>x.name).join('; ')+'.', unavailable},
+        unavailable.map(x=>x.name+' ('+x.reason+')').join('; ')+'.', unavailable},
         {status:503,headers});
 
     // CJ quotes each product independently more reliably than mixed shipments.
@@ -92,7 +114,7 @@ export async function onRequestPost({request, env}) {
     const unquoted = [];
     for (const detail of details) {
       const result = await freightQuote(env, zip,
-        [{vid:detail.variant.vid, quantity:detail.quantity}], [detail]);
+        [{vid:detail.variant.vid, quantity:detail.quantity}], [detail], cjRequest);
       if (!result || !(Number(result.freight) > 0)) {
         unquoted.push({name:detail.displayName,reason:'CJ has not provided a verified freight rate'});
         continue;
@@ -115,7 +137,7 @@ export async function onRequestPost({request, env}) {
       shippingMethod, quoteMode, estimateOnly:true
     }, {headers});
   } catch (error) {
-    const reason = error.message === 'Supplier unavailable' || error.message === 'Supplier not configured'
+    const reason = error.message === 'Supplier unavailable' || error.message === 'Supplier rate limited' || error.message === 'Supplier not configured'
       ? 'The supplier could not confirm shipping right now.'
       : error.message || 'Unable to check shipping right now.';
     return Response.json({error:reason}, {status:503, headers});
