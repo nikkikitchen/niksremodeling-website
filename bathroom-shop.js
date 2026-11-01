@@ -249,8 +249,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
      const r=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store',signal:controller.signal});
      if(!r.ok)throw Error('Unverified');
      const d=await r.json();
-     if(d.warehouseCountry!=='US'||typeof d.inStockUS!=='boolean'||!Array.isArray(d.variants))throw Error('Unverified');
-     const count=d.variants.reduce((n,v)=>n+Math.max(0,Number(v.usStock)||0),0);
+     const verified=bathVerified(d);
+     if(!verified)throw Error('No currently verified, priced U.S. stock');
+     const count=verified.reduce((n,v)=>n+Math.max(0,Number(v.usStock)||0),0);
      node.textContent='In stock (U.S.): '+count;
      node.dataset.state=count>0?'available':'out';
      const card=node.closest('.store-card');
