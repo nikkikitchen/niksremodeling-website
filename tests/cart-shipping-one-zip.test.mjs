@@ -13,7 +13,7 @@ const context=products=>({
   method:'POST',headers:{Origin:'https://niksremodeling.com','Content-Type':'application/json'},
   body:JSON.stringify({zip:'36269',items:products})
  }),
- env:{CJ_ACCESS_TOKEN:'unit-test-only'}
+ env:{CJ_ACCESS_TOKEN:'unit-test-only',CJ_CART_REQUEST_SPACING_MS:'0'}
 });
 function mockCJ({combinedCharge=null,unquotableIndex=-1}={}) {
  return async (url,opts={})=>{
@@ -81,5 +81,42 @@ test('missing freight for one item identifies the item, never shows a partial or
   assert.match(body.error,/No partial shipping total/);
   assert.equal(body.deliveryCents,undefined);
   assert.equal(body.unavailable?.length,1);
+ }finally{global.fetch=original;}
+});
+
+test('temporary supplier rate limit on second product recovers and retains all products',async()=>{
+ const original=global.fetch;
+ const supplier=mockCJ();
+ let throttled=false;
+ global.fetch=async(url,opts)=>{
+  if(String(url).includes('/product/stock/queryByVid?vid='+VIDS[1])&&!throttled){
+   throttled=true;
+   return {ok:false,status:429,json:async()=>({result:false,code:1600200,data:null})};
+  }
+  return supplier(url,opts);
+ };
+ try {
+  const response=await onRequestPost(context(items));
+  assert.equal(response.status,200);
+  const output=await response.json();
+  assert.equal(throttled,true);
+  assert.equal(output.deliveryCents,8100);
+  assert.equal(output.productLines,3);
+ }finally{global.fetch=original;}
+});
+test('a genuinely unstocked item is still blocked rather than assigned invented shipping',async()=>{
+ const original=global.fetch;
+ const supplier=mockCJ();
+ global.fetch=async(url,opts)=>{
+  if(String(url).includes('/product/stock/queryByVid?vid='+VIDS[2]))
+   return json([{countryCode:'US',cjInventory:0}]);
+  return supplier(url,opts);
+ };
+ try {
+  const response=await onRequestPost(context(items));
+  assert.equal(response.status,503);
+  const body=await response.json();
+  assert.match(body.error,/Towel item.*Insufficient confirmed U.S. warehouse stock/);
+  assert.equal(body.deliveryCents,undefined);
  }finally{global.fetch=original;}
 });
