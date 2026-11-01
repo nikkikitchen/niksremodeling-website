@@ -30,6 +30,20 @@ Object.assign(window.ROOM_WORK_OPTIONS,{"pet-care": {"title": "Pet Features", "k
 window.ROOM_PROJECT_SCOPES['home-theater'].unshift('theater-setting');
 window.ROOM_PROJECT_SCOPES['home-theater'].push('outdoor-media','snack-station');
 window.ROOM_PROJECT_SCOPES['kitchen-pantry'].push('snack-station','beverage');
+// Share essential room surfaces across the project dropdown and project planner.
+// Specialty services remain available after the standard room work; no duplicate options.
+const STANDARD_INDOOR_ROOM_WORK=['ceiling','walls','floor','trim','doors','lighting'];
+const INDOOR_ROOM_PROJECT_IDS=[
+  'attic','basement','garage','bathrooms','bath-remodel','bedroom-guest-room',
+  'closets-storage','dining-room','entry-mudroom','home-office','home-theater',
+  'kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room',
+  'music-creative-studio','kids-room','custom-room-ideas','pet-room',
+  'fitness-wellness','games-hobbies','snack-beverage'
+];
+INDOOR_ROOM_PROJECT_IDS.forEach(id=>{
+  const specific=window.ROOM_PROJECT_SCOPES[id]||[];
+  window.ROOM_PROJECT_SCOPES[id]=[...new Set([...STANDARD_INDOOR_ROOM_WORK,...specific.filter(key=>key!=='other')]),'other'];
+});
 const TOPIC_PHOTOS={"pet-room": "/assets/idea-pet-room.jpg", "outdoor-kitchen": "/assets/idea-outdoor-kitchen.jpg", "mechanic-shop": "/assets/idea-mechanic-shop.jpg", "car-wash": "/assets/idea-car-wash.jpg", "recycling-scrap": "/assets/idea-recycling-scrap.jpg", "vault-safe-room": "/assets/idea-vault-safe-room.jpg", "snack-beverage": "/assets/idea-snack-beverage.jpg", "pools": "/assets/idea-pools.jpg", "bus-stop": "/assets/idea-bus-stop.jpg", "mailboxes": "/assets/idea-mailboxes.jpg", "outdoor-sound": "/assets/idea-outdoor-sound.jpg", "garden-greenhouse": "/assets/idea-garden-greenhouse.jpg", "fitness-wellness": "/assets/idea-fitness-wellness.jpg", "games-hobbies": "/assets/idea-games-hobbies.jpg", "accessibility": "/assets/idea-accessibility.jpg", "backyard-retreat": "/assets/idea-backyard-retreat.jpg"};
 Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=image;});
 // Customer-approved project photos have priority over general catalog covers.
