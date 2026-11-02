@@ -40,10 +40,10 @@ test('A new ZIP immediately re-enables Check shipping and invalidates the stale 
   ui.input.value='30117';
   ui.input.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
   assert.equal(ui.button.disabled,false);
-  assert.equal(ui.shipping.textContent,'Enter ZIP to check');
+  assert.equal(ui.shipping.textContent,'Pending ZIP');
   finish(Response.json({deliveryCents:9000,units:3}));
   await flush();
-  assert.equal(ui.shipping.textContent,'Enter ZIP to check','stale response cannot overwrite new ZIP');
+  assert.equal(ui.shipping.textContent,'Pending ZIP','stale response cannot overwrite new ZIP');
   assert.equal(ui.total.textContent,'$100.00 + shipping pending');
  }finally{ui.dom.window.close();}
 });
@@ -64,6 +64,6 @@ test('A mixed supplier cart requests all products under one ZIP and displays one
   assert.equal(ui.shipping.textContent,'$81.00');
   assert.equal(ui.total.textContent,'$181.00');
   assert.equal(ui.button.disabled,false);
-  assert.match(ui.status.textContent,/Shipping is included in the estimated total/);
+  assert.match(ui.status.textContent,/Delivery estimated for 36269/);
  }finally{ui.dom.window.close();}
 });
