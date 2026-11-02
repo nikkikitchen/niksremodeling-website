@@ -64,7 +64,7 @@
   }
   function matched(query){
     const terms=query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    if(!terms.length)return routes.filter(r=>['Toilets','Refrigerators & Freezers','All Furniture','All Materials','Tools','Kitchen Projects','Bathroom Project'].includes(r[0]));
+    if(!terms.length)return [];
     return routes.map((r,i)=>{
       const title=r[0].toLowerCase(),rest=(r[1]+' '+r[2]+' '+r[4]).toLowerCase();
       const score=terms.reduce((sum,term)=>sum+(title.includes(term)?5:rest.includes(term)?2:0),0);
@@ -73,7 +73,7 @@
   }
   function results(q){
     const entries=matched(q),root=document.getElementById('product-search-results');
-    root.innerHTML='<p class="search-count">'+(entries.length?entries.length+' matching '+(entries.length===1?'destination':'destinations'):'No matching categories yet. Try another product name or browse by project.')+'</p>'+
+    root.innerHTML='<p class="search-count">'+(!q.trim()?'Search for a product above to see matching shopping options.':entries.length?entries.length+' matching '+(entries.length===1?'destination':'destinations'):'No matching products. Try another search.')+'</p>'+
       (entries.length?'<div class="product-search-results">'+entries.map(([name,group,description,url])=>
         '<a class="product-search-result" href="'+esc(url)+'"><img class="product-search-photo" src="'+esc(resultPhoto(name,group))+'" alt="" loading="lazy"><span class="product-search-group">'+esc(group)+'</span>'+
         '<strong>'+esc(name)+'</strong><span>'+esc(description)+'</span><span class="product-search-arrow">View options →</span></a>').join('')+'</div>':'');
