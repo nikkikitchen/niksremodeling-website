@@ -742,14 +742,14 @@ function cartCheckoutSummary(items){
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
    '<form id="cart-shipping-form" class="cart-delivery-check"><label for="cart-shipping-zip">Delivery ZIP<input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label></form><p id="cart-shipping-status" class="nr-cart-inline-status" role="status" aria-live="polite"></p>':
-   '<p class="calc-note">Delivery is confirmed separately for items without a supplier freight quote.</p>';
+   remainingShippingPending?'<p class="calc-note">Delivery is confirmed separately for items without a supplier freight quote.</p>':'';
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Order Summary</h3>
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
  ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
- <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Pending ZIP":"To be confirmed"}</strong></div>
+ <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
