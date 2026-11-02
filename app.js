@@ -93,6 +93,17 @@ const PRODUCT_IMAGES={
 // Retail listings come from verified supplier records, never planning examples.
 const PRODUCTS={furniture:[],appliances:[],cabinets:[],tools:[],materials:[],supplies:[]};
 
+function approvedRetailLabor(product){
+ const name=String(product?.name||'').toLowerCase();
+ const dept=String(product?.department||'').toLowerCase();
+ if(dept!=='appliances')return null;
+ if(/kegerator|beer tower|draft beer tap|beverage tap/.test(name))return {price:350,starting:true};
+ if(/range hood/.test(name))return {price:150,starting:false};
+ if(/wall oven/.test(name))return {price:/double/.test(name)?575:325,starting:false};
+ if(/over.the.range microwave/.test(name))return {price:325,starting:false};
+ if(/dishwasher/.test(name)&&!/countertop|portable/.test(name))return {price:275,starting:false};
+ return null;
+}
 // Keep installation checked in Shopping as a real cart line, including carts
 // saved before the shopping checkbox began creating its own service entry.
 function reconcileRetailInstallationCart(items){
@@ -113,6 +124,10 @@ function reconcileRetailInstallationCart(items){
   line.name='Install — '+String(product.name||'selected product');
   line.qty=Number(product.qty)||1;
   line.department=product.department;
+  const approved=approvedRetailLabor(product);
+  line.price=approved?.price??null;
+  line.pricingPending=!approved;
+  line.startingPrice=!!approved?.starting;
   if(!matching.length)result.push(line);
   for(const extra of matching.slice(1))result.splice(result.indexOf(extra),1);
  }
