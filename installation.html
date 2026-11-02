@@ -403,6 +403,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   const select=byId('labor-appliance');if(select)select.value=chosen?key:'';
   groups.forEach(g=>{g.hidden=g!==chosen;g.open=g===chosen;});
   if(chosen)byId('labor-category-appliances').open=true;
+  const picker=byId('labor-appliance')?.closest('.labor-room');if(picker)picker.hidden=!!chosen;
+  const helper=byId('labor-appliance-help');if(helper)helper.hidden=!!chosen;
  }
  function revealLaborTarget(target){
   if(!target)return;
@@ -494,10 +496,10 @@ document.addEventListener('DOMContentLoaded',()=>{
  const picker=make('div',undefined,'labor-room'),label=make('label','Appliance'),select=make('select');label.htmlFor='labor-appliance';select.id='labor-appliance';
  const prompt=make('option','Select an appliance');prompt.value='';select.append(prompt);
  category.groups.forEach(g=>{const option=make('option',g.label);option.value=g.applianceKey;select.append(option);});
- select.addEventListener('change',()=>chooseAppliance(select.value));picker.append(label,select);section.append(picker,make('p','Choose an appliance to see its installation, removal and related services.','labor-note'));
+ select.addEventListener('change',()=>chooseAppliance(select.value));picker.append(label,select);const help=make('p','Choose an appliance to see its installation, removal and related services.','labor-note');help.id='labor-appliance-help';section.append(picker,help);
  }
  // Product browsing remains optional: never change labor rates or add unverified stock.
- const matchingShopPages={appliances:'/appliances.html',bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/shop-installed.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',paint:'/material-paint-finishes.html'};
+ const matchingShopPages={bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/shop-installed.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',paint:'/material-paint-finishes.html'};
  if(matchingShopPages[category.id]){
   const shop=make('a','Shop matching products (optional)','btn outline');
   shop.href=matchingShopPages[category.id];
@@ -527,7 +529,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     target=matches[0]||null;
   }
   const hashTarget=location.hash?document.getElementById(decodeURIComponent(location.hash.slice(1))):null;
-  const applianceKey=new URLSearchParams(location.search).get('appliance');
+  const params=new URLSearchParams(location.search);
+  const applianceKey=params.get('appliance')||(/tap|kegerator|beverage/i.test(params.get('service')||params.get('product')||'')?'beverage-taps':null);
   const applianceTarget=applianceKey?[...document.querySelectorAll('[data-appliance]')].find(g=>g.dataset.appliance===applianceKey):null;
   const focus=target||applianceTarget||hashTarget;
   if(focus){const section=focus.closest('.labor-section');if(section)selectLaborCategory(section.id.replace('labor-category-',''));revealLaborTarget(focus);requestAnimationFrame(()=>focus.scrollIntoView({block:'start'}));}
