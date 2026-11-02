@@ -671,14 +671,16 @@ function cartCheckoutSummary(items){
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Order Summary</h3>
  ${shippingChecker}
+ <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
  ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(estimatedLabor.total)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Pending ZIP":"To be confirmed"}</strong></div>
- ${remainingShippingPending?'<p class="calc-note">Shipping for remaining products will be confirmed separately.</p>':''}
+
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
- ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items need a price before the total is final. <a href="/terms.html">Quote details</a></p>':''}
+ ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
  <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending items':''}</strong></div>
  <div class="cart-item"><span>Due now</span><strong>$0.00</strong></div>
+ </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
  <p class="calc-note"><a href="/terms.html">Estimate only — details &amp; terms</a>. No payment collected.</p>
  </section>`;
