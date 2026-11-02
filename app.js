@@ -711,8 +711,8 @@ function initCartShippingQuote(items){
   shipping.textContent='Pending ZIP';
   total.textContent=initialTotal;
   status.textContent='';
-  if(/^\\d{5}$/.test(input.value))form.requestSubmit();
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
+  if(/^\d{5}$/.test(input.value))form.requestSubmit();
  });
  form.addEventListener('submit',async event=>{
   event.preventDefault();
