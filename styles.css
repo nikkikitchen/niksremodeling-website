@@ -432,3 +432,33 @@ nav.nav .mobile-top-nav{display:none!important}
  }
  nav.nav .mobile-top-nav .nav-toggle[aria-controls="mobile-labor-menu"] .nav-caret{display:none!important}
 }
+
+
+/* Review Cart: familiar store layout, readable at desktop and phone sizes */
+.nr-cart-page{max-width:1240px}
+.nr-cart-title{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.nr-cart-title h1{margin:0 0 6px}.nr-cart-title .lead{margin:0}
+.nr-cart-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,1fr);align-items:start;gap:22px}
+.nr-cart-products{padding:24px!important;min-width:0}
+.nr-cart-products h2{font-size:1.35rem;margin:0 0 18px}
+.nr-cart-column-labels{display:flex;justify-content:space-between;border-bottom:1px solid #d8dee8;color:#64748b;font-size:.84rem;font-weight:600;padding-bottom:10px}
+.nr-cart-line{display:grid;grid-template-columns:54px minmax(0,1fr) minmax(96px,auto);align-items:start;gap:14px;padding:22px 0;border-bottom:1px solid #e2e8f0}
+.nr-cart-line:last-child{border-bottom:0}
+.nr-cart-item-symbol{width:54px;height:54px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:24px}
+.nr-cart-line-info{min-width:0}.nr-cart-line-info strong{display:block;line-height:1.45;overflow-wrap:anywhere}
+.nr-cart-meta{font-size:.88rem;color:#64748b;margin-top:7px}
+.nr-cart-line-price{text-align:right;font-weight:700;overflow-wrap:anywhere}
+.nr-cart-remove{border:0;background:transparent;padding:6px 0;margin-top:8px;color:#ad2631;text-decoration:underline;cursor:pointer;font:inherit;font-size:.9rem}
+.nr-cart-summary{min-width:0;position:sticky;top:15px}
+.nr-cart-summary .cart-checkout-summary{margin:0!important;padding:24px!important;border-radius:14px}
+.nr-cart-summary h3{font-size:1.35rem;margin-top:0}
+.nr-cart-summary .cart-item{gap:14px;padding:12px 0;align-items:start}
+.nr-cart-summary .cart-item strong{text-align:right}
+.nr-cart-summary #cart-estimated-total{font-size:1.22rem}
+.nr-cart-summary .cart-delivery-check{display:grid!important;grid-template-columns:minmax(0,1fr);align-items:stretch!important}
+.nr-cart-summary #cart-shipping-zip{max-width:100%;width:100%;box-sizing:border-box}
+.nr-cart-summary .cart-delivery-check .btn{width:100%}
+.nr-cart-bottom{margin-top:22px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.nr-cart-empty{text-align:center;padding:42px 18px!important}
+@media(max-width:850px){.nr-cart-layout{grid-template-columns:minmax(0,1fr)}.nr-cart-summary{position:static}.nr-cart-title{align-items:start}.nr-cart-title>.btn{flex-shrink:0}}
+@media(max-width:540px){.nr-cart-title{display:block}.nr-cart-title>.btn{margin-top:12px}.nr-cart-products{padding:16px!important}.nr-cart-line{grid-template-columns:42px minmax(0,1fr) minmax(80px,auto);gap:9px;padding:16px 0}.nr-cart-item-symbol{width:42px;height:42px;font-size:19px}.nr-cart-line-price{font-size:.94rem}.nr-cart-summary .cart-checkout-summary{padding:16px!important}}
