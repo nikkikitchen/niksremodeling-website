@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  if(projectWork)projectParams.set('work',projectWork);
  const projectReturn='/project.html?'+projectParams.toString();
  const selectedCategory=bathroomNames[type]||'Bathroom Products';
- const projectBack='<a class="btn outline" href="'+projectReturn+'">← Back to Bathroom Project / Add Labor</a>';
+ const projectBack='<a class="btn outline" href="'+projectReturn+'">← Back to Project</a>';
  const projectControls=fromProject?'<div class="project-shopping-return">'+projectBack+' <a class="btn outline" href="/project-cart.html">Review Cart</a></div>':'';
  // Preserve a route to project planning when retail warehouse stock is unavailable.
  const bathWorkByType={toilets:'toilet',bathtubs:'tub',vanities:'vanity',showers:'shower',showerBases:'shower',showerDoors:'shower',faucets:'faucet-service',lighting:'vanity-light',ventilation:'ventilation',accessories:'mirror'};
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '<div class="store-card-grid" id="bath-products"></div>'+
    '<p id="bath-status" role="status">Loading available products…</p>'+
    '<div id="bath-more"></div>'+
-   '<p>Product prices exclude delivery, tax and installation. Online payment is not yet available.</p>'+planWithoutProduct+projectControls)+
+   '<p>Delivery and tax are estimated in Review Cart.</p>'+planWithoutProduct+projectControls)+
    '</main>'+footer();
  updateCartCount();initNavMenus();
  if(choosingToilet)return;
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     variants.map(v=>'<option value="'+bathEsc(v.id)+'">'+bathEsc(v.name||v.sku)+' — '+bathMoney(v.priceCents)+'</option>').join('')+
     '</select></label><p id="bath-price" class="price">'+bathMoney(variants[0].priceCents)+'</p>'+
     '<fieldset style="border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0"><legend>Completing your project</legend>'+
-    '<label style="display:block"><input type="checkbox" id="bath-install"> Would you like Nik’s Remodeling to install this?</label>'+
+    '<label style="display:block"><input type="checkbox" id="bath-install"> I want Nik’s Remodeling to install this</label>'+
     '<label id="bath-supplies-choice" style="display:block;margin-top:10px"><input type="checkbox" id="bath-supplies"> Include matching supplies</label></fieldset>'+
     '<button type="button" class="btn primary" id="bath-add-cart">Add to Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a>'+
     '<p id="bath-cart-status" role="status"></p></div></article>';
