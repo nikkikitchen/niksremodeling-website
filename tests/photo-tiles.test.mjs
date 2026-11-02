@@ -39,11 +39,11 @@ test('photo navigation changes do not alter approved labor amounts',()=>{
   assert.equal(packages.find(x=>x.id===id)?.labor,labor,id);
  }
 });
-test('retail checkout stays opt-in server-side',()=>{
+test('retail checkout stays disabled even with payment settings present',()=>{
  const status=readFileSync(new URL('../functions/api/store-quote.js',import.meta.url),'utf8');
- assert.ok(status.includes('STORE_CHECKOUT_ENABLED'));
+ assert.ok(status.includes('const checkoutEnabled=false;'));
  const checkout=readFileSync(new URL('../functions/api/store-checkout.js',import.meta.url),'utf8');
- assert.ok(checkout.includes('checkoutEnabled'));
+ assert.ok(checkout.includes('checkoutEnabled:false'));
 });
 
 test('appliance dryers show a laundry image, not kitchen images',()=>{
