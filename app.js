@@ -655,14 +655,24 @@ function cartCheckoutSummary(items){
  const supplyEstimate=packagedSupplies+standaloneSupplies+laborCatalogTotal;
  const hasSupplyEstimate=packaged.length>0||standalone.length>0||laborCatalogSupplies.length>0;
  const pendingSupplies=items.some(x=>x.hiddenFromCustomer&&x.pricingPending)||items.some(x=>x.source==='supplier-retail'&&x.suppliesRequested&&!x.installationRequested)||items.some(x=>x.source==='labor-catalog'&&['Labor','Service'].includes(x.type)&&!x.supplyPackage);
- const payableSubtotal=amount+standaloneSupplies+laborCatalogTotal;
- // Package supplies are already contained in their package price; do not add again.
- const combinedEstimatedTotal=payableSubtotal+(estimatedLabor.hasServices?estimatedLabor.total:0);
+ // Split bundled bathroom/project package prices into labor versus materials.
+ // Those package materials are already within their item price; count them
+ // in the upfront portion without adding anything to the combined total twice.
+ const packagedMaterialTotal=packaged.reduce((sum,x)=>{
+  if(!['Labor','Service'].includes(x.type)||!Number.isFinite(Number(x.price)))return sum;
+  const units=Number(x.packageQuantity)||Number(x.qty)||1;
+  const costs=x.internalCosts;
+  const supplies=Math.max(0,Number(costs.supplies)||0)*units;
+  const fixtures=Math.max(0,(Number(costs.fixture)||0)*units-(Number(x.fixtureAllowanceReplaced)||0));
+  const packagePrice=Math.max(0,Number(x.price)*(Number(x.qty)||1));
+  return sum+Math.min(packagePrice,supplies+fixtures);
+ },0);
+ const payableSubtotal=amount+standaloneSupplies+laborCatalogTotal+packagedMaterialTotal;
+ const laborSubtotal=estimatedLabor.hasServices?Math.max(0,estimatedLabor.total-packagedMaterialTotal):0;
+ const combinedEstimatedTotal=payableSubtotal+laborSubtotal;
  // Only separately priced retail merchandise is included in the provisional
  // goods tax base. Labor and project estimates are not treated as retail sales.
- const retailGoodsCents=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&
-   Number.isFinite(Number(x.price))&&Number(x.price)>0&&!x.pricingPending)
-  .reduce((sum,x)=>sum+Math.round(Number(x.price)*100)*(Number(x.qty)||1),0);
+ const retailGoodsCents=Math.round(payableSubtotal*100);
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
@@ -673,7 +683,7 @@ function cartCheckoutSummary(items){
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
- ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(estimatedLabor.total)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
+ ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Pending ZIP":"To be confirmed"}</strong></div>
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
