@@ -46,7 +46,7 @@ test('one ZIP shipment plus highest verified ZIP tax builds a transparent previe
  });
  try{
   ui.zip.value='36269';
-  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true}));
+  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true,bubbles:true}));
   await flush();await flush();
   assert.equal(shippingCalls,1);
   assert.equal(taxCalls,1);
@@ -76,7 +76,7 @@ test('updating address reduces tax estimate without recalculating CJ freight',as
  });
  try{
   ui.zip.value='36269';
-  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true}));
+  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true,bubbles:true}));
   await flush();await flush();
   assert.equal(ui.total.textContent,'$193.69');
   ui.street.value='123 Main St';ui.city.value='Heflin';ui.state.value='AL';
@@ -96,7 +96,7 @@ test('missing API key never turns unknown sales tax into zero or a pretend final
  });
  try{
   ui.zip.value='36269';
-  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true}));
+  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true,bubbles:true}));
   await flush();await flush();
   assert.equal(ui.tax.textContent,'Awaiting verified calculation');
   assert.equal(ui.total.textContent,'$181.00 + tax pending');
