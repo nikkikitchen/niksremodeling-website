@@ -684,6 +684,13 @@ function cartCheckoutSummary(items){
 
  <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
  <div class="cart-item"><span><strong>Estimated combined project total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
+ <div class="nr-cart-payment-summary" aria-label="Payment balance">
+ <h4>Payment Summary</h4>
+ <div class="cart-item"><span>Payments received</span><strong>$0.00</strong></div>
+ <div class="cart-item"><span><strong>Estimated remaining balance</strong></span><strong id="cart-remaining-balance">To be calculated</strong></div>
+ <div class="cart-item"><span>Payment due now</span><strong>$0.00</strong></div>
+ <p class="calc-note">No payments have been collected online. The remaining balance is an estimate until the final quote is approved. Payment collection is disabled.</p>
+ </div>
  <p class="calc-note"><strong>Quote only — online payments are disabled.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
  </section>`;
 }
@@ -767,7 +774,11 @@ function initCartTaxPreview(){
  const total=document.getElementById('cart-estimated-total');
  if(!tax||!info||!total)return;
  const retailCents=Number(total.dataset.retailCents);
- if(!Number.isSafeInteger(retailCents)||retailCents<=0)return;
+ if(!Number.isSafeInteger(retailCents)||retailCents<=0){
+  const balance=document.getElementById('cart-remaining-balance');
+  if(balance)balance.textContent=total.textContent;
+  return;
+ }
  const baseCents=Number(total.dataset.baseCents);
  const otherPending=total.dataset.pending==='true'?' + pending charges':'';
  const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
@@ -782,6 +793,8 @@ function initCartTaxPreview(){
   info.textContent=disclaimer;
   total.textContent=money(baseCents+(shippingCents??0)+taxCents)+
    (form&&shippingCents===null?' + shipping pending':'')+otherPending;
+  const balance=document.getElementById('cart-remaining-balance');
+  if(balance)balance.textContent=total.textContent;
  };
  calculate();
  if(!form)return;
