@@ -742,7 +742,7 @@ function initCartShippingQuote(items){
    const combinedCents=Number(total.dataset.baseCents)+result.deliveryCents;
    total.textContent=moneyValue(combinedCents/100)+(total.dataset.pending==='true'?' + pending charges':'');
    status.textContent='Estimated supplier delivery to ZIP '+zip+' for '+result.units+' item(s)'+
-    (result.shippingMethod?' via '+result.shippingMethod:'')+'. Shipping is included in the estimated total above; sales tax and any other delivery charges are not yet included.';
+    (result.shippingMethod?' via '+result.shippingMethod:'')+'. Shipping and temporary 8% estimated sales tax are included in the combined total above. Any additional delivery charges will be confirmed before payment.';
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
    form.dispatchEvent(new form.ownerDocument.defaultView.CustomEvent('nr:shipping-quoted',{
     detail:{zip,deliveryCents:result.deliveryCents}
