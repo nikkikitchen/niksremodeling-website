@@ -877,7 +877,7 @@ function renderCart(){
  const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
- <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/">Continue Shopping</a></div>
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/product-search.html">Find Products</a></div>
 
  ${c.length?`<div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
  <h2>Items in Your Cart</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
@@ -891,8 +891,8 @@ function renderCart(){
  </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
- '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Choose where to shop or add installation labor directly.</p><div class="nr-cart-empty-actions" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0"><a class="btn primary" href="/product-search.html">Browse Products</a><a class="btn outline" href="/installation.html">Installation &amp; Labor</a><a class="btn outline" href="/#projects">Projects</a></div><p>Shop by category:</p><div class="nr-cart-empty-categories" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"><a class="btn outline" href="/appliances.html">Appliances</a><a class="btn outline" href="/bathroom.html">Bathroom</a><a class="btn outline" href="/cabinets.html">Cabinets</a><a class="btn outline" href="/furniture.html">Furniture</a><a class="btn outline" href="/materials.html">Materials</a><a class="btn outline" href="/other.html">Other</a><a class="btn outline" href="/supplies.html">Supplies</a><a class="btn outline" href="/tools.html">Tools</a></div></div>'}
- </div></section></main>`+projectFlow('cart')+footer();
+ '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Add what you need directly—no extra picture gallery.</p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0"><a class="btn primary" href="/product-search.html">Find Products</a><a class="btn outline" href="/installation.html">Add Installation &amp; Labor</a><a class="btn outline" href="/#projects">Start a Project</a></div></div>'}
+ </div></section></main>`+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
  if(zipTop&&zipForm){
