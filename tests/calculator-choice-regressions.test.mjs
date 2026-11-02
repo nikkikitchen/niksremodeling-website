@@ -537,7 +537,7 @@ test('removing the final cart item removes stale calculator drafts too',async()=
   w.removeCart(0);
   assert.equal(w.getCart().length,0);
   assert.ok(!JSON.parse(w.localStorage.getItem('niks-material-estimates-v1')||'[]').length,'Removed items may not return');
-  assert.match(w.document.body.textContent,/Your project cart is empty/);
+  assert.match(w.document.body.textContent,/Your cart is empty/);
  }finally{dom.window.close();}
 });
 
