@@ -797,7 +797,30 @@ function initCartTaxPreview(){
  });
 }
 
-function renderCart(){const c=reconcileBathroomFixtureAllowances(getCart());document.title='Review Cart | Nik\'s Remodeling';document.body.innerHTML=header()+`<main><section class="section"><div class="wrap"><h2>Review Your Cart</h2><p class="lead">Review your estimate or keep shopping.</p><p class="calc-note">Materials and labor are separate choices. When you choose installation, any needed supplies are included in the installation estimate and charged only once. Materials-only orders do not automatically include installation supplies.</p>${c.some(x=>x.fixtureAllowanceReplaced)?'<p class="calc-note">Your selected toilet price replaces the matching standard fixture allowance. Labor and required supplies stay unchanged. Delivery and tax are confirmed with your quote.</p>':''}<div class="panel"><div class="cart-list">${c.length?c.map((x,i)=>x.hiddenFromCustomer?'':`<div class="cart-item"><div><strong>${escapeCartText(x.name)}</strong><div>${escapeCartText(x.type||'Project')} item · Qty ${x.qty||1}</div></div><div class="cart-current">${cartPriceMarkup(x)}</div><button class="btn outline" onclick="removeCart(${i})">${x.source==='project-calculator'?'Remove project':'Remove'}</button></div>`).join(''):'<div class="empty">Your project cart is empty. Browse products and add items when you are ready.</div>'}</div>${c.some(x=>x.source==='bathroom-retail')?'<div class="btns"><a class="btn outline" href="/project.html?project=bathrooms'+(c.find(x=>x.source==='bathroom-retail'&&x.workKey)?.workKey?'&work='+encodeURIComponent(c.find(x=>x.source==='bathroom-retail'&&x.workKey).workKey):'')+'">Continue Bathroom Project / Add Labor</a></div>':''}${projectEstimateMarkup(c)}${c.length?`${cartShoppingChoices(c)}${cartCheckoutSummary(c)}<div class="result">Your project estimate combines priced work and required installation costs. Labor is not payable here; any incomplete pricing must be confirmed before payment.</div>${cartSchedulingMarkup(c)}<div class="btns"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a><a class="btn outline" href="/">Keep Shopping</a></div>`:''}</div>${c.length?cartSuggestionMarkup(c):''}</div></section></main>`+projectFlow('cart')+footer();updateCartCount();initCartShippingQuote(c);initCartTaxPreview()}
+function renderCart(){
+ const c=reconcileBathroomFixtureAllowances(getCart());
+ const visible=c.map((item,index)=>({item,index})).filter(({item})=>!item.hiddenFromCustomer);
+ const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
+ document.title='Review Cart | Nik\'s Remodeling';
+ document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review products and project work in one place.</p></div><a class="btn outline" href="/">Continue Shopping</a></div>
+ ${c.some(x=>x.fixtureAllowanceReplaced)?'<p class="calc-note">Your selected toilet replaces its standard fixture allowance. Installation and supplies are not duplicated.</p>':''}
+ ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
+ <h2>Items in Your Cart</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
+ <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
+ <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
+ <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
+ <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
+ <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
+ </article>`).join('')}</div>
+ ${c.some(x=>x.source==='bathroom-retail')?'<a class="btn outline" href="/project.html?project=bathrooms">Add Bathroom Installation</a>':''}
+ </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
+ ${projectEstimateMarkup(c)}${cartShoppingChoices(c)}${cartSchedulingMarkup(c)}
+ <div class="nr-cart-bottom"><p class="calc-note">This is an estimate, not a payment request. Final pricing, shipping and taxes will be confirmed before payment.</p><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
+ '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Start with a project or browse materials and products.</p><a class="btn primary" href="/">Browse Projects &amp; Shopping</a></div>'}
+ </div></section></main>`+projectFlow('cart')+footer();
+ updateCartCount();initCartShippingQuote(c);initCartTaxPreview();
+}
 function removeCart(i){const c=getCart();if(!Number.isInteger(i)||i<0||i>=c.length)return;c.splice(i,1);saveCart(c);
  // Once the user removes the last cart item, don't retain stale calculator
  // drafts that would otherwise restore deleted work into another estimate.
