@@ -892,7 +892,7 @@ function renderCart(){
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
  '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Add what you need directly—no extra picture gallery.</p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0"><a class="btn primary" href="/?open=shopping">Add Products</a><a class="btn outline" href="/installation.html">Add Installation &amp; Labor</a><a class="btn outline" href="/#projects">Start a Project</a></div></div>'}
- <section id="cart-shopping-categories" class="panel" style="margin-top:20px"><h2>Shop Products</h2><p>Go directly to the products you need:</p><div class="nr-cart-shop-categories" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:15px 0"><a class="btn outline" href="/appliances.html">Appliances</a><a class="btn outline" href="/bathroom.html">Bathroom</a><a class="btn outline" href="/cabinets.html">Cabinets</a><a class="btn outline" href="/furniture.html">Furniture</a><a class="btn outline" href="/materials.html">Materials</a><a class="btn outline" href="/other.html">Other</a><a class="btn outline" href="/supplies.html">Supplies</a><a class="btn outline" href="/tools.html">Tools</a></div></section></div></section></main>`+footer();
+ </div></section></main>`+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
  if(zipTop&&zipForm){
