@@ -679,13 +679,13 @@ function cartCheckoutSummary(items){
  <div class="cart-item"><span>Delivery, shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
  ${shippingChecker}
  ${remainingShippingPending?'<p class="calc-note">Shipping for any remaining products will be confirmed separately.</p>':''}
- <div class="cart-item"><span>Estimated sales tax on retail items</span><strong id="cart-tax-amount">${retailGoodsCents?'Awaiting verified lookup':'No retail merchandise'}</strong></div>
- <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Sales tax is a preview only. We confirm tax obligations and the delivery address before collecting payment. Labor is excluded from this merchandise tax estimate.</p>
+ <div class="cart-item"><span>Estimated sales tax on retail items<small id="cart-tax-rate-label" style="display:block;color:var(--muted);font-weight:400"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Awaiting verified lookup':'No retail merchandise'}</strong></div>
+ <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Based on a verified destination tax rate when available. Actual sales tax and final price will be confirmed before payment. Online payments are currently disabled.</p>
  ${retailGoodsCents&&supplierShippingItems.length?'<details id="cart-tax-address-details" style="margin:10px 0"><summary>Refine tax estimate with delivery address (optional)</summary><div style="display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0"><label>Street address<br><input id="cart-tax-street" autocomplete="shipping street-address" maxlength="150"></label><label>City<br><input id="cart-tax-city" autocomplete="shipping address-level2" maxlength="80"></label><label>State (2 letters)<br><input id="cart-tax-state" autocomplete="shipping address-level1" maxlength="2" placeholder="AL"></label><button class="btn outline" type="button" id="cart-tax-refine">Update tax estimate</button></div><p class="calc-note">Uses the delivery ZIP above. No payment is taken.</p></details>':''}
 
  <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
  <div class="cart-item"><span><strong>Estimated combined project total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
- <p class="calc-note"><strong>Pay nothing unless you choose to purchase.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
+ <p class="calc-note"><strong>Quote only — online payments are disabled.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
  </section>`;
 }
 function cartShoppingChoices(items){
@@ -762,6 +762,7 @@ function initCartTaxPreview(){
  const form=document.getElementById('cart-shipping-form');
  const tax=document.getElementById('cart-tax-amount');
  const info=document.getElementById('cart-tax-status');
+ const rateLabel=document.getElementById('cart-tax-rate-label');
  const total=document.getElementById('cart-estimated-total');
  if(!form||!tax||!info||!total)return;
  const retailCents=Number(total.dataset.retailCents);
@@ -776,6 +777,7 @@ function initCartTaxPreview(){
  let version=0,shippingCents=null,verifiedZip='';
  function showPending(message){
   tax.textContent='Awaiting verified calculation';
+  if(rateLabel)rateLabel.textContent='';
   info.textContent=message||'Tax has not been included. Rates and collection requirements will be confirmed before payment.';
   if(shippingCents!==null)
    total.textContent=money(baseCents+shippingCents)+' + tax pending'+otherPending;
@@ -802,11 +804,16 @@ function initCartTaxPreview(){
       result.taxCents<0||!['zip-upper-estimate','address-estimate'].includes(result.mode))
     throw Error(result.error||'A verified tax estimate is not available.');
    tax.textContent=money(result.taxCents)+' (estimate)';
+   const verifiedRate=Number(result.ratePercent);
+   const rateText=Number.isFinite(verifiedRate)&&verifiedRate>=0&&verifiedRate<=25
+    ?verifiedRate.toLocaleString('en-US',{maximumFractionDigits:2})+'%':'';
+   if(rateLabel)rateLabel.textContent=rateText?'Based on '+rateText+(result.mode==='zip-upper-estimate'?' ZIP-area maximum':' delivery-address rate'):'';
    total.textContent=money(baseCents+shippingCents+result.taxCents)+otherPending;
-   info.textContent=(result.mode==='zip-upper-estimate'
-    ?'Using the highest verified sales-tax rate within the ZIP. Full address may lower it. '
-    :'Using the verified delivery-address tax rate. ')+
-    'This is a preview only; tax registration, product taxability, and final collection still require confirmation.';
+   info.textContent=(rateText?'Based on '+rateText+'. ':'')+
+    (result.mode==='zip-upper-estimate'
+     ?'Using the highest verified sales-tax rate overlapping ZIP '+verifiedZip+'. A full address may change this estimate. '
+     :'Using the verified sales-tax rate for the delivery address. ')+
+    'Actual sales tax and final price will be confirmed before payment. Online payments are disabled until registration and tax obligations are confirmed.'; tax registration, product taxability, and final collection still require confirmation.';
   }catch(error){
    if(mine!==version)return;
    showPending((error?.message||'Verified sales-tax lookup unavailable.')+
@@ -816,6 +823,7 @@ function initCartTaxPreview(){
  form.addEventListener('nr:shipping-cleared',()=>{
   version++;shippingCents=null;verifiedZip='';
   tax.textContent='Awaiting delivery ZIP';
+  if(rateLabel)rateLabel.textContent='';
   info.textContent='Enter your ZIP and check shipping to see a sales-tax estimate.';
  });
  form.addEventListener('nr:shipping-quoted',event=>{
