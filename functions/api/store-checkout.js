@@ -1,6 +1,9 @@
 import {square,PRODUCT_ID} from '../_lib/commerce.js';
 import {onRequestGet as getQuote} from './store-quote.js';
 export async function onRequestPost({request,env}){
+ // Quote-only launch. Deliberately hard-disabled regardless of Cloudflare/Square secrets.
+ // Re-enable only after required seller registrations, tax rules, and checkout QA.
+ return Response.json({error:'Online payments are not available yet. Please review your cart estimate or contact Nik’s Remodeling.',checkoutEnabled:false},{status:503,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
  const origin=new URL(request.url).origin;
  if(request.headers.get('Origin')!==origin)return Response.json({error:'Please start checkout from our website.'},{status:403});
  try{
