@@ -676,9 +676,9 @@ function cartCheckoutSummary(items){
  ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(estimatedLabor.total)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Pending ZIP":"To be confirmed"}</strong></div>
 
- <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
+ <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
- <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending items':''}</strong></div>
+ <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  <div class="cart-item"><span>Due now</span><strong>$0.00</strong></div>
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
@@ -762,11 +762,9 @@ function initCartTaxPreview(){
  const total=document.getElementById('cart-estimated-total');
  if(!tax||!info||!total)return;
  const retailCents=Number(total.dataset.retailCents);
- if(!Number.isSafeInteger(retailCents)||retailCents<=0){
-  return;
- }
+ if(!Number.isSafeInteger(retailCents)||retailCents<0)return;
  const baseCents=Number(total.dataset.baseCents);
- const otherPending=total.dataset.pending==='true'?' + pending charges':'';
+
  const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
  const disclaimer='Tax estimated at 8%. Final amount confirmed before payment.';
  let shippingCents=null;
@@ -774,11 +772,10 @@ function initCartTaxPreview(){
   // Planning estimate only, not a verified or collectible sales-tax amount.
   // Include retail merchandise plus estimated shipping, never installation labor.
   const taxCents=Math.round((retailCents+(shippingCents??0))*0.08);
-  tax.textContent=money(taxCents)+' (estimate)';
+  tax.textContent=money(taxCents);
   if(rateLabel)rateLabel.textContent='Based on temporary 8% estimate';
   info.textContent=disclaimer;
-  total.textContent=money(baseCents+(shippingCents??0)+taxCents)+
-   (form&&shippingCents===null?' + shipping pending':'')+otherPending;
+  total.textContent=money(baseCents+(shippingCents??0)+taxCents);
  };
  calculate();
  if(!form)return;
