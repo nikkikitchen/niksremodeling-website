@@ -14,7 +14,7 @@ function mount(fetch){
  const dom=new JSDOM(`<form id="cart-shipping-form"><input id="cart-shipping-zip" required pattern="[0-9]{5}" maxlength="5"><button type="submit">Check Shipping & Taxes</button></form>
  <p id="cart-shipping-status"></p><strong id="cart-shipping-amount">Enter ZIP</strong>
  <strong id="cart-tax-amount">Temporary 8% estimate</strong><small id="cart-tax-rate-label"></small><p id="cart-tax-status"></p>
- <strong id="cart-estimated-total" data-base-cents="10000" data-retail-cents="6000" data-pending="false">$100.00 + shipping and tax pending</strong>`,
+ <strong id="cart-due-now">$0.00</strong><strong id="cart-estimated-total" data-base-cents="10000" data-payable-cents="6000" data-retail-cents="6000" data-pending="false">$100.00 + shipping and tax pending</strong>`,
  {url:'https://niksremodeling.com/'});
  const {document,localStorage}=dom.window;
  new Function('document','localStorage','fetch','items',
@@ -23,7 +23,7 @@ function mount(fetch){
  const id=name=>document.getElementById(name);
  return {dom,form:id('cart-shipping-form'),zip:id('cart-shipping-zip'),
   shipping:id('cart-shipping-amount'),tax:id('cart-tax-amount'),rateLabel:id('cart-tax-rate-label'),
-  info:id('cart-tax-status'),total:id('cart-estimated-total')};
+  info:id('cart-tax-status'),total:id('cart-estimated-total'),due:id('cart-due-now')};
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const submit=ui=>{
@@ -36,6 +36,7 @@ test('temporarily estimates merchandise at 8% even before shipping quote',()=>{
   assert.equal(ui.tax.textContent,'$4.80');
   assert.equal(ui.rateLabel.textContent,'Based on temporary 8% estimate');
   assert.equal(ui.total.textContent,'$104.80');
+  assert.equal(ui.due.textContent,'$64.80','upfront amount includes merchandise and tax, not $40 labor');
   assert.match(ui.info.textContent,/Final amount confirmed before payment/);
   assert.match(ui.info.textContent,/Tax estimated at 8%/);
  }finally{ui.dom.window.close();}
@@ -56,6 +57,7 @@ test('one ZIP adds verified freight, then estimates 8% of merchandise plus shipp
   assert.equal(ui.shipping.textContent,'$81.00');
   assert.equal(ui.tax.textContent,'$11.28');
   assert.equal(ui.total.textContent,'$192.28');
+  assert.equal(ui.due.textContent,'$147.28','upfront amount includes merchandise, freight and tax, not labor');
   assert.equal(ui.rateLabel.textContent,'Based on temporary 8% estimate');
   ui.zip.value='3011';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
