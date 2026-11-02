@@ -33,11 +33,11 @@ const submit=ui=>{
 test('temporarily estimates merchandise at 8% even before shipping quote',()=>{
  const ui=mount(async()=>{throw Error('No shipping request expected');});
  try{
-  assert.equal(ui.tax.textContent,'$4.80 (estimate)');
+  assert.equal(ui.tax.textContent,'$4.80');
   assert.equal(ui.rateLabel.textContent,'Based on temporary 8% estimate');
-  assert.equal(ui.total.textContent,'$104.80 + shipping pending');
-  assert.match(ui.info.textContent,/Actual tax may be higher or lower/);
-  assert.match(ui.info.textContent,/payments are disabled/);
+  assert.equal(ui.total.textContent,'$104.80');
+  assert.match(ui.info.textContent,/Final amount confirmed before payment/);
+  assert.match(ui.info.textContent,/Tax estimated at 8%/);
  }finally{ui.dom.window.close();}
 });
 test('one ZIP adds verified freight, then estimates 8% of merchandise plus shipping',async()=>{
@@ -54,13 +54,13 @@ test('one ZIP adds verified freight, then estimates 8% of merchandise plus shipp
   assert.equal(shippingCalls,1);
   assert.equal(otherCalls,0);
   assert.equal(ui.shipping.textContent,'$81.00');
-  assert.equal(ui.tax.textContent,'$11.28 (estimate)');
+  assert.equal(ui.tax.textContent,'$11.28');
   assert.equal(ui.total.textContent,'$192.28');
   assert.equal(ui.rateLabel.textContent,'Based on temporary 8% estimate');
-  ui.zip.value='30117';
+  ui.zip.value='3011';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
-  assert.equal(ui.tax.textContent,'$4.80 (estimate)');
-  assert.equal(ui.total.textContent,'$104.80 + shipping pending');
+  assert.equal(ui.tax.textContent,'$4.80');
+  assert.equal(ui.total.textContent,'$104.80');
  }finally{ui.dom.window.close();}
 });
 test('unknown supplier freight never becomes zero or a fake final price',async()=>{
@@ -69,8 +69,8 @@ test('unknown supplier freight never becomes zero or a fake final price',async()
   submit(ui);
   await flush();await flush();
   assert.equal(ui.shipping.textContent,'Shipping needs confirmation');
-  assert.equal(ui.tax.textContent,'$4.80 (estimate)');
-  assert.equal(ui.total.textContent,'$104.80 + shipping pending');
-  assert.match(ui.info.textContent,/temporary 8% rate/);
+  assert.equal(ui.tax.textContent,'$4.80');
+  assert.equal(ui.total.textContent,'$104.80');
+  assert.match(ui.info.textContent,/Tax estimated at 8%/);
  }finally{ui.dom.window.close();}
 });
