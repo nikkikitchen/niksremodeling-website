@@ -494,3 +494,12 @@ nav.nav .mobile-top-nav{display:none!important}
 .nr-cart-summary .nr-cart-inline-status:empty{display:none}
 .nr-cart-summary .cart-item{padding:9px 0}
 .nr-cart-summary .cart-checkout-summary>.calc-note{font-size:.78rem;margin:8px 0 0}
+
+/* Price chart: all dollar amounts aligned in one compact block */
+.nr-cart-price-chart{border:1px solid #dce3eb;border-radius:12px;padding:8px 15px;margin:10px 0;background:#fff}
+.nr-cart-price-chart .cart-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,auto);gap:12px;align-items:baseline;padding:11px 0;margin:0;border-bottom:1px solid #e8edf3}
+.nr-cart-price-chart .cart-item:last-child{border-bottom:0}
+.nr-cart-price-chart .cart-item strong{text-align:right}
+.nr-cart-price-chart .nr-cart-balance-row{border-top:2px solid #aab6c8;margin-top:4px;padding-top:16px}
+.nr-cart-price-chart .nr-cart-quote-note{margin:8px 0;font-size:.84rem}
+@media(max-width:540px){.nr-cart-price-chart{padding:5px 10px}.nr-cart-price-chart .cart-item{grid-template-columns:minmax(0,1fr) minmax(90px,auto);font-size:.94rem}}
