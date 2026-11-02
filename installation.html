@@ -17,7 +17,7 @@
 .labor-section>summary{padding:12px 6px;font-size:22px;font-weight:800;color:var(--blue2)}
 .labor-section>summary::after,.labor-group>summary::after{content:'+';font-size:25px;color:var(--blue)}
 .labor-section[open]>summary::after,.labor-group[open]>summary::after{content:'−'}
-.labor-section{padding:10px 20px;scroll-margin-top:90px}
+.labor-section{padding:10px 20px;scroll-margin-top:90px}.labor-section[hidden],.labor-photo-nav[hidden],.labor-review[hidden]{display:none!important}
 .labor-group{border-top:1px solid var(--line);margin-top:12px}
 .labor-group>summary{background:#edf3f8;color:var(--blue2);font-size:17px;font-weight:700;padding:13px 12px;border-radius:5px}
 .labor-line{scroll-margin-top:110px}
@@ -467,6 +467,29 @@ document.addEventListener('DOMContentLoaded',()=>{
    link.append(img,make('strong',category.label));link.addEventListener('click',()=>{const target=document.getElementById('labor-category-'+category.id);if(target)target.open=true;});pictureNav.append(link);
  });
  list.before(pictureNav);
+ // Keep category browsing short: display only the category the customer chose.
+ const allCategoriesButton=make('button','Show all installation categories','btn outline');
+ allCategoriesButton.type='button';
+ allCategoriesButton.style.margin='0 0 18px';
+ allCategoriesButton.hidden=true;
+ pictureNav.after(allCategoriesButton);
+ function selectLaborCategory(id){
+   const sections=[...list.querySelectorAll('.labor-section')];
+   const selected=sections.find(el=>el.id==='labor-category-'+id);
+   sections.forEach(el=>{el.hidden=!!selected&&el!==selected;});
+   if(selected)selected.open=true;
+   pictureNav.hidden=!!selected;
+   allCategoriesButton.hidden=!selected;
+   return selected;
+ }
+ pictureNav.querySelectorAll('a').forEach(link=>{
+   link.addEventListener('click',()=>selectLaborCategory(link.hash.replace('#labor-category-','')));
+ });
+ allCategoriesButton.addEventListener('click',()=>{
+   selectLaborCategory('');
+   history.replaceState(null,'',location.pathname);
+   pictureNav.scrollIntoView({block:'start'});
+ });
  LABOR_CATALOG.forEach(category=>{const section=make('details',undefined,'labor-section');section.id='labor-category-'+category.id;section.append(make('summary',category.label,'labor-category-heading'));if(category.id==='appliances')section.append(make('p','LABOR ONLY — appliance purchase, cords, connection parts and other materials are not included. Prices assume existing compatible hookups; built-ins require an existing compatible opening. New plumbing, electrical, gas or ventilation work requires a separate quote unless specifically listed. Drywall repair is not included.','labor-note'));if(category.id==='appliances'){
  const picker=make('div',undefined,'labor-room'),label=make('label','Appliance'),select=make('select');label.htmlFor='labor-appliance';select.id='labor-appliance';
  const prompt=make('option','Select an appliance');prompt.value='';select.append(prompt);
@@ -474,7 +497,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  select.addEventListener('change',()=>chooseAppliance(select.value));picker.append(label,select);section.append(picker,make('p','Choose an appliance to see its installation, removal and related services.','labor-note'));
  }
  // Product browsing remains optional: never change labor rates or add unverified stock.
- const matchingShopPages={appliances:'/appliances.html',bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/shop-installed.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',painting:'/material-paint-finishes.html'};
+ const matchingShopPages={appliances:'/appliances.html',bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/shop-installed.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',paint:'/material-paint-finishes.html'};
  if(matchingShopPages[category.id]){
   const shop=make('a','Shop matching products (optional)','btn outline');
   shop.href=matchingShopPages[category.id];
@@ -507,8 +530,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   const applianceKey=new URLSearchParams(location.search).get('appliance');
   const applianceTarget=applianceKey?[...document.querySelectorAll('[data-appliance]')].find(g=>g.dataset.appliance===applianceKey):null;
   const focus=target||applianceTarget||hashTarget;
-  if(focus){revealLaborTarget(focus);requestAnimationFrame(()=>focus.scrollIntoView({block:'start'}));}
-  window.addEventListener('hashchange',()=>{const focus=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(focus){revealLaborTarget(focus);focus.scrollIntoView({block:'start'});}});
+  if(focus){const section=focus.closest('.labor-section');if(section)selectLaborCategory(section.id.replace('labor-category-',''));revealLaborTarget(focus);requestAnimationFrame(()=>focus.scrollIntoView({block:'start'}));}
+  window.addEventListener('hashchange',()=>{const focus=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(focus){const section=focus.closest('.labor-section');if(section)selectLaborCategory(section.id.replace('labor-category-',''));revealLaborTarget(focus);focus.scrollIntoView({block:'start'});}});
   renderReview();updateCartCount();initNavMenus();
 });
 </script>
