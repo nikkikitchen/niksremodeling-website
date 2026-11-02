@@ -100,7 +100,7 @@ function reconcileRetailInstallationCart(items){
  const linked=(labor,product)=>labor.source==='retail-installation'&&
   String(labor.productId)===String(product.productId)&&
   String(labor.variantId)===String(product.variantId);
- const products=result.filter(x=>x.source==='supplier-retail'&&x.productId&&x.variantId);
+ const products=result.filter(x=>['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  for(const product of products){
   const matching=result.filter(x=>linked(x,product));
   if(!product.installationRequested){
@@ -879,10 +879,10 @@ function removeCart(i){
  const removed=c.splice(i,1)[0];
  const matches=(item,other)=>item.productId&&item.variantId&&
   String(item.productId)===String(other.productId)&&String(item.variantId)===String(other.variantId);
- if(removed.source==='supplier-retail'){
+ if(['supplier-retail','bathroom-retail'].includes(removed.source)){
   for(let j=c.length-1;j>=0;j--)if(c[j].source==='retail-installation'&&matches(c[j],removed))c.splice(j,1);
  }else if(removed.source==='retail-installation'){
-  for(const item of c)if(item.source==='supplier-retail'&&matches(item,removed))item.installationRequested=false;
+  for(const item of c)if(['supplier-retail','bathroom-retail'].includes(item.source)&&matches(item,removed))item.installationRequested=false;
  }
  saveCart(c);
  // Once the user removes the last cart item, don't retain stale calculator
