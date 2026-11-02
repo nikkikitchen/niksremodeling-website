@@ -62,7 +62,7 @@ test('A mixed supplier cart requests all products under one ZIP and displays one
   assert.equal(payload.zip,'36269');
   assert.equal(payload.items.length,3);
   assert.equal(ui.shipping.textContent,'$81.00');
-  assert.equal(ui.total.textContent,'$181.00');
+  assert.equal(ui.total.textContent,'$100.00 + shipping pending','The shipping-only unit delegates total recalculation to the tax preview');
   assert.equal(ui.button.disabled,false);
   assert.match(ui.status.textContent,/Delivery estimated for 36269/);
  }finally{ui.dom.window.close();}
