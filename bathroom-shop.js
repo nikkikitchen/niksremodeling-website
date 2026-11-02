@@ -165,13 +165,15 @@ document.addEventListener('DOMContentLoaded',async()=>{
    if(!variants)throw Error('This product has no verified U.S. warehouse stock or current price.');
    if(type!=='all'&&!bathroomMatch(detail.name,type))throw Error('Product does not belong to this bathroom category.');
    const image=/^https:\/\//.test(detail.image||'')?detail.image:'';
+   const faucetEstimate=type==='faucets'&&/faucet/i.test(detail.name)&&!/wall.mount|shower|tub|cartridge|parts|repair/i.test(detail.name);
+   const laborHint=faucetEstimate?'Estimated installation labor: $225 per faucet (existing connections).':'Installation estimate depends on the fixture and existing connections.';
    root.innerHTML='<article class="store-product"><div><img alt="'+bathEsc(detail.name)+'" src="'+bathEsc(image)+'" loading="lazy"></div>'+
     '<div><h2>'+bathEsc(detail.name)+'</h2><label>Available in-stock option <select id="bath-variant">'+
     variants.map(v=>'<option value="'+bathEsc(v.id)+'">'+bathEsc(v.name||v.sku)+' — '+bathMoney(v.priceCents)+'</option>').join('')+
     '</select></label><p id="bath-price" class="price">'+bathMoney(variants[0].priceCents)+'</p>'+
     '<fieldset style="border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0"><legend>Completing your project</legend>'+
     '<label style="display:block"><input type="checkbox" id="bath-install"> I want Nik’s Remodeling to install this</label>'+
-    '<label id="bath-supplies-choice" style="display:block;margin-top:10px"><input type="checkbox" id="bath-supplies"> Include matching supplies</label></fieldset>'+
+    '<label id="bath-supplies-choice" style="display:block;margin-top:10px"><input type="checkbox" id="bath-supplies"> Include matching supplies</label><small>'+bathEsc(laborHint)+'</small></fieldset>'+
     '<button type="button" class="btn primary" id="bath-add-cart">Add to Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a>'+
     '<p id="bath-cart-status" role="status"></p></div></article>';
    const select=document.getElementById('bath-variant');
@@ -236,7 +238,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
      saveCart(cart);
      const chosenProduct=existing||cart.find(x=>x.source==='bathroom-retail'&&x.productId===product&&String(x.variantId)===String(variant.id));
      feedback.innerHTML='Added to <a href="/project-cart.html">Review Cart</a>.'+
-       (chosenProduct.installationRequested?' Installation added; labor price will be confirmed with your estimate.':'');
+       (chosenProduct.installationRequested?(faucetEstimate?' Installation labor estimated at $225 per faucet.':' Installation added; labor estimate shown in Review Cart when available.'):'');
    });
 
 
