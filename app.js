@@ -887,11 +887,11 @@ function renderCart(){
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
- <div class="nr-cart-actions"><a class="btn outline" href="/installation.html">Add Installation</a><a class="btn outline" href="/shopping.html">Add Products</a></div>
+ <div class="nr-cart-actions"><a class="btn outline" href="/installation.html">Add Installation</a><a class="btn outline" href="/product-search.html">Add Products</a></div>
  </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
- '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Start with a project or browse materials and products.</p><a class="btn primary" href="/">Browse Projects &amp; Shopping</a></div>'}
+ '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Choose where to shop or add installation labor directly.</p><div class="nr-cart-empty-actions" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0"><a class="btn primary" href="/product-search.html">Browse Products</a><a class="btn outline" href="/installation.html">Installation &amp; Labor</a><a class="btn outline" href="/#projects">Projects</a></div><p>Shop by category:</p><div class="nr-cart-empty-categories" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"><a class="btn outline" href="/appliances.html">Appliances</a><a class="btn outline" href="/bathroom.html">Bathroom</a><a class="btn outline" href="/cabinets.html">Cabinets</a><a class="btn outline" href="/furniture.html">Furniture</a><a class="btn outline" href="/materials.html">Materials</a><a class="btn outline" href="/other.html">Other</a><a class="btn outline" href="/supplies.html">Supplies</a><a class="btn outline" href="/tools.html">Tools</a></div></div>'}
  </div></section></main>`+projectFlow('cart')+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
