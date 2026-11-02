@@ -136,6 +136,38 @@ function card(p,current=false){
  const note=priced?(current?'U.S. warehouse stock checked':'Price checked '+esc(p.priceCheckedAt)+' · Confirm current price and stock'):'Awaiting current supplier price and U.S. availability';
  return `<article class="card store-card" data-product="${esc(p.id)}" data-category="${esc(p.category)}" data-verified="${current}" ${priced?'data-saved-price="'+p.priceCents+'" data-price-checked="'+esc(p.priceCheckedAt)+'"':''}><a href="${itemLink(p)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><h3>${esc(p.name)}</h3><p class="store-card-price">${price}</p><p class="store-card-stock" role="status" aria-live="polite" data-state="unknown">Stock not confirmed</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
+// The Shopping installation checkbox must add a visible, linked labor line.
+ // Do not guess a labor rate for a supplier item without an approved matching scope.
+export function syncRetailInstallationLabor(cart,product){
+ if(!product||product.source!=='supplier-retail')return cart;
+ const linked=item=>item.source==='retail-installation' &&
+  String(item.productId)===String(product.productId) &&
+  String(item.variantId)===String(product.variantId);
+ const matching=cart.filter(linked);
+ if(!product.installationRequested){
+  for(const line of matching)cart.splice(cart.indexOf(line),1);
+  return cart;
+ }
+ const labor=matching[0]||{
+  source:'retail-installation',
+  type:'Labor',
+  productId:String(product.productId),
+  variantId:String(product.variantId),
+  department:product.department,
+  price:null,
+  pricingPending:true
+ };
+ labor.name='Install — '+String(product.name||'selected product');
+ labor.qty=Number(product.qty)||1;
+ labor.productId=String(product.productId);
+ labor.variantId=String(product.variantId);
+ labor.department=product.department;
+ labor.price=null;
+ labor.pricingPending=true;
+ if(!matching.length)cart.push(labor);
+ for(const extra of matching.slice(1))cart.splice(cart.indexOf(extra),1);
+ return cart;
+}
 async function detailView(target,id,department){
  const saved=retailCatalog.find(p=>p.id===id&&p.department===department)||otherCandidates.find(p=>p.id===id&&department==='other');
  const pageTitle=document.getElementById('retail-page-title');
@@ -169,13 +201,11 @@ async function detailView(target,id,department){
    const cart=getCart();const existing=cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
    if(existing){existing.department=department;existing.qty=Math.min(99,(Number(existing.qty)||1)+1);existing.price=v.priceCents/100;existing.installationRequested=existing.installationRequested||$('retail-install').checked;existing.suppliesRequested=existing.suppliesRequested||$('retail-supplies').checked;}
    else cart.push({name:name+' — '+(v.name||v.sku),type:'Product',source:'supplier-retail',department,productId:id,variantId:String(v.id),sku:v.sku,qty:1,price:v.priceCents/100,priceVerifiedAt:new Date().toISOString(),shippingAndTaxNotIncluded:true,installationRequested:$('retail-install').checked,suppliesRequested:$('retail-supplies').checked});
+   const addedProduct=existing||cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
+   syncRetailInstallationLabor(cart,addedProduct);
    saveCart(cart);
-   const installCategory=({appliances:'appliances',bathroom:'bathroom',cabinets:'cabinets',doors:'doors',flooring:'flooring',lighting:'electrical'})[department];
-   const laborHref='/installation.html'+(installCategory?'#labor-category-'+installCategory:'');
-   const installationNext=$('retail-install').checked
-     ? ' Installation has been requested but is not priced or added yet. <a href="'+laborHref+'">Choose installation labor</a> to add the service and see its price.'
-     : '';
-   status.innerHTML='Product added. <a href="/project-cart.html">Review cart</a>.'+installationNext+' Shipping and tax are calculated before payment.';
+   status.innerHTML='Added to <a href="/project-cart.html">Review Cart</a>.'+
+    (addedProduct.installationRequested?' Installation added; labor price will be confirmed with your estimate.':'');
   });
 
  }catch{
