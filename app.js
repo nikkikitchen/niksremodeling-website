@@ -710,7 +710,8 @@ function initCartShippingQuote(items){
  try{const saved=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(saved||''))input.value=saved;}catch{}
  input.addEventListener('input',()=>{
   requestId++;
-  // Cancel the pending quote visually too: an old response must not strand the button disabled.
+  // Cancel stale quotes when ZIP changes; support older carts that still have a button.
+  if(button)button.disabled=false;
   shipping.textContent='Pending ZIP';
   total.textContent=initialTotal;
   status.textContent='';
