@@ -620,18 +620,13 @@ function cartPriceMarkup(x){
  return (known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
 }
 function cartSchedulingMarkup(c){
- const request=encodeURIComponent(cartRequestMessage(c));
- return `<section class="panel" id="cart-scheduling" aria-labelledby="cart-scheduling-heading" style="margin-top:20px">
- <h3 id="cart-scheduling-heading">Let's Get Your Project Scheduled!</h3>
- <p><strong>Ready to get started?</strong> Purchasing your required installation supplies helps move your project toward the <strong>next available installation date</strong>, after the project and labor estimate are confirmed and approved.</p>
- <p>Plans change? Supply payments may be refunded if your project cannot proceed, subject to our <a href="/terms.html">refund policy</a>. The listed supplies price covers standard installation needs; any additional materials require your approval. Labor is quoted separately and is not charged at checkout.</p>
- <p><strong>Not ready to purchase supplies?</strong> Request a <strong>FREE estimate confirmation</strong> with no upfront payment or obligation.</p>
- <label style="display:flex;align-items:flex-start;gap:10px;margin:16px 0"><input type="checkbox" id="cart-terms-agree" onchange="updateCartRequestButtons()" style="margin-top:4px"> <span>I have read and agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions, scheduling and refund policy</a>.</span></label>
+ return `<section class="panel nr-cart-next-step" id="cart-scheduling" aria-labelledby="cart-scheduling-heading">
+ <h3 id="cart-scheduling-heading">Next Step</h3>
+ <label class="nr-cart-terms"><input type="checkbox" id="cart-terms-agree" onchange="updateCartRequestButtons()"> <span>I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
  <div class="btns">
- <button class="btn primary" type="button" data-cart-request="supplies" disabled onclick="submitCartRequest('supplies')">Arrange Supplies Purchase &amp; Scheduling</button>
- <button class="btn outline" type="button" data-cart-request="free" disabled onclick="submitCartRequest('free')">Request FREE Estimate Confirmation</button>
+ <button class="btn primary" type="button" data-cart-request="free" disabled onclick="submitCartRequest('free')">Request Estimate</button>
+ <button class="btn outline" type="button" data-cart-request="supplies" disabled onclick="submitCartRequest('supplies')">Ask About Scheduling</button>
  </div>
- <p class="calc-note">We will confirm supply prices and payment instructions before collecting payment. No payment is taken on this page. Scheduling follows final approval and availability.</p>
  </section>`;
 }
 function updateCartRequestButtons(){
@@ -806,7 +801,7 @@ function renderCart(){
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
  <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/">Continue Shopping</a></div>
- ${c.some(x=>x.fixtureAllowanceReplaced)?'<p class="calc-note">Your selected toilet replaces its standard fixture allowance. Installation and supplies are not duplicated.</p>':''}
+
  ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
  <h2>Items in Your Cart</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
@@ -815,10 +810,10 @@ function renderCart(){
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
- ${c.some(x=>x.source==='bathroom-retail')?'<a class="btn outline" href="/project.html?project=bathrooms">Add Bathroom Installation</a>':''}
+ <div class="nr-cart-actions"><a class="btn outline" href="/installation.html">Add Installation</a><a class="btn outline" href="/shopping.html">Add Products</a></div>
  </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
- ${projectEstimateMarkup(c)}${cartShoppingChoices(c)}${cartSchedulingMarkup(c)}
- <div class="nr-cart-bottom"><p class="calc-note">Final prices, delivery and tax are confirmed before payment.</p><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
+ ${cartSchedulingMarkup(c)}
+ <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
  '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Start with a project or browse materials and products.</p><a class="btn primary" href="/">Browse Projects &amp; Shopping</a></div>'}
  </div></section></main>`+projectFlow('cart')+footer();
  updateCartCount();initCartShippingQuote(c);initCartTaxPreview();
