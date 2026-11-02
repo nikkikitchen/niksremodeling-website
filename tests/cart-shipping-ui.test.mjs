@@ -37,7 +37,7 @@ test('A new ZIP immediately re-enables Check shipping and invalidates the stale 
   ui.input.value='36269';
   ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true,bubbles:true}));
   assert.equal(ui.button.disabled,true);
-  ui.input.value='30117';
+  ui.input.value='3011';
   ui.input.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
   assert.equal(ui.button.disabled,false);
   assert.equal(ui.shipping.textContent,'Pending ZIP');
