@@ -473,3 +473,13 @@ nav.nav .mobile-top-nav{display:none!important}
 .nr-cart-summary .nr-cart-balance-row{border-top:2px solid #cbd5e1;margin-top:12px;padding-top:17px}
 .nr-cart-summary .nr-cart-balance-row #cart-estimated-total{font-size:1.35rem}
 .nr-cart-summary .cart-checkout-summary>h3:not(:first-child){margin:22px 0 8px}
+
+/* Unified review-cart controls */
+.nr-cart-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.nr-cart-next-step{margin-top:20px;padding:24px!important;border-radius:14px}
+.nr-cart-next-step h3{margin:0 0 16px}
+.nr-cart-next-step .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.nr-cart-terms{display:flex;align-items:center;gap:10px}
+.nr-cart-terms input{flex:none}
+.nr-cart-next-step .btns .btn{min-width:180px}
+@media(max-width:540px){.nr-cart-actions .btn,.nr-cart-next-step .btns .btn{flex:1 1 100%;text-align:center}.nr-cart-next-step{padding:16px!important}}
