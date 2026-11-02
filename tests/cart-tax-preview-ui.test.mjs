@@ -14,7 +14,7 @@ const products=[{source:'supplier-retail',productId:'1992983344353558529',
 function mount(fetch){
  const dom=new JSDOM(`<form id="cart-shipping-form"><input id="cart-shipping-zip" required pattern="[0-9]{5}" maxlength="5"><button type="submit">Check shipping</button></form>
  <p id="cart-shipping-status"></p><strong id="cart-shipping-amount">Enter ZIP</strong>
- <strong id="cart-tax-amount">Awaiting verified lookup</strong><p id="cart-tax-status"></p>
+ <strong id="cart-tax-amount">Awaiting verified lookup</strong><small id="cart-tax-rate-label"></small><p id="cart-tax-status"></p>
  <input id="cart-tax-street"><input id="cart-tax-city"><input id="cart-tax-state">
  <button type="button" id="cart-tax-refine">Update tax</button>
  <strong id="cart-estimated-total" data-base-cents="10000" data-retail-cents="6000" data-pending="false">$100.00 + shipping and tax pending</strong>`,
@@ -25,7 +25,7 @@ function mount(fetch){
   (document,localStorage,fetch,products);
  const id=name=>document.getElementById(name);
  return {dom,document,form:id('cart-shipping-form'),zip:id('cart-shipping-zip'),
-  shipping:id('cart-shipping-amount'),tax:id('cart-tax-amount'),
+  shipping:id('cart-shipping-amount'),tax:id('cart-tax-amount'),rateLabel:id('cart-tax-rate-label'),
   info:id('cart-tax-status'),total:id('cart-estimated-total'),
   street:id('cart-tax-street'),city:id('cart-tax-city'),state:id('cart-tax-state'),
   refine:id('cart-tax-refine')};
@@ -42,7 +42,7 @@ test('one ZIP shipment plus highest verified ZIP tax builds a transparent previe
   }
   assert.equal(url,'/api/cart-tax');
   taxCalls++;assert.deepEqual(body,{zip:'36269',merchandiseCents:6000,shippingCents:8100});
-  return Response.json({estimateOnly:true,mode:'zip-upper-estimate',taxCents:1269});
+  return Response.json({estimateOnly:true,mode:'zip-upper-estimate',taxCents:1269,ratePercent:9});
  });
  try{
   ui.zip.value='36269';
@@ -52,6 +52,8 @@ test('one ZIP shipment plus highest verified ZIP tax builds a transparent previe
   assert.equal(taxCalls,1);
   assert.equal(ui.shipping.textContent,'$81.00');
   assert.equal(ui.tax.textContent,'$12.69 (estimate)');
+  assert.equal(ui.rateLabel.textContent,'Based on 9% ZIP-area maximum');
+  assert.match(ui.info.textContent,/Based on 9%/);
   assert.equal(ui.total.textContent,'$193.69');
   assert.match(ui.info.textContent,/highest verified sales-tax rate/);
  }finally{ui.dom.window.close();}
@@ -68,9 +70,9 @@ test('updating address reduces tax estimate without recalculating CJ freight',as
    assert.equal(body.zip,'36269');
    assert.equal(body.address,'123 Main St');
    assert.equal(body.state,'AL');
-   return Response.json({estimateOnly:true,mode:'address-estimate',taxCents:420});
+   return Response.json({estimateOnly:true,mode:'address-estimate',taxCents:420,ratePercent:7});
   }
-  return Response.json({estimateOnly:true,mode:'zip-upper-estimate',taxCents:1269});
+  return Response.json({estimateOnly:true,mode:'zip-upper-estimate',taxCents:1269,ratePercent:9});
  });
  try{
   ui.zip.value='36269';
@@ -84,6 +86,7 @@ test('updating address reduces tax estimate without recalculating CJ freight',as
   assert.equal(taxCalls,2);
   assert.equal(ui.tax.textContent,'$4.20 (estimate)');
   assert.equal(ui.total.textContent,'$185.20');
+  assert.equal(ui.rateLabel.textContent,'Based on 7% delivery-address rate');
  }finally{ui.dom.window.close();}
 });
 test('missing API key never turns unknown sales tax into zero or a pretend final total',async()=>{
@@ -97,6 +100,7 @@ test('missing API key never turns unknown sales tax into zero or a pretend final
   await flush();await flush();
   assert.equal(ui.tax.textContent,'Awaiting verified calculation');
   assert.equal(ui.total.textContent,'$181.00 + tax pending');
+  assert.equal(ui.rateLabel.textContent,'');
   assert.match(ui.info.textContent,/No guessed tax was added/);
   ui.zip.value='30117';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
