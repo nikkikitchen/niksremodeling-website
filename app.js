@@ -678,8 +678,8 @@ function cartCheckoutSummary(items){
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
- <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
- <div class="cart-item"><span>Due now</span><strong>$0.00</strong></div>
+ <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
+ <div class="cart-item"><span>Due now</span><strong id="cart-due-now">${money((Math.round(payableSubtotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
  <p class="calc-note"><a href="/terms.html">Estimate only — details &amp; terms</a>. No payment collected.</p>
@@ -761,10 +761,12 @@ function initCartTaxPreview(){
  const info=document.getElementById('cart-tax-status');
  const rateLabel=document.getElementById('cart-tax-rate-label');
  const total=document.getElementById('cart-estimated-total');
+ const dueNow=document.getElementById('cart-due-now');
  if(!tax||!info||!total)return;
  const retailCents=Number(total.dataset.retailCents);
  if(!Number.isSafeInteger(retailCents)||retailCents<0)return;
  const baseCents=Number(total.dataset.baseCents);
+ const payableCents=Number(total.dataset.payableCents);
 
  const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
  const disclaimer='Tax estimated at 8%. Final amount confirmed before payment.';
@@ -777,6 +779,8 @@ function initCartTaxPreview(){
   if(rateLabel)rateLabel.textContent='Based on temporary 8% estimate';
   info.textContent=disclaimer;
   total.textContent=money(baseCents+(shippingCents??0)+taxCents);
+  if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0)
+   dueNow.textContent=money(payableCents+(shippingCents??0)+taxCents);
  };
  calculate();
  if(!form)return;
