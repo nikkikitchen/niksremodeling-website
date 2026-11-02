@@ -93,7 +93,43 @@ const PRODUCT_IMAGES={
 // Retail listings come from verified supplier records, never planning examples.
 const PRODUCTS={furniture:[],appliances:[],cabinets:[],tools:[],materials:[],supplies:[]};
 
-function getCart(){try{const cart=JSON.parse(localStorage.getItem('nr-cart')||'[]');const cleaned=Array.isArray(cart)?cart.filter(Boolean).map(item=>/^(Supply request|Supplies request|Supplies)$/.test(item.type)?{...item,hiddenFromCustomer:true,pricingPending:item.price==null}:item):[];if(cleaned.length!==cart.length)localStorage.setItem('nr-cart',JSON.stringify(cleaned));return cleaned}catch{return[]}}
+// Keep installation checked in Shopping as a real cart line, including carts
+// saved before the shopping checkbox began creating its own service entry.
+function reconcileRetailInstallationCart(items){
+ const result=[...items];
+ const linked=(labor,product)=>labor.source==='retail-installation'&&
+  String(labor.productId)===String(product.productId)&&
+  String(labor.variantId)===String(product.variantId);
+ const products=result.filter(x=>x.source==='supplier-retail'&&x.productId&&x.variantId);
+ for(const product of products){
+  const matching=result.filter(x=>linked(x,product));
+  if(!product.installationRequested){
+   for(const line of matching)result.splice(result.indexOf(line),1);
+   continue;
+  }
+  const line=matching[0]||{source:'retail-installation',type:'Labor',
+   productId:String(product.productId),variantId:String(product.variantId),
+   price:null,pricingPending:true};
+  line.name='Install — '+String(product.name||'selected product');
+  line.qty=Number(product.qty)||1;
+  line.department=product.department;
+  if(!matching.length)result.push(line);
+  for(const extra of matching.slice(1))result.splice(result.indexOf(extra),1);
+ }
+ return result.filter(item=>item.source!=='retail-installation'||
+  products.some(product=>product.installationRequested&&linked(item,product)));
+}
+function getCart(){
+ try{
+  const cart=JSON.parse(localStorage.getItem('nr-cart')||'[]');
+  const cleaned=Array.isArray(cart)?cart.filter(Boolean).map(item=>
+   /^(Supply request|Supplies request|Supplies)$/.test(item.type)
+    ?{...item,hiddenFromCustomer:true,pricingPending:item.price==null}:item):[];
+  const ready=reconcileRetailInstallationCart(cleaned);
+  if(JSON.stringify(ready)!==JSON.stringify(cart))localStorage.setItem('nr-cart',JSON.stringify(ready));
+  return ready;
+ }catch{return[]}
+}
 function saveCart(c){c=repriceRemovalGroups(c);const previous=getCart();if(c.length>previous.length||c.some((x,i)=>JSON.stringify(x)!==JSON.stringify(previous[i]))&&c.length>=previous.length){setTimeout(()=>{let note=document.getElementById('cart-added-confirmation');if(!note){note=document.createElement('div');note.id='cart-added-confirmation';note.className='wrap panel';note.setAttribute('role','status');document.querySelector('main')?.append(note);}note.innerHTML='Added to cart. <a class="btn outline" target="_top" href="/#projects">Keep shopping</a>';},0);}localStorage.setItem('nr-cart',JSON.stringify(c));if(c.length)localStorage.setItem('nr-cart-updated-at',String(Date.now()));else{localStorage.removeItem('nr-cart-updated-at');localStorage.removeItem('nr-cart-reminder-dismissed-until')}updateCartCount()}
 function updateCartCount(){const n=getCart().filter(x=>!x.hiddenFromCustomer).reduce((s,x)=>s+(x.qty||1),0);document.querySelectorAll('.cart-count').forEach(e=>e.textContent=n)}
 function addItem(name){
@@ -612,6 +648,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
+ if(x.source==='retail-installation'&&(x.price==null||x.pricingPending))return 'Installation quote needed';
  if(customEstimate(x)||requiresInPersonQuote(x))return 'In-person quote required';
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
  if(x.type==='Material estimate'&&!known)return 'Material price to be confirmed';
@@ -837,7 +874,17 @@ function renderCart(){
  }else if(zipTop){zipTop.remove();}
  updateCartCount();initCartShippingQuote(c);initCartTaxPreview();
 }
-function removeCart(i){const c=getCart();if(!Number.isInteger(i)||i<0||i>=c.length)return;c.splice(i,1);saveCart(c);
+function removeCart(i){
+ const c=getCart();if(!Number.isInteger(i)||i<0||i>=c.length)return;
+ const removed=c.splice(i,1)[0];
+ const matches=(item,other)=>item.productId&&item.variantId&&
+  String(item.productId)===String(other.productId)&&String(item.variantId)===String(other.variantId);
+ if(removed.source==='supplier-retail'){
+  for(let j=c.length-1;j>=0;j--)if(c[j].source==='retail-installation'&&matches(c[j],removed))c.splice(j,1);
+ }else if(removed.source==='retail-installation'){
+  for(const item of c)if(item.source==='supplier-retail'&&matches(item,removed))item.installationRequested=false;
+ }
+ saveCart(c);
  // Once the user removes the last cart item, don't retain stale calculator
  // drafts that would otherwise restore deleted work into another estimate.
  if(!c.length){try{localStorage.removeItem(MATERIAL_ESTIMATES_KEY)}catch{}}
