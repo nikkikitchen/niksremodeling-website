@@ -671,22 +671,22 @@ function cartCheckoutSummary(items){
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
-   '<form id="cart-shipping-form" class="cart-delivery-check" style="display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0 4px"><label for="cart-shipping-zip">Delivery ZIP code<br><input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label><button class="btn primary" type="submit">Check Shipping &amp; Taxes</button></form><p id="cart-shipping-status" class="calc-note" role="status" aria-live="polite">Enter your ZIP to check supplier shipping and the temporary 8% tax estimate.</p>':
+   '<form id="cart-shipping-form" class="cart-delivery-check" style="display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0 4px"><label for="cart-shipping-zip">Delivery ZIP<br><input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label><button class="btn primary" type="submit">Check Delivery &amp; Tax</button></form><p id="cart-shipping-status" class="calc-note" role="status" aria-live="polite">Enter ZIP for delivery and tax estimate.</p>':
    '<p class="calc-note">Delivery is confirmed separately for items without a supplier freight quote.</p>';
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Shipping &amp; Taxes</h3>
- <p class="calc-note">Enter your delivery ZIP to check supplier shipping for all eligible cart products and update your estimated total.</p>
+ <p class="calc-note">Enter your ZIP code for estimated delivery and tax.</p>
  ${shippingChecker}
  <h3>Order Summary</h3>
- <div class="cart-item"><span>Products &amp; project materials</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
- <div class="cart-item"><span>Estimated installation labor</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
+ <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
+ <div class="cart-item"><span>Installation</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
  <div class="cart-item"><span>Shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
  ${remainingShippingPending?'<p class="calc-note">Shipping for remaining products will be confirmed separately.</p>':''}
- <div class="cart-item"><span>Estimated tax (8%)<small id="cart-tax-rate-label" style="display:block;color:var(--muted);font-weight:400"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
- <div class="cart-item nr-cart-balance-row"><span><strong>Estimated balance</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
- <div class="cart-item"><span>Payment due today</span><strong>$0.00</strong></div>
- <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Estimated sales tax uses a temporary 8% rate on eligible merchandise and estimated shipping. Actual tax will be verified before payment.</p>
- <p class="calc-note"><strong>Quote only — no online payment collected.</strong> Shipping, taxes, availability and any unfinished prices must be confirmed before payment. Required installation supplies are included once in project estimates. Payments are disabled.</p>
+ <div class="cart-item"><span>Tax estimate (8%)<small id="cart-tax-rate-label" style="display:block;color:var(--muted);font-weight:400"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
+ <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
+ <div class="cart-item"><span>Due now</span><strong>$0.00</strong></div>
+ <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax is estimated at 8%. Final tax and delivery are confirmed before payment.</p>
+ <p class="calc-note"><strong>Estimate only.</strong> No payment is due or collected online.</p>
  </section>`;
 }
 function cartShoppingChoices(items){
@@ -718,7 +718,7 @@ function initCartShippingQuote(items){
   button.disabled=false;
   shipping.textContent='Enter ZIP to check';
   total.textContent=initialTotal;
-  status.textContent='Enter your ZIP code to check shipping and estimated tax before payment.';
+  status.textContent='Enter ZIP to estimate delivery and tax.';
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
  });
  form.addEventListener('submit',async event=>{
@@ -730,7 +730,7 @@ function initCartShippingQuote(items){
   total.textContent=initialTotal;
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
   shipping.textContent='Checking shipping…';
-  status.textContent='Verifying U.S. warehouse stock and freight for your cart…';
+  status.textContent='Checking delivery…';
   button.disabled=true;
   try{
    const response=await fetch('/api/cart-shipping',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -742,8 +742,8 @@ function initCartShippingQuote(items){
    const moneyValue=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
    shipping.textContent=moneyValue(result.deliveryCents/100);
    // The shipping event recalculates the complete total including estimated tax.
-   status.textContent='Estimated supplier delivery to ZIP '+zip+' for '+result.units+' item(s)'+
-    (result.shippingMethod?' via '+result.shippingMethod:'')+'. Shipping and temporary 8% estimated sales tax are included in the combined total above. Any additional delivery charges will be confirmed before payment.';
+   status.textContent='Estimated delivery to ZIP '+zip+' for '+result.units+' item(s)'+
+    (result.shippingMethod?' via '+result.shippingMethod:'')+'. Delivery and estimated tax are included above; final amounts are confirmed before payment.';
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
    form.dispatchEvent(new form.ownerDocument.defaultView.CustomEvent('nr:shipping-quoted',{
     detail:{zip,deliveryCents:result.deliveryCents}
@@ -773,7 +773,7 @@ function initCartTaxPreview(){
  const baseCents=Number(total.dataset.baseCents);
  const otherPending=total.dataset.pending==='true'?' + pending charges':'';
  const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
- const disclaimer='Estimated sales tax based on a temporary 8% rate. Actual tax may be higher or lower and will be calculated before payment. Online payments are disabled.';
+ const disclaimer='Tax estimated at 8%. Final amount confirmed before payment.';
  let shippingCents=null;
  const calculate=()=>{
   // Planning estimate only, not a verified or collectible sales-tax amount.
@@ -805,7 +805,7 @@ function renderCart(){
  const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
- <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review products and project work in one place.</p></div><a class="btn outline" href="/">Continue Shopping</a></div>
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/">Continue Shopping</a></div>
  ${c.some(x=>x.fixtureAllowanceReplaced)?'<p class="calc-note">Your selected toilet replaces its standard fixture allowance. Installation and supplies are not duplicated.</p>':''}
  ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
  <h2>Items in Your Cart</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
@@ -818,7 +818,7 @@ function renderCart(){
  ${c.some(x=>x.source==='bathroom-retail')?'<a class="btn outline" href="/project.html?project=bathrooms">Add Bathroom Installation</a>':''}
  </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${projectEstimateMarkup(c)}${cartShoppingChoices(c)}${cartSchedulingMarkup(c)}
- <div class="nr-cart-bottom"><p class="calc-note">This is an estimate, not a payment request. Final pricing, shipping and taxes will be confirmed before payment.</p><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
+ <div class="nr-cart-bottom"><p class="calc-note">Final prices, delivery and tax are confirmed before payment.</p><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
  '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Start with a project or browse materials and products.</p><a class="btn primary" href="/">Browse Projects &amp; Shopping</a></div>'}
  </div></section></main>`+projectFlow('cart')+footer();
  updateCartCount();initCartShippingQuote(c);initCartTaxPreview();
