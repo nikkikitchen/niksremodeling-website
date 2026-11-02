@@ -483,3 +483,14 @@ nav.nav .mobile-top-nav{display:none!important}
 .nr-cart-terms input{flex:none}
 .nr-cart-next-step .btns .btn{min-width:180px}
 @media(max-width:540px){.nr-cart-actions .btn,.nr-cart-next-step .btns .btn{flex:1 1 100%;text-align:center}.nr-cart-next-step{padding:16px!important}}
+
+/* Compact cart summary: ZIP auto-calculates, no extra action required */
+.nr-cart-summary .cart-checkout-summary{display:flex;flex-direction:column;gap:0}
+.nr-cart-summary .cart-checkout-summary>h3{margin:0 0 12px!important}
+.nr-cart-summary .cart-delivery-check{margin:0 0 10px!important}
+.nr-cart-summary .cart-delivery-check label{display:block;width:100%;font-weight:600}
+.nr-cart-summary .cart-delivery-check input{display:block;margin-top:5px}
+.nr-cart-summary .nr-cart-inline-status{margin:0 0 6px;font-size:.82rem;color:#64748b}
+.nr-cart-summary .nr-cart-inline-status:empty{display:none}
+.nr-cart-summary .cart-item{padding:9px 0}
+.nr-cart-summary .cart-checkout-summary>.calc-note{font-size:.78rem;margin:8px 0 0}
