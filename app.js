@@ -751,6 +751,8 @@ function initCartShippingQuote(items){
    if(mine!==requestId)return;
    shipping.textContent='Shipping needs confirmation';
    total.textContent=initialTotal;
+   // Preserve the 8% merchandise estimate while leaving unverified shipping pending.
+   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
    status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
   }finally{if(mine===requestId)button.disabled=false;}
  });
