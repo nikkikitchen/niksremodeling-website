@@ -666,22 +666,20 @@ function cartCheckoutSummary(items){
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
-   '<form id="cart-shipping-form" class="cart-delivery-check" style="display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0 4px"><label for="cart-shipping-zip">Delivery ZIP<br><input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label><button class="btn primary" type="submit">Check Delivery &amp; Tax</button></form><p id="cart-shipping-status" class="calc-note" role="status" aria-live="polite">Enter ZIP for delivery and tax estimate.</p>':
+   '<form id="cart-shipping-form" class="cart-delivery-check"><label for="cart-shipping-zip">Delivery ZIP<input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label></form><p id="cart-shipping-status" class="nr-cart-inline-status" role="status" aria-live="polite"></p>':
    '<p class="calc-note">Delivery is confirmed separately for items without a supplier freight quote.</p>';
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
- <h3>Shipping &amp; Taxes</h3>
- <p class="calc-note">Enter your ZIP code for estimated delivery and tax.</p>
- ${shippingChecker}
  <h3>Order Summary</h3>
+ ${shippingChecker}
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
- <div class="cart-item"><span>Installation</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
- <div class="cart-item"><span>Shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
+ ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(estimatedLabor.total)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
+ <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Pending ZIP":"To be confirmed"}</strong></div>
  ${remainingShippingPending?'<p class="calc-note">Shipping for remaining products will be confirmed separately.</p>':''}
- <div class="cart-item"><span>Tax estimate (8%)<small id="cart-tax-rate-label" style="display:block;color:var(--muted);font-weight:400"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
+ <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
  <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
  <div class="cart-item"><span>Due now</span><strong>$0.00</strong></div>
- <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax is estimated at 8%. Final tax and delivery are confirmed before payment.</p>
- <p class="calc-note"><strong>Estimate only.</strong> No payment is due or collected online.</p>
+ <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
+ <p class="calc-note"><a href="/terms.html">Estimate only — details &amp; terms</a>. No payment collected.</p>
  </section>`;
 }
 function cartShoppingChoices(items){
@@ -710,10 +708,10 @@ function initCartShippingQuote(items){
  input.addEventListener('input',()=>{
   requestId++;
   // Cancel the pending quote visually too: an old response must not strand the button disabled.
-  button.disabled=false;
-  shipping.textContent='Enter ZIP to check';
+  shipping.textContent='Pending ZIP';
   total.textContent=initialTotal;
-  status.textContent='Enter ZIP to estimate delivery and tax.';
+  status.textContent='';
+  if(/^\\d{5}$/.test(input.value))form.requestSubmit();
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
  });
  form.addEventListener('submit',async event=>{
@@ -725,8 +723,8 @@ function initCartShippingQuote(items){
   total.textContent=initialTotal;
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
   shipping.textContent='Checking shipping…';
-  status.textContent='Checking delivery…';
-  button.disabled=true;
+  status.textContent='Calculating…';
+  if(button)button.disabled=true;
   try{
    const response=await fetch('/api/cart-shipping',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({zip,items:lines}),cache:'no-store'});
@@ -737,8 +735,7 @@ function initCartShippingQuote(items){
    const moneyValue=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
    shipping.textContent=moneyValue(result.deliveryCents/100);
    // The shipping event recalculates the complete total including estimated tax.
-   status.textContent='Estimated delivery to ZIP '+zip+' for '+result.units+' item(s)'+
-    (result.shippingMethod?' via '+result.shippingMethod:'')+'. Delivery and estimated tax are included above; final amounts are confirmed before payment.';
+   status.textContent='Delivery estimated for '+zip+'.';
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
    form.dispatchEvent(new form.ownerDocument.defaultView.CustomEvent('nr:shipping-quoted',{
     detail:{zip,deliveryCents:result.deliveryCents}
@@ -749,7 +746,7 @@ function initCartShippingQuote(items){
    // Preserve the 8% merchandise estimate while leaving unverified shipping pending.
    form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
    status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
-  }finally{if(mine===requestId)button.disabled=false;}
+  }finally{if(mine===requestId&&button)button.disabled=false;}
  });
  if(/^\d{5}$/.test(input.value))form.requestSubmit();
 }
