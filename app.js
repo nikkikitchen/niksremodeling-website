@@ -674,24 +674,19 @@ function cartCheckoutSummary(items){
    '<form id="cart-shipping-form" class="cart-delivery-check" style="display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:10px 0 4px"><label for="cart-shipping-zip">Delivery ZIP code<br><input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label><button class="btn primary" type="submit">Check Shipping &amp; Taxes</button></form><p id="cart-shipping-status" class="calc-note" role="status" aria-live="polite">Enter your ZIP to check supplier shipping and the temporary 8% tax estimate.</p>':
    '<p class="calc-note">Delivery is confirmed separately for items without a supplier freight quote.</p>';
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
- <h3>Order Summary</h3>
- <div class="cart-item"><span>Materials &amp; project costs</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
- <div class="cart-item"><span>Delivery, shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
+ <h3>Shipping &amp; Taxes</h3>
+ <p class="calc-note">Enter your delivery ZIP to check supplier shipping for all eligible cart products and update your estimated total.</p>
  ${shippingChecker}
- ${remainingShippingPending?'<p class="calc-note">Shipping for any remaining products will be confirmed separately.</p>':''}
- <div class="cart-item"><span>Estimated sales tax on retail items<small id="cart-tax-rate-label" style="display:block;color:var(--muted);font-weight:400"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'No retail merchandise'}</strong></div>
- <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Estimated sales tax based on a temporary 8% rate. Actual tax may be higher or lower and will be calculated before payment. Online payments are disabled.</p>
-
- <div class="cart-item"><span>Estimated labor (not charged today)</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
- <div class="cart-item"><span><strong>Estimated combined project total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
- <div class="nr-cart-payment-summary" aria-label="Payment balance">
- <h4>Payment Summary</h4>
- <div class="cart-item"><span>Payments received</span><strong>$0.00</strong></div>
- <div class="cart-item"><span><strong>Estimated remaining balance</strong></span><strong id="cart-remaining-balance">To be calculated</strong></div>
- <div class="cart-item"><span>Payment due now</span><strong>$0.00</strong></div>
- <p class="calc-note">No payments have been collected online. The remaining balance is an estimate until the final quote is approved. Payment collection is disabled.</p>
- </div>
- <p class="calc-note"><strong>Quote only — online payments are disabled.</strong> No payment is collected on this page. Before payment, we'll confirm delivery, tax, availability and final project total. Required installation consumables are included in the project estimate once; any items needing site-specific pricing will be confirmed before work begins. The dropshipping supplier handles merchandise shipping; installation labor is billed separately once approved.</p>
+ <h3>Order Summary</h3>
+ <div class="cart-item"><span>Products &amp; project materials</span><strong>${money(payableSubtotal)}${unpriced||pendingSupplies?' + pricing to confirm':''}</strong></div>
+ <div class="cart-item"><span>Estimated installation labor</span><strong>${estimatedLabor.hasServices?money(estimatedLabor.total):'Not selected'}${estimatedLabor.pending?' + quote required':''}</strong></div>
+ <div class="cart-item"><span>Shipping &amp; handling</span><strong id="cart-shipping-amount">${supplierShippingItems.length?"Enter ZIP to check":"To be confirmed"}</strong></div>
+ ${remainingShippingPending?'<p class="calc-note">Shipping for remaining products will be confirmed separately.</p>':''}
+ <div class="cart-item"><span>Estimated tax (8%)<small id="cart-tax-rate-label" style="display:block;color:var(--muted);font-weight:400"></small></span><strong id="cart-tax-amount">${retailGoodsCents?'Temporary 8% estimate':'$0.00'}</strong></div>
+ <div class="cart-item nr-cart-balance-row"><span><strong>Estimated balance</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)}${supplierShippingItems.length?' + shipping and tax pending':unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending?' + pending charges':''}</strong></div>
+ <div class="cart-item"><span>Payment due today</span><strong>$0.00</strong></div>
+ <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Estimated sales tax uses a temporary 8% rate on eligible merchandise and estimated shipping. Actual tax will be verified before payment.</p>
+ <p class="calc-note"><strong>Quote only — no online payment collected.</strong> Shipping, taxes, availability and any unfinished prices must be confirmed before payment. Required installation supplies are included once in project estimates. Payments are disabled.</p>
  </section>`;
 }
 function cartShoppingChoices(items){
@@ -746,8 +741,7 @@ function initCartShippingQuote(items){
     throw Error(result.error||'Shipping is not available for these items.');
    const moneyValue=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
    shipping.textContent=moneyValue(result.deliveryCents/100);
-   const combinedCents=Number(total.dataset.baseCents)+result.deliveryCents;
-   total.textContent=moneyValue(combinedCents/100)+(total.dataset.pending==='true'?' + pending charges':'');
+   // The shipping event recalculates the complete total including estimated tax.
    status.textContent='Estimated supplier delivery to ZIP '+zip+' for '+result.units+' item(s)'+
     (result.shippingMethod?' via '+result.shippingMethod:'')+'. Shipping and temporary 8% estimated sales tax are included in the combined total above. Any additional delivery charges will be confirmed before payment.';
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
@@ -757,7 +751,6 @@ function initCartShippingQuote(items){
   }catch(error){
    if(mine!==requestId)return;
    shipping.textContent='Shipping needs confirmation';
-   total.textContent=initialTotal;
    // Preserve the 8% merchandise estimate while leaving unverified shipping pending.
    form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
    status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
@@ -775,8 +768,6 @@ function initCartTaxPreview(){
  if(!tax||!info||!total)return;
  const retailCents=Number(total.dataset.retailCents);
  if(!Number.isSafeInteger(retailCents)||retailCents<=0){
-  const balance=document.getElementById('cart-remaining-balance');
-  if(balance)balance.textContent=total.textContent;
   return;
  }
  const baseCents=Number(total.dataset.baseCents);
@@ -793,8 +784,6 @@ function initCartTaxPreview(){
   info.textContent=disclaimer;
   total.textContent=money(baseCents+(shippingCents??0)+taxCents)+
    (form&&shippingCents===null?' + shipping pending':'')+otherPending;
-  const balance=document.getElementById('cart-remaining-balance');
-  if(balance)balance.textContent=total.textContent;
  };
  calculate();
  if(!form)return;
