@@ -57,7 +57,7 @@ test('one ZIP adds verified freight, then estimates 8% of merchandise plus shipp
   assert.equal(ui.shipping.textContent,'$81.00');
   assert.equal(ui.tax.textContent,'$11.28');
   assert.equal(ui.total.textContent,'$192.28');
-  assert.equal(ui.due.textContent,'$147.28','upfront amount includes merchandise, freight and tax, not labor');
+  assert.equal(ui.due.textContent,'$152.28','upfront amount includes merchandise, freight and tax, not labor');
   assert.equal(ui.rateLabel.textContent,'Based on temporary 8% estimate');
   ui.zip.value='3011';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
