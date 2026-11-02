@@ -136,6 +136,17 @@ function card(p,current=false){
  const note=priced?(current?'U.S. warehouse stock checked':'Price checked '+esc(p.priceCheckedAt)+' · Confirm current price and stock'):'Awaiting current supplier price and U.S. availability';
  return `<article class="card store-card" data-product="${esc(p.id)}" data-category="${esc(p.category)}" data-verified="${current}" ${priced?'data-saved-price="'+p.priceCents+'" data-price-checked="'+esc(p.priceCheckedAt)+'"':''}><a href="${itemLink(p)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><h3>${esc(p.name)}</h3><p class="store-card-price">${price}</p><p class="store-card-stock" role="status" aria-live="polite" data-state="unknown">Stock not confirmed</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
+function approvedRetailLabor(product){
+ const name=String(product?.name||'').toLowerCase();
+ const dept=String(product?.department||'').toLowerCase();
+ if(dept!=='appliances')return null;
+ if(/kegerator|beer tower|draft beer tap|beverage tap/.test(name))return {price:350,starting:true};
+ if(/range hood/.test(name))return {price:150,starting:false};
+ if(/wall oven/.test(name))return {price:/double/.test(name)?575:325,starting:false};
+ if(/over.the.range microwave/.test(name))return {price:325,starting:false};
+ if(/dishwasher/.test(name)&&!/countertop|portable/.test(name))return {price:275,starting:false};
+ return null;
+}
 // The Shopping installation checkbox must add a visible, linked labor line.
  // Do not guess a labor rate for a supplier item without an approved matching scope.
 export function syncRetailInstallationLabor(cart,product){
@@ -162,8 +173,10 @@ export function syncRetailInstallationLabor(cart,product){
  labor.productId=String(product.productId);
  labor.variantId=String(product.variantId);
  labor.department=product.department;
- labor.price=null;
- labor.pricingPending=true;
+ const approved=approvedRetailLabor(product);
+ labor.price=approved?.price??null;
+ labor.pricingPending=!approved;
+ labor.startingPrice=!!approved?.starting;
  if(!matching.length)cart.push(labor);
  for(const extra of matching.slice(1))cart.splice(cart.indexOf(extra),1);
  return cart;
@@ -180,7 +193,110 @@ async function detailView(target,id,department){
   const variants=availableVariants(data);if(!r.ok||!variants.length)throw Error('Unavailable');
   const name=saved?.name||data.name;
   setTitle(name);
-  target.innerHTML=`<article class="store-product"><img id="retail-photo" src="${esc(variants[0].image||data.image)}" alt="${esc(name)}"><div>${pageTitle?'':'<h2>'+esc(name)+'</h2>'}<label for="retail-option">Available option</label><select id="retail-option">${variants.map(v=>`<option value="${esc(v.id)}">${esc(v.name||v.sku)}</option>`).join('')}</select><p id="retail-price" class="price"></p><p id="retail-sku"></p><p>U.S. warehouse stock checked. Shipping is calculated once in Review Cart; tax is confirmed before payment.</p><fieldset style="border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0"><legend>Completing your project</legend><label style="display:block"><input type="checkbox" id="retail-install"> I want Nik’s Remodeling to install this</label><label id="retail-supplies-choice" style="display:block;margin-top:10px"><input type="checkbox" id="retail-supplies"> Include matching supplies</label><small>We select the appropriate installation supplies. Labor and supply prices are reviewed with your project; nothing is charged here.</small></fieldset><button type="button" id="retail-add" class="btn primary">Add to Cart</button><p id="retail-status" role="status"></p><p class="calc-note">Delivery is calculated once for everything in your <a href="/project-cart.html">Review Cart</a>.</p><p>Online payment is not yet available. Nothing is charged from this page.</p><a class="btn outline" href="/${department==='tools'?'products':department}.html">Keep shopping</a></div></article>`;
+  const approvedLabor=approvedRetailLabor({name,department});
+  target.innerHTML=`<article class="store-product"><img id="retail-photo" src="${esc(variants[0].image||data.image)}" alt="${esc(name)}"><div>${pageTitle?'':'<h2>'+esc(name)+'</h2>'}<label for="retail-option">Available option</label><select id="retail-option">${variants.map(v=>`<option value="${esc(v.id)}">${esc(v.name||v.sku)}</option>`).join('')}</select><p id="retail-price" class="price"></p><p id="retail-sku"></p><p>U.S. warehouse stock checked. Shipping is calculated once in Review Cart; tax is confirmed before payment.</p><fieldset style="border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0"><legend>Completing your project</legend><label style="display:block"><input type="checkbox" id="retail-install"> I want Nik’s Remodeling to install this</label><label id="retail-supplies-choice" style="display:block;margin-top:10px"><input type="checkbox" id="retail-supplies"> Include matching supplies</label><small>${approvedLabor?'Estimated installation labor: '+(approvedLabor.starting?'starting at ':'')+'</fieldset><button type="button" id="retail-add" class="btn primary">Add to Cart</button><p id="retail-status" role="status"></p><p class="calc-note">Delivery is calculated once for everything in your <a href="/project-cart.html">Review Cart</a>.</p><p>Online payment is not yet available. Nothing is charged from this page.</p><a class="btn outline" href="/${department==='tools'?'products':department}.html">Keep shopping</a></div></article>`;
+  const $=id=>target.querySelector('#'+id),chosen=()=>variants.find(v=>String(v.id)===$('retail-option').value);
+  const update=()=>{const v=chosen();$('retail-price').textContent=money(v.priceCents);$('retail-sku').textContent='Supplier SKU: '+v.sku;$('retail-photo').src=v.image||data.image;$('retail-status').textContent='';};
+  update();$('retail-option').addEventListener('change',update);
+  const syncInstallation=()=>{const installed=$('retail-install').checked;$('retail-supplies-choice').style.display=installed?'none':'block';if(installed)$('retail-supplies').checked=false;};
+  $('retail-install').addEventListener('change',syncInstallation);syncInstallation();
+  $('retail-add').addEventListener('click',async()=>{
+   const button=$('retail-add'),status=$('retail-status');button.disabled=true;status.textContent='Rechecking current U.S. warehouse price and stock…';
+   let v=chosen();
+   try{
+    const reply=await fetch('/api/store-product?product='+encodeURIComponent(id),{cache:'no-store'});
+    if(!reply.ok)throw Error('Supplier unavailable');
+    const fresh=await reply.json();
+    const selected=availableVariants(fresh).find(x=>String(x.id)===String(v.id));
+    if(!selected)throw Error('Selected option not currently available');
+    v=selected;
+   }catch{status.textContent='Stock or price could not be verified. Nothing was added to cart.';button.disabled=false;return;}
+   button.disabled=false;
+   const cart=getCart();const existing=cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
+   if(existing){existing.department=department;existing.qty=Math.min(99,(Number(existing.qty)||1)+1);existing.price=v.priceCents/100;existing.installationRequested=existing.installationRequested||$('retail-install').checked;existing.suppliesRequested=existing.suppliesRequested||$('retail-supplies').checked;}
+   else cart.push({name:name+' — '+(v.name||v.sku),type:'Product',source:'supplier-retail',department,productId:id,variantId:String(v.id),sku:v.sku,qty:1,price:v.priceCents/100,priceVerifiedAt:new Date().toISOString(),shippingAndTaxNotIncluded:true,installationRequested:$('retail-install').checked,suppliesRequested:$('retail-supplies').checked});
+   const addedProduct=existing||cart.find(x=>x.source==='supplier-retail'&&x.productId===id&&x.variantId===String(v.id));
+   syncRetailInstallationLabor(cart,addedProduct);
+   saveCart(cart);
+   status.innerHTML='Added to <a href="/project-cart.html">Review Cart</a>.'+
+    (addedProduct.installationRequested?' Installation added; labor price will be confirmed with your estimate.':'');
+  });
+
+ }catch{
+  target.innerHTML=preview('Current availability could not be confirmed. Please retry before adding this item to your cart.')+'<button type="button" class="btn outline" id="retail-retry">Retry availability</button>';
+  target.querySelector('#retail-retry').addEventListener('click',()=>detailView(target,id,department));
+ }
+}
+export async function mountCatalog(target,{department,material,type,installKeyword}={}){
+ if(!document.querySelector('link[href^="/store.css"]')){
+  const css=document.createElement('link');css.rel='stylesheet';css.href='/store.css?v='+encodeURIComponent(assetVersion);document.head.append(css);
+ }
+ const params=new URLSearchParams(location.search),id=params.get('product'),requestedCategory=params.get('category'),category=['Beverage Taps','Kegerators'].includes(requestedCategory)?'Beverage Equipment':requestedCategory;
+ target.classList.add('store-card-grid');
+ if(id&&/^[\w-]{8,64}$/.test(id)){target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');return detailView(target,id,department);}
+ if(department==='other'){
+  if(id&&/^[0-9]{19}$/.test(id)){
+   target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');
+   return detailView(target,id,department);
+  }
+  // Real CJ catalog items with actual supplier photographs, never invented prices.
+  // A current US-warehouse variant check is mandatory before any cart add.
+  target.innerHTML=otherCandidates.filter(p=>!requestedCategory||p.category===requestedCategory).map(p=>'<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(p.id)+'"><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(p.category)+'</p><h3>'+esc(p.name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier product · Price, U.S. stock and shipping must be verified before cart</p><span class="btn primary">View item</span></div></a></article>').join('');
+  return;
+ }
+ const flooringTypes={'Hardwood':/\\bhardwood flooring\\b|\\bsolid hardwood\\b|\\bengineered hardwood\\b/i,'Laminate':/\\blaminate flooring\\b/i,'LVP':/\\bvinyl plank flooring\\b|\\bluxury vinyl plank\\b/i,'Luxury Vinyl Plank (LVP)':/\\bvinyl plank flooring\\b|\\bluxury vinyl plank\\b/i,'Floor Tile':/\\bfloor tile\\b|\\bflooring tile\\b/i,'Underlayment':/\\bunderlayment\\b/i};
+ const matchesRequestedType=p=>!type||!(department==='materials'&&material==='flooring')||
+  (type==='Hardwood' ? p.category==='Hardwood'||flooringTypes.Hardwood.test(p.name||'') :
+   p.category===type||(flooringTypes[type]?.test(p.name||'')??false));
+ const saved=retailCatalog.filter(p=>p.department===department&&(!category||p.category===category)&&(!material||p.material===material)&&matchesRequestedType(p)&&(!installKeyword||matchesListing(p.name,installKeyword)));
+ // On the unfiltered Appliances landing page, surface installed beverage equipment first
+ // instead of burying taps below refrigerator and coffee listings.
+ if(department==='appliances'&&!category&&!installKeyword){
+  const priority={'Beverage Equipment':0};
+  saved.sort((a,b)=>(priority[a.category]??2)-(priority[b.category]??2));
+ }
+ const seen=new Set(saved.map(p=>p.id)),names=new Set(saved.map(p=>p.name.toLowerCase())),images=new Set(saved.map(p=>p.image));
+ target.innerHTML=saved.map(p=>card(p)).join('')||'<p class="empty" role="status">Checking available products…</p>';
+ await priceCards(target);
+ // Candidate IDs are not retail offers. Each item is shown only after the
+ // existing product API independently confirms a priced U.S.-warehouse variant.
+ const equipmentCandidates={
+  'Beverage Equipment':['1993033437579866113','1992983344353558529','1992915023801270274','1992915068682805249','1992915110470656002'],
+  'Coffee Systems':['1997963905444204545','2104817591011717121']
+ };
+ const equipmentKeyword={'Beverage Equipment':'beer','Coffee Systems':'espresso machine'}[category];
+ for(const candidateId of (department==='appliances'?equipmentCandidates[category]||[]:[])){
+  try{
+   const response=await fetch('/api/store-product?product='+encodeURIComponent(candidateId),{cache:'no-store'});
+   if(!response.ok)continue;
+   const data=await response.json(),vs=availableVariants(data),name=data.name||'',image=data.image||'';
+   if(!vs.length||!matchesListing(name,equipmentKeyword)||!/^https:\/\//.test(image)||seen.has(candidateId)||names.has(name.toLowerCase())||images.has(image))continue;
+   target.querySelectorAll('.empty').forEach(el=>el.remove());
+   target.insertAdjacentHTML('beforeend',card({
+    id:candidateId,department,name,image,category,
+    priceCents:Math.min(...vs.map(v=>v.priceCents)),
+    priceCheckedAt:new Date().toISOString().slice(0,10)
+   },true));
+   seen.add(candidateId);names.add(name.toLowerCase());images.add(image);
+  }catch{ /* Never advertise items whose current U.S. stock cannot be checked. */ }
+ }
+ const keyword=installKeyword||(type?({'LVP':'vinyl flooring','Luxury Vinyl Plank (LVP)':'vinyl flooring','Hardwood':'hardwood flooring','Laminate':'laminate flooring','Floor Tile':'floor tile','Underlayment':'floor underlayment'}[type]||type):material?materialSearch[material]:category?categorySearch[category]:({appliances:'refrigerator',cabinets:'storage cabinet',tools:'electric drill',materials:'wall panel',supplies:'construction adhesive'}[department]));
+ if(keyword){try{
+  const r=await fetch('/api/cj-products?keyword='+encodeURIComponent(keyword));const d=await r.json();if(!r.ok)throw Error('Unavailable');
+  for(const p of (d.products||[]).filter(p=>matchesListing(p.name,keyword)).slice(0,6)){
+   if(seen.has(p.id))continue;
+   try{const r=await fetch('/api/store-product?product='+encodeURIComponent(p.id));const data=await r.json();const vs=availableVariants(data);if(!r.ok||!vs.length)continue;
+    const image=data.image||p.image,name=data.name||p.name;if(!/^https:\/\//.test(image)||names.has(name.toLowerCase())||images.has(image)||!matchesListing(name,keyword))continue;
+    target.querySelectorAll('.empty').forEach(el=>el.remove());
+    target.insertAdjacentHTML('beforeend',card({id:p.id,department,name,image,category:category||department,priceCents:Math.min(...vs.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)},true));
+    seen.add(p.id);names.add(name.toLowerCase());images.add(image);
+   }catch{}
+  }
+ }catch{}}
+ await priceCards(target); // Update newly discovered product cards, including archived inventory decisions.
+ if(!target.querySelector('[data-product]'))target.innerHTML='<p class="empty">No confirmed products are available in this category yet. Please check back.</p>';
+}
++approvedLabor.price+' per item. Materials and supplies separate.':'Installation labor quoted after scope review.'} Nothing is charged here.</small></fieldset><button type="button" id="retail-add" class="btn primary">Add to Cart</button><p id="retail-status" role="status"></p><p class="calc-note">Delivery is calculated once for everything in your <a href="/project-cart.html">Review Cart</a>.</p><p>Online payment is not yet available. Nothing is charged from this page.</p><a class="btn outline" href="/${department==='tools'?'products':department}.html">Keep shopping</a></div></article>`;
   const $=id=>target.querySelector('#'+id),chosen=()=>variants.find(v=>String(v.id)===$('retail-option').value);
   const update=()=>{const v=chosen();$('retail-price').textContent=money(v.priceCents);$('retail-sku').textContent='Supplier SKU: '+v.sku;$('retail-photo').src=v.image||data.image;$('retail-status').textContent='';};
   update();$('retail-option').addEventListener('change',update);
