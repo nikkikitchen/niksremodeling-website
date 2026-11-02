@@ -169,14 +169,20 @@ document.addEventListener('DOMContentLoaded',async()=>{
     '<div><h2>'+bathEsc(detail.name)+'</h2><label>Available in-stock option <select id="bath-variant">'+
     variants.map(v=>'<option value="'+bathEsc(v.id)+'">'+bathEsc(v.name||v.sku)+' — '+bathMoney(v.priceCents)+'</option>').join('')+
     '</select></label><p id="bath-price" class="price">'+bathMoney(variants[0].priceCents)+'</p>'+
-    '<p>Item price excludes delivery, tax and installation.</p>'+
-    '<p class="calc-note">Shipping for all selected items is calculated once in <a href="/project-cart.html">Review Cart</a>.</p>'+
-    '<p>Installation is separate. <a href="/installation.html">Browse bathroom labor</a>.</p>'+ 
-    '<button type="button" class="btn primary" id="bath-add-cart">Add Selected Product to Project Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a> <a class="btn outline" href="'+projectReturn+'">Continue Bathroom Project & Add Labor</a>'+ 
-    '<p id="bath-cart-status" role="status">Product price excludes delivery, tax and installation. Cart is for review, not payment.</p>'+ 
-    '<p>Online checkout is currently disabled.</p></div></article>';
+    '<fieldset style="border:1px solid #ddd;border-radius:8px;padding:12px;margin:12px 0"><legend>Completing your project</legend>'+
+    '<label style="display:block"><input type="checkbox" id="bath-install"> Would you like Nik’s Remodeling to install this?</label>'+
+    '<label id="bath-supplies-choice" style="display:block;margin-top:10px"><input type="checkbox" id="bath-supplies"> Include matching supplies</label></fieldset>'+
+    '<button type="button" class="btn primary" id="bath-add-cart">Add to Cart</button> <a class="btn outline" href="/project-cart.html">Review Cart</a>'+
+    '<p id="bath-cart-status" role="status"></p></div></article>';
    const select=document.getElementById('bath-variant');
    const price=document.getElementById('bath-price');
+   const installChoice=document.getElementById('bath-install');
+   const suppliesChoice=document.getElementById('bath-supplies');
+   const suppliesRow=document.getElementById('bath-supplies-choice');
+   installChoice.addEventListener('change',()=>{
+    suppliesRow.style.display=installChoice.checked?'none':'block';
+    if(installChoice.checked)suppliesChoice.checked=false;
+   });
    select.addEventListener('change',()=>{price.textContent=bathMoney(variants.find(v=>v.id===select.value).priceCents);});
    document.getElementById('bath-add-cart').addEventListener('click',async()=>{
      const button=document.getElementById('bath-add-cart'),feedback=document.getElementById('bath-cart-status');
@@ -204,6 +210,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
        existing.projectId=existing.projectId||projectId||'bathrooms';
        existing.workKey=existing.workKey||projectWork||null;
        existing.bathroomFixtureType=type;
+       existing.installationRequested=existing.installationRequested||installChoice.checked;
+       existing.suppliesRequested=existing.suppliesRequested||suppliesChoice.checked;
        if(type==='toilets')existing.toiletStyle=toiletStyleFor(detail.name)||null;
      }else{
        cart.push({
@@ -220,12 +228,15 @@ document.addEventListener('DOMContentLoaded',async()=>{
          price:variant.priceCents/100,
          qty:1,
          priceVerifiedAt:new Date().toISOString(),
-         shippingAndTaxNotIncluded:true
+         shippingAndTaxNotIncluded:true,
+         installationRequested:installChoice.checked,
+         suppliesRequested:suppliesChoice.checked
        });
      }
      saveCart(cart);
-     feedback.textContent='Added '+detail.name+' to Project Cart at '+bathMoney(variant.priceCents)+
-       ' each before delivery, tax and installation. Price and stock are rechecked before purchase.';
+     const chosenProduct=existing||cart.find(x=>x.source==='bathroom-retail'&&x.productId===product&&String(x.variantId)===String(variant.id));
+     feedback.innerHTML='Added to <a href="/project-cart.html">Review Cart</a>.'+
+       (chosenProduct.installationRequested?' Installation added; labor price will be confirmed with your estimate.':'');
    });
 
 
