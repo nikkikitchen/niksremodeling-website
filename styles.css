@@ -503,3 +503,11 @@ nav.nav .mobile-top-nav{display:none!important}
 .nr-cart-price-chart .nr-cart-balance-row{border-top:2px solid #aab6c8;margin-top:4px;padding-top:16px}
 .nr-cart-price-chart .nr-cart-quote-note{margin:8px 0;font-size:.84rem}
 @media(max-width:540px){.nr-cart-price-chart{padding:5px 10px}.nr-cart-price-chart .cart-item{grid-template-columns:minmax(0,1fr) minmax(90px,auto);font-size:.94rem}}
+
+/* ZIP first, then a unified cart and price chart */
+.nr-cart-zip-top{border:1px solid #dce3eb;border-radius:14px;padding:15px 20px;margin:0 0 18px;background:#fff}
+.nr-cart-zip-top .cart-delivery-check{display:block!important;margin:0!important;max-width:320px}
+.nr-cart-zip-top .cart-delivery-check label{display:block;font-weight:700}
+.nr-cart-zip-top #cart-shipping-zip{display:block;width:100%;box-sizing:border-box;margin-top:6px}
+.nr-cart-zip-top .nr-cart-inline-status{font-size:.85rem;margin:6px 0 0;color:#64748b}
+.nr-cart-zip-top .nr-cart-inline-status:empty{display:none}
