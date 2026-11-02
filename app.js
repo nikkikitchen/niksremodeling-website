@@ -126,12 +126,18 @@ function reconcileRetailInstallationCart(items){
   line.department=product.department;
   const itemName=String(product?.name||'').toLowerCase();
   const dept=String(product?.department||'').toLowerCase();
-  const approved=dept!=='appliances'?null:
+  const bathType=String(product?.bathroomFixtureType||'').toLowerCase();
+  const bathroomApproved=product.source==='bathroom-retail'?
+   bathType==='faucets'&&/\bfaucet\b/.test(itemName)&&!/wall.mount|wall mount|shower|tub|cartridge|parts|repair/.test(itemName)?{price:225,starting:false}:
+   bathType==='lighting'&&/vanity light/.test(itemName)?{price:175,starting:false}:
+   bathType==='toilets'&&product.toiletStyle==='smart'?{price:650,starting:false}:
+   bathType==='toilets'&&product.toiletStyle!=='specialty'?{price:175,starting:false}:null:null;
+  const approved=bathroomApproved|| (dept!=='appliances'?null:
    /kegerator|beer tower|draft beer tap|beverage tap/.test(itemName)?{price:350,starting:true}:
    /range hood/.test(itemName)?{price:150,starting:false}:
    /wall oven/.test(itemName)?{price:/double/.test(itemName)?575:325,starting:false}:
    /over.the.range microwave/.test(itemName)?{price:325,starting:false}:
-   /dishwasher/.test(itemName)&&!/countertop|portable/.test(itemName)?{price:275,starting:false}:null;
+   /dishwasher/.test(itemName)&&!/countertop|portable/.test(itemName)?{price:275,starting:false}:null);
   line.price=approved?.price??null;
   line.pricingPending=!approved;
   line.startingPrice=!!approved?.starting;
