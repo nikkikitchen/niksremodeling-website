@@ -515,3 +515,31 @@ nav.nav .mobile-top-nav{display:none!important}
 /* Navigation icons shared with homepage on desktop and mobile. */
 .nav-icon{display:inline-block;font-size:15px;line-height:1;vertical-align:middle;margin-right:5px;flex-shrink:0}
 @media(max-width:820px){.mobile-top-nav .nav-icon{font-size:12px;margin-right:2px}.mobile-top-nav .nav-toggle{gap:2px}}
+
+
+/* Bathroom package previews within both desktop and mobile Projects menus. */
+.nav-dropdown .bath-nav-group,.nav-dropdown .bath-nav-tier{display:block;position:relative;border:0;margin:0}
+.nav-dropdown .bath-nav-group>summary,.nav-dropdown .bath-nav-tier>summary{
+ display:block;list-style:none;cursor:pointer;padding:10px 12px;border-radius:6px;color:var(--blue2);
+ font-size:13px;font-weight:700;line-height:1.45
+}
+.nav-dropdown .bath-nav-group>summary::-webkit-details-marker,.nav-dropdown .bath-nav-tier>summary::-webkit-details-marker{display:none}
+.nav-dropdown .bath-nav-group>summary:hover,.nav-dropdown .bath-nav-tier>summary:hover,
+.nav-dropdown .bath-nav-group>summary:focus-visible,.nav-dropdown .bath-nav-tier>summary:focus-visible{background:#e8f1fa}
+.nav-dropdown .bath-nav-group>summary span{float:right}
+.nav-dropdown .bath-nav-options{display:none;padding:2px 0 8px 10px;border-left:2px solid #dae7f0;margin-left:13px}
+.nav-dropdown .bath-nav-group[open]>.bath-nav-options{display:block}
+.nav-dropdown .bath-nav-tier-preview{display:none;background:#f4f8fb;border:1px solid #d9e6f1;border-radius:8px;
+ margin:3px 8px 10px 0;padding:12px;font-size:12px;line-height:1.5;max-width:330px}
+.nav-dropdown .bath-nav-tier[open]>.bath-nav-tier-preview{display:block}
+.nav-dropdown .bath-nav-tier-preview ul{padding-left:18px;margin:7px 0}
+.nav-dropdown .bath-nav-tier-preview li{margin:4px 0}
+.nav-dropdown .bath-nav-tier-preview a{font-size:12px;font-weight:700;text-decoration:underline;padding:7px 0}
+.nav-dropdown a.bath-nav-custom{font-weight:700}
+.nav-dropdown a.bath-nav-all{font-size:12px;text-decoration:underline}
+@media (hover:hover) and (pointer:fine){
+ .nav-dropdown .bath-nav-group:hover>.bath-nav-options,
+ .nav-dropdown .bath-nav-group:focus-within>.bath-nav-options{display:block}
+ .nav-dropdown .bath-nav-tier:hover>.bath-nav-tier-preview,
+ .nav-dropdown .bath-nav-tier:focus-within>.bath-nav-tier-preview{display:block}
+}
