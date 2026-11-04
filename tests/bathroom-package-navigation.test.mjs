@@ -38,3 +38,26 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
   assert.equal(chooser.window.document.querySelector('#project-work-grid'),null);
  }finally{chooser.window.close();}
 });
+
+test('Kitchen project tiles match Bathroom and retain prices and Custom choice', async()=>{
+ const html=readFileSync('project.html','utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(_,src)=>{
+  const path=src.split('?')[0].replace(/^\//,'');
+  return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
+ });
+ for(const [tier,price] of [['basic','1,995'],['standard','6,495'],['deluxe','17,995']]){
+  const dom=new JSDOM(html,{url:'https://niksremodeling.com/project.html?project=kitchen-pantry&kitchenPackage='+tier,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};}});
+  try{
+   await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
+   const doc=dom.window.document;
+   assert.equal(doc.querySelector('h1')?.textContent,'Kitchen Projects');
+   assert.equal(doc.querySelectorAll('.bath-photo-card').length,4);
+   assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4);
+   assert.equal(doc.querySelectorAll('.bath-card-add').length,3);
+   assert.ok(doc.querySelector('.bath-photo-card.current')?.href.endsWith('kitchenPackage='+tier));
+   assert.ok(doc.querySelector('.bath-photo-card.current .bath-hover-price')?.textContent.includes(price));
+   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
+   assert.ok([...doc.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('kitchenMode=individual')));
+   assert.equal(doc.querySelector('#project-work-grid'),null);
+  }finally{dom.window.close();}
+ }
+});
