@@ -760,7 +760,7 @@ function cartCheckoutSummary(items){
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  ${unconfirmedPackages.length?'<div class="cart-item"><span>Bathroom package starting total</span><strong>'+money(packageStartingTotal)+'+</strong></div><div class="cart-item"><span>Materials and supplies (proposed deposit)</span><strong>'+money(packageDepositEstimates)+'</strong></div><div class="cart-item"><span>Labor included in package</span><strong>'+money(packageLaborEstimates)+'</strong></div><div class="cart-item"><span>Overhead and contingency</span><strong>'+money(packageOverheadEstimates)+'</strong></div><div class="cart-item"><span>Remaining balance after deposit (progress draws)</span><strong>'+money(packageRemainingEstimate)+'</strong></div>':''}
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
- ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
+ ${estimatedLabor.hasServices&&items.some(x=>['Labor','Service'].includes(x.type)&&x.source!=='bathroom-project-package')?`<div class="cart-item"><span>Additional services / labor</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
