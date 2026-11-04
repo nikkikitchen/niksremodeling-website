@@ -18,3 +18,10 @@ test('Bathroom image selection does not fall back to unrelated room photos',()=>
   assert.ok(source.includes("...(isBathroom?(bathroomWorkPhotos[key]||[]):[])"));
   assert.ok(source.includes("id==='kids-room'||isBathroom?null"));
 });
+
+test('missing bathroom images fall back to accurately labeled illustrations',()=>{
+  assert.ok(source.includes('const bathroomPhotoFallback=key=>'));
+  assert.ok(source.includes("headingImage.addEventListener('error'"));
+  assert.ok(source.includes('bathroomPhotoFallback(key)'));
+  assert.match(photos,/const svg='<svg xmlns=/);
+});
