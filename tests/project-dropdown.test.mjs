@@ -48,7 +48,7 @@ test('Homepage cards and both dropdowns have exactly the same fifteen project na
     const primary=branch.querySelector('.project-category-link');
     const button=branch.querySelector('.project-category-toggle');
     assert.ok(button?.getAttribute('aria-label').includes('choices'));
-    const multiJob=!['themed-rooms','concrete','custom','room-additions'].includes(id);
+    const multiJob=!['bathrooms','themed-rooms','concrete','custom','room-additions'].includes(id);
     if(multiJob){
      assert.equal(primary.tagName,'BUTTON',id+' should expand choices without navigation');
      const boxes=[...branch.querySelectorAll('.project-submenu input[type="checkbox"]')];
