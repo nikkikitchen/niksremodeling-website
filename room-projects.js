@@ -255,7 +255,12 @@ function buildProjectDropdowns(){
  const projectLink=(id,params)=>'/project.html?project='+encodeURIComponent(id)+(params?'&'+params:'');
  function choicesFor(id,label){
    const choices=[];
-   if(['themed-rooms','concrete','custom'].includes(id)){
+   if(id==='bathrooms'){
+     choices.push(['Basic Refresh',projectLink(id,'bathPackage=basic')]);
+     choices.push(['Standard Upgrade',projectLink(id,'bathPackage=standard')]);
+     choices.push(['Deluxe Remodel',projectLink(id,'bathPackage=deluxe')]);
+     choices.push(['Choose Custom Items',projectLink(id,'bathMode=individual')]);
+   }else if(['themed-rooms','concrete','custom'].includes(id)){
      for(const item of window.projectGroupChoices(id))choices.push([item.title,item.href]);
    }else if(id==='room-additions'){
      for(const name of ['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'])
@@ -314,7 +319,7 @@ function buildProjectDropdowns(){
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const row=document.createElement('div');row.className='project-branch-row';
-     const multiJob=!['themed-rooms','concrete','custom','room-additions'].includes(id);
+     const multiJob=!['bathrooms','themed-rooms','concrete','custom','room-additions'].includes(id);
      const primary=multiJob?document.createElement('button'):link(label,projectLink(id));primary.className='project-category-link';
      if(multiJob){primary.type='button';primary.textContent=label;primary.setAttribute('aria-expanded','false');primary.setAttribute('aria-label','Choose '+label+' jobs');}
      const button=document.createElement('button');button.type='button';button.className='project-category-toggle';
