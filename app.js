@@ -694,6 +694,7 @@ function cartSchedulingMarkup(c){
  <div class="btns">
  <button class="btn primary" type="button" data-cart-request="free" disabled onclick="submitCartRequest('free')">Request Estimate</button>
  <button class="btn outline" type="button" data-cart-request="supplies" disabled onclick="submitCartRequest('supplies')">Ask About Scheduling</button>
+ ${hasProjectPackages?'<button class="btn outline" type="button" data-cart-request="deposit" disabled onclick="submitCartRequest(\'deposit\')">Request Deposit Invoice</button>':''}
  </div>
  </section>`;
 }
@@ -704,7 +705,7 @@ function updateCartRequestButtons(){
 function submitCartRequest(choice){
  if(!document.getElementById('cart-terms-agree')?.checked)return;
  const c=getCart();
- const heading=choice==='supplies'?'Supplies purchase and installation scheduling request':'Free estimate confirmation request';
+ const heading=choice==='deposit'?'Request proposed project deposit invoice and weekly draw schedule':choice==='supplies'?'Supplies purchase and installation scheduling request':'Free estimate confirmation request';
  const packagePaymentSchedule=c.some(item=>item.source==='bathroom-project-package')?'\\n\\nPlease confirm the deposit for project materials and supplies and provide a weekly progress-draw schedule based on completed work, to be mutually agreed in the written contract. I understand no payment is due until the quote and terms are approved.':'';
  const message=heading+'\\n\\n'+cartRequestMessage(c)+packagePaymentSchedule+'\\n\\nI agree to the Terms & Conditions and request confirmation before any payment or installation scheduling.';
  location.href='mailto:'+SITE.email+'?subject='+encodeURIComponent(heading)+'&body='+encodeURIComponent(message);
