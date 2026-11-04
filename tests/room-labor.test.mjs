@@ -31,7 +31,7 @@ test('ceiling premium applies only to overhead work and remains in the combined 
  assert.equal(w.roomLaborQuote(384,'full').amount,2340);
  d.getElementById('room-add').click();assert.equal(w.getCart()[0].ceilingArea,144);assert.equal(w.serviceEstimateSummary(w.getCart()).total,3308.4);
  const surface=d.getElementById('room-surfaces');surface.value='ceiling';surface.dispatchEvent(new w.Event('input'));d.getElementById('room-service').value='paint2';d.getElementById('room-service').dispatchEvent(new w.Event('input'));
- assert.equal(d.getElementById('room-price').textContent,'$129.60');d.getElementById('room-add').click();assert.equal(w.getCart().length,1);assert.equal(w.getCart()[0].price,129.6);
+ assert.equal(d.getElementById('room-price').textContent,'$150.00','The $150 minimum applies to the displayed one-coat ceiling labor quote');d.getElementById('room-add').click();assert.equal(w.getCart().length,1);assert.equal(w.getCart()[0].price,129.6);
  dom.window.close();
 });
 
