@@ -409,9 +409,9 @@
     // Isolated Bathroom package pilot. Existing detailed estimator is retained.
     if((id==='bathrooms'||id==='bath-remodel') && new URLSearchParams(location.search).get('bathMode')!=='individual'){
       const packages=[
-        {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',discount:5,startingAt:995,depositEstimate:320,work:['Minor Painting','Standard fixture replacement','Simple finishing touches']},
-        {id:'standard',name:'Standard Upgrade',intro:'Update your bathroom with freshly painted walls and select fixture improvements.',discount:7,startingAt:2195,depositEstimate:545,work:['Two coats of paint on bathroom walls, including a color change if desired','Paint existing baseboards','Paint one side of the bathroom door and its casing','Replace the existing vanity light and bathroom mirror','Minor finishing touches']},
-        {id:'deluxe',name:'Deluxe Remodel',intro:'Refresh the entire bathroom with comprehensive painting, sealing and accessory updates.',startingAt:3195,depositEstimate:745,work:['Two coats of paint on walls and ceiling','Paint all existing trim, including baseboards, door casing, doors and existing crown molding','Recaulking and sealing around existing fixtures as needed','Replace all standard bathroom accessories, including towel bars, towel rings and toilet paper holder','Upgrade the existing vanity light and bathroom mirror']},
+        {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',discount:5,startingAt:995,depositEstimate:320,laborEstimate:525,overheadAllowance:150,work:['Minor Painting','Standard fixture replacement','Simple finishing touches']},
+        {id:'standard',name:'Standard Upgrade',intro:'Update your bathroom with freshly painted walls and select fixture improvements.',discount:7,startingAt:2195,depositEstimate:545,laborEstimate:1350,overheadAllowance:300,work:['Two coats of paint on bathroom walls, including a color change if desired','Paint existing baseboards','Paint one side of the bathroom door and its casing','Replace the existing vanity light and bathroom mirror','Minor finishing touches']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'Refresh the entire bathroom with comprehensive painting, sealing and accessory updates.',startingAt:3195,depositEstimate:745,laborEstimate:1950,overheadAllowance:500,work:['Two coats of paint on walls and ceiling','Paint all existing trim, including baseboards, door casing, doors and existing crown molding','Recaulking and sealing around existing fixtures as needed','Replace all standard bathroom accessories, including towel bars, towel rings and toilet paper holder','Upgrade the existing vanity light and bathroom mirror']},
         {id:'custom',name:'Custom',intro:'Choose exactly what you need, even a single job.',work:['Choose individual bathroom work','Select materials and finishes','Combine as many tasks as you need']}
       ];
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||null;
@@ -433,7 +433,7 @@
         // Keep one entry per package, while allowing different Bathroom projects.
         const exists=cart.some(item=>item.source==='bathroom-project-package'&&item.packageId===packageChoice.id);
         if(!exists){
-          cart.push({name:'Bathroom — '+packageChoice.name,qty:1,type:'Service',source:'bathroom-project-package',packageId:packageChoice.id,startingAt:packageChoice.startingAt,depositEstimate:packageChoice.depositEstimate,price:null,quoteRequired:true,scope:packageChoice.work.slice(),description:'Starting estimate only; labor, materials and supplies confirmed after reviewing measurements and selections.'});
+          cart.push({name:'Bathroom — '+packageChoice.name,qty:1,type:'Service',source:'bathroom-project-package',packageId:packageChoice.id,startingAt:packageChoice.startingAt,depositEstimate:packageChoice.depositEstimate,laborEstimate:packageChoice.laborEstimate,overheadAllowance:packageChoice.overheadAllowance,price:null,quoteRequired:true,scope:packageChoice.work.slice(),description:'Starting estimate only; labor, materials and supplies confirmed after reviewing measurements and selections.'});
           saveCart(cart);
         }
         location.href='/project-cart.html';
