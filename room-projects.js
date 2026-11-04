@@ -260,6 +260,11 @@ function buildProjectDropdowns(){
      choices.push(['Standard Upgrade',projectLink(id,'bathPackage=standard')]);
      choices.push(['Deluxe Remodel',projectLink(id,'bathPackage=deluxe')]);
      choices.push(['Choose Custom Items',projectLink(id,'bathMode=individual')]);
+   }else if(id==='kitchen-pantry'){
+     choices.push(['Basic Refresh',projectLink(id,'kitchenPackage=basic')]);
+     choices.push(['Standard Upgrade',projectLink(id,'kitchenPackage=standard')]);
+     choices.push(['Deluxe Remodel',projectLink(id,'kitchenPackage=deluxe')]);
+     choices.push(['Choose Custom Items',projectLink(id,'kitchenMode=individual')]);
    }else if(['themed-rooms','concrete','custom'].includes(id)){
      for(const item of window.projectGroupChoices(id))choices.push([item.title,item.href]);
    }else if(id==='room-additions'){
@@ -319,7 +324,7 @@ function buildProjectDropdowns(){
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const row=document.createElement('div');row.className='project-branch-row';
-     const multiJob=!['bathrooms','themed-rooms','concrete','custom','room-additions'].includes(id);
+     const multiJob=!['bathrooms','kitchen-pantry','themed-rooms','concrete','custom','room-additions'].includes(id);
      const primary=multiJob?document.createElement('button'):link(label,projectLink(id));primary.className='project-category-link';
      if(multiJob){primary.type='button';primary.textContent=label;primary.setAttribute('aria-expanded','false');primary.setAttribute('aria-label','Choose '+label+' jobs');}
      const button=document.createElement('button');button.type='button';button.className='project-category-toggle';
