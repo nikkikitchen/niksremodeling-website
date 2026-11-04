@@ -676,6 +676,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
+ if(x.source==='bathroom-project-package'&&Number.isFinite(Number(x.startingAt)))return 'Starting at '+Number(x.startingAt).toLocaleString('en-US',{style:'currency',currency:'USD'})+'<small class="cart-price-scope">Complete project estimate · confirm scope before payment</small>';
  if(x.source==='retail-installation'&&(x.price==null||x.pricingPending))return 'Installation quote needed';
  if(customEstimate(x)||requiresInPersonQuote(x))return 'In-person quote required';
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
@@ -711,6 +712,8 @@ function cartCheckoutSummary(items){
  const unpriced=paidItems.some(x=>x.price===null||x.price===undefined||x.price===''||!Number.isFinite(Number(x.price))||x.pricingPending);
  const money=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
  const estimatedLabor=serviceEstimateSummary(items);
+ const unconfirmedPackages=items.filter(x=>x.source==='bathroom-project-package'&&Number.isFinite(Number(x.startingAt))&&Number(x.startingAt)>0);
+ const packageStartingTotal=unconfirmedPackages.reduce((sum,x)=>sum+Number(x.startingAt)*(Number(x.qty)||1),0);
  const packaged=items.filter(x=>x.internalCosts&&Number.isFinite(Number(x.internalCosts.supplies))&&Number(x.internalCosts.supplies)>=0);
  const packagedSupplies=packaged.reduce((sum,x)=>sum+Number(x.internalCosts.supplies)*(Number(x.packageQuantity)||Number(x.qty)||1),0);
  const standalone=items.filter(x=>x.hiddenFromCustomer&&Number.isFinite(Number(x.price))&&Number(x.price)>=0);
@@ -747,13 +750,15 @@ function cartCheckoutSummary(items){
  <h3>Order Summary</h3>
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
+ ${unconfirmedPackages.length?'<div class="cart-item"><span>Bathroom package starting estimate<small>Labor, materials and supplies; scope to confirm</small></span><strong>'+money(packageStartingTotal)+'+</strong></div>':''}
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
  ${estimatedLabor.hasServices?`<div class="cart-item"><span>Labor</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
+ ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Package starting prices are not confirmed charges and are excluded from the amounts due now and the priced subtotal below. Request an estimate to finalize the total.</p>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
- <div class="cart-item nr-cart-balance-row"><span><strong>Estimated total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
+ <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length?'Priced items subtotal':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  <div class="cart-item"><span>Due now</span><strong id="cart-due-now">${money((Math.round(payableSubtotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
