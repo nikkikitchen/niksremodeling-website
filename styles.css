@@ -543,3 +543,8 @@ nav.nav .mobile-top-nav{display:none!important}
  .nav-dropdown .bath-nav-tier:hover>.bath-nav-tier-preview,
  .nav-dropdown .bath-nav-tier:focus-within>.bath-nav-tier-preview{display:block}
 }
+
+/* Bathroom choices are visible directly below Bathroom in Projects navigation. */
+.nav-dropdown a.bath-nav-heading{font-weight:800;color:#073c70;border-top:1px solid #dfe5ea;margin-top:3px}
+.nav-dropdown a.bath-nav-link{padding-left:26px;font-size:13px}
+.nav-dropdown a.bath-nav-link:last-of-type{border-bottom:1px solid #dfe5ea;margin-bottom:4px}
