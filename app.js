@@ -676,7 +676,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
- if(x.source==='bathroom-project-package'&&Number.isFinite(Number(x.startingAt)))return 'Starting at '+Number(x.startingAt).toLocaleString('en-US',{style:'currency',currency:'USD'})+'<small class="cart-price-scope">Complete project estimate · confirm scope before payment</small>';
+ if(['bathroom-project-package','kitchen-project-package'].includes(x.source)&&Number.isFinite(Number(x.startingAt)))return 'Starting at '+Number(x.startingAt).toLocaleString('en-US',{style:'currency',currency:'USD'})+'<small class="cart-price-scope">Complete project estimate · confirm scope before payment</small>';
  if(x.source==='retail-installation'&&(x.price==null||x.pricingPending))return 'Installation quote needed';
  if(customEstimate(x)||requiresInPersonQuote(x))return 'In-person quote required';
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
@@ -686,7 +686,7 @@ function cartPriceMarkup(x){
  return (known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
 }
 function cartSchedulingMarkup(c){
- const hasProjectPackages=c.some(item=>item.source==='bathroom-project-package');
+ const hasProjectPackages=c.some(item=>['bathroom-project-package','kitchen-project-package'].includes(item.source));
  return `<section class="panel nr-cart-next-step" id="cart-scheduling" aria-labelledby="cart-scheduling-heading">
  <h3 id="cart-scheduling-heading">Next Step</h3>
  ${hasProjectPackages?'<p class="calc-note"><strong>Next:</strong> Request your finalized project estimate, materials-and-supplies deposit amount, and proposed weekly draw schedule. No payment is collected here.</p>':''}
@@ -706,7 +706,7 @@ function submitCartRequest(choice){
  if(!document.getElementById('cart-terms-agree')?.checked)return;
  const c=getCart();
  const heading=choice==='deposit'?'Request proposed project deposit invoice and weekly draw schedule':choice==='supplies'?'Supplies purchase and installation scheduling request':'Free estimate confirmation request';
- const packagePaymentSchedule=c.some(item=>item.source==='bathroom-project-package')?'\\n\\nPlease confirm the deposit for project materials and supplies and provide a weekly progress-draw schedule based on completed work, to be mutually agreed in the written contract. I understand no payment is due until the quote and terms are approved.':'';
+ const packagePaymentSchedule=c.some(item=>['bathroom-project-package','kitchen-project-package'].includes(item.source))?'\\n\\nPlease confirm the deposit for project materials and supplies and provide a weekly progress-draw schedule based on completed work, to be mutually agreed in the written contract. I understand no payment is due until the quote and terms are approved.':'';
  const message=heading+'\\n\\n'+cartRequestMessage(c)+packagePaymentSchedule+'\\n\\nI agree to the Terms & Conditions and request confirmation before any payment or installation scheduling.';
  location.href='mailto:'+SITE.email+'?subject='+encodeURIComponent(heading)+'&body='+encodeURIComponent(message);
 }
@@ -716,7 +716,7 @@ function cartCheckoutSummary(items){
  const unpriced=paidItems.some(x=>x.price===null||x.price===undefined||x.price===''||!Number.isFinite(Number(x.price))||x.pricingPending);
  const money=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
  const estimatedLabor=serviceEstimateSummary(items);
- const unconfirmedPackages=items.filter(x=>x.source==='bathroom-project-package'&&Number.isFinite(Number(x.startingAt))&&Number(x.startingAt)>0);
+ const unconfirmedPackages=items.filter(x=>['bathroom-project-package','kitchen-project-package'].includes(x.source)&&Number.isFinite(Number(x.startingAt))&&Number(x.startingAt)>0);
  const packageStartingTotal=unconfirmedPackages.reduce((sum,x)=>sum+Number(x.startingAt)*(Number(x.qty)||1),0);
  const packageDepositEstimates=unconfirmedPackages.reduce((sum,x)=>sum+(Number(x.depositEstimate)||0)*(Number(x.qty)||1),0);
  const packageLaborEstimates=unconfirmedPackages.reduce((sum,x)=>sum+(Number(x.laborEstimate)||0)*(Number(x.qty)||1),0);
@@ -760,7 +760,7 @@ function cartCheckoutSummary(items){
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  ${unconfirmedPackages.length?'<div class="cart-item"><span>Bathroom package starting total</span><strong>'+money(packageStartingTotal)+'+</strong></div><div class="cart-item"><span>Materials and supplies (proposed deposit)</span><strong>'+money(packageDepositEstimates)+'</strong></div><div class="cart-item"><span>Labor included in package</span><strong>'+money(packageLaborEstimates)+'</strong></div><div class="cart-item"><span>Overhead and contingency</span><strong>'+money(packageOverheadEstimates)+'</strong></div><div class="cart-item"><span>Remaining balance after deposit (progress draws)</span><strong>'+money(packageRemainingEstimate)+'</strong></div>':''}
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
- ${estimatedLabor.hasServices&&items.some(x=>['Labor','Service'].includes(x.type)&&x.source!=='bathroom-project-package')?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
+ ${estimatedLabor.hasServices&&items.some(x=>['Labor','Service'].includes(x.type)&&!['bathroom-project-package','kitchen-project-package'].includes(x.source))?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
