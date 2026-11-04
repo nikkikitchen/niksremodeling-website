@@ -409,9 +409,9 @@
     // Isolated Bathroom package pilot. Existing detailed estimator is retained.
     if((id==='bathrooms'||id==='bath-remodel') && new URLSearchParams(location.search).get('bathMode')!=='individual'){
       const packages=[
-        {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',work:['Wall or ceiling painting','Standard fixture replacement','Simple finishing touches']},
-        {id:'standard',name:'Standard Upgrade',intro:'Update key surfaces and fixtures.',work:['Wall and ceiling finishes','Vanity or fixture updates','Flooring and trim options']},
-        {id:'deluxe',name:'Deluxe Remodel',intro:'Plan a more complete bathroom transformation.',work:['Shower or tub improvements','Vanity, lighting, and flooring','Coordinated wall and ceiling finishes']},
+        {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',discount:5,work:['Minor Painting','Standard fixture replacement','Simple finishing touches']},
+        {id:'standard',name:'Standard Upgrade',intro:'Update your bathroom with freshly painted walls and select fixture improvements.',discount:7,work:['Two coats of paint on bathroom walls, including a color change if desired','Paint existing baseboards','Paint one side of the bathroom door and its casing','Replace the existing vanity light and bathroom mirror','Minor finishing touches']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'Refresh the entire bathroom with comprehensive painting, sealing and accessory updates.',work:['Two coats of paint on walls and ceiling','Paint all existing trim, including baseboards, door casing, doors and existing crown molding','Recaulking and sealing around existing fixtures as needed','Replace all standard bathroom accessories, including towel bars, towel rings and toilet paper holder','Upgrade the existing vanity light and bathroom mirror']},
         {id:'custom',name:'Custom',intro:'Choose exactly what you need, even a single job.',work:['Choose individual bathroom work','Select materials and finishes','Combine as many tasks as you need']}
       ];
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||null;
@@ -425,6 +425,7 @@
         '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose your bathroom project. For individual work and all the options, select Custom.</p>'+
         '<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>'+
         (selected?'<article class="bath-package-detail"><h2>'+selected.name+'</h2><p>'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
+        (selected.discount?'<p class="calc-note"><strong>Package labor savings:</strong> '+selected.discount+'% off included labor. Materials and supplies priced separately.</p>':'')+
         '<p class="calc-note"><strong>Starting price:</strong> To be determined after the base scope and materials are approved.</p>'+
         '<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a> '+
         '<a class="btn outline" href="/installation.html#labor-category-bathroom">Installation Only</a></article>':'')+
