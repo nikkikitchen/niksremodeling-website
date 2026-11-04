@@ -624,7 +624,7 @@
       accents:['/assets/accent-walls-card.jpg'],
       prep:['/assets/approved-b5c632fcfbc0.jpg'],
       'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
-      'faucet-service':['https://images.pexels.com/photos/3609956/pexels-photo-3609956.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      'faucet-service':['https://images.pexels.com/photos/6920608/pexels-photo-6920608.jpeg?auto=compress&cs=tinysrgb&w=900'],
       other:['/assets/custom-projects-card.jpg']
     };
     // Broken external photographs must never leave blank tiles. Draw a matching,
