@@ -18,7 +18,8 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
    assert.equal(cards.length,4,'Package links must keep the four-photo chooser visible');
    assert.ok(cards.find(c=>c.classList.contains('current'))?.href.endsWith('bathPackage='+tier));
    assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4,'Each photo must describe the included work');
-   assert.ok(doc.querySelector('.bath-photo-card.current .bath-hover-price')?.textContent.includes('Starting at '));
+   assert.equal(doc.querySelector('.bath-photo-card.current .bath-hover-price'),null,'Price should not repeat in hover');
+   assert.ok(doc.querySelector('.bath-photo-tile:has(.bath-photo-card.current) .bath-price-below')?.textContent.includes('Starting at '));
    assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
@@ -54,7 +55,8 @@ test('Kitchen project tiles match Bathroom and retain prices and Custom choice',
    assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4);
    assert.equal(doc.querySelectorAll('.bath-card-add').length,3);
    assert.ok(doc.querySelector('.bath-photo-card.current')?.href.endsWith('kitchenPackage='+tier));
-   assert.ok(doc.querySelector('.bath-photo-card.current .bath-hover-price')?.textContent.includes(price));
+   assert.equal(doc.querySelector('.bath-photo-card.current .bath-hover-price'),null,'Price should not repeat in hover');
+   assert.ok(doc.querySelector('.bath-photo-tile:has(.bath-photo-card.current) .bath-price-below')?.textContent.includes(price));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
    assert.ok([...doc.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('kitchenMode=individual')));
    assert.equal(doc.querySelector('#project-work-grid'),null);
