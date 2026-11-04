@@ -417,50 +417,24 @@
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||null;
       const original='/project.html?project=bathrooms&bathMode=individual';
       const photos=['https://images.pexels.com/photos/19899059/pexels-photo-19899059.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/7031908/pexels-photo-7031908.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/4940613/pexels-photo-4940613.jpeg?auto=compress&cs=tinysrgb&w=900','/assets/tile-shower.jpg'];
-      // All four previews share ONE Bathroom page. Hover/focus reveals the work;
-      // click/tap selects the details below without loading another package page.
-      const cardLabel={basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'};
-      const nav=packages.map((p,index)=>'<button type="button" class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" data-bath-tier="'+p.id+'" aria-controls="bath-package-details" aria-pressed="'+(!!selected&&selected.id===p.id)+'" aria-label="Preview '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+cardLabel[p.id]+'</strong><small>'+p.intro+'</small></span><span class="bath-card-preview"><strong>'+p.name+'</strong><span>'+p.work.map(w=>'<span class="bath-card-point">'+w+'</span>').join('')+'</span><small>Click or tap to keep these details open</small></span></button>').join('');
-      const renderDetail=p=>'<h2>'+p.name+'</h2><p>'+p.intro+'</p><h3>Included work</h3><ul>'+p.work.map(w=>'<li>'+w+'</li>').join('')+'</ul>'+
-        (p.id==='custom'?'<a class="btn primary" href="'+original+'">Choose Your Work</a>':
-        '<p class="calc-note">Package pricing is based on the selected work and measurements; materials and supplies are separate.</p>'+
-        '<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+p.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a> '+
-        '<a class="btn outline" href="/installation.html#labor-category-bathroom">Installation Only</a>');
+      const nav=packages.map((p,index)=>'<a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small></span></a>').join('');
+      const work=selected?selected.work.map(w=>'<li>'+w+'</li>').join(''):'';
       document.body.innerHTML=header()+
         '<main><section class="section bath-project-chooser"><div class="wrap">'+
         '<a class="project-back" href="/#projects">← All Projects</a>'+
-        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Hover over a picture to see what is included. Tap a picture on your phone. All four packages are compared right here.</p>'+
+        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose your bathroom project. For individual work and all the options, select Custom.</p>'+
         '<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>'+
-        '<article id="bath-package-details" class="bath-package-detail" aria-live="polite" tabindex="-1">'+
-          (selected?renderDetail(selected):'<h2>Explore your bathroom options</h2><p>Point to any package picture to preview its work, or select one to keep the details open.</p>')+
-        '</article>'+
         '<div class="bath-custom-callout"><p><strong>Not sure which package is right for you?</strong> Choose Custom and build your own bathroom project.</p><a class="btn outline" href="'+original+'">Explore Custom Options</a></div>'+
+        (selected?'<article class="bath-package-detail"><h2>'+selected.name+'</h2><p>'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
+        (selected.discount?'<p class="calc-note"><strong>Package labor savings:</strong> '+selected.discount+'% off included labor. Materials and supplies priced separately.</p>':'')+
+        '<p class="calc-note"><strong>Starting price:</strong> To be determined after the base scope and materials are approved.</p>'+
+        '<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a> '+
+        '<a class="btn outline" href="/installation.html#labor-category-bathroom">Installation Only</a></article>':'')+
         '</div></section></main>'+footer();
       const style=document.createElement('style');
       style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.bath-photo-card{height:380px;position:relative;display:block;border-radius:12px;overflow:hidden;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .2s ease}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-card:hover img,.bath-photo-card:focus-visible img{transform:scale(1.04)}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 29px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-package-detail{margin-top:32px;padding:26px;border:1px solid #dfe5ea;border-radius:12px}.bath-package-detail h2{font:700 30px Georgia,serif;margin:0 0 12px}.bath-package-detail li{margin:8px 0}.bath-package-detail .btn{margin:12px 8px 0 0}@media(max-width:1000px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
       style.textContent+='.bath-custom-callout{margin:26px 0 0;padding:22px 24px;border:1px solid #dfe5ea;border-radius:12px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f7fafc}.bath-custom-callout p{margin:0;flex:1 1 280px;line-height:1.5}.bath-custom-callout .btn{white-space:nowrap}@media(max-width:560px){.bath-custom-callout{padding:18px}.bath-custom-callout .btn{width:100%;text-align:center}}';
-      style.textContent+='.bath-photo-card{cursor:pointer;border:0;padding:0;text-align:left;font:inherit}.bath-card-preview{display:flex;flex-direction:column;justify-content:center;position:absolute;inset:0;z-index:2;background:rgba(5,28,49,.93);color:#fff;padding:18px;opacity:0;visibility:hidden;transition:opacity .16s ease;overflow-y:auto}.bath-card-preview>strong{font:700 23px Georgia,serif;margin-bottom:12px}.bath-card-preview>span{display:block}.bath-card-point{display:block;font-size:13px;line-height:1.4;padding:5px 0;border-bottom:1px solid #ffffff35}.bath-card-preview>small{font-size:12px;margin-top:12px;color:#d7e5f3}.bath-photo-card:hover .bath-card-preview,.bath-photo-card:focus-visible .bath-card-preview{opacity:1;visibility:visible}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:3px}.bath-package-detail{min-height:150px}@media(hover:none){.bath-photo-card.current .bath-card-preview{opacity:1;visibility:visible}}@media(max-width:560px){.bath-card-preview{padding:22px}.bath-card-point{font-size:14px}}';
       document.head.append(style);
-      const detail=document.getElementById('bath-package-details');
-      document.querySelectorAll('[data-bath-tier]').forEach(button=>{
-        const tier=packages.find(p=>p.id===button.dataset.bathTier);
-        const show=()=>{
-          detail.innerHTML=renderDetail(tier);
-          document.querySelectorAll('[data-bath-tier]').forEach(card=>{
-            const active=card===button;
-            card.classList.toggle('current',active);
-            card.setAttribute('aria-pressed',String(active));
-          });
-          // Keep the same Bathroom URL; only update the selected package parameter.
-          const url=new URL(location.href);
-          url.searchParams.set('bathPackage',tier.id);
-          history.replaceState(null,'',url.pathname+url.search);
-        };
-        button.addEventListener('click',show);
-        button.addEventListener('mouseenter',()=>{if(matchMedia('(hover:hover)').matches)detail.innerHTML=renderDetail(tier);});
-        button.addEventListener('focus',()=>{detail.innerHTML=renderDetail(tier);});
-      });
-
       updateCartCount();return;
     }
 
