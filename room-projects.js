@@ -327,13 +327,14 @@ function buildProjectDropdowns(){
      // Bathroom and Kitchens link directly to their four-photo project chooser.
      // No arrow, flyout, or hover-triggered side dropdown for these two entries.
      if(id==='bathrooms'||id==='kitchen-pantry'){
-       const primary=link(label,projectLink(id));primary.className='project-category-link';
+       const primary=link(label,projectLink(id));primary.className='project-category-link';primary.style.cssText='color:#0b5aa6;text-decoration:underline;text-underline-offset:3px;font-weight:800;cursor:pointer';
        row.append(primary);branch.append(row);menu.append(branch);
        // A neighboring flyout must not linger over this direct-link row.
        const dismissOtherChoices=()=>{close(menu);};
        branch.addEventListener('mouseenter',dismissOtherChoices);
        branch.addEventListener('pointerenter',dismissOtherChoices);
        primary.addEventListener('focus',dismissOtherChoices);
+       branch.addEventListener('focusin',dismissOtherChoices);
        continue;
      }
      const multiJob=!['bathrooms','kitchen-pantry','themed-rooms','concrete','custom','room-additions'].includes(id);
