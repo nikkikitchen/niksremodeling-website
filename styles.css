@@ -511,3 +511,7 @@ nav.nav .mobile-top-nav{display:none!important}
 .nr-cart-zip-top #cart-shipping-zip{display:block;width:100%;box-sizing:border-box;margin-top:6px}
 .nr-cart-zip-top .nr-cart-inline-status{font-size:.85rem;margin:6px 0 0;color:#64748b}
 .nr-cart-zip-top .nr-cart-inline-status:empty{display:none}
+
+/* Navigation icons shared with homepage on desktop and mobile. */
+.nav-icon{display:inline-block;font-size:15px;line-height:1;vertical-align:middle;margin-right:5px;flex-shrink:0}
+@media(max-width:820px){.mobile-top-nav .nav-icon{font-size:12px;margin-right:2px}.mobile-top-nav .nav-toggle{gap:2px}}
