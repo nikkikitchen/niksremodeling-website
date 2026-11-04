@@ -253,3 +253,24 @@ test('Homepage fallback links Bathroom and Kitchens directly, with no package su
   }
  }
 });
+
+test('Bathroom and Kitchens dismiss neighboring side menus on hover and focus',async()=>{
+ const dom=await load();
+ try{
+  const doc=dom.window.document,w=dom.window;
+  for(const menuId of ['projects-menu','mobile-projects-menu']){
+   const menu=doc.getElementById(menuId);
+   for(const [directId,neighborId] of [['bathrooms','basement'],['kitchen-pantry','garage']]){
+    const neighbor=menu.querySelector('.project-branch[data-project="'+neighborId+'"]');
+    neighbor.querySelector('.project-category-toggle').click();
+    assert.equal(neighbor.querySelector('.project-submenu').hidden,false);
+    const direct=menu.querySelector('.project-branch[data-project="'+directId+'"]');
+    direct.dispatchEvent(new w.MouseEvent('mouseenter'));
+    assert.equal(neighbor.querySelector('.project-submenu').hidden,true,directId+' left a neighboring flyout open');
+    neighbor.querySelector('.project-category-toggle').click();
+    direct.querySelector('a.project-category-link').focus();
+    assert.equal(neighbor.querySelector('.project-submenu').hidden,true,directId+' did not close flyout on keyboard focus');
+   }
+  }
+ }finally{dom.window.close();}
+});
