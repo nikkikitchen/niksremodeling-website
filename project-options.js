@@ -416,7 +416,7 @@
       ];
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||null;
       const original='/project.html?project=bathrooms&bathMode=individual';
-      const photos=['/assets/approved-a908c20ce632.jpg','/assets/tile-shower.jpg','/assets/showers-card.png','/assets/custom-projects-card.jpg'];
+      const photos=['https://images.pexels.com/photos/19899059/pexels-photo-19899059.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/7031908/pexels-photo-7031908.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/4940613/pexels-photo-4940613.jpeg?auto=compress&cs=tinysrgb&w=900','/assets/tile-shower.jpg'];
       const nav=packages.map((p,index)=>'<a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small></span></a>').join('');
       const work=selected?selected.work.map(w=>'<li>'+w+'</li>').join(''):'';
       document.body.innerHTML=header()+
