@@ -412,16 +412,17 @@
         {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',work:['Wall or ceiling painting','Standard fixture replacement','Simple finishing touches']},
         {id:'standard',name:'Standard Upgrade',intro:'Update key surfaces and fixtures.',work:['Wall and ceiling finishes','Vanity or fixture updates','Flooring and trim options']},
         {id:'deluxe',name:'Deluxe Remodel',intro:'Plan a more complete bathroom transformation.',work:['Shower or tub improvements','Vanity, lighting, and flooring','Coordinated wall and ceiling finishes']},
-        {id:'custom',name:'Custom Project',intro:'Choose exactly what you need, even a single job.',work:['Choose individual bathroom work','Select materials and finishes','Combine as many tasks as you need']}
+        {id:'custom',name:'Custom',intro:'Choose exactly what you need, even a single job.',work:['Choose individual bathroom work','Select materials and finishes','Combine as many tasks as you need']}
       ];
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||packages[0];
       const original='/project.html?project=bathrooms&bathMode=individual';
-      const nav=packages.map(p=>'<a class="bath-tier-link'+(p.id===selected.id?' current':'')+'" href="/project.html?project=bathrooms&bathPackage='+p.id+'">'+p.name+'</a>').join('');
+      const photos=['/assets/approved-a908c20ce632.jpg','/assets/tile-shower.jpg','/assets/showers-card.png','/assets/approved-a908c20ce632.jpg'];
+      const nav=packages.map((p,index)=>'<a class="bath-tier-link'+(p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'"><img src="'+photos[index]+'" alt="" loading="lazy"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><span>'+p.intro+'</span></a>').join('');
       const work=selected.work.map(w=>'<li>'+w+'</li>').join('');
       document.body.innerHTML=header()+
         '<main><section class="project-detail-hero"><img src="/assets/approved-a908c20ce632.jpg" alt="Bathroom project" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>Bathroom Projects</h1><p>Choose a complete bathroom project. Select Custom for individual work and detailed options.</p></div></section>'+
         '<section class="section"><div class="wrap"><div class="bath-pilot">'+
-        '<aside class="bath-tier-menu"><h2>Choose a project</h2>'+nav+'</aside>'+
+        '<nav class="bath-tier-menu" aria-label="Choose a bathroom project">'+nav+'</nav>'+
         '<article class="bath-tier-detail"><h2>'+selected.name+'</h2><p class="lead">'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
         '<p class="calc-note"><strong>Starting price:</strong> To be determined after the base scope and materials are approved.</p>'+
         (selected.id==='custom'?'<a class="btn primary" href="'+original+'">Choose Custom Work</a>':'<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a>')+' '+
@@ -429,7 +430,7 @@
         '<p class="calc-note">Standard packages are planned as complete projects. Custom opens the detailed work calculator.</p>'+
         '</article></div></div></section></main>'+footer();
       const style=document.createElement('style');
-      style.textContent='.bath-pilot{display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;align-items:start}.bath-tier-menu,.bath-tier-detail{background:#fff;border:1px solid #dfe5ea;border-radius:12px;padding:22px;box-shadow:0 6px 18px #10223210}.bath-tier-menu h2,.bath-tier-detail h2{font-family:Georgia,serif;margin:0 0 16px}.bath-tier-link{display:block;padding:13px;margin:0 0 9px;border:1px solid #dfe5ea;border-radius:7px;color:#073c70;font-weight:700}.bath-tier-link.current,.bath-tier-link:hover{background:#e8f1fa;border-color:#0b5aa6}.bath-tier-link.current{border-left:5px solid #b3262d}.bath-tier-detail li{margin:10px 0}.bath-tier-detail .btn{margin:12px 8px 12px 0}@media(max-width:730px){.bath-pilot{grid-template-columns:1fr}.bath-tier-menu,.bath-tier-detail{padding:16px}}';
+      style.textContent='.bath-pilot{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}.bath-tier-detail{background:#fff;border:1px solid #dfe5ea;border-radius:12px;padding:22px;box-shadow:0 6px 18px #10223210}.bath-tier-menu h2,.bath-tier-detail h2{font-family:Georgia,serif;margin:0 0 16px}.bath-tier-menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.bath-tier-link img{width:100%;height:200px;object-fit:cover;display:block}.bath-tier-link strong{display:block;font-size:1.3rem;padding:16px 16px 8px}.bath-tier-link span{display:block;padding:0 16px 18px;font-weight:400}.bath-tier-link{display:block;overflow:hidden;text-decoration:none;padding:0;margin:0 0 9px;border:1px solid #dfe5ea;border-radius:7px;color:#073c70;font-weight:700}.bath-tier-link.current,.bath-tier-link:hover{background:#e8f1fa;border-color:#0b5aa6}.bath-tier-link.current{border-left:5px solid #b3262d}.bath-tier-detail li{margin:10px 0}.bath-tier-detail .btn{margin:12px 8px 12px 0}@media(max-width:730px){.bath-tier-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.bath-pilot{grid-template-columns:1fr}.bath-tier-detail{padding:16px}}@media(max-width:420px){.bath-tier-menu{grid-template-columns:1fr}}';
       document.head.append(style);
       updateCartCount();return;
     }
