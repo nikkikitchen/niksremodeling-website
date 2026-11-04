@@ -610,6 +610,8 @@
       ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
       walls:['/assets/approved-0ab244a922c8.jpg'],
       floor:['/assets/flooring-card.jpg'],
+      doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
       tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
       shower:['/assets/showers-card.png'],
       toilet:['/assets/approved-a908c20ce632.jpg'],
@@ -617,15 +619,43 @@
       'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
       refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
       mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
-      lighting:['/assets/pendant-lighting.jpg'],
+      lighting:['/assets/lighting-card.jpg'],
       ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
-      accents:['https://images.pexels.com/photos/6934226/pexels-photo-6934226.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      accents:['/assets/accent-walls-card.jpg'],
       prep:['/assets/approved-b5c632fcfbc0.jpg'],
-      'bath-shower-valve':['/assets/approved-b9cdb9084877.jpg'],
+      'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
       'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82'],
       other:['/assets/custom-projects-card.jpg']
     };
-    // More cards can share a subject, but must never display the very same picture.
+    // Broken external photographs must never leave blank tiles. Draw a matching,
+    // labeled illustration instead of borrowing an unrelated room's photograph.
+    const bathroomPhotoFallback=key=>{
+      const title=String(options[key]?.title||key);
+      const scene={
+        doors:'<rect x="230" y="55" width="260" height="294" fill="#f8fafb" stroke="#567789" stroke-width="15"/><rect x="253" y="77" width="214" height="250" fill="#adc4d0"/><circle cx="438" cy="206" r="10" fill="#bb874a"/>',
+        trim:'<rect x="112" y="70" width="495" height="268" fill="#fff" stroke="#657f90" stroke-width="18"/><path d="M145 305h425M145 280h425" stroke="#c1a07e" stroke-width="12"/>',
+        'bath-shower-valve':'<rect x="0" y="0" width="720" height="365" fill="#c9dce3"/><path d="M0 75h720M0 155h720M0 235h720M0 315h720M120 0v365M240 0v365M360 0v365M480 0v365M600 0v365" stroke="#ecf4f7" stroke-width="5"/><circle cx="360" cy="183" r="93" fill="#edf2f4" stroke="#728997" stroke-width="14"/><circle cx="360" cy="183" r="39" fill="#8ca3b1"/><path d="M360 183l65 58" stroke="#415968" stroke-width="22" stroke-linecap="round"/>',
+        'faucet-service':'<rect x="160" y="230" width="400" height="100" rx="44" fill="#f9fcfd" stroke="#7d9cac" stroke-width="12"/><path d="M350 225v-83q0-38 48-38h75v35h-62q-23 0-23 26v62" fill="none" stroke="#5c7887" stroke-width="20"/>',
+        ventilation:'<circle cx="360" cy="181" r="130" fill="#fff" stroke="#607e90" stroke-width="12"/><circle cx="360" cy="181" r="42" fill="#607e90"/><path d="M360 139q-100-70-115 4 10 50 75 39M400 181q100-65 43-111-55-23-78 61M340 211q-10 135 58 108 43-25 6-82" fill="#9fbbc9"/>',
+        mirror:'<rect x="230" y="44" width="260" height="290" rx="125" fill="#d9eff5" stroke="#a98762" stroke-width="17"/><path d="M250 165l120-105M260 230L455 65" stroke="#fff" stroke-width="13" opacity=".7"/>',
+        toilet:'<rect x="240" y="54" width="245" height="142" rx="24" fill="#fff" stroke="#7290a0" stroke-width="12"/><ellipse cx="360" cy="232" rx="110" ry="64" fill="#f8fcfd" stroke="#7290a0" stroke-width="13"/><path d="M277 246q10 84 83 84h47q55 0 45-79" fill="#f8fcfd" stroke="#7290a0" stroke-width="11"/>',
+        shower:'<path d="M280 110v-45h155v45M435 110q100 0 100 80" stroke="#587786" fill="none" stroke-width="22"/><path d="M390 190h190" stroke="#658a9c" stroke-width="22"/><path d="M420 220v80M470 220v80M520 220v80" stroke="#74aac0" stroke-width="10" stroke-dasharray="8 14"/>',
+        tub:'<path d="M143 165h430v70q-12 95-92 95H232q-75 0-89-95z" fill="#f9fcfc" stroke="#6c8a9c" stroke-width="14"/><path d="M490 165v-64q0-27 30-27h45" fill="none" stroke="#7896a7" stroke-width="18"/>',
+        vanity:'<rect x="165" y="145" width="390" height="200" rx="12" fill="#96adbc" stroke="#506d7d" stroke-width="12"/><rect x="185" y="165" width="170" height="162" fill="#d9e4ea"/><rect x="370" y="165" width="165" height="162" fill="#d9e4ea"/><ellipse cx="360" cy="130" rx="150" ry="36" fill="#fff" stroke="#7d99a8" stroke-width="9"/><path d="M353 130v-55h48" fill="none" stroke="#617e8e" stroke-width="13"/>',
+        lighting:'<path d="M360 35v125" stroke="#617d8b" stroke-width="12"/><path d="M230 160h260l-45 100H275z" fill="#ffe8a8" stroke="#9d8959" stroke-width="12"/>',
+        'vanity-light':'<path d="M250 130h230" stroke="#627d8d" stroke-width="18"/><circle cx="270" cy="190" r="48" fill="#fff1ba" stroke="#b7a06b" stroke-width="8"/><circle cx="450" cy="190" r="48" fill="#fff1ba" stroke="#b7a06b" stroke-width="8"/>',
+        floor:'<path d="M0 285l720-130M0 230l720-130M150 365l100-365M410 365l100-365M600 365l100-365" stroke="#6f8b9c" stroke-width="9"/>',
+        walls:'<rect x="160" y="68" width="400" height="290" fill="#c6d7dc" stroke="#7c99a6" stroke-width="15"/><path d="M170 210h380" stroke="#f0f7f9" stroke-width="10"/>',
+        ceiling:'<path d="M110 190l250-120 250 120-250 120z" fill="#e9f3f5" stroke="#7e9fae" stroke-width="14"/>',
+        refinish:'<path d="M200 250l205-115 30 45-205 115z" fill="#9ab4c3" stroke="#527487" stroke-width="12"/><path d="M430 160l110-58" stroke="#a88256" stroke-width="25"/>',
+        accents:'<rect x="140" y="60" width="440" height="280" fill="#a4bac2" stroke="#577789" stroke-width="12"/><path d="M235 60v280M330 60v280M425 60v280" stroke="#f1ebe1" stroke-width="10"/>',
+        prep:'<path d="M220 260l240-135" stroke="#a47d50" stroke-width="28"/><rect x="400" y="85" width="100" height="85" rx="10" fill="#7c9daa"/><path d="M120 310h480" stroke="#7694a1" stroke-width="14"/>',
+        other:'<path d="M260 85h200v230H260z" fill="#cadce3" stroke="#5e7e8e" stroke-width="15"/><path d="M320 145h80M360 105v180" stroke="#fff" stroke-width="15"/>'
+      }[key]||'<rect x="215" y="60" width="290" height="270" rx="20" fill="#d7e7ed" stroke="#668797" stroke-width="15"/>';
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460"><rect width="720" height="460" fill="#e4edf1"/>'+scene+'<rect y="365" width="720" height="95" fill="#f7fafb"/><text x="360" y="423" font-family="Arial,sans-serif" font-size="29" font-weight="700" text-anchor="middle" fill="#244b60">'+title.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</text></svg>';
+      return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+    };
+        // More cards can share a subject, but must never display the very same picture.
     // Reserve the hero and any indoor/outdoor selector photos before drawing work cards.
     const usedWorkPhotos=new Set([project.image]);
     document.querySelectorAll('.project-location-photo img').forEach(img=>usedWorkPhotos.add(img.getAttribute('src')));
@@ -690,7 +720,7 @@
     (scopes[id]||scopes.custom).forEach(key=>{
       const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
       const heading=document.createElement('summary');
-      const headingImage=document.createElement('img');headingImage.src=workPhoto(key);headingImage.alt='';headingImage.loading='lazy';
+      const headingImage=document.createElement('img');headingImage.src=workPhoto(key);headingImage.alt=item.title;headingImage.loading='lazy';if(isBathroom){const fallback=bathroomPhotoFallback(key);headingImage.addEventListener('error',()=>{if(headingImage.src!==fallback)headingImage.src=fallback;},{once:true});}
       const headingLabel=document.createElement('span');headingLabel.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;
       heading.append(headingImage,headingLabel);card.append(heading);
       if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){
