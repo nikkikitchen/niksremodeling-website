@@ -38,22 +38,3 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
   assert.equal(chooser.window.document.querySelector('#project-work-grid'),null);
  }finally{chooser.window.close();}
 });
-));
-   assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials, and needed supplies are included'));
-   assert.ok(!doc.querySelector('#bath-package-detail')?.textContent.includes('Installation Only'));
-   assert.equal(doc.querySelector('#bath-package-detail a[href*="/installation.html"]'),null);
-   assert.equal(doc.querySelector('#project-work-grid'),null);
-  }finally{dom.window.close();}
- }
- const chooser=new JSDOM(html,{url:'https://niksremodeling.com/project.html?project=bathrooms',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};}});
- try{
-  await new Promise(resolve=>chooser.window.addEventListener('load',resolve,{once:true}));
-  assert.equal(chooser.window.document.querySelectorAll('.bath-photo-card').length,4);
-  assert.equal(chooser.window.document.querySelectorAll('.bath-photo-hover').length,4);
-  assert.ok([...chooser.window.document.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('bathMode=individual')));
-  assert.equal(chooser.window.document.querySelector('.bath-photo-card.current'),null);
-  assert.equal(chooser.window.document.querySelector('#project-work-grid'),null);
- }finally{chooser.window.close();}
-});
