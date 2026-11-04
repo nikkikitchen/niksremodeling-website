@@ -193,14 +193,14 @@ test('Projects > Attic > Paint ceiling estimates the whole job without asking fo
   const item=estimates[estimates.length-1];
   assert.equal(item.measurements.area,120);
   assert.equal(item.products.find(p=>p.name==='Paint').price,50,'Paint price and standard supplies must appear only in estimate');
-  assert.equal(item.labor.find(l=>l.service==='Installation').price,216,'Two-coat ceiling painting uses the approved $1.80/sq.ft. labor rate');
+  assert.equal(item.labor.find(l=>l.service==='Installation').price,108,'One-coat white ceiling painting uses the approved $0.90/sq.ft. labor rate');
   assert.equal(item.supplyChoices.length,0,'Paint includes standard supplies; do not charge again');
   w.addProjectToCart();
   const cart=w.getCart();
   assert.equal(cart.filter(x=>x.type==='Material estimate').length,1);
   assert.equal(cart.filter(x=>x.type==='Labor').length,1);
   assert.equal(cart.filter(x=>x.type==='Included project costs').length,0);
-  assert.equal(cart.reduce((sum,item)=>sum+(Number(item.price)||0),0),266,'Complete ceiling project is paint, supplies once, and labor');
+  assert.equal(cart.reduce((sum,item)=>sum+(Number(item.price)||0),0),158,'Complete ceiling project is one coat of paint, supplies once, and labor');
  }finally{calc.window.close()}
 });
 
