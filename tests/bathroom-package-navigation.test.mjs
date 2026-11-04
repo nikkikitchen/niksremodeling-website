@@ -22,7 +22,7 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
    assert.ok(doc.querySelector('.bath-photo-tile:has(.bath-photo-card.current) .bath-price-below')?.textContent.includes('Starting at '));
    assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials, and needed supplies are included'));
+   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
    assert.equal(doc.querySelector('#bath-package-detail ul'),null,'No duplicate checklist below photo tiles');
    assert.ok(!doc.querySelector('#bath-package-detail')?.textContent.includes('Installation Only'));
    assert.equal(doc.querySelector('#bath-package-detail a[href*="/installation.html"]'),null);
@@ -57,7 +57,7 @@ test('Kitchen project tiles match Bathroom and retain prices and Custom choice',
    assert.ok(doc.querySelector('.bath-photo-card.current')?.href.endsWith('kitchenPackage='+tier));
    assert.equal(doc.querySelector('.bath-photo-card.current .bath-hover-price'),null,'Price should not repeat in hover');
    assert.ok(doc.querySelector('.bath-photo-tile:has(.bath-photo-card.current) .bath-price-below')?.textContent.includes(price));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
+   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials, and needed supplies are included'));
    assert.ok([...doc.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('kitchenMode=individual')));
    assert.equal(doc.querySelector('#project-work-grid'),null);
   }finally{dom.window.close();}
