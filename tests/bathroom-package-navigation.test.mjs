@@ -13,12 +13,12 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
   try{
    await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
    const doc=dom.window.document;
-   assert.equal(doc.querySelector('h1').textContent,'Bathroom Projects');
+   assert.equal(doc.querySelector('h1').textContent,({basic:'Basic Refresh',standard:'Standard Upgrade',deluxe:'Deluxe Remodel'})[tier]);
    const cards=[...doc.querySelectorAll('.bath-photo-card')];
-   assert.equal(cards.length,4,'Four bathroom picture choices must be visible');
-   assert.ok(doc.querySelector('.bath-photo-card.current').href.endsWith('bathPackage='+tier));
-   assert.equal(cards.filter(c=>c.querySelector('img')).length,4,'Every choice needs a photograph');
-   assert.ok(cards.some(c=>c.href.endsWith('bathMode=individual')&&c.textContent.includes('Custom')),'Custom must open the original work calculator');
+   assert.equal(cards.length,0,'Direct package links should open their details, not the four-picture chooser');
+   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Project options include'));
+   assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
+   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
    assert.equal(doc.querySelector('#project-work-grid'),null);
   }finally{dom.window.close();}
  }
@@ -26,6 +26,8 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
  try{
   await new Promise(resolve=>chooser.window.addEventListener('load',resolve,{once:true}));
   assert.equal(chooser.window.document.querySelectorAll('.bath-photo-card').length,4);
+  assert.equal(chooser.window.document.querySelectorAll('.bath-photo-hover').length,4);
+  assert.ok([...chooser.window.document.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('bathMode=individual')));
   assert.equal(chooser.window.document.querySelector('.bath-photo-card.current'),null);
   assert.equal(chooser.window.document.querySelector('#project-work-grid'),null);
  }finally{chooser.window.close();}
