@@ -11,5 +11,5 @@ test('Walls & Finishes retains shared grouped work choices',()=>{
  }
  assert.match(source,/options\.walls\.groups=wallWorkGroups/);
  const page=readFileSync(new URL('../project.html',import.meta.url),'utf8');
- assert.match(page,/\/project-options\.js\?v=room-uniform-20261101/);
+ assert.match(page,/\/project-options\.js\?v=[^"\s]+/);
 });

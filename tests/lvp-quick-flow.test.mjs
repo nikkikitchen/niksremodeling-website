@@ -19,7 +19,7 @@ async function openPage(file, query = '') {
 }
 
 test('LVP from Projects asks about pad only once and accepts a two-measurement quote',async()=>{
-  const project=await openPage('project.html','?project=bathrooms&selectedWorks=floor');
+  const project=await openPage('project.html','?project=bathrooms&bathMode=individual&selectedWorks=floor');
   let target='';
   try {
     const w=project.window,card=w.document.querySelector('[data-work-key="floor"]');

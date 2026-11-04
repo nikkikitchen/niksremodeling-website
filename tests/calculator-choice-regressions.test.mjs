@@ -116,7 +116,7 @@ test('Projects dropdown selections open only the requested work options without 
 
 test('Ceiling shows complete work options without material prices and keeps mixed choices together', async () => {
  for(const project of ['attic','bathrooms','bedroom-guest-room']){
-  const dom=await openPage('project.html','?project='+project+'&selectedWorks=ceiling');
+  const dom=await openPage('project.html','?project='+project+(project==='bathrooms'?'&bathMode=individual':'')+'&selectedWorks=ceiling');
   try{
    const w=dom.window,doc=w.document,card=doc.querySelector('[data-work-key="ceiling"]');
    assert.ok(card&&!card.hidden,project+' must show Ceiling work');
@@ -373,7 +373,7 @@ test('Known ceiling drywall and primer labor never forces an in-person quote for
 
 test('Ceiling installation is labeled separately from drywall repair throughout every project and calculator',async()=>{
   for(const project of ['attic','bathrooms','bedroom-guest-room']){
-    const dom=await openPage('project.html','?project='+project+'&selectedWorks=ceiling');
+    const dom=await openPage('project.html','?project='+project+(project==='bathrooms'?'&bathMode=individual':'')+'&selectedWorks=ceiling');
     try{
       const options=workCard(dom.window.document,'ceiling');
       assert.ok(options.includes('Install ceiling drywall'),project+' missing installation');
@@ -457,7 +457,7 @@ test('Miscellaneous and prep labor calculate at the approved $75 hourly rate wit
 
 test('ceiling texture matching is a patch-size quote, distinct from whole-ceiling application',async()=>{
  for(const project of ['attic','bathrooms','bedroom-guest-room']){
-  const d=await openPage('project.html','?project='+project+'&selectedWorks=ceiling');
+  const d=await openPage('project.html','?project='+project+(project==='bathrooms'?'&bathMode=individual':'')+'&selectedWorks=ceiling');
   try{
    const choices=workCard(d.window.document,'ceiling');
    assert.ok(choices.includes('Match existing ceiling texture (patch)'));
@@ -542,7 +542,7 @@ test('removing the final cart item removes stale calculator drafts too',async()=
 });
 
 test('Bathroom flooring remembers floor tile, asks no repeat location, and offers another tile area',async()=>{
- const project=await openPage('project.html','?project=bathrooms&selectedWorks=floor');
+ const project=await openPage('project.html','?project=bathrooms&bathMode=individual&selectedWorks=floor');
  let target='';
  try{
   const w=project.window,card=w.document.querySelector('[data-work-key="floor"]');
