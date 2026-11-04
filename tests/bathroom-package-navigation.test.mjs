@@ -21,6 +21,9 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Project options include'));
    assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
+   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials, and needed supplies are included'));
+   assert.ok(!doc.querySelector('#bath-package-detail')?.textContent.includes('Installation Only'));
+   assert.equal(doc.querySelector('#bath-package-detail a[href*="/installation.html"]'),null);
    assert.equal(doc.querySelector('#project-work-grid'),null);
   }finally{dom.window.close();}
  }
