@@ -548,6 +548,8 @@
       ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
       walls:['/assets/accent-walls-card.jpg'],
       floor:['/assets/flooring-card.jpg'],
+      doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
       trim:['/assets/approved-e9fee5a04016.jpg'],
       doors:['/assets/entryways-card.jpg'],
       lighting:['/assets/lighting-card.jpg'],
@@ -555,7 +557,8 @@
       toilet:['/assets/approved-a908c20ce632.jpg'],
       tub:['/assets/tile-shower.jpg'],
       shower:['/assets/showers-card.png'],
-      'bath-shower-valve':['/assets/approved-b9cdb9084877.jpg'],
+      // A tiled shower with visible controls, never a laundry machine.
+      'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
       vanity:['/assets/approved-9bfcb89f7800.jpg'],
       backsplash:['/assets/approved-0ab244a922c8.jpg'],
       cabinets:['/assets/kitchen.jpg'],
@@ -654,12 +657,12 @@
     const workPhoto=key=>{
       const ownPhotos=id==='kids-room'?(kidsWorkPhotos[key]?[kidsWorkPhotos[key]]:[]):[
         ...(isBathroom?(bathroomWorkPhotos[key]||[]):[]),
-        ...(specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
-        ...(workPhotoChoices[key]||[]),
-        ...(stockByWork[key]||[])
+        ...(!isBathroom&&specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
+        ...(!isBathroom?(workPhotoChoices[key]||[]):[]),
+        ...(!isBathroom?(stockByWork[key]||[]):[])
       ];
       const chosen=ownPhotos.find(url=>!usedWorkPhotos.has(url))
-        ||(id==='kids-room'?null:(
+        ||(id==='kids-room'||isBathroom?null:(
           (specialtyProjectPhotos[id]||[]).find(url=>!usedWorkPhotos.has(url))
           ||(PROJECT_CATALOG[id]?.image&&!usedWorkPhotos.has(PROJECT_CATALOG[id].image)?PROJECT_CATALOG[id].image:null)
         ));
