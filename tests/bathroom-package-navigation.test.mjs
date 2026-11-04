@@ -18,7 +18,7 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
    assert.equal(cards.length,4,'Package links must keep the four-photo chooser visible');
    assert.ok(cards.find(c=>c.classList.contains('current'))?.href.endsWith('bathPackage='+tier));
    assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4,'Each photo must describe the included work');
-   assert.ok(doc.querySelector('.bath-photo-card.current .bath-hover-price')?.textContent.includes('Starting at 
+   assert.ok(doc.querySelector('.bath-photo-card.current .bath-hover-price')?.textContent.includes('Starting at '));
    assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
