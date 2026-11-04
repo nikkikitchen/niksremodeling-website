@@ -239,3 +239,17 @@ test('Desktop and phone menus expose Adult Room and Room Additions, with expanda
   }
  }finally{dom.window.close()}
 });
+
+test('Homepage fallback links Bathroom and Kitchens directly, with no package sublinks',()=>{
+ const html=source('index.html');
+ const doc=new JSDOM(html).window.document;
+ for(const menuId of ['projects-menu','mobile-projects-menu']){
+  const menu=doc.getElementById(menuId);
+  assert.ok(menu,menuId+' missing');
+  for(const projectId of ['bathrooms','kitchen-pantry']){
+   const links=[...menu.querySelectorAll('a')].filter(a=>a.getAttribute('href')?.includes('project='+projectId));
+   assert.equal(links.length,1,menuId+' must have exactly one direct link for '+projectId);
+   assert.equal(links[0].getAttribute('href'),href(projectId));
+  }
+ }
+});
