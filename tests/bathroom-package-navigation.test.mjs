@@ -13,9 +13,11 @@ test('Bathroom packages lead to Custom work while preset packages stay simple', 
   try{
    await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
    const doc=dom.window.document;
-   assert.equal(doc.querySelector('h1').textContent,({basic:'Basic Refresh',standard:'Standard Upgrade',deluxe:'Deluxe Remodel'})[tier]);
+   assert.equal(doc.querySelector('h1').textContent,'Bathroom Projects');
    const cards=[...doc.querySelectorAll('.bath-photo-card')];
-   assert.equal(cards.length,0,'Direct package links should open their details, not the four-picture chooser');
+   assert.equal(cards.length,4,'Package links must keep the four-photo chooser visible');
+   assert.ok(cards.find(c=>c.classList.contains('current'))?.href.endsWith('bathPackage='+tier));
+   assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4,'Each photo must describe the included work');
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Project options include'));
    assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
    assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
