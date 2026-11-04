@@ -25,3 +25,8 @@ test('missing bathroom images fall back to accurately labeled illustrations',()=
   assert.ok(source.includes('bathroomPhotoFallback(key)'));
   assert.match(photos,/const svg='<svg xmlns=/);
 });
+
+test('Walls shows wallpaper and vanity faucet replacement shows a faucet',()=>{
+  assert.match(photos,/walls:\['\/assets\/wallpaper-card\.jpg'\]/);
+  assert.match(photos,/'faucet-service':\['https:\/\/images\.pexels\.com\/photos\/3609956\//);
+});
