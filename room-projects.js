@@ -329,6 +329,11 @@ function buildProjectDropdowns(){
      if(id==='bathrooms'||id==='kitchen-pantry'){
        const primary=link(label,projectLink(id));primary.className='project-category-link';
        row.append(primary);branch.append(row);menu.append(branch);
+       // A neighboring flyout must not linger over this direct-link row.
+       const dismissOtherChoices=()=>{close(menu);};
+       branch.addEventListener('mouseenter',dismissOtherChoices);
+       branch.addEventListener('pointerenter',dismissOtherChoices);
+       primary.addEventListener('focus',dismissOtherChoices);
        continue;
      }
      const multiJob=!['bathrooms','kitchen-pantry','themed-rooms','concrete','custom','room-additions'].includes(id);
