@@ -686,8 +686,10 @@ function cartPriceMarkup(x){
  return (known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
 }
 function cartSchedulingMarkup(c){
+ const hasProjectPackages=c.some(item=>item.source==='bathroom-project-package');
  return `<section class="panel nr-cart-next-step" id="cart-scheduling" aria-labelledby="cart-scheduling-heading">
  <h3 id="cart-scheduling-heading">Next Step</h3>
+ ${hasProjectPackages?'<p class="calc-note"><strong>Next:</strong> Request your finalized project estimate, materials-and-supplies deposit amount, and proposed weekly draw schedule. No payment is collected here.</p>':''}
  <label class="nr-cart-terms"><input type="checkbox" id="cart-terms-agree" onchange="updateCartRequestButtons()"> <span>I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
  <div class="btns">
  <button class="btn primary" type="button" data-cart-request="free" disabled onclick="submitCartRequest('free')">Request Estimate</button>
@@ -703,7 +705,8 @@ function submitCartRequest(choice){
  if(!document.getElementById('cart-terms-agree')?.checked)return;
  const c=getCart();
  const heading=choice==='supplies'?'Supplies purchase and installation scheduling request':'Free estimate confirmation request';
- const message=heading+'\\n\\n'+cartRequestMessage(c)+'\\n\\nI agree to the Terms & Conditions and request confirmation before any payment or installation scheduling.';
+ const packagePaymentSchedule=c.some(item=>item.source==='bathroom-project-package')?'\\n\\nPlease confirm the deposit for project materials and supplies and provide a weekly progress-draw schedule based on completed work, to be mutually agreed in the written contract. I understand no payment is due until the quote and terms are approved.':'';
+ const message=heading+'\\n\\n'+cartRequestMessage(c)+packagePaymentSchedule+'\\n\\nI agree to the Terms & Conditions and request confirmation before any payment or installation scheduling.';
  location.href='mailto:'+SITE.email+'?subject='+encodeURIComponent(heading)+'&body='+encodeURIComponent(message);
 }
 function cartCheckoutSummary(items){
@@ -757,6 +760,7 @@ function cartCheckoutSummary(items){
 
  <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
  ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Package starting prices are not confirmed charges and are excluded from the amounts due now and the priced subtotal below. Request an estimate to finalize the total.</p>':''}
+ ${unconfirmedPackages.length?'<div class="nr-cart-quote-note" role="group" aria-label="Proposed project payment plan"><strong>How project payments work</strong><p><strong>Initial deposit:</strong> Covers agreed project materials and needed supplies. Amount is calculated from the final selections and itemized quote, not from the starting package price.</p><p><strong>Weekly progress draws:</strong> Payments are expected weekly based on the work completed and verified against milestones agreed upon by Nik’s Remodeling and the customer in the written project agreement.</p><p><strong>Payment status:</strong> Request the finalized quote and deposit instructions below. No deposit or other payment can be made through this cart yet.</p></div>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
  <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length?'Priced items subtotal':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  <div class="cart-item"><span>Due now</span><strong id="cart-due-now">${money((Math.round(payableSubtotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
