@@ -608,7 +608,7 @@
     // use a task-specific licensed stock photo only when our own photos do not cover it.
     const bathroomWorkPhotos={
       ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
-      walls:['/assets/approved-0ab244a922c8.jpg'],
+      walls:['/assets/wallpaper-card.jpg'],
       floor:['/assets/flooring-card.jpg'],
       doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
       trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
@@ -624,7 +624,7 @@
       accents:['/assets/accent-walls-card.jpg'],
       prep:['/assets/approved-b5c632fcfbc0.jpg'],
       'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
-      'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82'],
+      'faucet-service':['https://images.pexels.com/photos/3609956/pexels-photo-3609956.jpeg?auto=compress&cs=tinysrgb&w=900'],
       other:['/assets/custom-projects-card.jpg']
     };
     // Broken external photographs must never leave blank tiles. Draw a matching,
