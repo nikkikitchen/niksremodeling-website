@@ -268,6 +268,8 @@ test('Bathroom and Kitchens dismiss neighboring side menus on hover and focus',a
     direct.dispatchEvent(new w.MouseEvent('mouseenter'));
     assert.equal(neighbor.querySelector('.project-submenu').hidden,true,directId+' left a neighboring flyout open');
     neighbor.querySelector('.project-category-toggle').click();
+    // Start keyboard navigation from the neighboring control so focus actually changes.
+    neighbor.querySelector('.project-category-toggle').focus();
     direct.querySelector('a.project-category-link').focus();
     assert.equal(neighbor.querySelector('.project-submenu').hidden,true,directId+' did not close flyout on keyboard focus');
    }
