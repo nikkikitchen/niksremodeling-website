@@ -392,6 +392,33 @@
     if(/trim|lumber|tread|riser|rail|baluster|newel/i.test(name))return ['Compatible fasteners','Specified adhesive if required','Filler','Caulk / finish as required'];
     return ['Product-compatible fasteners / connections','Surface protection','Installation accessories to confirm with the selected product'];
   };
+  // Touchscreen visitors need a way to read package scope without hovering.
+  // Native details keep the photo chooser compact and keyboard accessible.
+  const mobilePackageDetailsCss = '.bath-mobile-details{display:none;margin:0;border:1px solid #c9d9e8;border-radius:10px;background:#f7fafc;color:#16202a}.bath-mobile-details summary{cursor:pointer;padding:13px 15px;color:#073c70;font-weight:800;line-height:1.35;list-style-position:inside;touch-action:manipulation}.bath-mobile-details[open] summary{border-bottom:1px solid #dfe5ea}.bath-mobile-detail-content{display:flex;flex-direction:column;gap:8px;padding:14px 16px;font-size:14px;line-height:1.45}.bath-mobile-detail-content strong{font-size:17px}.bath-mobile-detail-content .bath-includes-note{color:#073c70}.bath-mobile-detail-content .bath-hover-price{color:#073c70;border-color:#cbd7e2}.bath-touch-instructions{display:none}@media(hover:none),(pointer:coarse){.bath-touch-instructions{display:inline}.bath-desktop-instructions{display:none}.bath-mobile-details{display:block}.bath-photo-tile .bath-photo-hover{display:none!important}}';
+  function addMobilePackageDetails(){
+    const tiles=[...document.querySelectorAll('.bath-photo-tile')];
+    const hasSelection=!!document.querySelector('.bath-photo-card.current');
+    tiles.forEach((tile,index)=>{
+      const overlay=tile.querySelector('.bath-photo-hover');
+      if(!overlay)return;
+      const card=tile.querySelector('.bath-photo-card');
+      const isCustom=card?.querySelector('.bath-photo-label strong')?.textContent==='Custom';
+      const details=document.createElement('details');
+      details.className='bath-mobile-details';
+      details.open=!!card?.classList.contains('current')||(!hasSelection&&index===0);
+      const summary=document.createElement('summary');
+      summary.textContent=isCustom?'See how Custom works':'See what’s included — labor & materials';
+      const content=document.createElement('div');
+      content.className='bath-mobile-detail-content';
+      content.innerHTML=overlay.innerHTML;
+      if(isCustom){
+        const note=content.querySelector('.bath-includes-note');
+        if(note)note.textContent='Choose the work and materials you want. Labor and needed supplies are included in your custom estimate when applicable.';
+      }
+      details.append(summary,content);
+      tile.insertBefore(details,tile.querySelector('.bath-price-below')||tile.querySelector('.bath-card-add')||null);
+    });
+  }
   window.renderProjectOptions=(id,project)=>{
     if(id==='custom'&&!new URLSearchParams(location.search).has('customWork')){window.renderCustomProjects();return;}
     if(id==='themed-rooms'){window.renderThemedRooms();return;}
@@ -421,10 +448,11 @@
       document.body.innerHTML=header()+
         '<main><section class="section bath-project-chooser"><div class="wrap">'+
         '<a class="project-back" href="'+(selected?'/project.html?project=bathrooms':'/#projects')+'">'+(selected?'← All Bathroom Packages':'← All Projects')+'</a>'+
-        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose a package below. <span class="bath-desktop-instructions">Hover over a photo to see what each package includes.</span><span class="bath-touch-instructions">Tap “See what’s included” beneath a photo to review the work, labor, materials and supplies.</span> Choose Custom for individual work.</p>'+
         '<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>'+
         (selected?'<div id="bath-package-detail" class="bath-package-action"><p>Labor, materials and standard supplies included. Final estimate depends on measurements, fixture selections and existing conditions.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Starting prices apply to qualifying small bathrooms. Final estimates depend on measurements, fixture selections and existing conditions.</p>')+
         '</div></section></main>'+footer();
+      addMobilePackageDetails();
       // Save a package interest for a quote without charging the advertised starting price.
       document.querySelectorAll('[data-bath-package]').forEach(button=>button.addEventListener('click',()=>{
         const packageChoice=packages.find(p=>p.id===button.dataset.bathPackage);
@@ -444,6 +472,7 @@
       style.textContent+='.bath-mobile-price{display:none!important;font-weight:800;color:#fff;margin-top:10px!important}.bath-hover-price{display:block;margin-top:9px;padding-top:12px;border-top:1px solid #ffffff55;font-size:21px;font-weight:800}.bath-package-action{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bath-package-action p{margin:0;flex:1 1 320px}.bath-package-action .btn{white-space:nowrap}@media(hover:none){.bath-mobile-price{display:block!important}.bath-photo-card{min-height:330px;height:auto;aspect-ratio:3/4}}';
       style.textContent+='.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:22px;color:#fff;background:rgba(5,31,55,.92);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:19px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}@media(hover:none){.bath-photo-hover{display:none}}.bath-package-detail{margin-top:12px}.bath-package-detail ul{padding-left:22px}';
       style.textContent+='.bath-photo-tile{position:relative;min-width:0;display:flex;flex-direction:column;gap:8px}.bath-photo-tile .bath-photo-hover{justify-content:flex-start;gap:6px;padding:14px 15px;font-size:12px;line-height:1.25;scrollbar-width:thin}.bath-photo-hover strong{font-size:16px}.bath-includes-note{font-weight:700;color:#e1f1ff;font-size:12px}.bath-hover-price{font-size:16px;margin-top:4px;padding-top:6px}.bath-price-below{font-weight:800;font-size:18px;line-height:1.3;color:#073c70;text-align:center}.bath-card-add{position:static;z-index:auto;display:block;width:100%;min-height:42px;opacity:1;visibility:visible;pointer-events:auto;margin:0}.bath-photo-tile .bath-mobile-price{display:none!important}@media(hover:none){.bath-photo-tile .bath-photo-hover{display:none}}';
+      style.textContent+=mobilePackageDetailsCss;
       document.head.append(style);
       updateCartCount();return;
     }
@@ -464,7 +493,7 @@
       document.body.innerHTML=header()+
         '<main><section class="section bath-project-chooser"><div class="wrap">'+
         '<a class="project-back" href="'+(selected?'/project.html?project=kitchen-pantry':'/#projects')+'">'+(selected?'← All Kitchen Packages':'← All Projects')+'</a>'+
-        '<h1>Kitchen Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<h1>Kitchen Projects</h1><p class="bath-chooser-lead">Choose a package below. <span class="bath-desktop-instructions">Hover over a photo to see what each package includes.</span><span class="bath-touch-instructions">Tap “See what’s included” beneath a photo to review the work, labor, materials and supplies.</span> Choose Custom for individual work.</p>'+
         '<nav class="bath-photo-grid" aria-label="Choose a kitchen project">'+nav+'</nav>'+
         '<div class="bath-custom-callout"><p><strong>Not sure which package is right for you?</strong> Choose Custom and build your own kitchen project.</p><a class="btn outline" href="'+original+'">Explore Custom Options</a></div>'+
         (selected?'<article id="bath-package-detail" class="bath-package-detail" tabindex="-1"><h2>'+selected.name+'</h2><p>'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
@@ -472,6 +501,7 @@
         '<p class="calc-note"><strong>Complete project package:</strong> Labor, materials, and needed supplies are included in the project estimate. Final total is determined after the scope and selections are confirmed.</p>'+
         '<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' kitchen project package. Please help me plan it.')+'">Request Package Estimate</a></article>':'')+
         '</div></section></main>'+footer();
+      addMobilePackageDetails();
       // Package scope can be saved without charging an invented starting price.
       document.querySelectorAll('[data-kitchen-package]').forEach(button=>button.addEventListener('click',()=>{
         const choice=packages.find(p=>p.id===button.dataset.kitchenPackage);
@@ -488,6 +518,7 @@
       style.textContent+='.bath-custom-callout{margin:26px 0 0;padding:22px 24px;border:1px solid #dfe5ea;border-radius:12px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f7fafc}.bath-custom-callout p{margin:0;flex:1 1 280px;line-height:1.5}.bath-custom-callout .btn{white-space:nowrap}@media(max-width:560px){.bath-custom-callout{padding:18px}.bath-custom-callout .btn{width:100%;text-align:center}}';
       style.textContent+='.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:22px;color:#fff;background:rgba(5,31,55,.92);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:19px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}@media(hover:none){.bath-photo-hover{display:none}}.bath-package-detail{margin-top:12px}.bath-package-detail ul{padding-left:22px}';
       style.textContent+='.bath-photo-tile{position:relative;min-width:0;display:flex;flex-direction:column;gap:8px}.bath-photo-tile .bath-photo-hover{justify-content:flex-start;gap:6px;padding:14px 15px;font-size:12px;line-height:1.25;scrollbar-width:thin}.bath-photo-hover strong{font-size:16px}.bath-includes-note{font-weight:700;color:#e1f1ff;font-size:12px}.bath-hover-price{display:block;font-size:16px;font-weight:800;margin-top:4px;padding-top:6px;border-top:1px solid #ffffff55}.bath-price-below{font-weight:800;font-size:18px;line-height:1.3;color:#073c70;text-align:center}.bath-card-add{display:block;width:100%;min-height:42px;margin:0}.bath-photo-tile .bath-photo-hover{scrollbar-width:thin}@media(hover:none){.bath-photo-tile .bath-photo-hover{display:none}}';
+      style.textContent+=mobilePackageDetailsCss;
       document.head.append(style);
       updateCartCount();return;
     }
