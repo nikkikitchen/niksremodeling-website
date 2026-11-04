@@ -315,7 +315,7 @@
       const products=[];
       if(ceilingTasks.includes('Install ceiling drywall'))products.push({name:'Drywall',quantity:Math.ceil(area*1.15/32),unit:'sheets',area,detail:'4 × 8 sheets; 15% extra allowance.'});
       if(ceilingTasks.includes('Prime ceiling'))products.push({name:'Primer',quantity:Math.ceil(area/300),unit:'gallons',area,detail:'One coat; 300 sq. ft. per gallon.'});
-      if(ceilingTasks.includes('Paint ceiling'))products.push({name:'Paint',quantity:Math.ceil(area*2/350),unit:'gallons',area,detail:'Two coats; 350 sq. ft. per gallon.'});
+      if(ceilingTasks.includes('Paint ceiling'))products.push({name:'Paint',quantity:Math.ceil(area/350),unit:'gallons',area,detail:'One coat of white ceiling paint; 350 sq. ft. per gallon.'});
       if(patchSelected)products.push({name:'Drywall patch materials',quantity:1,unit:'repair',area:repairAreas[patchSize],detail:'Repair materials to confirm for selected patch size.'});
       if(textureMatchSelected)products.push({name:'Texture matching materials',quantity:1,unit:'patch',area:repairAreas[patchSize],detail:'Texture materials for one prepared patch, matched to existing finish.'});
       return {area,length:patchOnly?null:length,width:patchOnly?null:width,patchSize,products};
@@ -552,7 +552,7 @@
       if(measuredCeiling()){
         try{
           const plan=ceilingPlan();
-          const rates={'Install ceiling drywall':'hang','Finish ceiling drywall (tape / mud / sand)':'finish','Prime ceiling':'prime','Paint ceiling':'paint2'};
+          const rates={'Install ceiling drywall':'hang','Finish ceiling drywall (tape / mud / sand)':'finish','Prime ceiling':'prime','Paint ceiling':'paint1'};
           const patchRates={small:210,medium:330,large:540};
           const textureRates={small:180,medium:270,large:420};
           const labor=ceilingTasks.map(task=>({service:'Installation',scope:task,quantity:1,unit:'scope',price:task==='Repair / patch ceiling drywall'?patchRates[plan.patchSize]:task==='Match existing ceiling texture (patch)'?textureRates[plan.patchSize]:roomLaborQuote(0,rates[task],plan.area).amount,fixedPackage:true}));
