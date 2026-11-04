@@ -1186,7 +1186,9 @@ window.roomLaborQuote=function(area,key,ceilingArea=0){
  if(!service||!Number.isFinite(area)||!Number.isFinite(ceilingArea)||area<0||ceilingArea<0||area+ceilingArea<=0)throw Error('Enter a valid area and choose the work.');
  const sheets=Math.ceil(area/32),ceilingSheets=Math.ceil(ceilingArea/32);
  const wallAmount=sheets*service.sheetRate+area*service.wallRate;
- const ceilingAmount=(ceilingSheets*service.sheetRate+ceilingArea*service.wallRate)*window.CEILING_LABOR_MULTIPLIER;
+ // Ceiling paint is one white coat, even when the same room includes two wall coats.
+ const ceilingPaintReduction=['paint2','finish-prime-paint','full'].includes(key)?0.75:0;
+ const ceilingAmount=(ceilingSheets*service.sheetRate+ceilingArea*(service.wallRate-ceilingPaintReduction))*window.CEILING_LABOR_MULTIPLIER;
  const amount=Math.round((wallAmount+ceilingAmount)*100)/100;
  return {...service,key,area,sheets,ceilingArea,ceilingSheets,wallAmount,ceilingAmount:Math.round(ceilingAmount*100)/100,amount};
 };
