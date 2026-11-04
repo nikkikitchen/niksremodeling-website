@@ -417,7 +417,1201 @@
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||null;
       const original='/project.html?project=bathrooms&bathMode=individual';
       const photos=['https://images.pexels.com/photos/19899059/pexels-photo-19899059.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/7031908/pexels-photo-7031908.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/4940613/pexels-photo-4940613.jpeg?auto=compress&cs=tinysrgb&w=900','/assets/tile-shower.jpg'];
-      const nav=packages.map((p,index)=>'<div class="bath-photo-tile"><a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small>'+(p.startingAt?'<small class="bath-mobile-price">Starting at $'+p.startingAt.toLocaleString('en-US')+'</small>':'')+'</span><span class="bath-photo-hover"><strong>Included work</strong><span class="bath-includes-note">Complete project includes labor, materials &amp; standard supplies.</span>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+(p.startingAt?'<span class="bath-hover-price">Starting at $'+p.startingAt.toLocaleString('en-US')+'</span>':'<span class="bath-hover-price">Build Your Own Estimate</span>')+'</span></a>'+(p.startingAt?'<div class="bath-price-below">Starting at +'</div>').join('');
+      const nav=packages.map((p,index)=>'<div class="bath-photo-tile"><a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small>'+(p.startingAt?'<small class="bath-mobile-price">Starting at $'+p.startingAt.toLocaleString('en-US')+'</small>':'')+'</span><span class="bath-photo-hover"><strong>Included work</strong><span class="bath-includes-note">Complete project includes labor, materials &amp; standard supplies.</span>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+(p.startingAt?'<span class="bath-hover-price">Starting at $'+p.startingAt.toLocaleString('en-US')+'</span>':'<span class="bath-hover-price">Build Your Own Estimate</span>')+'</span></a>'+(p.startingAt?'<div class="bath-price-below">Starting at 
+      document.body.innerHTML=header()+
+        '<main><section class="section bath-project-chooser"><div class="wrap">'+
+        '<a class="project-back" href="'+(selected?'/project.html?project=bathrooms':'/#projects')+'">'+(selected?'← All Bathroom Packages':'← All Projects')+'</a>'+
+        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>'+
+        (selected?'<div id="bath-package-detail" class="bath-package-action"><p>Labor, materials and standard supplies included. Final estimate depends on measurements, fixture selections and existing conditions.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Starting prices apply to qualifying small bathrooms. Final estimates depend on measurements, fixture selections and existing conditions.</p>')+
+        '</div></section></main>'+footer();
+      // Save a package interest for a quote without charging the advertised starting price.
+      document.querySelectorAll('[data-bath-package]').forEach(button=>button.addEventListener('click',()=>{
+        const packageChoice=packages.find(p=>p.id===button.dataset.bathPackage);
+        if(!packageChoice||!packageChoice.startingAt)return;
+        const cart=getCart();
+        // Keep one entry per package, while allowing different Bathroom projects.
+        const exists=cart.some(item=>item.source==='bathroom-project-package'&&item.packageId===packageChoice.id);
+        if(!exists){
+          cart.push({name:'Bathroom — '+packageChoice.name,qty:1,type:'Service',source:'bathroom-project-package',packageId:packageChoice.id,startingAt:packageChoice.startingAt,depositEstimate:packageChoice.depositEstimate,laborEstimate:packageChoice.laborEstimate,overheadAllowance:packageChoice.overheadAllowance,price:null,quoteRequired:true,scope:packageChoice.work.slice(),description:'Starting estimate only; labor, materials and supplies confirmed after reviewing measurements and selections.'});
+          saveCart(cart);
+        }
+        location.href='/project-cart.html';
+      }));
+      const style=document.createElement('style');
+      style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.bath-photo-card{height:380px;position:relative;display:block;border-radius:12px;overflow:hidden;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .2s ease}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-card:hover img,.bath-photo-card:focus-visible img{transform:scale(1.04)}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 29px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-package-detail{margin-top:32px;padding:26px;border:1px solid #dfe5ea;border-radius:12px}.bath-package-detail h2{font:700 30px Georgia,serif;margin:0 0 12px}.bath-package-detail li{margin:8px 0}.bath-package-detail .btn{margin:12px 8px 0 0}@media(max-width:1000px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
+      style.textContent+='.bath-custom-callout{margin:26px 0 0;padding:22px 24px;border:1px solid #dfe5ea;border-radius:12px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f7fafc}.bath-custom-callout p{margin:0;flex:1 1 280px;line-height:1.5}.bath-custom-callout .btn{white-space:nowrap}@media(max-width:560px){.bath-custom-callout{padding:18px}.bath-custom-callout .btn{width:100%;text-align:center}}';
+      style.textContent+='.bath-mobile-price{display:none!important;font-weight:800;color:#fff;margin-top:10px!important}.bath-hover-price{display:block;margin-top:9px;padding-top:12px;border-top:1px solid #ffffff55;font-size:21px;font-weight:800}.bath-package-action{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bath-package-action p{margin:0;flex:1 1 320px}.bath-package-action .btn{white-space:nowrap}@media(hover:none){.bath-mobile-price{display:block!important}.bath-photo-card{min-height:330px;height:auto;aspect-ratio:3/4}}';
+      style.textContent+='.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:22px;color:#fff;background:rgba(5,31,55,.92);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:19px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}@media(hover:none){.bath-photo-hover{display:none}}.bath-package-detail{margin-top:12px}.bath-package-detail ul{padding-left:22px}';
+      style.textContent+='.bath-photo-tile{position:relative;min-width:0;display:flex;flex-direction:column;gap:8px}.bath-photo-tile .bath-photo-hover{justify-content:flex-start;gap:6px;padding:14px 15px;font-size:12px;line-height:1.25;scrollbar-width:thin}.bath-photo-hover strong{font-size:16px}.bath-includes-note{font-weight:700;color:#e1f1ff;font-size:12px}.bath-hover-price{font-size:16px;margin-top:4px;padding-top:6px}.bath-price-below{font-weight:800;font-size:18px;line-height:1.3;color:#073c70;text-align:center}.bath-card-add{position:static;z-index:auto;display:block;width:100%;min-height:42px;opacity:1;visibility:visible;pointer-events:auto;margin:0}.bath-photo-tile .bath-mobile-price{display:none!important}@media(hover:none){.bath-photo-tile .bath-photo-hover{display:none}}';
+      document.head.append(style);
+      updateCartCount();return;
+    }
+
+    // Kitchen packages mirror Bathroom's four-photo chooser; custom keeps every original work option.
+    if((id==='kitchen-pantry'||id==='kitchen-remodel') && new URLSearchParams(location.search).get('kitchenMode')!=='individual'){
+      const packages=[
+        {id:'basic',name:'Basic Refresh',intro:'Refresh the existing kitchen while keeping the current layout.',work:['Paint existing kitchen walls','Update cabinet handles or knobs','Recaulk the sink and backsplash where needed','Minor finish and trim touch-ups']},
+        {id:'standard',name:'Standard Upgrade',intro:'Give the kitchen a coordinated update without a full layout change.',work:['Paint existing kitchen walls and visible trim','Refresh existing cabinets and cabinet hardware','Update the backsplash','Replace the existing kitchen faucet using existing connections','Update selected existing lighting fixtures']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'Plan a comprehensive kitchen transformation with coordinated materials and labor.',work:['Remove and replace or extensively update kitchen cabinets','Install selected countertops and backsplash','Install a kitchen sink and faucet using compatible connections','Update selected existing light fixtures','Complete wall painting, trim and finishing touches']},
+        {id:'custom',name:'Custom',intro:'Choose individual kitchen tasks and combine as many as needed.',work:['Choose individual kitchen work','Select materials and finishes','Build a custom kitchen project estimate']}
+      ];
+      const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('kitchenPackage'))||null;
+      const original='/project.html?project=kitchen-pantry&kitchenMode=individual';
+      const photos=['/assets/kitchen.jpg','/assets/approved-9bfcb89f7800.jpg','/assets/approved-739d17fd2952.jpg','/assets/approved-0ab244a922c8.jpg'];
+      const nav=packages.map((p,index)=>'<a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=kitchen-pantry&kitchenPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' kitchen project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>').join('');
+      const work=selected?selected.work.map(w=>'<li>'+w+'</li>').join(''):'';
+      document.body.innerHTML=header()+
+        '<main><section class="section bath-project-chooser"><div class="wrap">'+
+        '<a class="project-back" href="'+(selected?'/project.html?project=kitchen-pantry':'/#projects')+'">'+(selected?'← All Kitchen Packages':'← All Projects')+'</a>'+
+        '<h1>Kitchen Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<nav class="bath-photo-grid" aria-label="Choose a kitchen project">'+nav+'</nav>'+
+        '<div class="bath-custom-callout"><p><strong>Not sure which package is right for you?</strong> Choose Custom and build your own kitchen project.</p><a class="btn outline" href="'+original+'">Explore Custom Options</a></div>'+
+        (selected?'<article id="bath-package-detail" class="bath-package-detail" tabindex="-1"><h2>'+selected.name+'</h2><p>'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
+        (selected.discount?'<p class="calc-note"><strong>Package labor savings:</strong> '+selected.discount+'% off included labor. Package estimates include labor, materials, and needed supplies.</p>':'')+
+        '<p class="calc-note"><strong>Complete project package:</strong> Labor, materials, and needed supplies are included in the project estimate. Final total is determined after the scope and selections are confirmed.</p>'+
+        '<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' kitchen project package. Please help me plan it.')+'">Request Package Estimate</a></article>':'')+
+        '</div></section></main>'+footer();
+      const style=document.createElement('style');
+      style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.bath-photo-card{height:380px;position:relative;display:block;border-radius:12px;overflow:hidden;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .2s ease}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-card:hover img,.bath-photo-card:focus-visible img{transform:scale(1.04)}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 29px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-package-detail{margin-top:32px;padding:26px;border:1px solid #dfe5ea;border-radius:12px}.bath-package-detail h2{font:700 30px Georgia,serif;margin:0 0 12px}.bath-package-detail li{margin:8px 0}.bath-package-detail .btn{margin:12px 8px 0 0}@media(max-width:1000px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
+      style.textContent+='.bath-custom-callout{margin:26px 0 0;padding:22px 24px;border:1px solid #dfe5ea;border-radius:12px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f7fafc}.bath-custom-callout p{margin:0;flex:1 1 280px;line-height:1.5}.bath-custom-callout .btn{white-space:nowrap}@media(max-width:560px){.bath-custom-callout{padding:18px}.bath-custom-callout .btn{width:100%;text-align:center}}';
+      style.textContent+='.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:22px;color:#fff;background:rgba(5,31,55,.92);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:19px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}@media(hover:none){.bath-photo-hover{display:none}}.bath-package-detail{margin-top:12px}.bath-package-detail ul{padding-left:22px}';
+      document.head.append(style);
+      updateCartCount();return;
+    }
+
+    const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;
+    document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>Choose the work you want done. We'll ask for measurements only when that item needs them.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Where is the work?</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><select id="scope-room" required><option value="">Select one</option><option>Bathroom</option><option>Bedroom</option><option>Closet / Storage</option><option>Dining Room</option><option>Entry / Mudroom</option><option>Hallway</option><option>Home Office</option><option>Kitchen</option><option>Laundry / Utility</option><option>Living / Family Room</option><option>Outdoor Area</option><option>Other Room / Area</option></select></div><div class="field"><label for="scope-location">Location</label><select id="scope-location" required><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" value="0"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
+    if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
+    if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
+    if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
+    if(id==='entry-mudroom'||id==='entryways'){
+      const section=document.querySelector('.project-section-title');
+      section?.insertAdjacentHTML('beforebegin','<p class="calc-note"><a class="btn outline" href="/other.html?category=Doorbells">Shop Doorbells</a> — wireless and video doorbells for the entryway.</p>');
+    }
+    // Kitchens holds cabinet planning plus a route to the actual cabinet catalog.
+    if(id==='kitchen-pantry' || id==='kitchen-remodel'){
+      const title=document.querySelector('.project-section-title');
+      if(title){
+        const shopCabinets=document.createElement('a');
+        shopCabinets.href='/cabinets.html';
+        shopCabinets.className='btn outline';
+        shopCabinets.textContent='Shop Cabinets';
+        shopCabinets.style.cssText='display:inline-flex;margin:0 0 18px';
+        title.after(shopCabinets);
+      }
+    }
+    const selectedRoom=document.getElementById('scope-room');
+    const roomNames={'bathrooms':'Bathroom','bath-remodel':'Bathroom','bedroom-guest-room':'Bedroom','kids-room':"Kids' Room",'kitchen-pantry':'Kitchen','kitchen-remodel':'Kitchen','closets-storage':'Closet / Storage','dining-room':'Dining Room','entry-mudroom':'Entry / Mudroom','home-office':'Home Office','home-theater':'Home Theater','music-creative-studio':'Music / Creative Studio','entryways':'Entry / Mudroom','laundry-utility':'Laundry / Utility','living-family-room':'Living / Family Room'};
+    const chosenRoom=roomNames[id]||(project.exterior?'Outdoor Area':project.title);
+    if(chosenRoom){
+      if(![...selectedRoom.options].some(option=>option.value===chosenRoom))selectedRoom.add(new Option(chosenRoom,chosenRoom));
+      selectedRoom.value=chosenRoom;
+      selectedRoom.closest('.field').style.display='none';
+    }
+    const fixedLocation=project.exterior||['attic','basement','garage','bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies','wallpaper'].includes(id);
+    const locationFromLink=new URLSearchParams(location.search).get('location');
+    document.getElementById('scope-location').value=fixedLocation?(project.exterior?'exterior':'interior'):(['interior','exterior'].includes(locationFromLink)?locationFromLink:'');
+    if(fixedLocation)document.getElementById('scope-location').closest('.field').hidden=true;
+    const measurementPanel=document.querySelector('.project-measurement-start');
+    // Ask for dimensions in the selected work calculator, not for the whole room.
+    // Keep empty inputs for the existing handoff without sending unrelated sizes.
+    ['length','width','height'].forEach(key=>{
+      const input=document.getElementById('scope-'+key);
+      input.value='';input.closest('.field').hidden=true;
+    });
+    const workTitle=document.querySelector('.project-section-title');
+    const workGrid=document.getElementById('project-work-grid');
+    const workNote=workGrid.nextElementSibling;
+    const cartLink=workNote.nextElementSibling;
+    cartLink.remove();
+    workNote.textContent='Choose a section to continue.';
+    const steps=document.createElement('nav');steps.setAttribute('aria-label','Project steps');
+    steps.style.cssText='display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px';
+    measurementPanel.before(steps);
+    const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next';measurementPanel.append(next);
+    const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';workNote.after(back);
+    const stepButtons=[];
+    const setStep=step=>{if(step===1&&!document.getElementById('scope-location').value){document.getElementById('scope-location').reportValidity();return;}if(step===1)filterLocationMaterials();measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=step!==1;back.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
+    ['Location','Choose Work','Review Cart'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
+    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};
+    back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};
+    if(!fixedLocation){
+      // Choosing indoor or outdoor work is the only required first step.
+      // Make the options visual instead of making customers open an empty select.
+      const choices=document.createElement('div');choices.className='project-location-photo-choices';
+      for(const option of [
+        {value:'interior',label:id==='accessibility'?'Indoor Accessibility':'Interior Work',photo:id==='accessibility'?'/assets/idea-accessibility.jpg':'/assets/approved-9bfcb89f7800.jpg'},
+        {value:'exterior',label:id==='accessibility'?'Outdoor Accessibility':'Exterior Work',photo:id==='accessibility'?'/assets/entryways-card.jpg':'/assets/approved-a11ab0fcd37f.jpg'}
+      ]){
+        const button=document.createElement('button');button.type='button';button.className='project-location-photo';
+        const image=document.createElement('img');image.src=option.photo;image.alt='';image.loading='lazy';
+        const label=document.createElement('strong');label.textContent=option.label;
+        button.append(image,label);
+        button.onclick=()=>{
+          const field=document.getElementById('scope-location');field.value=option.value;
+          field.dispatchEvent(new Event('input',{bubbles:true}));
+          setStep(1);
+        };
+        choices.append(button);
+      }
+      const selector=document.getElementById('scope-location').closest('.field');
+      selector.hidden=true;
+      next.hidden=true;
+      measurementPanel.append(choices);
+      const locationStyles=document.createElement('style');
+      locationStyles.textContent='.project-location-photo-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:14px 0}.project-location-photo{border:2px solid #d4dee6;border-radius:12px;padding:0;overflow:hidden;background:#fff;color:#204968;cursor:pointer;box-shadow:0 4px 15px #152a3c1c;text-align:left}.project-location-photo img{width:100%;height:205px;object-fit:cover;display:block}.project-location-photo strong{display:block;padding:14px 18px;font-size:18px}.project-location-photo:hover,.project-location-photo:focus-visible{border-color:#165a9c}@media(max-width:580px){.project-location-photo-choices{grid-template-columns:1fr}.project-location-photo img{height:160px}}';
+      document.head.append(locationStyles);
+    }
+    setStep(0);
+    const grid=document.getElementById('project-work-grid');
+    // Concrete finish choices are available in every room; the calculator checks the substrate.
+    if(id==='attic')options.floor.materials=[...new Set([...atticFloorMaterials,...options.floor.materials.filter(name=>!/padding|underlayment/i.test(name))])];
+    if(id==='bathrooms'||id==='bath-remodel'){
+      const shortcuts=document.createElement('nav');
+      shortcuts.className='project-product-links';
+      shortcuts.setAttribute('aria-label','Bathroom installation and labor');
+      shortcuts.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px';
+      for(const [label,href] of [
+        ['Bathroom Installation & Labor','/installation.html#labor-category-bathroom'],
+        ['Heated Towel Rack Installation','/installation.html?service=heated-towel-rack#labor-category-electrical']
+      ]){
+        const link=document.createElement('a');link.className='btn outline';link.href=href;link.textContent=label;shortcuts.append(link);
+      }
+      grid.before(shortcuts);
+    }
+    // Use existing approved job photographs on every work choice, retaining
+    // the accordion controls for material selection and calculator handoff.
+    grid.classList.add('project-work-pictures');
+    const pictureStyle=document.createElement('style');
+    pictureStyle.textContent=`#project-work-grid.project-work-pictures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}#project-work-grid .project-work-card{margin:0;padding:0;overflow:hidden;border-radius:12px;box-shadow:0 5px 18px #20304022}#project-work-grid .project-work-card>summary{display:block;cursor:pointer;list-style:none;padding:0;background:#fff}#project-work-grid .project-work-card>summary::-webkit-details-marker{display:none}#project-work-grid .project-work-card>summary img{display:block;width:100%;height:170px;object-fit:cover}#project-work-grid .project-work-card>summary span{display:block;min-height:52px;padding:11px 14px;font-size:16px;font-weight:800;color:#193e5b}#project-work-grid .project-work-card[open]>summary span{background:#edf5fc}#project-work-grid .project-work-card>:not(summary){margin:10px 14px}#project-work-grid .project-work-card>label{display:block;padding:5px 0}#project-work-grid .project-work-card .service-dropdown{margin-bottom:8px}@media(max-width:900px){#project-work-grid.project-work-pictures{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){#project-work-grid.project-work-pictures{grid-template-columns:1fr}#project-work-grid .project-work-card>summary img{height:185px}}`;
+    document.head.append(pictureStyle);
+    const workPhotoChoices={
+      ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      walls:['/assets/accent-walls-card.jpg'],
+      floor:['/assets/flooring-card.jpg'],
+      doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['/assets/approved-e9fee5a04016.jpg'],
+      doors:['/assets/entryways-card.jpg'],
+      lighting:['/assets/lighting-card.jpg'],
+      'vanity-light':['/assets/pendant-lighting.jpg'],
+      toilet:['/assets/approved-a908c20ce632.jpg'],
+      tub:['/assets/tile-shower.jpg'],
+      shower:['/assets/showers-card.png'],
+      // A tiled shower with visible controls, never a laundry machine.
+      'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      vanity:['/assets/approved-9bfcb89f7800.jpg'],
+      backsplash:['/assets/approved-0ab244a922c8.jpg'],
+      cabinets:['/assets/kitchen.jpg'],
+      refinish:['/assets/approved-739d17fd2952.jpg'],
+      drywall:['/assets/catalog-8.jpg'],
+      framing:['/assets/arches-columns.jpg'],
+      fireplace:['/assets/fireplace-card.jpg'],
+      'fireplace-outdoor':['/assets/idea-backyard-retreat.jpg'],
+      stairs:['/assets/stairs-card.jpg'],
+      plumbing:['/assets/approved-493d744bf5f7.jpg'],
+      storage:['/assets/approved-8a9d216224b8.jpg'],
+      furniture:['/assets/approved-4822ff53e23f.jpg'],
+      ventilation:['/assets/catalog-9.jpg'],
+      appliances:['/assets/approved-26657e8bc7bd.jpg'],
+      prep:['/assets/approved-b5c632fcfbc0.jpg'],
+      concrete:['/assets/patio-concrete.webp'],
+      decking:['/assets/approved-4de99f88049f.jpg'],
+      exterior:['/assets/approved-a11ab0fcd37f.jpg'],
+      wallpaper:['/assets/wallpaper-card.jpg'],
+      murals:['/assets/murals-card.jpg'],
+      'outdoor-accent':['/assets/project-stone-real.jpg'],
+      'outdoor-tile':['/assets/approved-de82473d9ce3.jpg'],
+      'outdoor-lighting':['/assets/idea-outdoor-sound.jpg'],
+      'access-interior':['/assets/idea-accessibility.jpg'],
+      'access-exterior':['/assets/idea-bus-stop.jpg'],
+      'access-bath':['/assets/showers-card.png'],
+      'access-grab-bars':['/assets/idea-accessibility.jpg'],
+      'access-indoor-rails':['/assets/stairs-card.jpg'],
+      'access-doorways':['/assets/entryways-card.jpg'],
+      'access-thresholds':['/assets/approved-4de99f88049f.jpg'],
+      'access-controls':['/assets/lighting-card.jpg'],
+      'access-ramps':['/assets/idea-accessibility.jpg'],
+      'access-outdoor-rails':['/assets/approved-94fe00a25a93.jpg'],
+      'access-walkways':['/assets/patio-concrete.webp'],
+      'access-entry':['/assets/entryways-card.jpg'],
+      'access-other':['/assets/custom-projects-card.jpg'],
+      'exterior-doors':['/assets/entryways-card.jpg'],
+      'exterior-trim':['/assets/approved-4de99f88049f.jpg'],
+      'exterior-framing':['/assets/arches-columns.jpg'],
+      'deck-frame':['/assets/approved-a11ab0fcd37f.jpg'],
+      'deck-stairs':['/assets/stairs-card.jpg'],
+      'deck-rails':['/assets/approved-94fe00a25a93.jpg']
+    };
+    const specialtyProjectPhotos={"pet-room":["/assets/idea-pet-room.jpg","/assets/tile-shower.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/approved-0af816f48fb0.jpg","/assets/kids-room.jpg"],"outdoor-kitchen":["/assets/idea-outdoor-kitchen.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/approved-b9cdb9084877.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg"],"mechanic-shop":["/assets/idea-mechanic-shop.jpg","/assets/idea-car-wash.jpg","/assets/flooring-card.jpg","/assets/approved-d2807423c8f0.jpg","/assets/lighting-card.jpg","/assets/approved-8a9d216224b8.jpg"],"car-wash":["/assets/idea-car-wash.jpg","/assets/patio-concrete.webp","/assets/approved-b9cdb9084877.jpg","/assets/idea-mechanic-shop.jpg","/assets/approved-4de99f88049f.jpg"],"recycling-scrap":["/assets/idea-recycling-scrap.jpg","/assets/concrete-card.jpg","/assets/idea-garden-greenhouse.jpg","/assets/approved-b5c632fcfbc0.jpg"],"vault-safe-room":["/assets/idea-vault-safe-room.jpg","/assets/entryways-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/lighting-card.jpg","/assets/approved-739d17fd2952.jpg"],"snack-beverage":["/assets/idea-snack-beverage.jpg","/assets/approved-b9cdb9084877.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/lighting-card.jpg","/assets/approved-a051ee7e1935.jpg","/assets/approved-807c60a6001a.jpg"],"pools":["/assets/idea-pools.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/stairs-card.jpg","/assets/idea-backyard-retreat.jpg","/assets/patio-concrete.webp"],"bus-stop":["/assets/idea-bus-stop.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/lighting-card.jpg","/assets/approved-a11ab0fcd37f.jpg"],"mailboxes":["/assets/idea-mailboxes.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/approved-b5c632fcfbc0.jpg"],"garden-greenhouse":["/assets/idea-garden-greenhouse.jpg","/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/patio-concrete.webp","/assets/approved-b5c632fcfbc0.jpg"],"fitness-wellness":["/assets/idea-fitness-wellness.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/office.jpg"],"games-hobbies":["/assets/idea-games-hobbies.jpg","/assets/office.jpg","/assets/approved-6075be404407.jpg","/assets/approved-17df84119d39.jpg"],"outdoor-sound":["/assets/idea-outdoor-sound.jpg","/assets/cinema.jpg","/assets/lighting-card.jpg","/assets/idea-backyard-retreat.jpg"],"backyard-retreat":["/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg","/assets/lighting-card.jpg","/assets/patio-concrete.webp"]};
+    const specificWorkPhotos={"pet-floor":"/assets/flooring-card.jpg","pet-wash":"/assets/tile-shower.jpg","pet-storage":"/assets/approved-8a9d216224b8.jpg","pet-walls":"/assets/approved-0af816f48fb0.jpg","outdoor-counters":"/assets/approved-9bfcb89f7800.jpg","outdoor-sink":"/assets/approved-b9cdb9084877.jpg","outdoor-storage":"/assets/approved-4de99f88049f.jpg","outdoor-kitchen-power":"/assets/lighting-card.jpg","shop-floor":"/assets/flooring-card.jpg","shop-storage":"/assets/approved-d2807423c8f0.jpg","shop-utilities":"/assets/lighting-card.jpg","wash-floor":"/assets/patio-concrete.webp","wash-water":"/assets/approved-b9cdb9084877.jpg","wash-storage":"/assets/idea-mechanic-shop.jpg","scrap-platform":"/assets/concrete-card.jpg","scrap-cover":"/assets/idea-recycling-scrap.jpg","vault-door":"/assets/entryways-card.jpg","vault-storage":"/assets/approved-8a9d216224b8.jpg","vault-services":"/assets/lighting-card.jpg","snack-counters":"/assets/kitchen.jpg","snack-storage":"/assets/approved-9bfcb89f7800.jpg","snack-sink":"/assets/approved-b9cdb9084877.jpg","snack-light":"/assets/pendant-lighting.jpg","pool-deck":"/assets/approved-a11ab0fcd37f.jpg","pool-access":"/assets/stairs-card.jpg","pool-storage":"/assets/idea-pools.jpg","waiting-access":"/assets/patio-concrete.webp","waiting-shelter":"/assets/idea-bus-stop.jpg","waiting-light":"/assets/lighting-card.jpg","mailbox-base":"/assets/idea-mailboxes.jpg","mailbox-parcels":"/assets/idea-mailboxes.jpg","garden-beds":"/assets/idea-garden-greenhouse.jpg","garden-shelter":"/assets/idea-backyard-retreat.jpg","garden-water":"/assets/approved-a11ab0fcd37f.jpg","fit-floor":"/assets/flooring-card.jpg","fit-mirror":"/assets/idea-fitness-wellness.jpg","hobby-work":"/assets/office.jpg","hobby-display":"/assets/approved-6075be404407.jpg","sound-install":"/assets/idea-outdoor-sound.jpg","sound-power":"/assets/lighting-card.jpg","retreat-surface":"/assets/patio-concrete.webp","retreat-privacy":"/assets/idea-backyard-retreat.jpg","retreat-light":"/assets/lighting-card.jpg"};
+    // Match each picture to the actual task. Approved local photographs take priority;
+    // use a task-specific licensed stock photo only when our own photos do not cover it.
+    const bathroomWorkPhotos={
+      ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      walls:['/assets/wallpaper-card.jpg'],
+      floor:['/assets/flooring-card.jpg'],
+      doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
+      shower:['/assets/showers-card.png'],
+      toilet:['/assets/approved-a908c20ce632.jpg'],
+      vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
+      'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
+      refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
+      lighting:['/assets/lighting-card.jpg'],
+      ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
+      accents:['/assets/accent-walls-card.jpg'],
+      prep:['/assets/approved-b5c632fcfbc0.jpg'],
+      'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      'faucet-service':['https://images.pexels.com/photos/6920608/pexels-photo-6920608.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      other:['/assets/custom-projects-card.jpg']
+    };
+    // Broken external photographs must never leave blank tiles. Draw a matching,
+    // labeled illustration instead of borrowing an unrelated room's photograph.
+    const bathroomPhotoFallback=key=>{
+      const title=String(options[key]?.title||key);
+      const scene={
+        doors:'<rect x="230" y="55" width="260" height="294" fill="#f8fafb" stroke="#567789" stroke-width="15"/><rect x="253" y="77" width="214" height="250" fill="#adc4d0"/><circle cx="438" cy="206" r="10" fill="#bb874a"/>',
+        trim:'<rect x="112" y="70" width="495" height="268" fill="#fff" stroke="#657f90" stroke-width="18"/><path d="M145 305h425M145 280h425" stroke="#c1a07e" stroke-width="12"/>',
+        'bath-shower-valve':'<rect x="0" y="0" width="720" height="365" fill="#c9dce3"/><path d="M0 75h720M0 155h720M0 235h720M0 315h720M120 0v365M240 0v365M360 0v365M480 0v365M600 0v365" stroke="#ecf4f7" stroke-width="5"/><circle cx="360" cy="183" r="93" fill="#edf2f4" stroke="#728997" stroke-width="14"/><circle cx="360" cy="183" r="39" fill="#8ca3b1"/><path d="M360 183l65 58" stroke="#415968" stroke-width="22" stroke-linecap="round"/>',
+        'faucet-service':'<rect x="160" y="230" width="400" height="100" rx="44" fill="#f9fcfd" stroke="#7d9cac" stroke-width="12"/><path d="M350 225v-83q0-38 48-38h75v35h-62q-23 0-23 26v62" fill="none" stroke="#5c7887" stroke-width="20"/>',
+        ventilation:'<circle cx="360" cy="181" r="130" fill="#fff" stroke="#607e90" stroke-width="12"/><circle cx="360" cy="181" r="42" fill="#607e90"/><path d="M360 139q-100-70-115 4 10 50 75 39M400 181q100-65 43-111-55-23-78 61M340 211q-10 135 58 108 43-25 6-82" fill="#9fbbc9"/>',
+        mirror:'<rect x="230" y="44" width="260" height="290" rx="125" fill="#d9eff5" stroke="#a98762" stroke-width="17"/><path d="M250 165l120-105M260 230L455 65" stroke="#fff" stroke-width="13" opacity=".7"/>',
+        toilet:'<rect x="240" y="54" width="245" height="142" rx="24" fill="#fff" stroke="#7290a0" stroke-width="12"/><ellipse cx="360" cy="232" rx="110" ry="64" fill="#f8fcfd" stroke="#7290a0" stroke-width="13"/><path d="M277 246q10 84 83 84h47q55 0 45-79" fill="#f8fcfd" stroke="#7290a0" stroke-width="11"/>',
+        shower:'<path d="M280 110v-45h155v45M435 110q100 0 100 80" stroke="#587786" fill="none" stroke-width="22"/><path d="M390 190h190" stroke="#658a9c" stroke-width="22"/><path d="M420 220v80M470 220v80M520 220v80" stroke="#74aac0" stroke-width="10" stroke-dasharray="8 14"/>',
+        tub:'<path d="M143 165h430v70q-12 95-92 95H232q-75 0-89-95z" fill="#f9fcfc" stroke="#6c8a9c" stroke-width="14"/><path d="M490 165v-64q0-27 30-27h45" fill="none" stroke="#7896a7" stroke-width="18"/>',
+        vanity:'<rect x="165" y="145" width="390" height="200" rx="12" fill="#96adbc" stroke="#506d7d" stroke-width="12"/><rect x="185" y="165" width="170" height="162" fill="#d9e4ea"/><rect x="370" y="165" width="165" height="162" fill="#d9e4ea"/><ellipse cx="360" cy="130" rx="150" ry="36" fill="#fff" stroke="#7d99a8" stroke-width="9"/><path d="M353 130v-55h48" fill="none" stroke="#617e8e" stroke-width="13"/>',
+        lighting:'<path d="M360 35v125" stroke="#617d8b" stroke-width="12"/><path d="M230 160h260l-45 100H275z" fill="#ffe8a8" stroke="#9d8959" stroke-width="12"/>',
+        'vanity-light':'<path d="M250 130h230" stroke="#627d8d" stroke-width="18"/><circle cx="270" cy="190" r="48" fill="#fff1ba" stroke="#b7a06b" stroke-width="8"/><circle cx="450" cy="190" r="48" fill="#fff1ba" stroke="#b7a06b" stroke-width="8"/>',
+        floor:'<path d="M0 285l720-130M0 230l720-130M150 365l100-365M410 365l100-365M600 365l100-365" stroke="#6f8b9c" stroke-width="9"/>',
+        walls:'<rect x="160" y="68" width="400" height="290" fill="#c6d7dc" stroke="#7c99a6" stroke-width="15"/><path d="M170 210h380" stroke="#f0f7f9" stroke-width="10"/>',
+        ceiling:'<path d="M110 190l250-120 250 120-250 120z" fill="#e9f3f5" stroke="#7e9fae" stroke-width="14"/>',
+        refinish:'<path d="M200 250l205-115 30 45-205 115z" fill="#9ab4c3" stroke="#527487" stroke-width="12"/><path d="M430 160l110-58" stroke="#a88256" stroke-width="25"/>',
+        accents:'<rect x="140" y="60" width="440" height="280" fill="#a4bac2" stroke="#577789" stroke-width="12"/><path d="M235 60v280M330 60v280M425 60v280" stroke="#f1ebe1" stroke-width="10"/>',
+        prep:'<path d="M220 260l240-135" stroke="#a47d50" stroke-width="28"/><rect x="400" y="85" width="100" height="85" rx="10" fill="#7c9daa"/><path d="M120 310h480" stroke="#7694a1" stroke-width="14"/>',
+        other:'<path d="M260 85h200v230H260z" fill="#cadce3" stroke="#5e7e8e" stroke-width="15"/><path d="M320 145h80M360 105v180" stroke="#fff" stroke-width="15"/>'
+      }[key]||'<rect x="215" y="60" width="290" height="270" rx="20" fill="#d7e7ed" stroke="#668797" stroke-width="15"/>';
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460"><rect width="720" height="460" fill="#e4edf1"/>'+scene+'<rect y="365" width="720" height="95" fill="#f7fafb"/><text x="360" y="423" font-family="Arial,sans-serif" font-size="29" font-weight="700" text-anchor="middle" fill="#244b60">'+title.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</text></svg>';
+      return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+    };
+        // More cards can share a subject, but must never display the very same picture.
+    // Reserve the hero and any indoor/outdoor selector photos before drawing work cards.
+    const usedWorkPhotos=new Set([project.image]);
+    document.querySelectorAll('.project-location-photo img').forEach(img=>usedWorkPhotos.add(img.getAttribute('src')));
+    const stockByWork={
+      accents:['https://images.pexels.com/photos/6934226/pexels-photo-6934226.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
+      vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
+      'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
+      mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
+      ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
+      tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
+      'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82']
+    };
+    const isBathroom=id==='bathrooms'||id==='bath-remodel';
+    // The kids' room must show child-appropriate spaces, not generic adult furniture.
+    // Use approved local photography first when it fits; otherwise use distinct kids-room interiors.
+    const kidsWorkPhotos={
+      ceiling:'https://images.pexels.com/photos/10854908/pexels-photo-10854908.jpeg?auto=compress&cs=tinysrgb&w=900',
+      doors:'https://images.pexels.com/photos/7045947/pexels-photo-7045947.jpeg?auto=compress&cs=tinysrgb&w=900',
+      floor:'https://images.pexels.com/photos/5008397/pexels-photo-5008397.jpeg?auto=compress&cs=tinysrgb&w=900',
+      furniture:'https://images.pexels.com/photos/7045846/pexels-photo-7045846.jpeg?auto=compress&cs=tinysrgb&w=900',
+      lighting:'https://images.pexels.com/photos/7166642/pexels-photo-7166642.jpeg?auto=compress&cs=tinysrgb&w=900',
+      storage:'https://images.pexels.com/photos/7028062/pexels-photo-7028062.jpeg?auto=compress&cs=tinysrgb&w=900',
+      trim:'https://images.pexels.com/photos/7045857/pexels-photo-7045857.jpeg?auto=compress&cs=tinysrgb&w=900',
+      walls:'https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900',
+      other:'https://images.pexels.com/photos/6693324/pexels-photo-6693324.jpeg?auto=compress&cs=tinysrgb&w=900'
+    };
+    const workPhoto=key=>{
+      const ownPhotos=id==='kids-room'?(kidsWorkPhotos[key]?[kidsWorkPhotos[key]]:[]):[
+        ...(isBathroom?(bathroomWorkPhotos[key]||[]):[]),
+        ...(!isBathroom&&specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
+        ...(!isBathroom?(workPhotoChoices[key]||[]):[]),
+        ...(!isBathroom?(stockByWork[key]||[]):[])
+      ];
+      const chosen=ownPhotos.find(url=>!usedWorkPhotos.has(url))
+        ||(id==='kids-room'||isBathroom?null:(
+          (specialtyProjectPhotos[id]||[]).find(url=>!usedWorkPhotos.has(url))
+          ||(PROJECT_CATALOG[id]?.image&&!usedWorkPhotos.has(PROJECT_CATALOG[id].image)?PROJECT_CATALOG[id].image:null)
+        ));
+      // Never repeat a photo, including the hero. If there is no suitable unique
+      // photograph for a specialty task, use a labeled task-specific illustration.
+      // This is preferable to a random kitchen, bathroom or repeated hero photo.
+      const photo=chosen||('data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460">'+
+        '<rect width="720" height="460" fill="#e7edf0"/>'+
+        '<rect x="112" y="76" width="496" height="308" rx="12" fill="#f7f9fa" stroke="#b3c3cb" stroke-width="5"/>'+
+        '<path d="M220 242h280M360 150v184" stroke="#aac0cb" stroke-width="9" stroke-linecap="round"/>'+
+        '<text x="360" y="402" font-size="27" font-family="Arial,sans-serif" fill="#25495b" text-anchor="middle">'+
+        String(options[key]?.title||key).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</text></svg>'
+      ));
+      usedWorkPhotos.add(photo);
+      return photo;
+    };
+    const draftKey='niks-project-options-'+id;
+    let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
+
+
+    function filterLocationMaterials(){const location=document.getElementById('scope-location').value;const allowed=locationScopes[id]?.[location];if(allowed){grid.querySelectorAll('[data-work-key]').forEach(card=>{card.hidden=!allowed.includes(card.dataset.workKey);if(card.hidden){card.open=false;card.querySelectorAll('input[type="checkbox"]:checked').forEach(box=>{box.checked=false;});}});workTitle.textContent=location==='exterior'?'Choose Exterior Work':'Choose Interior Work';}grid.querySelectorAll('.room-supply-choice').forEach(label=>{const input=label.querySelector('input');if(!input)return;const mismatch=location==='interior'?/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(input.value):location==='exterior'?/^Interior (Paint|Stain|Primer|Finish)\b/i.test(input.value):false;label.hidden=mismatch;if(mismatch)input.checked=false;});}
+    const saveDraft=()=>{const selected={},preparation={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll(':scope > label input:checked')].map(x=>x.value);preparation[card.dataset.workKey]=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({preparation,locationChosen:!!document.getElementById('scope-location').value,room:document.getElementById('scope-room').value,selected,...Object.fromEntries(['scope-location','scope-length','scope-width','scope-height'].map(id=>[id,document.getElementById(id).value]))}))}catch{}};
+    ['scope-room','scope-location','scope-length','scope-width','scope-height'].forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
+    (scopes[id]||scopes.custom).forEach(key=>{
+      const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
+      const heading=document.createElement('summary');
+      const headingImage=document.createElement('img');headingImage.src=workPhoto(key);headingImage.alt=item.title;headingImage.loading='lazy';if(isBathroom){const fallback=bathroomPhotoFallback(key);headingImage.addEventListener('error',()=>{if(headingImage.src!==fallback)headingImage.src=fallback;},{once:true});}
+      const headingLabel=document.createElement('span');headingLabel.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;
+      heading.append(headingImage,headingLabel);card.append(heading);
+      if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){
+        const styleKey=new URLSearchParams(location.search).get('toiletStyle');
+        const names={round:'Standard Round',elongated:'Elongated & Comfort Height',smart:'Smart Toilets',specialty:'Wall-Hung & Specialty'};
+        if(names[styleKey]){
+          const note=document.createElement('p');note.className='calc-note';
+          note.textContent='Preferred toilet style: '+names[styleKey]+'. Select the work below. Specific model, stock and product price must be confirmed.';
+          card.append(note);
+        }
+      }
+      // Route every Bathroom work section to the appropriate catalog. Verified
+      // retail listings show real product variants and prices; material pages
+      // are planning guides until specific supplier products are approved.
+      const bathroomProductLinks = {
+        ceiling: [
+          ['Browse Paint & Finishes', '/material-paint-finishes.html', false],
+          ['Browse Drywall Materials', '/material-drywall.html', false]
+        ],
+        walls: [
+          ['Browse Wall Paint & Finishes', '/material-paint-finishes.html', false],
+          ['Browse Wall Tile & Stone', '/material-tile-stone.html', false],
+          ['Browse Drywall Materials', '/material-drywall.html', false]
+        ],
+        floor: [
+          ['Browse Flooring Materials', '/material-flooring.html', false],
+          ['Browse Floor Tile & Stone', '/material-tile-stone.html', false]
+        ],
+        tub: [
+          ['Shop Bathtubs & See Prices', '/bathroom.html?type=bathtubs', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        shower: [
+          ['Shop Shower Enclosures', '/bathroom.html?type=showers', true],
+          ['Shop Shower Bases', '/bathroom.html?type=showerBases', true],
+          ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true],
+          ['Browse Shower Tile & Stone', '/material-tile-stone.html', false]
+        ],
+        'tub-shower': [
+          ['Shop Bathtubs', '/bathroom.html?type=bathtubs', true],
+          ['Shop Shower Enclosures', '/bathroom.html?type=showers', true],
+          ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true]
+        ],
+        toilet: [
+          ['Explore Toilet Styles', '/bathroom.html?type=toilets', true]
+        ],
+        vanity: [
+          ['Shop Vanities & Sinks', '/bathroom.html?type=vanities', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        'faucet-service': [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        'vanity-light': [
+          ['Shop Bathroom Lights', '/bathroom.html?type=lighting', true]
+        ],
+        mirror: [
+          ['Shop Mirrors & Accessories', '/bathroom.html?type=accessories', true]
+        ],
+        lighting: [
+          ['Shop Bathroom Lights', '/bathroom.html?type=lighting', true]
+        ],
+        ventilation: [
+          ['Shop Bathroom Ventilation & Fans', '/bathroom.html?type=ventilation', true]
+        ],
+        accents: [
+          ['Shop Mirrors & Accessories', '/bathroom.html?type=accessories', true],
+          ['Browse Trim Materials', '/material-trim-molding.html', false]
+        ],
+        refinish: [
+          ['Browse Refinishing Materials', '/material-paint-finishes.html', false]
+        ],
+        prep: [
+          ['Browse Drywall & Repair Materials', '/material-drywall.html', false],
+          ['Browse Paint & Prep Materials', '/material-paint-finishes.html', false]
+        ],
+        'bath-shower-valve': [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        plumbing: [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        other: [
+          ['Browse Material Categories', '/materials.html', false],
+          ['Browse Bathroom Fixtures', '/bathroom.html', true]
+        ]
+      };
+      if((id==='bathrooms'||id==='bath-remodel')&&['other','accents'].includes(key)){
+        const link=document.createElement('a');
+        link.className='btn outline project-products-link';
+        link.href='/installation.html?service=heated-towel-rack#labor-category-electrical';
+        link.textContent='Heated Towel Rack — Installation & Labor';
+        card.append(link);
+      }
+      if(id==='bathrooms'||id==='bath-remodel'){
+        const related=bathroomProductLinks[key]||[];
+        if(related.length){
+          const box=document.createElement('div');
+          box.className='project-product-links';
+          box.setAttribute('aria-label','Find products for '+item.title);
+          const note=document.createElement('p');
+          note.className='calc-note';
+          note.textContent='Find the specific products for this work:';
+          box.append(note);
+          related.forEach(([label,href,verifiedCatalog])=>{
+            const link=document.createElement('a');
+            link.className='btn outline project-products-link';
+            if(href.startsWith('/bathroom.html')){
+              const destination=new URL(href,location.origin);
+              destination.searchParams.set('fromProject','1');
+              destination.searchParams.set('project',id);
+              destination.searchParams.set('work',key);
+              link.href=destination.pathname+destination.search;
+            }else link.href=href;
+            link.textContent=label;
+            box.append(link);
+          });
+          const isMaterials=related.some(row=>!row[2]);
+          if(isMaterials){
+            const disclaimer=document.createElement('small');
+            disclaimer.className='calc-note';
+            disclaimer.style.display='block';
+            disclaimer.textContent='Material pages help you choose types. Exact brands, stock and purchase prices must be confirmed before ordering.';
+            box.append(disclaimer);
+          }
+          card.append(box);
+        }
+      }
+
+      if(['furniture','office-furniture'].includes(key)){
+        const roomCategory=id==='kids-room'?'kids-room':id==='bedroom-guest-room'?'bedroom':id==='home-office'?'home-office':null;
+        if(roomCategory){
+          const products=document.createElement('div');card.append(products);
+          const load=()=>{if(!card.open||products.dataset.loaded)return;products.dataset.loaded='true';import('/store-cards.js').then(m=>m.renderRoomCards(products,roomCategory)).catch(()=>{products.innerHTML='<a href="/furniture.html?category='+roomCategory+'">Shop furniture →</a>';});};
+          card.addEventListener('toggle',load);load();
+        }
+      }
+      if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);extras.addEventListener('change',saveDraft);}
+      const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
+      if(key==='ceiling'){
+        const note=document.createElement('p');note.className='calc-note';
+        note.textContent='Choose any ceiling work you need. Pricing and supplies come later in the estimate.';
+        card.append(note);
+      }
+      const workGroupFor=name=>item.groups?.find(([,tasks])=>tasks.includes(name))?.[0]||null;
+      let lastWorkGroup='';
+      item.materials.forEach(name=>{
+        const group=workGroupFor(name);
+        if(group&&group!==lastWorkGroup){
+          lastWorkGroup=group;
+          const subheading=document.createElement('h3');subheading.className='ceiling-work-heading';
+          subheading.textContent=group;subheading.style.cssText='font-size:1rem;margin:18px 0 8px';
+          card.append(subheading);
+        }if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode((id==='accents'||key==='walls')&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));card.append(label)});
+      card.querySelectorAll('.finish-preparation input[type="checkbox"]').forEach(box=>{box.checked=!!draft.preparation?.[key]?.includes(box.value);box.addEventListener('change',saveDraft);});
+      if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
+      const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
+      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent=key==='ceiling'?'Choose one or more ceiling tasks.':'Choose one or more materials.';return;}const chosenTasks=selected();
+        // Projects plan the entire job. A single ceiling-paint choice must
+        // enter the measured paint calculator, not the generic one-item picker.
+        const ceilingPaintOnly=key==='ceiling'&&chosenTasks.length===1&&chosenTasks[0]==='Paint ceiling';
+        const floorPaintOnly=key==='floor'&&chosenTasks.length===1&&chosenTasks[0]==='Concrete Floor Paint';
+        const projectMaterial=ceilingPaintOnly||floorPaintOnly?'paint':item.kind;
+        const chosenMaterials=ceilingPaintOnly?[document.getElementById('scope-location').value==='exterior'?'Exterior Paint':'Interior Paint']:chosenTasks;
+        const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:projectMaterial,materials:chosenMaterials.join('|'),projectMode:'complete',embedded:'1'});
+        // Each click from Projects starts only the newly selected job.
+        params.set('projectStart',Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9));
+        if(key==='ceiling')params.set('projectTasks',chosenTasks.join('|'));if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
+      card.append(plan);
+      plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
+      status.textContent='Choose what you need. Sizes and options come next.';
+      card.append(status);grid.append(card);
+    });
+    // The Projects dropdown already captures work selections. Never ask for the same jobs twice.
+    if(fixedLocation){
+      stepButtons[0].hidden=true;setStep(1);
+      back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
+    }
+    const selectedWorks=new URLSearchParams(location.search).get('selectedWorks');
+    if(selectedWorks){
+      const cards=[...grid.querySelectorAll('.project-work-card')];
+      const available=new Set(cards.map(card=>card.dataset.workKey));
+      const chosen=new Set(selectedWorks.split(',').filter(key=>/^[a-z0-9-]{1,60}$/.test(key)&&available.has(key)));
+      if(chosen.size){
+        setStep(1);
+        grid.classList.add('project-work-filtered');
+        const titles=[];
+        cards.forEach(card=>{
+          const show=chosen.has(card.dataset.workKey)&&!card.hidden;
+          card.hidden=!show;
+          card.open=show;
+          if(show)titles.push(card.querySelector('summary span')?.textContent?.trim()||card.dataset.workKey);
+        });
+        workTitle.textContent=titles.length===1?'Choose '+titles[0]+' options':'Choose options for your selected work';
+        workNote.textContent='Pick the materials or services you need for each job below. No need to choose the same work again.';
+      }
+    }
+    const requestedWork=new URLSearchParams(location.search).get('work');
+    if(requestedWork&&locationScopes[id]&&!document.getElementById('scope-location').value){const places=locationScopes[id];const matches=['interior','exterior'].filter(place=>places[place].includes(requestedWork));if(matches.length===1){document.getElementById('scope-location').value=matches[0];filterLocationMaterials();}}
+    if(requestedWork&&/^[a-z0-9-]{1,60}$/.test(requestedWork)){
+      const target=grid.querySelector('[data-work-key="'+requestedWork+'"]');
+      if(target){
+        setStep(1);
+        target.open=true;
+        const note=document.createElement('p');
+        note.className='calc-note';
+        note.textContent='Your products remain in the Project Cart. Select installation or more work below.';
+        target.append(note);
+        requestAnimationFrame(()=>target.scrollIntoView({block:'center'}));
+      }
+    }
+    if(grid.classList.contains('project-work-filtered')){
+      const compact=document.createElement('style');
+      compact.textContent='#project-work-grid.project-work-filtered{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}#project-work-grid.project-work-filtered .project-work-card>summary img{height:76px;object-fit:cover}';
+      document.head.append(compact);
+    }
+    const style=document.createElement('style');style.textContent='.project-measurement-start{margin-bottom:26px}.project-measurement-grid{display:grid;grid-template-columns:2fr 1.3fr repeat(3,1fr);gap:12px}.project-measurement-grid input,.project-measurement-grid select{width:100%;box-sizing:border-box;padding:10px}.project-section-title{margin:26px 0 10px}.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}@media(max-width:700px){.project-measurement-grid{grid-template-columns:1fr 1fr}.project-measurement-grid .field:first-child{grid-column:1/-1}}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
+  };
+  window.openProjectMeasurements=url=>{
+    if(customUrl(url)){showCustomQuote();return;}
+    try{const dims=JSON.parse(localStorage.getItem('nr-project-dimensions')||'{}'),target=new URL(url,location.origin);for(const [key,value] of Object.entries(dims))if(value&&!target.searchParams.has(key))target.searchParams.set(key,value);url=target.pathname+target.search; }catch{}
+    let dialog=document.getElementById('project-measurements-dialog');
+    if(!dialog){dialog=document.createElement('section');dialog.id='project-measurements-dialog';dialog.className='wrap panel';dialog.innerHTML='<div class="material-calc-dialog-head"><strong>Project Options & Estimate</strong><button class="btn outline" type="button">Keep Adding Work</button><a class="btn primary" href="/project-cart.html">Review Cart / Request Quote</a></div><p role="status" id="project-measurements-status">Calculate your work, then add it to the cart.</p><iframe title="Project options and estimate" style="width:100%;height:900px;border:0"></iframe>';dialog.querySelector('button').onclick=()=>{dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});updateCartCount()};document.querySelector('main').append(dialog);}
+    dialog.hidden=false;dialog.querySelector('iframe').src=url;dialog.scrollIntoView({behavior:'smooth',block:'start'});
+
+  };
+  window.addEventListener('message',event=>{if(event.origin===location.origin&&event.data?.type==='project-calculator-back'){const dialog=document.getElementById('project-measurements-dialog');if(event.source!==dialog?.querySelector('iframe')?.contentWindow)return;dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});return;}if(event.origin!==location.origin||event.data?.type!=='project-cart-saved')return;updateCartCount();const status=document.getElementById('project-measurements-status');if(status)status.textContent='Saved to your Project Cart. You can keep adding work to this room.';});
+  // Reuse the calculator's supply rules and coverage assumptions for this saved work.
+  window.projectSupplyChoices=item=>{
+    const group=estimateSupplyGroup(item),guide=SUPPLY_GUIDE[group];
+    let entries=guide?.items||[...new Set((item.products||[]).flatMap(p=>materialSupplyList(p.name)))].map(name=>[name,'Confirm compatibility and package coverage.']);
+    // Do not automatically order a second cushion when attached padding is
+    // present OR unknown. If the flooring lacks pad, only the product's own
+    // instructions can determine if an extra underlayment is appropriate.
+    if(group==='floating'){
+      if(item.answers?.padding!=='no')
+        entries=entries.filter(([name])=>!['Compatible underlayment','Underlayment seam tape'].includes(name));
+      // Plastic sheeting over wood can trap moisture. A concrete moisture
+      // barrier is separate from the LVP's attached cushion and is conditional
+      // on the flooring manufacturer's concrete installation requirements.
+      if(item.answers?.base==='wood')
+        entries=entries.filter(([name])=>name!=='Moisture or vapor barrier');
+    }
+    const primary=item.products?.find(p=>Number.isFinite(p.waste)&&Number.isFinite(p.area));
+    const measured=primary?{...item,measurements:{...item.measurements,coverage:Number((primary.area*(1+primary.waste/100)).toFixed(8))}}:item;
+    return entries.map(([name,note])=>{const estimate=group?supplyStartingQuantity(group,name,[measured]):null;return {name,note,quantity:estimate?.quantity??null,unit:estimate?.unit||'quantity / packaging to confirm',selected:false};});
+  };
+})();
+
++p.startingAt.toLocaleString('en-US')+'</div><button class="btn primary bath-card-add" type="button" data-bath-package="'+p.id+'">Add to Cart</button>':'')+'</div>').join('');
+      document.body.innerHTML=header()+
+        '<main><section class="section bath-project-chooser"><div class="wrap">'+
+        '<a class="project-back" href="'+(selected?'/project.html?project=bathrooms':'/#projects')+'">'+(selected?'← All Bathroom Packages':'← All Projects')+'</a>'+
+        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>'+
+        (selected?'<div id="bath-package-detail" class="bath-package-action"><p>Labor, materials and standard supplies included. Final estimate depends on measurements, fixture selections and existing conditions.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' bathroom project package. Please help me plan it.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Starting prices apply to qualifying small bathrooms. Final estimates depend on measurements, fixture selections and existing conditions.</p>')+
+        '</div></section></main>'+footer();
+      // Save a package interest for a quote without charging the advertised starting price.
+      document.querySelectorAll('[data-bath-package]').forEach(button=>button.addEventListener('click',()=>{
+        const packageChoice=packages.find(p=>p.id===button.dataset.bathPackage);
+        if(!packageChoice||!packageChoice.startingAt)return;
+        const cart=getCart();
+        // Keep one entry per package, while allowing different Bathroom projects.
+        const exists=cart.some(item=>item.source==='bathroom-project-package'&&item.packageId===packageChoice.id);
+        if(!exists){
+          cart.push({name:'Bathroom — '+packageChoice.name,qty:1,type:'Service',source:'bathroom-project-package',packageId:packageChoice.id,startingAt:packageChoice.startingAt,depositEstimate:packageChoice.depositEstimate,laborEstimate:packageChoice.laborEstimate,overheadAllowance:packageChoice.overheadAllowance,price:null,quoteRequired:true,scope:packageChoice.work.slice(),description:'Starting estimate only; labor, materials and supplies confirmed after reviewing measurements and selections.'});
+          saveCart(cart);
+        }
+        location.href='/project-cart.html';
+      }));
+      const style=document.createElement('style');
+      style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.bath-photo-card{height:380px;position:relative;display:block;border-radius:12px;overflow:hidden;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .2s ease}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-card:hover img,.bath-photo-card:focus-visible img{transform:scale(1.04)}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 29px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-package-detail{margin-top:32px;padding:26px;border:1px solid #dfe5ea;border-radius:12px}.bath-package-detail h2{font:700 30px Georgia,serif;margin:0 0 12px}.bath-package-detail li{margin:8px 0}.bath-package-detail .btn{margin:12px 8px 0 0}@media(max-width:1000px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
+      style.textContent+='.bath-custom-callout{margin:26px 0 0;padding:22px 24px;border:1px solid #dfe5ea;border-radius:12px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f7fafc}.bath-custom-callout p{margin:0;flex:1 1 280px;line-height:1.5}.bath-custom-callout .btn{white-space:nowrap}@media(max-width:560px){.bath-custom-callout{padding:18px}.bath-custom-callout .btn{width:100%;text-align:center}}';
+      style.textContent+='.bath-mobile-price{display:none!important;font-weight:800;color:#fff;margin-top:10px!important}.bath-hover-price{display:block;margin-top:9px;padding-top:12px;border-top:1px solid #ffffff55;font-size:21px;font-weight:800}.bath-package-action{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.bath-package-action p{margin:0;flex:1 1 320px}.bath-package-action .btn{white-space:nowrap}@media(hover:none){.bath-mobile-price{display:block!important}.bath-photo-card{min-height:330px;height:auto;aspect-ratio:3/4}}';
+      style.textContent+='.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:22px;color:#fff;background:rgba(5,31,55,.92);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:19px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}@media(hover:none){.bath-photo-hover{display:none}}.bath-package-detail{margin-top:12px}.bath-package-detail ul{padding-left:22px}';
+      style.textContent+='.bath-photo-tile{position:relative;min-width:0}.bath-photo-tile .bath-photo-hover{padding-bottom:88px}.bath-card-add{position:absolute;z-index:5;left:14px;right:14px;bottom:14px;width:calc(100% - 28px);min-height:42px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}.bath-photo-tile:hover .bath-card-add,.bath-photo-tile:focus-within .bath-card-add{opacity:1;visibility:visible;pointer-events:auto}@media(hover:none){.bath-card-add{position:relative;bottom:auto;left:auto;right:auto;width:100%;opacity:1;visibility:visible;pointer-events:auto;margin-top:10px}.bath-photo-tile .bath-photo-hover{padding-bottom:22px}}';
+      document.head.append(style);
+      updateCartCount();return;
+    }
+
+    // Kitchen packages mirror Bathroom's four-photo chooser; custom keeps every original work option.
+    if((id==='kitchen-pantry'||id==='kitchen-remodel') && new URLSearchParams(location.search).get('kitchenMode')!=='individual'){
+      const packages=[
+        {id:'basic',name:'Basic Refresh',intro:'Refresh the existing kitchen while keeping the current layout.',work:['Paint existing kitchen walls','Update cabinet handles or knobs','Recaulk the sink and backsplash where needed','Minor finish and trim touch-ups']},
+        {id:'standard',name:'Standard Upgrade',intro:'Give the kitchen a coordinated update without a full layout change.',work:['Paint existing kitchen walls and visible trim','Refresh existing cabinets and cabinet hardware','Update the backsplash','Replace the existing kitchen faucet using existing connections','Update selected existing lighting fixtures']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'Plan a comprehensive kitchen transformation with coordinated materials and labor.',work:['Remove and replace or extensively update kitchen cabinets','Install selected countertops and backsplash','Install a kitchen sink and faucet using compatible connections','Update selected existing light fixtures','Complete wall painting, trim and finishing touches']},
+        {id:'custom',name:'Custom',intro:'Choose individual kitchen tasks and combine as many as needed.',work:['Choose individual kitchen work','Select materials and finishes','Build a custom kitchen project estimate']}
+      ];
+      const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('kitchenPackage'))||null;
+      const original='/project.html?project=kitchen-pantry&kitchenMode=individual';
+      const photos=['/assets/kitchen.jpg','/assets/approved-9bfcb89f7800.jpg','/assets/approved-739d17fd2952.jpg','/assets/approved-0ab244a922c8.jpg'];
+      const nav=packages.map((p,index)=>'<a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=kitchen-pantry&kitchenPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' kitchen project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>').join('');
+      const work=selected?selected.work.map(w=>'<li>'+w+'</li>').join(''):'';
+      document.body.innerHTML=header()+
+        '<main><section class="section bath-project-chooser"><div class="wrap">'+
+        '<a class="project-back" href="'+(selected?'/project.html?project=kitchen-pantry':'/#projects')+'">'+(selected?'← All Kitchen Packages':'← All Projects')+'</a>'+
+        '<h1>Kitchen Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<nav class="bath-photo-grid" aria-label="Choose a kitchen project">'+nav+'</nav>'+
+        '<div class="bath-custom-callout"><p><strong>Not sure which package is right for you?</strong> Choose Custom and build your own kitchen project.</p><a class="btn outline" href="'+original+'">Explore Custom Options</a></div>'+
+        (selected?'<article id="bath-package-detail" class="bath-package-detail" tabindex="-1"><h2>'+selected.name+'</h2><p>'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
+        (selected.discount?'<p class="calc-note"><strong>Package labor savings:</strong> '+selected.discount+'% off included labor. Package estimates include labor, materials, and needed supplies.</p>':'')+
+        '<p class="calc-note"><strong>Complete project package:</strong> Labor, materials, and needed supplies are included in the project estimate. Final total is determined after the scope and selections are confirmed.</p>'+
+        '<a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I am interested in the '+selected.name+' kitchen project package. Please help me plan it.')+'">Request Package Estimate</a></article>':'')+
+        '</div></section></main>'+footer();
+      const style=document.createElement('style');
+      style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.bath-photo-card{height:380px;position:relative;display:block;border-radius:12px;overflow:hidden;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .2s ease}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-card:hover img,.bath-photo-card:focus-visible img{transform:scale(1.04)}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 29px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-package-detail{margin-top:32px;padding:26px;border:1px solid #dfe5ea;border-radius:12px}.bath-package-detail h2{font:700 30px Georgia,serif;margin:0 0 12px}.bath-package-detail li{margin:8px 0}.bath-package-detail .btn{margin:12px 8px 0 0}@media(max-width:1000px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
+      style.textContent+='.bath-custom-callout{margin:26px 0 0;padding:22px 24px;border:1px solid #dfe5ea;border-radius:12px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#f7fafc}.bath-custom-callout p{margin:0;flex:1 1 280px;line-height:1.5}.bath-custom-callout .btn{white-space:nowrap}@media(max-width:560px){.bath-custom-callout{padding:18px}.bath-custom-callout .btn{width:100%;text-align:center}}';
+      style.textContent+='.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:22px;color:#fff;background:rgba(5,31,55,.92);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:19px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}@media(hover:none){.bath-photo-hover{display:none}}.bath-package-detail{margin-top:12px}.bath-package-detail ul{padding-left:22px}';
+      document.head.append(style);
+      updateCartCount();return;
+    }
+
+    const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;
+    document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>Choose the work you want done. We'll ask for measurements only when that item needs them.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Where is the work?</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><select id="scope-room" required><option value="">Select one</option><option>Bathroom</option><option>Bedroom</option><option>Closet / Storage</option><option>Dining Room</option><option>Entry / Mudroom</option><option>Hallway</option><option>Home Office</option><option>Kitchen</option><option>Laundry / Utility</option><option>Living / Family Room</option><option>Outdoor Area</option><option>Other Room / Area</option></select></div><div class="field"><label for="scope-location">Location</label><select id="scope-location" required><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" value="0"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
+    if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
+    if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
+    if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
+    if(id==='entry-mudroom'||id==='entryways'){
+      const section=document.querySelector('.project-section-title');
+      section?.insertAdjacentHTML('beforebegin','<p class="calc-note"><a class="btn outline" href="/other.html?category=Doorbells">Shop Doorbells</a> — wireless and video doorbells for the entryway.</p>');
+    }
+    // Kitchens holds cabinet planning plus a route to the actual cabinet catalog.
+    if(id==='kitchen-pantry' || id==='kitchen-remodel'){
+      const title=document.querySelector('.project-section-title');
+      if(title){
+        const shopCabinets=document.createElement('a');
+        shopCabinets.href='/cabinets.html';
+        shopCabinets.className='btn outline';
+        shopCabinets.textContent='Shop Cabinets';
+        shopCabinets.style.cssText='display:inline-flex;margin:0 0 18px';
+        title.after(shopCabinets);
+      }
+    }
+    const selectedRoom=document.getElementById('scope-room');
+    const roomNames={'bathrooms':'Bathroom','bath-remodel':'Bathroom','bedroom-guest-room':'Bedroom','kids-room':"Kids' Room",'kitchen-pantry':'Kitchen','kitchen-remodel':'Kitchen','closets-storage':'Closet / Storage','dining-room':'Dining Room','entry-mudroom':'Entry / Mudroom','home-office':'Home Office','home-theater':'Home Theater','music-creative-studio':'Music / Creative Studio','entryways':'Entry / Mudroom','laundry-utility':'Laundry / Utility','living-family-room':'Living / Family Room'};
+    const chosenRoom=roomNames[id]||(project.exterior?'Outdoor Area':project.title);
+    if(chosenRoom){
+      if(![...selectedRoom.options].some(option=>option.value===chosenRoom))selectedRoom.add(new Option(chosenRoom,chosenRoom));
+      selectedRoom.value=chosenRoom;
+      selectedRoom.closest('.field').style.display='none';
+    }
+    const fixedLocation=project.exterior||['attic','basement','garage','bathrooms','bath-remodel','bedroom-guest-room','kids-room','closets-storage','dining-room','entry-mudroom','home-office','kitchen-pantry','kitchen-remodel','laundry-utility','living-family-room','music-creative-studio','pet-room','mechanic-shop','vault-safe-room','snack-beverage','fitness-wellness','games-hobbies','wallpaper'].includes(id);
+    const locationFromLink=new URLSearchParams(location.search).get('location');
+    document.getElementById('scope-location').value=fixedLocation?(project.exterior?'exterior':'interior'):(['interior','exterior'].includes(locationFromLink)?locationFromLink:'');
+    if(fixedLocation)document.getElementById('scope-location').closest('.field').hidden=true;
+    const measurementPanel=document.querySelector('.project-measurement-start');
+    // Ask for dimensions in the selected work calculator, not for the whole room.
+    // Keep empty inputs for the existing handoff without sending unrelated sizes.
+    ['length','width','height'].forEach(key=>{
+      const input=document.getElementById('scope-'+key);
+      input.value='';input.closest('.field').hidden=true;
+    });
+    const workTitle=document.querySelector('.project-section-title');
+    const workGrid=document.getElementById('project-work-grid');
+    const workNote=workGrid.nextElementSibling;
+    const cartLink=workNote.nextElementSibling;
+    cartLink.remove();
+    workNote.textContent='Choose a section to continue.';
+    const steps=document.createElement('nav');steps.setAttribute('aria-label','Project steps');
+    steps.style.cssText='display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px';
+    measurementPanel.before(steps);
+    const next=document.createElement('button');next.type='button';next.className='btn primary';next.textContent='Next';measurementPanel.append(next);
+    const back=document.createElement('button');back.type='button';back.className='btn outline';back.textContent='Back';workNote.after(back);
+    const stepButtons=[];
+    const setStep=step=>{if(step===1&&!document.getElementById('scope-location').value){document.getElementById('scope-location').reportValidity();return;}if(step===1)filterLocationMaterials();measurementPanel.hidden=step!==0;workTitle.hidden=workGrid.hidden=workNote.hidden=step!==1;back.hidden=false;stepButtons.forEach((button,index)=>{button.className='btn '+(index===step?'primary':'outline');if(index===step)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});};
+    ['Location','Choose Work','Review Cart'].forEach((label,index)=>{const button=document.createElement('button');button.type='button';button.textContent=label;button.className='btn outline';button.onclick=()=>{if(index===2){location.href='/project-cart.html';return;}setStep(index);};steps.append(button);stepButtons.push(button);});
+    next.onclick=()=>{if(!document.getElementById('scope-room').value.trim()){document.getElementById('scope-room').focus();return;}setStep(1)};
+    back.onclick=()=>{if(workGrid.hidden){if(history.length>1)history.back();else location.href='/#projects';}else setStep(0);};
+    if(!fixedLocation){
+      // Choosing indoor or outdoor work is the only required first step.
+      // Make the options visual instead of making customers open an empty select.
+      const choices=document.createElement('div');choices.className='project-location-photo-choices';
+      for(const option of [
+        {value:'interior',label:id==='accessibility'?'Indoor Accessibility':'Interior Work',photo:id==='accessibility'?'/assets/idea-accessibility.jpg':'/assets/approved-9bfcb89f7800.jpg'},
+        {value:'exterior',label:id==='accessibility'?'Outdoor Accessibility':'Exterior Work',photo:id==='accessibility'?'/assets/entryways-card.jpg':'/assets/approved-a11ab0fcd37f.jpg'}
+      ]){
+        const button=document.createElement('button');button.type='button';button.className='project-location-photo';
+        const image=document.createElement('img');image.src=option.photo;image.alt='';image.loading='lazy';
+        const label=document.createElement('strong');label.textContent=option.label;
+        button.append(image,label);
+        button.onclick=()=>{
+          const field=document.getElementById('scope-location');field.value=option.value;
+          field.dispatchEvent(new Event('input',{bubbles:true}));
+          setStep(1);
+        };
+        choices.append(button);
+      }
+      const selector=document.getElementById('scope-location').closest('.field');
+      selector.hidden=true;
+      next.hidden=true;
+      measurementPanel.append(choices);
+      const locationStyles=document.createElement('style');
+      locationStyles.textContent='.project-location-photo-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:14px 0}.project-location-photo{border:2px solid #d4dee6;border-radius:12px;padding:0;overflow:hidden;background:#fff;color:#204968;cursor:pointer;box-shadow:0 4px 15px #152a3c1c;text-align:left}.project-location-photo img{width:100%;height:205px;object-fit:cover;display:block}.project-location-photo strong{display:block;padding:14px 18px;font-size:18px}.project-location-photo:hover,.project-location-photo:focus-visible{border-color:#165a9c}@media(max-width:580px){.project-location-photo-choices{grid-template-columns:1fr}.project-location-photo img{height:160px}}';
+      document.head.append(locationStyles);
+    }
+    setStep(0);
+    const grid=document.getElementById('project-work-grid');
+    // Concrete finish choices are available in every room; the calculator checks the substrate.
+    if(id==='attic')options.floor.materials=[...new Set([...atticFloorMaterials,...options.floor.materials.filter(name=>!/padding|underlayment/i.test(name))])];
+    if(id==='bathrooms'||id==='bath-remodel'){
+      const shortcuts=document.createElement('nav');
+      shortcuts.className='project-product-links';
+      shortcuts.setAttribute('aria-label','Bathroom installation and labor');
+      shortcuts.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px';
+      for(const [label,href] of [
+        ['Bathroom Installation & Labor','/installation.html#labor-category-bathroom'],
+        ['Heated Towel Rack Installation','/installation.html?service=heated-towel-rack#labor-category-electrical']
+      ]){
+        const link=document.createElement('a');link.className='btn outline';link.href=href;link.textContent=label;shortcuts.append(link);
+      }
+      grid.before(shortcuts);
+    }
+    // Use existing approved job photographs on every work choice, retaining
+    // the accordion controls for material selection and calculator handoff.
+    grid.classList.add('project-work-pictures');
+    const pictureStyle=document.createElement('style');
+    pictureStyle.textContent=`#project-work-grid.project-work-pictures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}#project-work-grid .project-work-card{margin:0;padding:0;overflow:hidden;border-radius:12px;box-shadow:0 5px 18px #20304022}#project-work-grid .project-work-card>summary{display:block;cursor:pointer;list-style:none;padding:0;background:#fff}#project-work-grid .project-work-card>summary::-webkit-details-marker{display:none}#project-work-grid .project-work-card>summary img{display:block;width:100%;height:170px;object-fit:cover}#project-work-grid .project-work-card>summary span{display:block;min-height:52px;padding:11px 14px;font-size:16px;font-weight:800;color:#193e5b}#project-work-grid .project-work-card[open]>summary span{background:#edf5fc}#project-work-grid .project-work-card>:not(summary){margin:10px 14px}#project-work-grid .project-work-card>label{display:block;padding:5px 0}#project-work-grid .project-work-card .service-dropdown{margin-bottom:8px}@media(max-width:900px){#project-work-grid.project-work-pictures{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){#project-work-grid.project-work-pictures{grid-template-columns:1fr}#project-work-grid .project-work-card>summary img{height:185px}}`;
+    document.head.append(pictureStyle);
+    const workPhotoChoices={
+      ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      walls:['/assets/accent-walls-card.jpg'],
+      floor:['/assets/flooring-card.jpg'],
+      doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['/assets/approved-e9fee5a04016.jpg'],
+      doors:['/assets/entryways-card.jpg'],
+      lighting:['/assets/lighting-card.jpg'],
+      'vanity-light':['/assets/pendant-lighting.jpg'],
+      toilet:['/assets/approved-a908c20ce632.jpg'],
+      tub:['/assets/tile-shower.jpg'],
+      shower:['/assets/showers-card.png'],
+      // A tiled shower with visible controls, never a laundry machine.
+      'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      vanity:['/assets/approved-9bfcb89f7800.jpg'],
+      backsplash:['/assets/approved-0ab244a922c8.jpg'],
+      cabinets:['/assets/kitchen.jpg'],
+      refinish:['/assets/approved-739d17fd2952.jpg'],
+      drywall:['/assets/catalog-8.jpg'],
+      framing:['/assets/arches-columns.jpg'],
+      fireplace:['/assets/fireplace-card.jpg'],
+      'fireplace-outdoor':['/assets/idea-backyard-retreat.jpg'],
+      stairs:['/assets/stairs-card.jpg'],
+      plumbing:['/assets/approved-493d744bf5f7.jpg'],
+      storage:['/assets/approved-8a9d216224b8.jpg'],
+      furniture:['/assets/approved-4822ff53e23f.jpg'],
+      ventilation:['/assets/catalog-9.jpg'],
+      appliances:['/assets/approved-26657e8bc7bd.jpg'],
+      prep:['/assets/approved-b5c632fcfbc0.jpg'],
+      concrete:['/assets/patio-concrete.webp'],
+      decking:['/assets/approved-4de99f88049f.jpg'],
+      exterior:['/assets/approved-a11ab0fcd37f.jpg'],
+      wallpaper:['/assets/wallpaper-card.jpg'],
+      murals:['/assets/murals-card.jpg'],
+      'outdoor-accent':['/assets/project-stone-real.jpg'],
+      'outdoor-tile':['/assets/approved-de82473d9ce3.jpg'],
+      'outdoor-lighting':['/assets/idea-outdoor-sound.jpg'],
+      'access-interior':['/assets/idea-accessibility.jpg'],
+      'access-exterior':['/assets/idea-bus-stop.jpg'],
+      'access-bath':['/assets/showers-card.png'],
+      'access-grab-bars':['/assets/idea-accessibility.jpg'],
+      'access-indoor-rails':['/assets/stairs-card.jpg'],
+      'access-doorways':['/assets/entryways-card.jpg'],
+      'access-thresholds':['/assets/approved-4de99f88049f.jpg'],
+      'access-controls':['/assets/lighting-card.jpg'],
+      'access-ramps':['/assets/idea-accessibility.jpg'],
+      'access-outdoor-rails':['/assets/approved-94fe00a25a93.jpg'],
+      'access-walkways':['/assets/patio-concrete.webp'],
+      'access-entry':['/assets/entryways-card.jpg'],
+      'access-other':['/assets/custom-projects-card.jpg'],
+      'exterior-doors':['/assets/entryways-card.jpg'],
+      'exterior-trim':['/assets/approved-4de99f88049f.jpg'],
+      'exterior-framing':['/assets/arches-columns.jpg'],
+      'deck-frame':['/assets/approved-a11ab0fcd37f.jpg'],
+      'deck-stairs':['/assets/stairs-card.jpg'],
+      'deck-rails':['/assets/approved-94fe00a25a93.jpg']
+    };
+    const specialtyProjectPhotos={"pet-room":["/assets/idea-pet-room.jpg","/assets/tile-shower.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/approved-0af816f48fb0.jpg","/assets/kids-room.jpg"],"outdoor-kitchen":["/assets/idea-outdoor-kitchen.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/approved-b9cdb9084877.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg"],"mechanic-shop":["/assets/idea-mechanic-shop.jpg","/assets/idea-car-wash.jpg","/assets/flooring-card.jpg","/assets/approved-d2807423c8f0.jpg","/assets/lighting-card.jpg","/assets/approved-8a9d216224b8.jpg"],"car-wash":["/assets/idea-car-wash.jpg","/assets/patio-concrete.webp","/assets/approved-b9cdb9084877.jpg","/assets/idea-mechanic-shop.jpg","/assets/approved-4de99f88049f.jpg"],"recycling-scrap":["/assets/idea-recycling-scrap.jpg","/assets/concrete-card.jpg","/assets/idea-garden-greenhouse.jpg","/assets/approved-b5c632fcfbc0.jpg"],"vault-safe-room":["/assets/idea-vault-safe-room.jpg","/assets/entryways-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/lighting-card.jpg","/assets/approved-739d17fd2952.jpg"],"snack-beverage":["/assets/idea-snack-beverage.jpg","/assets/approved-b9cdb9084877.jpg","/assets/kitchen.jpg","/assets/approved-9bfcb89f7800.jpg","/assets/lighting-card.jpg","/assets/approved-a051ee7e1935.jpg","/assets/approved-807c60a6001a.jpg"],"pools":["/assets/idea-pools.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/stairs-card.jpg","/assets/idea-backyard-retreat.jpg","/assets/patio-concrete.webp"],"bus-stop":["/assets/idea-bus-stop.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/lighting-card.jpg","/assets/approved-a11ab0fcd37f.jpg"],"mailboxes":["/assets/idea-mailboxes.jpg","/assets/entryways-card.jpg","/assets/approved-4de99f88049f.jpg","/assets/approved-b5c632fcfbc0.jpg"],"garden-greenhouse":["/assets/idea-garden-greenhouse.jpg","/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/patio-concrete.webp","/assets/approved-b5c632fcfbc0.jpg"],"fitness-wellness":["/assets/idea-fitness-wellness.jpg","/assets/flooring-card.jpg","/assets/approved-8a9d216224b8.jpg","/assets/office.jpg"],"games-hobbies":["/assets/idea-games-hobbies.jpg","/assets/office.jpg","/assets/approved-6075be404407.jpg","/assets/approved-17df84119d39.jpg"],"outdoor-sound":["/assets/idea-outdoor-sound.jpg","/assets/cinema.jpg","/assets/lighting-card.jpg","/assets/idea-backyard-retreat.jpg"],"backyard-retreat":["/assets/idea-backyard-retreat.jpg","/assets/approved-a11ab0fcd37f.jpg","/assets/entryways-card.jpg","/assets/lighting-card.jpg","/assets/patio-concrete.webp"]};
+    const specificWorkPhotos={"pet-floor":"/assets/flooring-card.jpg","pet-wash":"/assets/tile-shower.jpg","pet-storage":"/assets/approved-8a9d216224b8.jpg","pet-walls":"/assets/approved-0af816f48fb0.jpg","outdoor-counters":"/assets/approved-9bfcb89f7800.jpg","outdoor-sink":"/assets/approved-b9cdb9084877.jpg","outdoor-storage":"/assets/approved-4de99f88049f.jpg","outdoor-kitchen-power":"/assets/lighting-card.jpg","shop-floor":"/assets/flooring-card.jpg","shop-storage":"/assets/approved-d2807423c8f0.jpg","shop-utilities":"/assets/lighting-card.jpg","wash-floor":"/assets/patio-concrete.webp","wash-water":"/assets/approved-b9cdb9084877.jpg","wash-storage":"/assets/idea-mechanic-shop.jpg","scrap-platform":"/assets/concrete-card.jpg","scrap-cover":"/assets/idea-recycling-scrap.jpg","vault-door":"/assets/entryways-card.jpg","vault-storage":"/assets/approved-8a9d216224b8.jpg","vault-services":"/assets/lighting-card.jpg","snack-counters":"/assets/kitchen.jpg","snack-storage":"/assets/approved-9bfcb89f7800.jpg","snack-sink":"/assets/approved-b9cdb9084877.jpg","snack-light":"/assets/pendant-lighting.jpg","pool-deck":"/assets/approved-a11ab0fcd37f.jpg","pool-access":"/assets/stairs-card.jpg","pool-storage":"/assets/idea-pools.jpg","waiting-access":"/assets/patio-concrete.webp","waiting-shelter":"/assets/idea-bus-stop.jpg","waiting-light":"/assets/lighting-card.jpg","mailbox-base":"/assets/idea-mailboxes.jpg","mailbox-parcels":"/assets/idea-mailboxes.jpg","garden-beds":"/assets/idea-garden-greenhouse.jpg","garden-shelter":"/assets/idea-backyard-retreat.jpg","garden-water":"/assets/approved-a11ab0fcd37f.jpg","fit-floor":"/assets/flooring-card.jpg","fit-mirror":"/assets/idea-fitness-wellness.jpg","hobby-work":"/assets/office.jpg","hobby-display":"/assets/approved-6075be404407.jpg","sound-install":"/assets/idea-outdoor-sound.jpg","sound-power":"/assets/lighting-card.jpg","retreat-surface":"/assets/patio-concrete.webp","retreat-privacy":"/assets/idea-backyard-retreat.jpg","retreat-light":"/assets/lighting-card.jpg"};
+    // Match each picture to the actual task. Approved local photographs take priority;
+    // use a task-specific licensed stock photo only when our own photos do not cover it.
+    const bathroomWorkPhotos={
+      ceiling:['https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      walls:['/assets/wallpaper-card.jpg'],
+      floor:['/assets/flooring-card.jpg'],
+      doors:['https://images.pexels.com/photos/5178093/pexels-photo-5178093.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      trim:['https://images.pexels.com/photos/5178067/pexels-photo-5178067.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
+      shower:['/assets/showers-card.png'],
+      toilet:['/assets/approved-a908c20ce632.jpg'],
+      vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
+      'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
+      refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
+      lighting:['/assets/lighting-card.jpg'],
+      ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
+      accents:['/assets/accent-walls-card.jpg'],
+      prep:['/assets/approved-b5c632fcfbc0.jpg'],
+      'bath-shower-valve':['https://images.pexels.com/photos/11208973/pexels-photo-11208973.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      'faucet-service':['https://images.pexels.com/photos/6920608/pexels-photo-6920608.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      other:['/assets/custom-projects-card.jpg']
+    };
+    // Broken external photographs must never leave blank tiles. Draw a matching,
+    // labeled illustration instead of borrowing an unrelated room's photograph.
+    const bathroomPhotoFallback=key=>{
+      const title=String(options[key]?.title||key);
+      const scene={
+        doors:'<rect x="230" y="55" width="260" height="294" fill="#f8fafb" stroke="#567789" stroke-width="15"/><rect x="253" y="77" width="214" height="250" fill="#adc4d0"/><circle cx="438" cy="206" r="10" fill="#bb874a"/>',
+        trim:'<rect x="112" y="70" width="495" height="268" fill="#fff" stroke="#657f90" stroke-width="18"/><path d="M145 305h425M145 280h425" stroke="#c1a07e" stroke-width="12"/>',
+        'bath-shower-valve':'<rect x="0" y="0" width="720" height="365" fill="#c9dce3"/><path d="M0 75h720M0 155h720M0 235h720M0 315h720M120 0v365M240 0v365M360 0v365M480 0v365M600 0v365" stroke="#ecf4f7" stroke-width="5"/><circle cx="360" cy="183" r="93" fill="#edf2f4" stroke="#728997" stroke-width="14"/><circle cx="360" cy="183" r="39" fill="#8ca3b1"/><path d="M360 183l65 58" stroke="#415968" stroke-width="22" stroke-linecap="round"/>',
+        'faucet-service':'<rect x="160" y="230" width="400" height="100" rx="44" fill="#f9fcfd" stroke="#7d9cac" stroke-width="12"/><path d="M350 225v-83q0-38 48-38h75v35h-62q-23 0-23 26v62" fill="none" stroke="#5c7887" stroke-width="20"/>',
+        ventilation:'<circle cx="360" cy="181" r="130" fill="#fff" stroke="#607e90" stroke-width="12"/><circle cx="360" cy="181" r="42" fill="#607e90"/><path d="M360 139q-100-70-115 4 10 50 75 39M400 181q100-65 43-111-55-23-78 61M340 211q-10 135 58 108 43-25 6-82" fill="#9fbbc9"/>',
+        mirror:'<rect x="230" y="44" width="260" height="290" rx="125" fill="#d9eff5" stroke="#a98762" stroke-width="17"/><path d="M250 165l120-105M260 230L455 65" stroke="#fff" stroke-width="13" opacity=".7"/>',
+        toilet:'<rect x="240" y="54" width="245" height="142" rx="24" fill="#fff" stroke="#7290a0" stroke-width="12"/><ellipse cx="360" cy="232" rx="110" ry="64" fill="#f8fcfd" stroke="#7290a0" stroke-width="13"/><path d="M277 246q10 84 83 84h47q55 0 45-79" fill="#f8fcfd" stroke="#7290a0" stroke-width="11"/>',
+        shower:'<path d="M280 110v-45h155v45M435 110q100 0 100 80" stroke="#587786" fill="none" stroke-width="22"/><path d="M390 190h190" stroke="#658a9c" stroke-width="22"/><path d="M420 220v80M470 220v80M520 220v80" stroke="#74aac0" stroke-width="10" stroke-dasharray="8 14"/>',
+        tub:'<path d="M143 165h430v70q-12 95-92 95H232q-75 0-89-95z" fill="#f9fcfc" stroke="#6c8a9c" stroke-width="14"/><path d="M490 165v-64q0-27 30-27h45" fill="none" stroke="#7896a7" stroke-width="18"/>',
+        vanity:'<rect x="165" y="145" width="390" height="200" rx="12" fill="#96adbc" stroke="#506d7d" stroke-width="12"/><rect x="185" y="165" width="170" height="162" fill="#d9e4ea"/><rect x="370" y="165" width="165" height="162" fill="#d9e4ea"/><ellipse cx="360" cy="130" rx="150" ry="36" fill="#fff" stroke="#7d99a8" stroke-width="9"/><path d="M353 130v-55h48" fill="none" stroke="#617e8e" stroke-width="13"/>',
+        lighting:'<path d="M360 35v125" stroke="#617d8b" stroke-width="12"/><path d="M230 160h260l-45 100H275z" fill="#ffe8a8" stroke="#9d8959" stroke-width="12"/>',
+        'vanity-light':'<path d="M250 130h230" stroke="#627d8d" stroke-width="18"/><circle cx="270" cy="190" r="48" fill="#fff1ba" stroke="#b7a06b" stroke-width="8"/><circle cx="450" cy="190" r="48" fill="#fff1ba" stroke="#b7a06b" stroke-width="8"/>',
+        floor:'<path d="M0 285l720-130M0 230l720-130M150 365l100-365M410 365l100-365M600 365l100-365" stroke="#6f8b9c" stroke-width="9"/>',
+        walls:'<rect x="160" y="68" width="400" height="290" fill="#c6d7dc" stroke="#7c99a6" stroke-width="15"/><path d="M170 210h380" stroke="#f0f7f9" stroke-width="10"/>',
+        ceiling:'<path d="M110 190l250-120 250 120-250 120z" fill="#e9f3f5" stroke="#7e9fae" stroke-width="14"/>',
+        refinish:'<path d="M200 250l205-115 30 45-205 115z" fill="#9ab4c3" stroke="#527487" stroke-width="12"/><path d="M430 160l110-58" stroke="#a88256" stroke-width="25"/>',
+        accents:'<rect x="140" y="60" width="440" height="280" fill="#a4bac2" stroke="#577789" stroke-width="12"/><path d="M235 60v280M330 60v280M425 60v280" stroke="#f1ebe1" stroke-width="10"/>',
+        prep:'<path d="M220 260l240-135" stroke="#a47d50" stroke-width="28"/><rect x="400" y="85" width="100" height="85" rx="10" fill="#7c9daa"/><path d="M120 310h480" stroke="#7694a1" stroke-width="14"/>',
+        other:'<path d="M260 85h200v230H260z" fill="#cadce3" stroke="#5e7e8e" stroke-width="15"/><path d="M320 145h80M360 105v180" stroke="#fff" stroke-width="15"/>'
+      }[key]||'<rect x="215" y="60" width="290" height="270" rx="20" fill="#d7e7ed" stroke="#668797" stroke-width="15"/>';
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460"><rect width="720" height="460" fill="#e4edf1"/>'+scene+'<rect y="365" width="720" height="95" fill="#f7fafb"/><text x="360" y="423" font-family="Arial,sans-serif" font-size="29" font-weight="700" text-anchor="middle" fill="#244b60">'+title.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</text></svg>';
+      return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+    };
+        // More cards can share a subject, but must never display the very same picture.
+    // Reserve the hero and any indoor/outdoor selector photos before drawing work cards.
+    const usedWorkPhotos=new Set([project.image]);
+    document.querySelectorAll('.project-location-photo img').forEach(img=>usedWorkPhotos.add(img.getAttribute('src')));
+    const stockByWork={
+      accents:['https://images.pexels.com/photos/6934226/pexels-photo-6934226.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      refinish:['https://images.pexels.com/photos/36777600/pexels-photo-36777600.jpeg?auto=compress&cs=tinysrgb&w=900'],
+      ceiling:['https://images.unsplash.com/photo-1693907646286-8c6c030f36bf?auto=format&fit=crop&w=900&q=80'],
+      vanity:['https://images.unsplash.com/photo-1770987685744-630d3c2494bd?auto=format&fit=crop&w=900&q=82'],
+      'vanity-light':['https://images.unsplash.com/photo-1763485956232-45c74e1e8610?auto=format&fit=crop&w=900&q=82'],
+      mirror:['https://images.unsplash.com/photo-1685084844860-5d94e6c82939?auto=format&fit=crop&w=900&q=82'],
+      ventilation:['https://images.unsplash.com/photo-1572081790780-1a7739896259?auto=format&fit=crop&w=900&q=82'],
+      tub:['https://images.unsplash.com/photo-1773177930136-afe2bac0090a?auto=format&fit=crop&w=900&q=82'],
+      'faucet-service':['https://images.unsplash.com/photo-1761353854551-361b1c804849?auto=format&fit=crop&w=900&q=82']
+    };
+    const isBathroom=id==='bathrooms'||id==='bath-remodel';
+    // The kids' room must show child-appropriate spaces, not generic adult furniture.
+    // Use approved local photography first when it fits; otherwise use distinct kids-room interiors.
+    const kidsWorkPhotos={
+      ceiling:'https://images.pexels.com/photos/10854908/pexels-photo-10854908.jpeg?auto=compress&cs=tinysrgb&w=900',
+      doors:'https://images.pexels.com/photos/7045947/pexels-photo-7045947.jpeg?auto=compress&cs=tinysrgb&w=900',
+      floor:'https://images.pexels.com/photos/5008397/pexels-photo-5008397.jpeg?auto=compress&cs=tinysrgb&w=900',
+      furniture:'https://images.pexels.com/photos/7045846/pexels-photo-7045846.jpeg?auto=compress&cs=tinysrgb&w=900',
+      lighting:'https://images.pexels.com/photos/7166642/pexels-photo-7166642.jpeg?auto=compress&cs=tinysrgb&w=900',
+      storage:'https://images.pexels.com/photos/7028062/pexels-photo-7028062.jpeg?auto=compress&cs=tinysrgb&w=900',
+      trim:'https://images.pexels.com/photos/7045857/pexels-photo-7045857.jpeg?auto=compress&cs=tinysrgb&w=900',
+      walls:'https://images.pexels.com/photos/3615726/pexels-photo-3615726.jpeg?auto=compress&cs=tinysrgb&w=900',
+      other:'https://images.pexels.com/photos/6693324/pexels-photo-6693324.jpeg?auto=compress&cs=tinysrgb&w=900'
+    };
+    const workPhoto=key=>{
+      const ownPhotos=id==='kids-room'?(kidsWorkPhotos[key]?[kidsWorkPhotos[key]]:[]):[
+        ...(isBathroom?(bathroomWorkPhotos[key]||[]):[]),
+        ...(!isBathroom&&specificWorkPhotos[key]?[specificWorkPhotos[key]]:[]),
+        ...(!isBathroom?(workPhotoChoices[key]||[]):[]),
+        ...(!isBathroom?(stockByWork[key]||[]):[])
+      ];
+      const chosen=ownPhotos.find(url=>!usedWorkPhotos.has(url))
+        ||(id==='kids-room'||isBathroom?null:(
+          (specialtyProjectPhotos[id]||[]).find(url=>!usedWorkPhotos.has(url))
+          ||(PROJECT_CATALOG[id]?.image&&!usedWorkPhotos.has(PROJECT_CATALOG[id].image)?PROJECT_CATALOG[id].image:null)
+        ));
+      // Never repeat a photo, including the hero. If there is no suitable unique
+      // photograph for a specialty task, use a labeled task-specific illustration.
+      // This is preferable to a random kitchen, bathroom or repeated hero photo.
+      const photo=chosen||('data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460">'+
+        '<rect width="720" height="460" fill="#e7edf0"/>'+
+        '<rect x="112" y="76" width="496" height="308" rx="12" fill="#f7f9fa" stroke="#b3c3cb" stroke-width="5"/>'+
+        '<path d="M220 242h280M360 150v184" stroke="#aac0cb" stroke-width="9" stroke-linecap="round"/>'+
+        '<text x="360" y="402" font-size="27" font-family="Arial,sans-serif" fill="#25495b" text-anchor="middle">'+
+        String(options[key]?.title||key).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</text></svg>'
+      ));
+      usedWorkPhotos.add(photo);
+      return photo;
+    };
+    const draftKey='niks-project-options-'+id;
+    let draft={};try{draft=JSON.parse(localStorage.getItem(draftKey)||'{}')}catch{}
+
+
+    function filterLocationMaterials(){const location=document.getElementById('scope-location').value;const allowed=locationScopes[id]?.[location];if(allowed){grid.querySelectorAll('[data-work-key]').forEach(card=>{card.hidden=!allowed.includes(card.dataset.workKey);if(card.hidden){card.open=false;card.querySelectorAll('input[type="checkbox"]:checked').forEach(box=>{box.checked=false;});}});workTitle.textContent=location==='exterior'?'Choose Exterior Work':'Choose Interior Work';}grid.querySelectorAll('.room-supply-choice').forEach(label=>{const input=label.querySelector('input');if(!input)return;const mismatch=location==='interior'?/^Exterior (Paint|Stain|Primer|Finish)\b/i.test(input.value):location==='exterior'?/^Interior (Paint|Stain|Primer|Finish)\b/i.test(input.value):false;label.hidden=mismatch;if(mismatch)input.checked=false;});}
+    const saveDraft=()=>{const selected={},preparation={};grid.querySelectorAll('[data-work-key]').forEach(card=>{selected[card.dataset.workKey]=[...card.querySelectorAll(':scope > label input:checked')].map(x=>x.value);preparation[card.dataset.workKey]=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value)});try{localStorage.setItem(draftKey,JSON.stringify({preparation,locationChosen:!!document.getElementById('scope-location').value,room:document.getElementById('scope-room').value,selected,...Object.fromEntries(['scope-location','scope-length','scope-width','scope-height'].map(id=>[id,document.getElementById(id).value]))}))}catch{}};
+    ['scope-room','scope-location','scope-length','scope-width','scope-height'].forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
+    (scopes[id]||scopes.custom).forEach(key=>{
+      const item=options[key],card=document.createElement('details');card.className='panel project-work-card';card.dataset.workKey=key;card.open=!!draft.selected?.[key]?.length;
+      const heading=document.createElement('summary');
+      const headingImage=document.createElement('img');headingImage.src=workPhoto(key);headingImage.alt=item.title;headingImage.loading='lazy';if(isBathroom){const fallback=bathroomPhotoFallback(key);headingImage.addEventListener('error',()=>{if(headingImage.src!==fallback)headingImage.src=fallback;},{once:true});}
+      const headingLabel=document.createElement('span');headingLabel.textContent=id==='accents'&&key==='walls'?'Paint & Wall Repairs':item.title;
+      heading.append(headingImage,headingLabel);card.append(heading);
+      if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){
+        const styleKey=new URLSearchParams(location.search).get('toiletStyle');
+        const names={round:'Standard Round',elongated:'Elongated & Comfort Height',smart:'Smart Toilets',specialty:'Wall-Hung & Specialty'};
+        if(names[styleKey]){
+          const note=document.createElement('p');note.className='calc-note';
+          note.textContent='Preferred toilet style: '+names[styleKey]+'. Select the work below. Specific model, stock and product price must be confirmed.';
+          card.append(note);
+        }
+      }
+      // Route every Bathroom work section to the appropriate catalog. Verified
+      // retail listings show real product variants and prices; material pages
+      // are planning guides until specific supplier products are approved.
+      const bathroomProductLinks = {
+        ceiling: [
+          ['Browse Paint & Finishes', '/material-paint-finishes.html', false],
+          ['Browse Drywall Materials', '/material-drywall.html', false]
+        ],
+        walls: [
+          ['Browse Wall Paint & Finishes', '/material-paint-finishes.html', false],
+          ['Browse Wall Tile & Stone', '/material-tile-stone.html', false],
+          ['Browse Drywall Materials', '/material-drywall.html', false]
+        ],
+        floor: [
+          ['Browse Flooring Materials', '/material-flooring.html', false],
+          ['Browse Floor Tile & Stone', '/material-tile-stone.html', false]
+        ],
+        tub: [
+          ['Shop Bathtubs & See Prices', '/bathroom.html?type=bathtubs', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        shower: [
+          ['Shop Shower Enclosures', '/bathroom.html?type=showers', true],
+          ['Shop Shower Bases', '/bathroom.html?type=showerBases', true],
+          ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true],
+          ['Browse Shower Tile & Stone', '/material-tile-stone.html', false]
+        ],
+        'tub-shower': [
+          ['Shop Bathtubs', '/bathroom.html?type=bathtubs', true],
+          ['Shop Shower Enclosures', '/bathroom.html?type=showers', true],
+          ['Shop Shower Doors', '/bathroom.html?type=showerDoors', true]
+        ],
+        toilet: [
+          ['Explore Toilet Styles', '/bathroom.html?type=toilets', true]
+        ],
+        vanity: [
+          ['Shop Vanities & Sinks', '/bathroom.html?type=vanities', true],
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        'faucet-service': [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        'vanity-light': [
+          ['Shop Bathroom Lights', '/bathroom.html?type=lighting', true]
+        ],
+        mirror: [
+          ['Shop Mirrors & Accessories', '/bathroom.html?type=accessories', true]
+        ],
+        lighting: [
+          ['Shop Bathroom Lights', '/bathroom.html?type=lighting', true]
+        ],
+        ventilation: [
+          ['Shop Bathroom Ventilation & Fans', '/bathroom.html?type=ventilation', true]
+        ],
+        accents: [
+          ['Shop Mirrors & Accessories', '/bathroom.html?type=accessories', true],
+          ['Browse Trim Materials', '/material-trim-molding.html', false]
+        ],
+        refinish: [
+          ['Browse Refinishing Materials', '/material-paint-finishes.html', false]
+        ],
+        prep: [
+          ['Browse Drywall & Repair Materials', '/material-drywall.html', false],
+          ['Browse Paint & Prep Materials', '/material-paint-finishes.html', false]
+        ],
+        'bath-shower-valve': [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        plumbing: [
+          ['Shop Bathroom Faucets', '/bathroom.html?type=faucets', true]
+        ],
+        other: [
+          ['Browse Material Categories', '/materials.html', false],
+          ['Browse Bathroom Fixtures', '/bathroom.html', true]
+        ]
+      };
+      if((id==='bathrooms'||id==='bath-remodel')&&['other','accents'].includes(key)){
+        const link=document.createElement('a');
+        link.className='btn outline project-products-link';
+        link.href='/installation.html?service=heated-towel-rack#labor-category-electrical';
+        link.textContent='Heated Towel Rack — Installation & Labor';
+        card.append(link);
+      }
+      if(id==='bathrooms'||id==='bath-remodel'){
+        const related=bathroomProductLinks[key]||[];
+        if(related.length){
+          const box=document.createElement('div');
+          box.className='project-product-links';
+          box.setAttribute('aria-label','Find products for '+item.title);
+          const note=document.createElement('p');
+          note.className='calc-note';
+          note.textContent='Find the specific products for this work:';
+          box.append(note);
+          related.forEach(([label,href,verifiedCatalog])=>{
+            const link=document.createElement('a');
+            link.className='btn outline project-products-link';
+            if(href.startsWith('/bathroom.html')){
+              const destination=new URL(href,location.origin);
+              destination.searchParams.set('fromProject','1');
+              destination.searchParams.set('project',id);
+              destination.searchParams.set('work',key);
+              link.href=destination.pathname+destination.search;
+            }else link.href=href;
+            link.textContent=label;
+            box.append(link);
+          });
+          const isMaterials=related.some(row=>!row[2]);
+          if(isMaterials){
+            const disclaimer=document.createElement('small');
+            disclaimer.className='calc-note';
+            disclaimer.style.display='block';
+            disclaimer.textContent='Material pages help you choose types. Exact brands, stock and purchase prices must be confirmed before ordering.';
+            box.append(disclaimer);
+          }
+          card.append(box);
+        }
+      }
+
+      if(['furniture','office-furniture'].includes(key)){
+        const roomCategory=id==='kids-room'?'kids-room':id==='bedroom-guest-room'?'bedroom':id==='home-office'?'home-office':null;
+        if(roomCategory){
+          const products=document.createElement('div');card.append(products);
+          const load=()=>{if(!card.open||products.dataset.loaded)return;products.dataset.loaded='true';import('/store-cards.js').then(m=>m.renderRoomCards(products,roomCategory)).catch(()=>{products.innerHTML='<a href="/furniture.html?category='+roomCategory+'">Shop furniture →</a>';});};
+          card.addEventListener('toggle',load);load();
+        }
+      }
+      if(id==='accents'){const extras=document.createElement('fieldset');extras.className='finish-preparation';extras.innerHTML='<legend>Prep / Repairs</legend><label><input type="checkbox" value="Prep"> Prep</label><label><input type="checkbox" value="Repairs"> Repairs</label>';card.append(extras);extras.addEventListener('change',saveDraft);}
+      const selected=()=>[...card.querySelectorAll(':scope > label input[type="checkbox"]:checked')].map(x=>x.value);
+      if(key==='ceiling'){
+        const note=document.createElement('p');note.className='calc-note';
+        note.textContent='Choose any ceiling work you need. Pricing and supplies come later in the estimate.';
+        card.append(note);
+      }
+      const workGroupFor=name=>item.groups?.find(([,tasks])=>tasks.includes(name))?.[0]||null;
+      let lastWorkGroup='';
+      item.materials.forEach(name=>{
+        const group=workGroupFor(name);
+        if(group&&group!==lastWorkGroup){
+          lastWorkGroup=group;
+          const subheading=document.createElement('h3');subheading.className='ceiling-work-heading';
+          subheading.textContent=group;subheading.style.cssText='font-size:1rem;margin:18px 0 8px';
+          card.append(subheading);
+        }if(id==='accents'&&name==='Painting Prep')return;if(id==='accents'&&/primer|backer board/i.test(name)){const prepLabel=document.createElement('label');const prepInput=document.createElement('input');prepInput.type='checkbox';prepInput.value=name;prepLabel.append(prepInput,document.createTextNode(name==='Backer Board'?'Backer board, if needed':name));card.querySelector('.finish-preparation').append(prepLabel);return;}const label=document.createElement('label');label.className='room-supply-choice';const input=document.createElement('input');input.type='checkbox';input.value=name;input.checked=!!draft.selected?.[key]?.includes(name);input.addEventListener('change',saveDraft);label.append(input,document.createTextNode((id==='accents'||key==='walls')&&name==='Drywall Panels'?'Drywall':/^(Interior|Exterior) Paint$/.test(name)?'Paint':name));card.append(label)});
+      card.querySelectorAll('.finish-preparation input[type="checkbox"]').forEach(box=>{box.checked=!!draft.preparation?.[key]?.includes(box.value);box.addEventListener('change',saveDraft);});
+      if(['cabinets','refinish'].includes(key))card.insertAdjacentHTML('beforeend',cabinetOptionPicker(item.title));
+      const status=document.createElement('p');status.className='calc-note';status.setAttribute('role','status');
+      const plan=document.createElement('button');plan.type='button';plan.className='btn primary';plan.textContent=id==='accessibility'?'Plan Accessibility Work & Request Quote':(id==='bathrooms'||id==='bath-remodel')?'Estimate Work & Add to Cart':'Plan Work & Add to Cart';
+      plan.onclick=()=>{const area=document.getElementById('scope-room').value.trim();if(!area){status.textContent='Name the room or area first.';return;}if(item.materials.length&&!selected().length){status.textContent=key==='ceiling'?'Choose one or more ceiling tasks.':'Choose one or more materials.';return;}const chosenTasks=selected();
+        // Projects plan the entire job. A single ceiling-paint choice must
+        // enter the measured paint calculator, not the generic one-item picker.
+        const ceilingPaintOnly=key==='ceiling'&&chosenTasks.length===1&&chosenTasks[0]==='Paint ceiling';
+        const floorPaintOnly=key==='floor'&&chosenTasks.length===1&&chosenTasks[0]==='Concrete Floor Paint';
+        const projectMaterial=ceilingPaintOnly||floorPaintOnly?'paint':item.kind;
+        const chosenMaterials=ceilingPaintOnly?[document.getElementById('scope-location').value==='exterior'?'Exterior Paint':'Interior Paint']:chosenTasks;
+        const params=new URLSearchParams({project:id,work:key,workLabel:item.title,room:area,material:projectMaterial,materials:chosenMaterials.join('|'),projectMode:'complete',embedded:'1'});
+        // Each click from Projects starts only the newly selected job.
+        params.set('projectStart',Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9));
+        if(key==='ceiling')params.set('projectTasks',chosenTasks.join('|'));if((id==='bathrooms'||id==='bath-remodel')&&key==='toilet'){const preferred=new URLSearchParams(location.search).get('toiletStyle');if(['round','elongated','smart','specialty'].includes(preferred))params.set('toiletStyle',preferred);}for(const key of ['location','length','width','height']){const value=document.getElementById('scope-'+key).value;if(value)params.set(key,value);}const extra=[...card.querySelectorAll('.finish-preparation input:checked')].map(x=>x.value);if(extra.length)params.set('preparation',extra.join('|'));openProjectMeasurements('/calculators.html?'+params.toString());};
+      card.append(plan);
+      plan.addEventListener('click',()=>{localStorage.setItem('nr-project-dimensions',JSON.stringify({location:document.getElementById('scope-location').value,length:document.getElementById('scope-length').value,width:document.getElementById('scope-width').value,height:document.getElementById('scope-height').value}));});
+      status.textContent='Choose what you need. Sizes and options come next.';
+      card.append(status);grid.append(card);
+    });
+    // The Projects dropdown already captures work selections. Never ask for the same jobs twice.
+    if(fixedLocation){
+      stepButtons[0].hidden=true;setStep(1);
+      back.onclick=()=>{location.href=project.themedGroup?'/project.html?project=themed-rooms':(project.exterior||project.outdoorGroup)?'/project.html?project=concrete':'/#projects';};
+    }
+    const selectedWorks=new URLSearchParams(location.search).get('selectedWorks');
+    if(selectedWorks){
+      const cards=[...grid.querySelectorAll('.project-work-card')];
+      const available=new Set(cards.map(card=>card.dataset.workKey));
+      const chosen=new Set(selectedWorks.split(',').filter(key=>/^[a-z0-9-]{1,60}$/.test(key)&&available.has(key)));
+      if(chosen.size){
+        setStep(1);
+        grid.classList.add('project-work-filtered');
+        const titles=[];
+        cards.forEach(card=>{
+          const show=chosen.has(card.dataset.workKey)&&!card.hidden;
+          card.hidden=!show;
+          card.open=show;
+          if(show)titles.push(card.querySelector('summary span')?.textContent?.trim()||card.dataset.workKey);
+        });
+        workTitle.textContent=titles.length===1?'Choose '+titles[0]+' options':'Choose options for your selected work';
+        workNote.textContent='Pick the materials or services you need for each job below. No need to choose the same work again.';
+      }
+    }
+    const requestedWork=new URLSearchParams(location.search).get('work');
+    if(requestedWork&&locationScopes[id]&&!document.getElementById('scope-location').value){const places=locationScopes[id];const matches=['interior','exterior'].filter(place=>places[place].includes(requestedWork));if(matches.length===1){document.getElementById('scope-location').value=matches[0];filterLocationMaterials();}}
+    if(requestedWork&&/^[a-z0-9-]{1,60}$/.test(requestedWork)){
+      const target=grid.querySelector('[data-work-key="'+requestedWork+'"]');
+      if(target){
+        setStep(1);
+        target.open=true;
+        const note=document.createElement('p');
+        note.className='calc-note';
+        note.textContent='Your products remain in the Project Cart. Select installation or more work below.';
+        target.append(note);
+        requestAnimationFrame(()=>target.scrollIntoView({block:'center'}));
+      }
+    }
+    if(grid.classList.contains('project-work-filtered')){
+      const compact=document.createElement('style');
+      compact.textContent='#project-work-grid.project-work-filtered{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}#project-work-grid.project-work-filtered .project-work-card>summary img{height:76px;object-fit:cover}';
+      document.head.append(compact);
+    }
+    const style=document.createElement('style');style.textContent='.project-measurement-start{margin-bottom:26px}.project-measurement-grid{display:grid;grid-template-columns:2fr 1.3fr repeat(3,1fr);gap:12px}.project-measurement-grid input,.project-measurement-grid select{width:100%;box-sizing:border-box;padding:10px}.project-section-title{margin:26px 0 10px}.project-work-card summary{font-size:1.15rem;font-weight:700;cursor:pointer}.project-work-card[open] summary{margin-bottom:12px}.project-work-card .btn{margin:8px 6px 0 0}.project-work-card .room-supply-choice{align-items:center}.project-work-card input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}@media(max-width:700px){.project-measurement-grid{grid-template-columns:1fr 1fr}.project-measurement-grid .field:first-child{grid-column:1/-1}}';document.head.append(style);updateCartCount();bindCabinetOptionPickers();
+  };
+  window.openProjectMeasurements=url=>{
+    if(customUrl(url)){showCustomQuote();return;}
+    try{const dims=JSON.parse(localStorage.getItem('nr-project-dimensions')||'{}'),target=new URL(url,location.origin);for(const [key,value] of Object.entries(dims))if(value&&!target.searchParams.has(key))target.searchParams.set(key,value);url=target.pathname+target.search; }catch{}
+    let dialog=document.getElementById('project-measurements-dialog');
+    if(!dialog){dialog=document.createElement('section');dialog.id='project-measurements-dialog';dialog.className='wrap panel';dialog.innerHTML='<div class="material-calc-dialog-head"><strong>Project Options & Estimate</strong><button class="btn outline" type="button">Keep Adding Work</button><a class="btn primary" href="/project-cart.html">Review Cart / Request Quote</a></div><p role="status" id="project-measurements-status">Calculate your work, then add it to the cart.</p><iframe title="Project options and estimate" style="width:100%;height:900px;border:0"></iframe>';dialog.querySelector('button').onclick=()=>{dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});updateCartCount()};document.querySelector('main').append(dialog);}
+    dialog.hidden=false;dialog.querySelector('iframe').src=url;dialog.scrollIntoView({behavior:'smooth',block:'start'});
+
+  };
+  window.addEventListener('message',event=>{if(event.origin===location.origin&&event.data?.type==='project-calculator-back'){const dialog=document.getElementById('project-measurements-dialog');if(event.source!==dialog?.querySelector('iframe')?.contentWindow)return;dialog.hidden=true;document.getElementById('project-work-grid').scrollIntoView({behavior:'smooth'});return;}if(event.origin!==location.origin||event.data?.type!=='project-cart-saved')return;updateCartCount();const status=document.getElementById('project-measurements-status');if(status)status.textContent='Saved to your Project Cart. You can keep adding work to this room.';});
+  // Reuse the calculator's supply rules and coverage assumptions for this saved work.
+  window.projectSupplyChoices=item=>{
+    const group=estimateSupplyGroup(item),guide=SUPPLY_GUIDE[group];
+    let entries=guide?.items||[...new Set((item.products||[]).flatMap(p=>materialSupplyList(p.name)))].map(name=>[name,'Confirm compatibility and package coverage.']);
+    // Do not automatically order a second cushion when attached padding is
+    // present OR unknown. If the flooring lacks pad, only the product's own
+    // instructions can determine if an extra underlayment is appropriate.
+    if(group==='floating'){
+      if(item.answers?.padding!=='no')
+        entries=entries.filter(([name])=>!['Compatible underlayment','Underlayment seam tape'].includes(name));
+      // Plastic sheeting over wood can trap moisture. A concrete moisture
+      // barrier is separate from the LVP's attached cushion and is conditional
+      // on the flooring manufacturer's concrete installation requirements.
+      if(item.answers?.base==='wood')
+        entries=entries.filter(([name])=>name!=='Moisture or vapor barrier');
+    }
+    const primary=item.products?.find(p=>Number.isFinite(p.waste)&&Number.isFinite(p.area));
+    const measured=primary?{...item,measurements:{...item.measurements,coverage:Number((primary.area*(1+primary.waste/100)).toFixed(8))}}:item;
+    return entries.map(([name,note])=>{const estimate=group?supplyStartingQuantity(group,name,[measured]):null;return {name,note,quantity:estimate?.quantity??null,unit:estimate?.unit||'quantity / packaging to confirm',selected:false};});
+  };
+})();
+
++p.startingAt.toLocaleString('en-US')+'</div><button class="btn primary bath-card-add" type="button" data-bath-package="'+p.id+'">Add to Cart</button>':'')+'</div>').join('');
       document.body.innerHTML=header()+
         '<main><section class="section bath-project-chooser"><div class="wrap">'+
         '<a class="project-back" href="'+(selected?'/project.html?project=bathrooms':'/#projects')+'">'+(selected?'← All Bathroom Packages':'← All Projects')+'</a>'+
