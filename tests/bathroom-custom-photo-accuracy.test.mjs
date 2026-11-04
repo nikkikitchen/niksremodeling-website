@@ -28,5 +28,5 @@ test('missing bathroom images fall back to accurately labeled illustrations',()=
 
 test('Walls shows wallpaper and vanity faucet replacement shows a faucet',()=>{
   assert.match(photos,/walls:\['\/assets\/wallpaper-card\.jpg'\]/);
-  assert.match(photos,/'faucet-service':\['https:\/\/images\.pexels\.com\/photos\/3609956\//);
+  assert.match(photos,/'faucet-service':\['https:\/\/images\.pexels\.com\/photos\/6920608\//);
 });
