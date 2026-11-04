@@ -405,6 +405,35 @@
       updateCartCount();return;
     }
     if(isCustomLabel(project.title)){renderCustomQuotePage(project.title);return;}
+
+    // Isolated Bathroom package pilot. Existing detailed estimator is retained.
+    if((id==='bathrooms'||id==='bath-remodel') && new URLSearchParams(location.search).get('bathMode')!=='individual'){
+      const packages=[
+        {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',work:['Wall or ceiling painting','Standard fixture replacement','Simple finishing touches']},
+        {id:'standard',name:'Standard Upgrade',intro:'Update key surfaces and fixtures.',work:['Wall and ceiling finishes','Vanity or fixture updates','Flooring and trim options']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'Plan a more complete bathroom transformation.',work:['Shower or tub improvements','Vanity, lighting, and flooring','Coordinated wall and ceiling finishes']},
+        {id:'custom',name:'Custom Project',intro:'Choose exactly what you need, even a single job.',work:['Individual repairs or replacements','Your choice of materials and finishes','Mix and match work categories']}
+      ];
+      const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||packages[0];
+      const original='/project.html?project=bathrooms&bathMode=individual';
+      const nav=packages.map(p=>'<a class="bath-tier-link'+(p.id===selected.id?' current':'')+'" href="/project.html?project=bathrooms&bathPackage='+p.id+'">'+p.name+'</a>').join('');
+      const work=selected.work.map(w=>'<li>'+w+'</li>').join('');
+      document.body.innerHTML=header()+
+        '<main><section class="project-detail-hero"><img src="/assets/approved-a908c20ce632.jpg" alt="Bathroom project" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>Bathroom Projects</h1><p>From one small update to a complete remodel.</p></div></section>'+
+        '<section class="section"><div class="wrap"><div class="bath-pilot">'+
+        '<aside class="bath-tier-menu"><h2>Choose a project</h2>'+nav+'<a class="bath-tier-link" href="'+original+'">Individual Jobs &amp; Calculator</a></aside>'+
+        '<article class="bath-tier-detail"><h2>'+selected.name+'</h2><p class="lead">'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
+        '<p class="calc-note"><strong>Starting price:</strong> Pending approved package scope, labor, and materials. No placeholder prices.</p>'+
+        '<a class="btn primary" href="'+original+'&bathPackage='+selected.id+'">Customize &amp; Estimate</a> '+
+        '<a class="btn outline" href="/installation.html#labor-category-bathroom">Installation Only</a>'+
+        '<p class="calc-note">The detailed calculator remains available. No existing labor selections or prices have been removed.</p>'+
+        '</article></div></div></section></main>'+footer();
+      const style=document.createElement('style');
+      style.textContent='.bath-pilot{display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;align-items:start}.bath-tier-menu,.bath-tier-detail{background:#fff;border:1px solid #dfe5ea;border-radius:12px;padding:22px;box-shadow:0 6px 18px #10223210}.bath-tier-menu h2,.bath-tier-detail h2{font-family:Georgia,serif;margin:0 0 16px}.bath-tier-link{display:block;padding:13px;margin:0 0 9px;border:1px solid #dfe5ea;border-radius:7px;color:#073c70;font-weight:700}.bath-tier-link.current,.bath-tier-link:hover{background:#e8f1fa;border-color:#0b5aa6}.bath-tier-link.current{border-left:5px solid #b3262d}.bath-tier-detail li{margin:10px 0}.bath-tier-detail .btn{margin:12px 8px 12px 0}@media(max-width:730px){.bath-pilot{grid-template-columns:1fr}.bath-tier-menu,.bath-tier-detail{padding:16px}}';
+      document.head.append(style);
+      updateCartCount();return;
+    }
+
     const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;
     document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>Choose the work you want done. We'll ask for measurements only when that item needs them.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Where is the work?</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><select id="scope-room" required><option value="">Select one</option><option>Bathroom</option><option>Bedroom</option><option>Closet / Storage</option><option>Dining Room</option><option>Entry / Mudroom</option><option>Hallway</option><option>Home Office</option><option>Kitchen</option><option>Laundry / Utility</option><option>Living / Family Room</option><option>Outdoor Area</option><option>Other Room / Area</option></select></div><div class="field"><label for="scope-location">Location</label><select id="scope-location" required><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" value="0"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
     if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
