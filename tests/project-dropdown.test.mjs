@@ -47,6 +47,13 @@ test('Homepage cards and both dropdowns have exactly the same fifteen project na
     const id=branch.dataset.project;
     const primary=branch.querySelector('.project-category-link');
     const button=branch.querySelector('.project-category-toggle');
+    if(id==='bathrooms'||id==='kitchen-pantry'){
+     assert.equal(primary.tagName,'A',id+' must link directly to the project picture chooser');
+     assert.equal(primary.getAttribute('href'),href(id));
+     assert.equal(button,null,id+' should have no sideways submenu arrow');
+     assert.equal(branch.querySelector('.project-submenu'),null,id+' should have no flyout');
+     continue;
+    }
     assert.ok(button?.getAttribute('aria-label').includes('choices'));
     const multiJob=!['bathrooms','kitchen-pantry','themed-rooms','concrete','custom','room-additions'].includes(id);
     if(multiJob){
