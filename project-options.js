@@ -417,14 +417,14 @@
       const selected=packages.find(p=>p.id===new URLSearchParams(location.search).get('bathPackage'))||null;
       const original='/project.html?project=bathrooms&bathMode=individual';
       const photos=['https://images.pexels.com/photos/19899059/pexels-photo-19899059.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/7031908/pexels-photo-7031908.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/4940613/pexels-photo-4940613.jpeg?auto=compress&cs=tinysrgb&w=900','/assets/tile-shower.jpg'];
-      const nav=packages.map((p,index)=>'<a class="bath-photo-card" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>').join('');
+      const nav=packages.map((p,index)=>'<a class="bath-photo-card'+(selected&&p.id===selected.id?' current':'')+'" href="'+(p.id==='custom'?original:'/project.html?project=bathrooms&bathPackage='+p.id)+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' bathroom project photo" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+({basic:'Basic',standard:'Standard',deluxe:'Deluxe',custom:'Custom'}[p.id])+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>').join('');
       const work=selected?selected.work.map(w=>'<li>'+w+'</li>').join(''):'';
       document.body.innerHTML=header()+
         '<main><section class="section bath-project-chooser"><div class="wrap">'+
         '<a class="project-back" href="'+(selected?'/project.html?project=bathrooms':'/#projects')+'">'+(selected?'← All Bathroom Packages':'← All Projects')+'</a>'+
-        '<h1>'+(selected?selected.name:'Bathroom Projects')+'</h1><p class="bath-chooser-lead">'+(selected?selected.intro:'Choose a package below, or select Custom to choose individual work.')+'</p>'+
-        (selected?'':'<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>')+
-        (selected?'':'<div class="bath-custom-callout"><p><strong>Not sure which package is right for you?</strong> Choose Custom and build your own bathroom project.</p><a class="btn outline" href="'+original+'">Explore Custom Options</a></div>')+
+        '<h1>Bathroom Projects</h1><p class="bath-chooser-lead">Choose a package below. Hover over a photo to see what each package includes, or choose Custom for individual work.</p>'+
+        '<nav class="bath-photo-grid" aria-label="Choose a bathroom project">'+nav+'</nav>'+
+        '<div class="bath-custom-callout"><p><strong>Not sure which package is right for you?</strong> Choose Custom and build your own bathroom project.</p><a class="btn outline" href="'+original+'">Explore Custom Options</a></div>'+
         (selected?'<article id="bath-package-detail" class="bath-package-detail" tabindex="-1"><h2>'+selected.name+'</h2><p>'+selected.intro+'</p><h3>Project options include</h3><ul>'+work+'</ul>'+
         (selected.discount?'<p class="calc-note"><strong>Package labor savings:</strong> '+selected.discount+'% off included labor. Materials and supplies priced separately.</p>':'')+
         '<p class="calc-note"><strong>Starting price:</strong> To be determined after the base scope and materials are approved.</p>'+
