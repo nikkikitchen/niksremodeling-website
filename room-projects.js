@@ -258,16 +258,15 @@ window.PROJECT_PACKAGE_CHOICES={"attic":[["Access and storage platform","Existin
 window.NIK_AUDITED_PACKAGE_PRICES={
   accents:{
     basic:{
-      scenario:'One sound 12 × 8 ft interior accent wall, up to 96 sq. ft.; two paint coats, one primer coat, routine edge preparation and cleanup. Repairs, specialty finishes and travel outside the service area are not included.',
+      scenario:'One sound 12 × 8 ft interior accent wall, up to 96 sq. ft.; two paint coats, one bonding-primer coat, routine edge preparation and cleanup. Repairs, specialty finishes and travel outside the service area are not included.',
       labor:[{name:'Two-coat accent wall painting and edge finishing',quantity:1,unitPrice:175}],
       materials:[
         {name:'1-Gallon Interior Flat Latex Paint',quantity:1,unitPrice:48.60},
-        {name:'PVA Drywall Primer (1 Gallon)',quantity:1,unitPrice:21.57}
+        {name:'Interior Bonding Primer (1 Gallon)',quantity:1,unitPrice:47.22}
       ],
       consumables:[
         {name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48},
         {name:'Sandpaper Sheets (Assorted Grit, 5-pack)',quantity:1,unitPrice:8.10},
-        {name:'Caulk (10.1 oz Silicone Tub & Tile)',quantity:1,unitPrice:10.12},
         {name:'9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)',quantity:1,unitPrice:18.90},
         {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
       ],
