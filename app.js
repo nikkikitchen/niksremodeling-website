@@ -937,7 +937,7 @@ function renderCart(){
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
   ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
   ${packageMeasurementSummary(x)?`<div class="nr-cart-meta"><strong>Measurements:</strong> ${escapeCartText(packageMeasurementSummary(x))}</div>`:''}
-  ${packageSources.has(x.source)&&!packageMeasurementSummary(x)&&packageQuoteLink(x)?`<a class="btn outline" href="${escapeCartText(packageQuoteLink(x))}">Enter Measurements to Complete Quote</a>`:''}
+  ${packageSources.has(x.source)&&packageQuoteLink(x)?`<a class="btn outline" href="${escapeCartText(packageQuoteLink(x))}">${packageMeasurementSummary(x)?"Edit Measurements":"Enter Measurements to Complete Quote"}</a>`:''}
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
