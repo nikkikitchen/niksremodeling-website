@@ -324,16 +324,10 @@ function buildProjectDropdowns(){
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const row=document.createElement('div');row.className='project-branch-row';
-     // Bathroom and Kitchen open their project chooser directly; each also has
-     // a clearly labeled link to the matching Installation & Labor category.
+     // Bathroom and Kitchen each have one direct link, without extra submenu links.
      if(id==='bathrooms'||id==='kitchen-pantry'){
        const primary=link(label,projectLink(id));primary.className='project-category-link';primary.style.cssText='color:#0b5aa6;text-decoration:underline;text-underline-offset:3px;font-weight:800;cursor:pointer';
-       row.append(primary);branch.append(row);
-       const laborCategory=id==='bathrooms'?'bathroom':'kitchen';
-       const labor=link('↳ Installation & Labor','/installation.html#labor-category-'+laborCategory);
-       labor.className='project-labor-shortcut';
-       labor.style.cssText='display:block;padding:6px 12px 10px 27px;color:#0b5aa6;text-decoration:underline;text-underline-offset:3px;font:700 13px/1.3 Arial,sans-serif';
-       branch.append(labor);menu.append(branch);
+       row.append(primary);branch.append(row);menu.append(branch);
        // A neighboring flyout must not linger over this direct-link row.
        const dismissOtherChoices=()=>{close(menu);};
        branch.addEventListener('mouseenter',dismissOtherChoices);
