@@ -138,3 +138,29 @@ test('Accessibility package asks relevant feature counts instead of an unrelated
     assert.match(d.body.textContent,/2 grab bars/);
   }finally{dom.window.close();}
 });
+
+test('Accent package measures only the chosen wall length × height and uses approved $175 painting labor',async()=>{
+  const dom=await load('project.html','?project=accents');
+  try{
+    const w=dom.window,d=w.document;
+    const button=d.querySelector('.pkg-add[data-package="basic"]');
+    assert.ok(button);
+    button.click();
+    assert.ok(d.getElementById('pkg-length-ft'));
+    assert.ok(d.getElementById('pkg-height-ft'));
+    assert.equal(d.getElementById('pkg-width-ft'),null,'Accent walls must not ask for room width');
+    d.getElementById('pkg-length-ft').value='12';
+    d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    assert.equal(d.getElementById('pkg-measure-result').hidden,false);
+    assert.match(d.getElementById('pkg-measure-summary').textContent,/96 sq\. ft\./);
+    d.getElementById('pkg-confirm-add').click();
+    const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
+    assert.equal(item.measurements.wallArea,96);
+    assert.equal(item.measurements.floorArea,0);
+    assert.equal(item.measurements.accentOnly,true);
+    assert.equal(item.measurements.wallPaintLabor,175);
+    assert.equal(item.price,null,'Fixed accent painting is part of the package, not a second charge');
+    w.renderCart();
+    assert.match(d.body.textContent,/12 × 8 ft\. accent wall/);
+  }finally{dom.window.close();}
+});
