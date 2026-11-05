@@ -36,8 +36,8 @@
   // Don't send customers back through the generic "What would you like done?" step.
   const selectedBathroomJob=context.get('material')==='bathroom'&&
     (context.get('materials')||'').split('|').some(Boolean);
-  const selectedWork=!!(context.get('room')&&context.get('material')&&
-    (context.get('embedded')||context.get('work')||context.get('materials')));
+  const selectedWork=!!(context.get('material')&&
+    (context.get('work')||context.get('materials')||context.get('projectTasks')));
   const preselectedWorkContext=selectedBathroomJob||selectedWork;
   show(preselectedWorkContext?2:1);
  }
