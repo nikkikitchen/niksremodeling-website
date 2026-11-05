@@ -412,4 +412,5 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     location.href='/project-cart.html';
   };
   updateCartCount();
+  if(typeof initNavMenus==='function')initNavMenus();
 };
