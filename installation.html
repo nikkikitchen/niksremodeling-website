@@ -335,9 +335,9 @@ const fixed=(label,price,extra={})=>setService(label,{price,status:'approved',st
 const quoted=label=>setService(label,{price:null,status:'pending',startingAt:false,note:'In-person estimate required.'});
 fixed('Microwave/oven combination installation',650,{startingAt:true});
 fixed('Chair rail installation',3);
-trim.push(approvedTask('chair-rail-finish','Chair rail finishing and painting',3.25,'linear foot','Labor only.'),approvedTask('chair-rail-complete','Chair rail installation, finishing and painting',6.25,'linear foot','Labor only. Choose either the combined service or separate installation and finishing.'));
+trim.push(approvedTask('chair-rail-finish','Chair rail finishing and painting',1.5,'linear foot','Labor only.'),approvedTask('chair-rail-complete','Chair rail installation, finishing and painting',4.5,'linear foot','Labor only. Choose either the combined service or separate installation and finishing.'));
 fixed('Door and window casing installation',3);
-trim.push(approvedTask('casing-finish','Door and window casing finishing and painting',3.25,'linear foot','Labor only.'),approvedTask('casing-complete','Door and window casing installation, finishing and painting',6.25,'linear foot','Labor only. Choose either the combined service or separate installation and finishing.'));
+trim.push(approvedTask('casing-finish','Door and window casing finishing and painting',1.5,'linear foot','Labor only.'),approvedTask('casing-complete','Door and window casing installation, finishing and painting',4.5,'linear foot','Labor only. Choose either the combined service or separate installation and finishing.'));
 fixed('Interior prehung door installation (including closet doors)',100);
 fixed('Interior slab door installation',250);
 fixed('Storm door installation',250,{startingAt:true});
