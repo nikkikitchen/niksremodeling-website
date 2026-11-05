@@ -621,7 +621,17 @@ function serviceEstimateMarkup(items){
  const money=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
  return `<div class="result service-estimate"><strong>Estimated service total: ${money(s.total)}</strong>${s.adjustment?`<div>Includes ${money(s.adjustment)} to meet the $150 minimum trip charge.</div>`:''}${s.pending?'<div>In-person quote required for unpriced services.</div>':''}</div>`;
 }
-function cartRequestMessage(cart){return `${cart.some(requiresInPersonQuote)?'I need to schedule an in-person quote. ':''}Hi Nik’s Remodeling, please review my project and send current pricing and availability for: ${cart.map(item=>`${item.name} (qty ${item.qty||1})`).join('; ')}. ${serviceEstimateSummary(cart).hasServices?'Estimated service total: $'+serviceEstimateSummary(cart).total.toFixed(2)+(serviceEstimateSummary(cart).adjustment?' (includes $'+serviceEstimateSummary(cart).adjustment.toFixed(2)+' to meet the $150 minimum trip charge)':'')+'. ':''}Please let me know about delivery and installation options.`}
+function packageMeasurementSummary(item){
+ const m=item?.measurements;
+ if(!m||!Number.isFinite(Number(m.length))||!Number.isFinite(Number(m.width)))return '';
+ const n=value=>Number(value||0).toLocaleString('en-US',{maximumFractionDigits:2});
+ return (m.roomName?m.roomName+': ':'')+n(m.length)+' × '+n(m.width)+' ft., ceiling '+n(m.height)+' ft.; floor '+n(m.floorArea)+' sq. ft.; paintable walls '+n(m.wallArea)+' sq. ft.; perimeter '+n(m.perimeter)+' linear ft.'+
+ (Number(m.paintGallons)>0?'; '+n(m.paintGallons)+' paint gallons':'')+
+ (Number(m.backsplashArea)>0?'; backsplash '+n(m.backsplashArea)+' sq. ft.':'')+
+ (Number(m.cabinetBoxes)>0?'; '+n(m.cabinetBoxes)+' cabinet boxes':'')+
+ (Number(m.counterLength)>0?'; countertop '+n(m.counterLength)+' linear ft.':'');
+}
+function cartRequestMessage(cart){return `${cart.some(requiresInPersonQuote)?'I need to schedule an in-person quote. ':''}Hi Nik’s Remodeling, please review my project and send current pricing and availability for: ${cart.map(item=>`${item.name} (qty ${item.qty||1})${packageMeasurementSummary(item)?' — '+packageMeasurementSummary(item):''}${item.scope?.length?'; included scope: '+item.scope.join(', '):''}`).join('; ')}. ${serviceEstimateSummary(cart).hasServices?'Estimated service total: $'+serviceEstimateSummary(cart).total.toFixed(2)+(serviceEstimateSummary(cart).adjustment?' (includes $'+serviceEstimateSummary(cart).adjustment.toFixed(2)+' to meet the $150 minimum trip charge)':'')+'. ':''}Please let me know about delivery and installation options.`}
 function cartSuggestionMarkup(cart){const suggestions=cartSuggestions(cart);return suggestions.length?`<section class="cart-addons"><h3>Complete Your Project</h3><p>These may be useful with what you saved. Check fit and availability before adding anything.</p><div class="cart-addon-grid">${suggestions.map(item=>`<article class="panel"><h4>${item.title}</h4><p>${item.description}</p><a class="btn outline" href="${item.url}">${item.action} →</a></article>`).join('')}</div></section>`:''}
 function renderCartReminder(){const cart=getCart();if(!cart.length)return;let updated=Number(localStorage.getItem('nr-cart-updated-at'));if(!updated||!Number.isFinite(updated)){localStorage.setItem('nr-cart-updated-at',String(Date.now()));return}if(Date.now()-updated<24*60*60*1000||Date.now()<Number(localStorage.getItem('nr-cart-reminder-dismissed-until')||0))return;const nav=document.querySelector('.nav');if(!nav)return;const banner=document.createElement('aside');banner.className='cart-return-reminder';banner.setAttribute('aria-label','Saved project reminder');const wrap=document.createElement('div');wrap.className='wrap';const message=document.createElement('span');message.textContent=`Your project cart is saved with ${cart.length} item ${cart.length===1?'type':'types'}. Ready to review it?`;const link=document.createElement('a');link.className='btn primary';link.href='/project-cart.html';link.textContent='Review Saved Project';const close=document.createElement('button');close.type='button';close.className='cart-reminder-close';close.setAttribute('aria-label','Dismiss saved project reminder');close.textContent='×';close.onclick=()=>{localStorage.setItem('nr-cart-reminder-dismissed-until',String(Date.now()+7*24*60*60*1000));banner.remove()};wrap.append(message,link,close);banner.append(wrap);nav.after(banner)}
 const PROJECT_CATALOG={
@@ -898,6 +908,7 @@ function renderCart(){
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
  <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
+  ${packageMeasurementSummary(x)?`<div class="nr-cart-meta"><strong>Measurements:</strong> ${escapeCartText(packageMeasurementSummary(x))}</div>`:''}
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
