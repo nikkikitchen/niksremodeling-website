@@ -31,7 +31,14 @@
   summary.addEventListener('click',e=>{const button=e.target.closest('button');if(!button)return;if(/Edit|Recalculate/.test(button.textContent))show(2);else if(/Add Work|Add Another/.test(button.textContent)){own.querySelector('input').checked=false;show(1);}});
   document.addEventListener('work-options-change',()=>{if(current!==3)show(current);});
   const editId=new URLSearchParams(location.search).get('editRoom');if(editId){const saved=materialEstimates.find(x=>x.roomId===editId);own.querySelector('input').checked=!!saved?.customerProvidesMaterials;}
-  const context=new URLSearchParams(location.search);show(context.get('embedded')&&context.get('room')&&context.get('material')?2:1);
+  const context=new URLSearchParams(location.search);
+  // The Installation / Labor catalog already chose the bathroom job.
+  // Don't send customers back through the generic "What would you like done?" step.
+  const selectedBathroomJob=context.get('material')==='bathroom'&&
+    (context.get('materials')||'').split('|').some(Boolean);
+  const selectedWork=!!(context.get('room')&&context.get('material')&&
+    (context.get('embedded')||context.get('work')||context.get('materials')));
+  show(selectedBathroomJob||selectedWork?2:1);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));else setTimeout(init,0);
 })();
