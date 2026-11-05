@@ -201,3 +201,34 @@ test('Audited Basic Accent Wall includes real materials, consumables, discount a
     assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
   }finally{dom.window.close();}
 });
+
+test('Audited accent wall recalculates a larger measured scope without charging twice',async()=>{
+  const dom=await load('project.html','?project=accents');
+  try{
+    const w=dom.window,d=w.document;
+    d.querySelector('.pkg-add[data-package="basic"]').click();
+    const length=d.getElementById('pkg-length-ft');
+    const height=d.getElementById('pkg-height-ft');
+    const submit=()=>d.getElementById('pkg-measure-form')
+      .dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    length.value='20';height.value='10';
+    submit();
+    assert.equal(d.getElementById('pkg-measure-result').hidden,false);
+    assert.match(d.getElementById('pkg-measure-summary').textContent,/200 sq\. ft\./);
+    assert.match(d.getElementById('pkg-measure-summary').textContent,/measured minimum/i);
+    d.getElementById('pkg-confirm-add').click();
+    let [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
+    assert.equal(item.measurements.wallArea,200);
+    assert.equal(item.measurements.wallPaintLabor,300,'Larger walls need more than the small-wall flat labor');
+    assert.deepEqual(item.priceBasis.materials.map(x=>x.quantity),[2,1],
+      '200 square feet requires two gallons of two-coat paint and one gallon of primer');
+    assert.equal(item.priceBasis.laborAfterDiscount,285);
+    assert.ok(item.startingAt>350,'Measured wall cannot retain the 96-square-foot minimum');
+    assert.equal(item.startingAt,item.depositEstimate+item.laborEstimate+item.overheadAllowance);
+    assert.equal(item.price,null);
+    assert.equal(item.quoteRequired,true);
+    w.renderCart();
+    assert.match(d.querySelector('.nr-cart-line-price').textContent,/Starting at \$/);
+    assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
+  }finally{dom.window.close();}
+});
