@@ -769,10 +769,10 @@ function cartCheckoutSummary(items){
  const payableSubtotal=amount+standaloneSupplies+laborCatalogTotal+packagedMaterialTotal;
  const laborSubtotal=estimatedLabor.hasServices?Math.max(0,estimatedLabor.total-packagedMaterialTotal):0;
  const combinedEstimatedTotal=payableSubtotal+laborSubtotal;
- // Only separately priced retail merchandise is included in the provisional
- // goods tax base. Internal installation supplies, labor and unconfirmed project
- // packages are excluded; tax treatment is confirmed before invoicing.
- const retailGoodsCents=Math.round(amount*100);
+ // Provisional taxable merchandise includes separately priced retail goods and
+ // identifiable material/supply portions of labor packages, but excludes labor.
+ // Actual tax treatment is verified before invoicing.
+ const retailGoodsCents=Math.round(payableSubtotal*100);
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
