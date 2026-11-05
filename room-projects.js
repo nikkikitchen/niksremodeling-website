@@ -404,6 +404,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const result=document.getElementById('pkg-measure-result');
   const error=document.getElementById('pkg-measure-error');
   let measured=null;
+  let measuredQuote=null;
   function number(id,optional){
     const input=document.getElementById('pkg-'+id);
     if(!input)return 0;
@@ -418,7 +419,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     return Math.round((ft+inch/12)*10000)/10000;
   }
   const pretty=n=>Number(n.toFixed(1));
-  form.addEventListener('input',()=>{measured=null;result.hidden=true;error.hidden=true;});
+  form.addEventListener('input',()=>{measured=null;measuredQuote=null;result.hidden=true;error.hidden=true;});
   form.addEventListener('submit',e=>{
     e.preventDefault();
     try{
@@ -457,9 +458,26 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
       // Approved $1.50/sq. ft. two-coat wall painting labor.
       // Ceiling 1-coat labor is 0.75/sq. ft. x approved 1.2 ceiling multiplier.
       // The painting subtotal is already part of package pricing, not an add-on.
-      const wallLabor=wallPaint?(accentOnly?175:Math.round(wallArea*1.50*100)/100):0;
+      const wallLabor=wallPaint?(accentOnly?Math.max(175,Math.ceil(wallArea*1.50/5)*5):Math.round(wallArea*1.50*100)/100):0;
       const ceilingLabor=ceilingPaint?Math.round(ceilingArea*0.75*1.2*100)/100:0;
       const paintMaterial=paintGallons*50;
+      // Reprice the fully audited accent-wall scope using the customer's measured
+      // square footage. The original $350 reference remains the minimum; larger
+      // surfaces need more paint, primer, and labor. This is still a quote, not a bill.
+      measuredQuote=null;
+      if(accentOnly&&choice.id==='basic'&&starting){
+        const original=window.NIK_AUDITED_PACKAGE_PRICES?.accents?.basic;
+        if(original){
+          const scaled={
+            ...original,
+            scenario:'One sound '+length.toFixed(2)+' × '+height.toFixed(2)+' ft. interior accent wall ('+pretty(wallArea)+' sq. ft.), two paint coats and one bonding-primer coat. Repairs and specialty finishes excluded.',
+            labor:original.labor.map(line=>({...line,unitPrice:wallLabor})),
+            materials:original.materials.map(line=>({...line,quantity:/primer/i.test(line.name)?Math.max(1,Math.ceil(wallArea/350)):wallGallons})),
+            consumables:original.consumables.map(line=>({...line,quantity:/painters tape/i.test(line.name)?Math.max(1,Math.ceil(2*(length+height)/180)):/roller sleeves/i.test(line.name)?Math.max(1,Math.ceil(wallArea/600)):line.quantity}))
+          };
+          measuredQuote=window.NIK_CALCULATE_PACKAGE_BASELINE(scaled);
+        }
+      }
       const basementFloor=basement?document.getElementById('pkg-basement-floor').value:'none';
       const basementLights=basement?number('existing-lights',true):0;
       if(basement&&(!Number.isInteger(basementLights)||basementLights>100))throw Error('Enter a whole number of existing lights (0–100).');
@@ -475,20 +493,20 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
         (ceilingPaint?row('One-coat ceiling paint',ceilingGallons+' gallons; measured painting labor '+money(ceilingLabor)):'')+
         (basementFloor!=='none'?row('Concrete floor '+basementFloor+' labor',pretty(floorArea)+' sq. ft. = '+money(basementFloorLabor)+' (materials and prep not yet priced)'):'')+
         (basementLights?row('Existing-connection light replacement labor',basementLights+' × $150 = '+money(basementLightLabor)+' (fixtures not yet priced)'):'')+
-        (paintGallons?row('Paint material allowance',paintGallons+' gallons × $50 = '+money(paintMaterial)):'')+
+        (paintGallons?(measuredQuote?row('Paint and primer materials',money(measuredQuote.priceBasis.materialsTotal)+' (included in measured package)'):row('Paint material allowance',paintGallons+' gallons × $50 = '+money(paintMaterial))):'')+
         (backsplash?row('Backsplash',pretty(backsplashArea)+' sq. ft. (to verify)'):'')+
         (cabinets?row('Cabinet boxes',cabinetBoxes+' (to verify)'):'')+
         (counters?row('Countertops',pretty(counterLength)+' linear ft. (to verify)'):'')+
-        (starting?row('Package starting price',money(starting)+'+ (not a final quote)'):row('Final package price','Quote required'))+
+        (starting?row('Package starting price',money(measuredQuote?.startingAt||starting)+'+ (measured minimum; not a final quote)'):row('Final package price','Quote required'))+
         (paintGallons?'<p class="calc-note">The measured painting amounts above are components of the package, not additional cart charges.</p>':'');
       measured={accentOnly,length:pretty(length),width:pretty(width),height:pretty(height),floorArea:pretty(floorArea),wallArea:pretty(wallArea),ceilingArea:pretty(ceilingArea),perimeter:pretty(perimeter),openings:pretty(openings),wallPaintGallons:wallGallons,ceilingPaintGallons:ceilingGallons,paintGallons,wallPaintLabor:wallLabor,ceilingPaintLabor:ceilingLabor,paintMaterialAllowance:paintMaterial,basementFloor,basementFloorLabor,basementLights,basementLightLabor,backsplashArea:pretty(backsplashArea),cabinetBoxes,counterLength:pretty(counterLength),roomName:document.getElementById('pkg-room-name').value.trim()||projectTitle};
       error.hidden=true;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'start'});
-    }catch(err){measured=null;result.hidden=true;error.textContent=err.message||'Check your measurements.';error.hidden=false;error.scrollIntoView({block:'center'});}
+    }catch(err){measured=null;measuredQuote=null;result.hidden=true;error.textContent=err.message||'Check your measurements.';error.hidden=false;error.scrollIntoView({block:'center'});}
   });
   document.getElementById('pkg-edit-size').onclick=()=>{form.scrollIntoView({behavior:'smooth',block:'start'});};
   document.getElementById('pkg-confirm-add').onclick=()=>{
     if(!measured){error.textContent='Calculate the measurements before adding to cart.';error.hidden=false;return;}
-    const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:starting,depositEstimate:choice.depositEstimate,laborEstimate:choice.laborEstimate,overheadAllowance:choice.overheadAllowance,priceBasis:choice.priceBasis||null,price:null,quoteRequired:true,inPersonQuoteRequired:accessibility,scope:work.slice(),measurements:{...measured},description:accessibility?'Accessibility work: '+measured.grabBars+' grab bars, '+measured.doorHardware+' door hardware sets, '+measured.thresholds+' thresholds, '+measured.handrailLength+' ft. handrail, '+measured.rampLength+' ft. ramp. In-person site quote required.':accentOnly?'Measured '+measured.roomName+': '+measured.length+' × '+measured.height+' ft. accent wall; '+measured.wallArea+' sq. ft. surface, '+measured.paintGallons+' paint gallons where applicable. Package quote pending.':'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
+    const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:measuredQuote?.startingAt||starting,depositEstimate:measuredQuote?.depositEstimate??choice.depositEstimate,laborEstimate:measuredQuote?.laborEstimate??choice.laborEstimate,overheadAllowance:measuredQuote?.overheadAllowance??choice.overheadAllowance,priceBasis:measuredQuote?.priceBasis||choice.priceBasis||null,price:null,quoteRequired:true,inPersonQuoteRequired:accessibility,scope:work.slice(),measurements:{...measured},description:accessibility?'Accessibility work: '+measured.grabBars+' grab bars, '+measured.doorHardware+' door hardware sets, '+measured.thresholds+' thresholds, '+measured.handrailLength+' ft. handrail, '+measured.rampLength+' ft. ramp. In-person site quote required.':accentOnly?'Measured '+measured.roomName+': '+measured.length+' × '+measured.height+' ft. accent wall; '+measured.wallArea+' sq. ft. surface, '+measured.paintGallons+' paint gallons where applicable. Package quote pending.':'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
     const cart=getCart();
     const match=cart.findIndex(x=>x.source===source&&x.packageId===choice.id&&(x.projectId===projectId||(!x.projectId&&['bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(source)))&&(!x.measurements||x.measurements.roomName===measured.roomName));
     if(match>=0)cart[match]=item;else cart.push(item);
