@@ -628,3 +628,19 @@ test('Bathroom flooring remembers floor tile, asks no repeat location, and offer
  w.addProjectToCart();assert.ok(w.getCart().length);
  }finally{calc.window.close();}
  });
+
+
+test('Preselected standard toilet skips duplicate work screen and retains same labor rate for both bowl shapes', async () => {
+ const query='?material=bathroom&location=interior&materials='+encodeURIComponent('Assemble and install standard toilet')+'&room=Bathroom';
+ const dom=await openPage('calculators.html',query);
+ try{
+  const w=dom.window,doc=w.document;
+  assert.equal(doc.querySelector('.calc-workspace').dataset.step,'2','Selected toilet must open at measurements and options');
+  assert.equal(doc.querySelector('#material-type').value,'bathroom');
+  assert.equal(doc.querySelector('#material-name').value,'Bathroom');
+  const choices=[...doc.querySelectorAll('[data-item-option="Bowl shape"] option')].map(x=>x.value).filter(Boolean);
+  assert.deepEqual(choices,['Round','Elongated (oval)']);
+  assert.equal(w.BATHROOM_PACKAGES.find(p=>p.id==='toilet-install').labor,175);
+  assert.equal(doc.querySelector('#room-planner h2').textContent,'Item measurements & options');
+ }finally{dom.window.close();}
+});
