@@ -1144,6 +1144,7 @@ function cabinetRefinishingEstimate(){
 // Shared by shopping and the project calculator; choices appear only for selected items.
 function itemOptionFields(name){
  const rules=[
+ [/assemble and install standard toilet/i,[['Bowl shape','Round','Elongated (oval)']]],
  [/laminate/i,[['Installation','Floating'],['Water resistance','Standard','Water resistant'],['Padding','Attached pad','Separate underlayment']]],
  [/luxury vinyl|\blvp\b|vinyl plank/i,[['Installation','Floating','Glue down'],['Padding','Attached pad','Separate underlayment']]],
  [/linoleum|sheet vinyl/i,[['Material','Sheet vinyl','Linoleum'],['Installation','Glue down','Loose lay']]],
