@@ -308,6 +308,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const kitchen=source==='kitchen-project-package';
   const accessibility=source==='accessibility-project-package';
   const accentOnly=projectId==='accents';
+  const basement=projectId==='basement';
   const wallPaint=kitchen||(/paint.*wall|wall.*paint|washable paint|paint bedroom|refresh paint|paint or finish walls|paint and finish walls|minor painting/.test(text));
   const ceilingPaint=/paint.*ceiling|ceiling.*paint/.test(text);
   const backsplash=/backsplash/.test(text);
@@ -328,6 +329,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     '<form id="pkg-measure-form" class="panel"><h2>'+(accessibility?'Enter project quantities':accentOnly?'Enter accent wall measurements':'Enter room measurements')+'</h2><p>'+(accessibility?'Count the features you want updated. Exact measurements and safe mounting conditions are confirmed on site.':accentOnly?'Measure the one wall you want to improve: wall length × wall height.':'One set of dimensions for this room. Use feet and inches, not decimal feet.')+'</p>'+
     '<label class="field" for="pkg-room-name">Room name (optional)<input type="text" id="pkg-room-name" maxlength="60" placeholder="Example: Main bathroom"></label>'+
     (accessibility?'<div class="pkg-feature-grid">'+feature('grab-bars','Grab bars / support rails (count)')+feature('door-hardware','Door hardware sets (count)')+feature('thresholds','Threshold transitions (count)')+feature('handrail-length','Handrail length (ft)')+feature('ramp-length','Ramp length (ft, if planned)')+'</div>':'<div class="pkg-dimension-grid">'+dimension('length',accentOnly?'Wall length':'Length')+(accentOnly?'':dimension('width','Width'))+dimension('height',accentOnly?'Wall height':'Ceiling height')+'</div>')+
+    (basement?'<div class="field"><label for="pkg-basement-floor">Existing concrete floor work</label><select id="pkg-basement-floor"><option value="none">No concrete floor treatment selected</option><option value="paint">Paint sound concrete — $2.50/sq. ft. labor</option><option value="seal">Seal sound concrete — $2.00/sq. ft. labor</option></select></div><div class="field">'+field('existing-lights','Existing-connection lights to replace (count)','0')+'</div>':'')+
     (wallPaint?'<div class="field">'+field('openings','Doors and windows to subtract from painted walls (sq. ft., optional)','0')+'</div>':'')+
     (backsplash?'<div class="field">'+field('backsplash','Backsplash to cover (sq. ft., optional)','0')+'</div>':'')+
     (cabinets?'<div class="field">'+field('cabinets','Cabinet boxes involved (optional)','0')+'</div>':'')+
@@ -404,6 +406,11 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
       const wallLabor=wallPaint?(accentOnly?175:Math.round(wallArea*1.50*100)/100):0;
       const ceilingLabor=ceilingPaint?Math.round(ceilingArea*0.75*1.2*100)/100:0;
       const paintMaterial=paintGallons*50;
+      const basementFloor=basement?document.getElementById('pkg-basement-floor').value:'none';
+      const basementLights=basement?number('existing-lights',true):0;
+      if(basement&&(!Number.isInteger(basementLights)||basementLights>100))throw Error('Enter a whole number of existing lights (0–100).');
+      const basementFloorLabor=basement?Math.round(floorArea*(basementFloor==='paint'?2.50:basementFloor==='seal'?2:0)*100)/100:0;
+      const basementLightLabor=basement?basementLights*150:0;
       const row=(label,value)=>'<p><strong>'+safe(label)+':</strong> '+safe(value)+'</p>';
       summary.innerHTML=row('Room',document.getElementById('pkg-room-name').value.trim()||projectTitle)+
         row('Dimensions',accentOnly?length.toFixed(2)+' ft. wall length × '+height.toFixed(2)+' ft. wall height':length.toFixed(2)+' × '+width.toFixed(2)+' ft.; ceiling '+height.toFixed(2)+' ft.')+
@@ -412,13 +419,15 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
         (accentOnly?'':row('Room perimeter',pretty(perimeter)+' linear ft.'))+
         (wallPaint?row('Two-coat wall paint',wallGallons+' gallons; measured painting labor '+money(wallLabor)):'')+
         (ceilingPaint?row('One-coat ceiling paint',ceilingGallons+' gallons; measured painting labor '+money(ceilingLabor)):'')+
+        (basementFloor!=='none'?row('Concrete floor '+basementFloor+' labor',pretty(floorArea)+' sq. ft. = '+money(basementFloorLabor)+' (materials and prep not yet priced)'):'')+
+        (basementLights?row('Existing-connection light replacement labor',basementLights+' × $150 = '+money(basementLightLabor)+' (fixtures not yet priced)'):'')+
         (paintGallons?row('Paint material allowance',paintGallons+' gallons × $50 = '+money(paintMaterial)):'')+
         (backsplash?row('Backsplash',pretty(backsplashArea)+' sq. ft. (to verify)'):'')+
         (cabinets?row('Cabinet boxes',cabinetBoxes+' (to verify)'):'')+
         (counters?row('Countertops',pretty(counterLength)+' linear ft. (to verify)'):'')+
         (starting?row('Package starting price',money(starting)+'+ (not a final quote)'):row('Final package price','Quote required'))+
         (paintGallons?'<p class="calc-note">The measured painting amounts above are components of the package, not additional cart charges.</p>':'');
-      measured={accentOnly,length:pretty(length),width:pretty(width),height:pretty(height),floorArea:pretty(floorArea),wallArea:pretty(wallArea),ceilingArea:pretty(ceilingArea),perimeter:pretty(perimeter),openings:pretty(openings),wallPaintGallons:wallGallons,ceilingPaintGallons:ceilingGallons,paintGallons,wallPaintLabor:wallLabor,ceilingPaintLabor:ceilingLabor,paintMaterialAllowance:paintMaterial,backsplashArea:pretty(backsplashArea),cabinetBoxes,counterLength:pretty(counterLength),roomName:document.getElementById('pkg-room-name').value.trim()||projectTitle};
+      measured={accentOnly,length:pretty(length),width:pretty(width),height:pretty(height),floorArea:pretty(floorArea),wallArea:pretty(wallArea),ceilingArea:pretty(ceilingArea),perimeter:pretty(perimeter),openings:pretty(openings),wallPaintGallons:wallGallons,ceilingPaintGallons:ceilingGallons,paintGallons,wallPaintLabor:wallLabor,ceilingPaintLabor:ceilingLabor,paintMaterialAllowance:paintMaterial,basementFloor,basementFloorLabor,basementLights,basementLightLabor,backsplashArea:pretty(backsplashArea),cabinetBoxes,counterLength:pretty(counterLength),roomName:document.getElementById('pkg-room-name').value.trim()||projectTitle};
       error.hidden=true;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'start'});
     }catch(err){measured=null;result.hidden=true;error.textContent=err.message||'Check your measurements.';error.hidden=false;error.scrollIntoView({block:'center'});}
   });
