@@ -421,7 +421,12 @@
     });
   }
   window.renderProjectOptions=(id,project)=>{
-    if(new URLSearchParams(location.search).get('view')==='packages' && window.renderProjectPackageOptions?.(id,project))return;
+    const projectParams=new URLSearchParams(location.search);
+    // Package-first is the one customer journey. Deep links to a chosen
+    // individual job still open the existing estimator without extra questions.
+    const detailWork=projectParams.get('roomMode')==='individual' ||
+      projectParams.has('selectedWorks') || projectParams.has('work');
+    if(!detailWork && window.renderProjectPackageOptions?.(id,project))return;
     if(id==='custom'&&!new URLSearchParams(location.search).has('customWork')){window.renderCustomProjects();return;}
     if(id==='themed-rooms'){window.renderThemedRooms();return;}
     if(id==='concrete'&&!new URLSearchParams(location.search).has('outdoorWork')){window.renderOutdoorProjects();return;}
@@ -430,21 +435,29 @@
       const requestedAddition=new URLSearchParams(location.search).get('additionType');
       const additionTypes=['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'];
       const additionTitle=additionTypes.includes(requestedAddition)?requestedAddition:'Room Additions';
-      document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="Home extension under construction" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${additionTitle}</h1><p>Add a bedroom, family room, sunroom or other living space.</p></div></section><section class="section"><div class="wrap"><p class="lead">Foundations, structural connections, framing, roofing, utilities, permits and finishes must be reviewed on site before pricing.</p>${requestedAddition&&additionTypes.includes(requestedAddition)?'<p class="calc-note"><strong>Selected project:</strong> '+additionTitle+'</p>':''}${customQuoteMarkup(additionTitle)}</div></section></main>`+footer();
+      // Room Additions also begins with project choices. Structural
+      // scope and prices remain on-site estimates, not fabricated packages.
+      if(!requestedAddition){
+        const choiceCards=additionTypes.map(name=>
+          '<a class="panel" style="display:block;padding:24px;text-decoration:none;color:inherit" href="/project.html?project=room-additions&additionType='+encodeURIComponent(name)+'"><h2>'+escapeCartText(name)+'</h2><p>Request a complete addition project estimate.</p></a>'
+        ).join('');
+        document.body.innerHTML=header()+'<main class="wrap section"><a class="project-back" href="/#projects">← All Projects</a>'+
+          '<h1>Room Addition Projects</h1><p class="lead">Choose the addition you want to build. Labor, materials and supplies will be included in your site-specific estimate.</p>'+
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0">'+choiceCards+'</div></main>'+footer();
+        updateCartCount();return;
+      }
+      document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="Home extension under construction" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/project.html?project=room-additions">← All Room Additions</a><h1>${additionTitle}</h1><p>Add a bedroom, family room, sunroom or other living space.</p></div></section><section class="section"><div class="wrap"><p class="lead">Foundations, structural connections, framing, roofing, utilities, permits and finishes must be reviewed on site before pricing.</p><p class="calc-note"><strong>Selected project:</strong> ${additionTitle}</p>${customQuoteMarkup(additionTitle)}</div></section></main>`+footer();
       updateCartCount();return;
     }
     if(isCustomLabel(project.title)){
       renderCustomQuotePage(project.title);
-      // Custom-labeled specialty work still needs a direct path to its
-      // Basic / Premium / Custom package choices, without bypassing quote review.
+      // This is the final Custom quote step, not a second project chooser.
       if(window.PROJECT_PACKAGE_CHOICES?.[id]){
-        const container=document.querySelector('main');
-        const action=document.createElement('a');
-        action.className='btn primary';
-        action.href='/project.html?project='+encodeURIComponent(id)+'&view=packages';
-        action.textContent='Explore Basic, Premium & Custom Packages';
-        action.style.cssText='display:inline-flex;margin:16px 0 20px';
-        container?.insertAdjacentElement('afterbegin',action);
+        const back=document.createElement('a');
+        back.className='project-back';
+        back.href='/project.html?project='+encodeURIComponent(id);
+        back.textContent='← All '+project.title+' Packages';
+        document.querySelector('main')?.prepend(back);
       }
       return;
     }
@@ -599,13 +612,13 @@
 
     const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;
     document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>Choose the work you want done. We'll ask for measurements only when that item needs them.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Where is the work?</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><select id="scope-room" required><option value="">Select one</option><option>Bathroom</option><option>Bedroom</option><option>Closet / Storage</option><option>Dining Room</option><option>Entry / Mudroom</option><option>Hallway</option><option>Home Office</option><option>Kitchen</option><option>Laundry / Utility</option><option>Living / Family Room</option><option>Outdoor Area</option><option>Other Room / Area</option></select></div><div class="field"><label for="scope-location">Location</label><select id="scope-location" required><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" value="0"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
-    if(window.PROJECT_PACKAGE_CHOICES?.[id]){
-      const projectHero=document.querySelector('.project-detail-hero .wrap');
-      projectHero?.insertAdjacentHTML('beforeend','<p style="margin:20px 0 0"><a class="btn primary" href="/project.html?project='+encodeURIComponent(id)+'&view=packages">Explore Basic, Premium &amp; Custom Packages</a></p>');
-    }
     if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
     if(project.themedGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=themed-rooms';back.textContent='← Themed Rooms';}
     if(project.customGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=custom';back.textContent='← More Ideas';}
+    if(window.PROJECT_PACKAGE_CHOICES?.[id]){
+      const back=document.querySelector('.project-back');
+      if(back){back.href='/project.html?project='+encodeURIComponent(id);back.textContent='← All '+project.title+' Packages';}
+    }
     if(id==='entry-mudroom'||id==='entryways'){
       const section=document.querySelector('.project-section-title');
       section?.insertAdjacentHTML('beforebegin','<p class="calc-note"><a class="btn outline" href="/other.html?category=Doorbells">Shop Doorbells</a> — wireless and video doorbells for the entryway.</p>');
