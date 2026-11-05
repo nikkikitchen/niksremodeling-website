@@ -7,9 +7,9 @@ const root=new URL('../',import.meta.url);
 const source=path=>readFileSync(new URL(path,root),'utf8');
 const approved=[
   ['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
-  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedrooms'],
+  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedroom'],
   ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
-  ['garage','Garage'],['kitchen-pantry','Kitchens'],
+  ['garage','Garage'],['kitchen-pantry','Kitchen'],
   ['laundry-utility','Laundry & Utility'],['living-family-room','Living & Family Room'],
   ['custom','More Ideas'],['concrete','Outdoor Projects'],
   ['room-additions','Room Additions'],['themed-rooms','Themed Rooms']
@@ -220,7 +220,12 @@ test('Desktop and phone menus expose Adult Room and Room Additions, with expanda
  try{
   const w=dom.window,doc=w.document;
   const staticMenu=source('app.js');
-  assert.ok(staticMenu.includes('<a href="/project.html?project=room-additions">Room Additions</a><a href="/project.html?project=themed-rooms">Themed Rooms</a><a href="/project.html?project=adult-room">Adult Room</a></div></div><div class="nav-menu"><button class="nav-toggle shopping-toggle" type="button" aria-expanded="false" aria-controls="mobile-shopping-menu">'),'Phone fallback must contain both additions and Adult Room');
+  for(const menuId of ['projects-menu','mobile-projects-menu']){
+   const start=staticMenu.indexOf('<div id="'+menuId+'" class="nav-dropdown">');
+   const fallback=staticMenu.slice(start,staticMenu.indexOf('</div>',start));
+   assert.ok(start>=0&&fallback.includes('<a href="/project.html?project=room-additions">Room Additions</a>')&&fallback.includes('<a href="/project.html?project=themed-rooms">Themed Rooms</a>'),menuId+' must include Room Additions and Themed Rooms');
+   assert.ok(!fallback.includes('project=adult-room'),menuId+' should keep Adult Room nested under Themed Rooms, not duplicate it at top level');
+  }
   for(const [name,width,menuId] of [['desktop',1280,'projects-menu'],['phone',390,'mobile-projects-menu']]){
    Object.defineProperty(w,'innerWidth',{value:width,configurable:true});
    const menu=doc.getElementById(menuId);
@@ -240,7 +245,7 @@ test('Desktop and phone menus expose Adult Room and Room Additions, with expanda
  }finally{dom.window.close()}
 });
 
-test('Homepage fallback links Bathroom and Kitchens directly, with no package sublinks',()=>{
+test('Homepage fallback links Bathroom and Kitchen directly, with no package sublinks',()=>{
  const html=source('index.html');
  const doc=new JSDOM(html).window.document;
  for(const menuId of ['projects-menu','mobile-projects-menu']){
@@ -254,7 +259,7 @@ test('Homepage fallback links Bathroom and Kitchens directly, with no package su
  }
 });
 
-test('Bathroom and Kitchens dismiss neighboring side menus on hover and focus',async()=>{
+test('Bathroom and Kitchen dismiss neighboring side menus on hover and focus',async()=>{
  const dom=await load();
  try{
   const doc=dom.window.document,w=dom.window;
