@@ -23,7 +23,7 @@ test('whole Bathroom packages include material deposits, labor, and overhead wit
 });
 
 test('cart displays complete package labor and deposit separately from cash due now',()=>{
- assert.ok(projects.includes('source:\'bathroom-project-package\''));
+ assert.ok(projects.includes("window.beginPackageQuote('bathrooms','Bathroom',packageChoice,'bathroom-project-package')"));
  for(const term of ['Package starting total','Materials and supplies (proposed deposit)','Labor included in package','Project fees (included)','Remaining balance after deposit (progress draws)']){
   assert.ok(app.includes(term),term+' missing');
  }
