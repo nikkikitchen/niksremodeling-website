@@ -19,6 +19,7 @@
 .labor-section[open]>summary::after,.labor-group[open]>summary::after{content:'−'}
 .labor-section{padding:10px 20px;scroll-margin-top:90px}.labor-section[hidden],.labor-photo-nav[hidden],.labor-review[hidden]{display:none!important}
 .labor-group{border-top:1px solid var(--line);margin-top:12px}
+.labor-remodel-link{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:13px 12px;border-top:1px solid var(--line);border-radius:5px;background:#edf3f8;color:var(--blue2);font-size:17px;font-weight:700;text-decoration:underline;text-underline-offset:3px}.labor-remodel-link::after{content:'→';color:var(--blue);font-size:22px}.labor-remodel-link:hover,.labor-remodel-link:focus-visible{background:#e2eef8;outline:2px solid #2c70aa;outline-offset:1px}
 .labor-group>summary{background:#edf3f8;color:var(--blue2);font-size:17px;font-weight:700;padding:13px 12px;border-radius:5px}
 .labor-line{scroll-margin-top:110px}
 .labor-line.labor-target{background:#f2f7fc;border-left:3px solid var(--blue)}
@@ -507,7 +508,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   shop.style.margin='12px 0';
   section.append(shop);
  }
- category.groups.forEach(group=>{const groupEl=category.groups.length>1?make('details',undefined,'labor-group'):section;if(groupEl!==section){groupEl.append(make('summary',group.label,'labor-group-heading'));section.append(groupEl);groupEl.id='labor-group-'+category.id+'-'+group.id;if(group.applianceKey){groupEl.id='labor-appliance-'+group.applianceKey;groupEl.dataset.appliance=group.applianceKey;groupEl.hidden=true;}}
+ // Keep remodel alongside related services, with the requested Bathroom order:
+ // Mirrors & accessories → Remodel → Shower doors.
+ const visibleGroups=category.groups.slice();
+ if(category.id==='bathroom'){
+  const doorsIndex=visibleGroups.findIndex(group=>group.id==='glass');
+  const mirrorsIndex=visibleGroups.findIndex(group=>group.id==='accessory');
+  if(doorsIndex<0||mirrorsIndex<0)throw Error('Bathroom remodel placement anchors missing');
+  const [doors]=visibleGroups.splice(doorsIndex,1);
+  const afterMirrors=visibleGroups.findIndex(group=>group.id==='accessory')+1;
+  visibleGroups.splice(afterMirrors,0,{id:'remodel',label:'Remodel',remodelUrl:'/project.html?project=bathrooms'},doors);
+ }else if(category.id==='kitchen'){
+  visibleGroups.unshift({id:'remodel',label:'Remodel',remodelUrl:'/project.html?project=kitchen-pantry'});
+ }
+ visibleGroups.forEach(group=>{
+ if(group.remodelUrl){const link=make('a','Remodel — Choose a Product or Package','labor-remodel-link');link.id='labor-group-'+category.id+'-remodel';link.href=group.remodelUrl;section.append(link);return;}
+ const groupEl=category.groups.length>1?make('details',undefined,'labor-group'):section;if(groupEl!==section){groupEl.append(make('summary',group.label,'labor-group-heading'));section.append(groupEl);groupEl.id='labor-group-'+category.id+'-'+group.id;if(group.applianceKey){groupEl.id='labor-appliance-'+group.applianceKey;groupEl.dataset.appliance=group.applianceKey;groupEl.hidden=true;}}
  if(category.id==='appliances'){
   const shoppingChoices={
     'beverage-taps':[['Shop beverage taps','Beverage Taps'],['Shop kegerators','Kegerators']],
