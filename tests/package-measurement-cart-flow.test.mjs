@@ -1,0 +1,111 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync, existsSync} from 'node:fs';
+import {JSDOM, VirtualConsole} from 'jsdom';
+
+const root=new URL('../',import.meta.url);
+const renderHtml=(page)=>readFileSync(new URL(page,root),'utf8')
+  .replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(_,src)=>{
+    const path=src.split('?')[0].replace(/^\//,'');
+    return existsSync(new URL(path,root))
+      ?'<script>'+readFileSync(new URL(path,root),'utf8').replace(/<\/script/gi,'<\\/script')+'</script>'
+      :'';
+  });
+async function load(page,query='',cart=[]){
+  const virtualConsole=new VirtualConsole();
+  // JSDOM does not implement cross-page navigation after the cart has been saved.
+  virtualConsole.on('jsdomError',e=>{if(!/Not implemented: navigation/.test(e.message))throw e;});
+  const dom=new JSDOM(renderHtml(page),{
+    url:'https://niksremodeling.com/'+page+query,
+    runScripts:'dangerously',pretendToBeVisual:true,virtualConsole,
+    beforeParse(w){
+      w.HTMLElement.prototype.scrollIntoView=function(){};
+      w.scrollTo=()=>{};
+      w.localStorage.setItem('nr-cart',JSON.stringify(cart));
+    }
+  });
+  await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
+  return dom;
+}
+const packageCases=[
+  {project:'bathrooms',source:'bathroom-project-package',button:'.bath-card-add[data-bath-package="standard"]',tier:'standard'},
+  {project:'kitchen-pantry',source:'kitchen-project-package',button:'.bath-card-add[data-kitchen-package="standard"]',tier:'standard'},
+  {project:'attic',source:'room-project-package',button:'.pkg-add[data-package="basic"]',tier:'basic'}
+];
+for(const entry of packageCases)test(entry.project+' package collects measurements before cart and includes labor',async()=>{
+  const dom=await load('project.html','?project='+entry.project);
+  try{
+    const w=dom.window,d=w.document,btn=d.querySelector(entry.button);
+    assert.ok(btn,entry.project+' package button missing');
+    assert.equal(btn.textContent,'Calculate Quote');
+    btn.click();
+    assert.ok(d.querySelector('#pkg-measure-form'),'Package button must open measurements');
+    assert.equal(JSON.parse(w.localStorage.getItem('nr-cart')).length,0,'No unmeasured cart entry');
+    assert.equal(d.querySelector('#pkg-measure-result').hidden,true);
+    const set=(id,value)=>d.getElementById(id).value=value;
+    set('pkg-length-ft','10');set('pkg-width-ft','10');
+    d.querySelector('#pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    assert.equal(d.querySelector('#pkg-measure-result').hidden,false,'Measured estimate should display');
+    assert.match(d.querySelector('#pkg-measure-summary').textContent,/100 sq\. ft\./);
+    d.querySelector('#pkg-confirm-add').click();
+    const items=JSON.parse(w.localStorage.getItem('nr-cart'));
+    assert.equal(items.length,1);
+    assert.equal(items[0].source,entry.source);
+    assert.equal(items[0].packageId,entry.tier);
+    assert.equal(items[0].measurements.floorArea,100);
+    assert.equal(items[0].measurements.ceilingArea,100);
+    assert.equal(items[0].quoteRequired,true,'A starting price must not be treated as a final invoice');
+    assert.equal(items[0].price,null);
+    w.renderCart();
+    assert.match(d.body.textContent,/Complete package:.*Labor, materials and standard supplies included/);
+    assert.equal(d.querySelector('.nr-cart-actions a[href="/installation.html"]'),null,
+      'Do not suggest paying for installation twice for a complete package');
+    assert.ok(d.querySelector('.nr-cart-meta')?.textContent);
+    assert.match(d.body.textContent,/Measurements:/);
+  } finally {dom.window.close();}
+});
+test('Bathroom measured paint and estimate do not silently add separate labor charges',async()=>{
+  const dom=await load('project.html','?project=bathrooms');
+  try{
+    const w=dom.window,d=w.document;
+    d.querySelector('.bath-card-add[data-bath-package="standard"]').click();
+    d.getElementById('pkg-length-ft').value='10';
+    d.getElementById('pkg-width-ft').value='10';
+    d.getElementById('pkg-openings').value='20';
+    d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    assert.match(d.getElementById('pkg-measure-summary').textContent,/300 sq\. ft\./);
+    assert.match(d.getElementById('pkg-measure-summary').textContent,/2 gallons/);
+    d.getElementById('pkg-confirm-add').click();
+    const item=JSON.parse(w.localStorage.getItem('nr-cart'))[0];
+    assert.equal(item.measurements.wallArea,300);
+    assert.equal(item.measurements.wallPaintGallons,2);
+    assert.equal(item.measurements.wallPaintLabor,450);
+    assert.equal(item.startingAt,2195);
+    assert.equal(item.price,null,'Measured painting breakdown must not be added atop bundled starting price');
+  } finally {dom.window.close();}
+});
+test('Legacy unmeasured package has direct measurement link; measuring it does not duplicate the cart row',async()=>{
+  const old={name:'Bathroom — Standard Upgrade',qty:1,type:'Service',source:'bathroom-project-package',packageId:'standard',startingAt:2195,price:null,quoteRequired:true};
+  const cart=await load('project-cart.html','',[old]);
+  let href;
+  try{
+    const d=cart.window.document;
+    href=d.querySelector('a[href*="quote=1"]')?.getAttribute('href');
+    assert.ok(href,'Existing package should offer to enter measurements');
+    assert.match(href,/bathPackage=standard/);
+    assert.equal(d.querySelector('.nr-cart-actions a[href="/installation.html"]'),null);
+  }finally{cart.window.close();}
+  const url=new URL(href,'https://niksremodeling.com');
+  const page=await load('project.html',url.search,[old]);
+  try{
+    const w=page.window,d=w.document;
+    assert.ok(d.getElementById('pkg-measure-form'),'Link should open measurements directly');
+    d.getElementById('pkg-length-ft').value='10';
+    d.getElementById('pkg-width-ft').value='10';
+    d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    d.getElementById('pkg-confirm-add').click();
+    const items=JSON.parse(w.localStorage.getItem('nr-cart'));
+    assert.equal(items.length,1,'Legacy unmeasured package must be replaced, not duplicated');
+    assert.equal(items[0].measurements.floorArea,100);
+  }finally{page.window.close();}
+});
