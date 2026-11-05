@@ -896,6 +896,14 @@ function initCartTaxPreview(){
  });
 }
 
+function packageQuoteLink(item){
+ const kind=item?.source;
+ const field=kind==='bathroom-project-package'?'bathPackage':kind==='kitchen-project-package'?'kitchenPackage':kind==='room-project-package'?'roomPackage':null;
+ if(!field||!/^[a-z0-9-]{1,64}$/.test(String(item.packageId||'')))return '';
+ const project=kind==='bathroom-project-package'?'bathrooms':kind==='kitchen-project-package'?'kitchen-pantry':item.projectId;
+ if(!/^[a-z0-9-]{1,80}$/.test(String(project||'')))return '';
+ return '/project.html?'+new URLSearchParams({project,[field]:item.packageId,quote:'1'}).toString();
+}
 function renderCart(){
  const c=reconcileBathroomFixtureAllowances(getCart());
  const visible=c.map((item,index)=>({item,index})).filter(({item})=>!item.hiddenFromCustomer);
@@ -914,6 +922,7 @@ function renderCart(){
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
   ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
   ${packageMeasurementSummary(x)?`<div class="nr-cart-meta"><strong>Measurements:</strong> ${escapeCartText(packageMeasurementSummary(x))}</div>`:''}
+  ${packageSources.has(x.source)&&!packageMeasurementSummary(x)&&packageQuoteLink(x)?`<a class="btn outline" href="${escapeCartText(packageQuoteLink(x))}">Enter Measurements to Complete Quote</a>`:''}
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
