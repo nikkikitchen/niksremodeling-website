@@ -315,7 +315,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const back='/project.html?project='+encodeURIComponent(projectId);
   const field=(id,label,placeholder)=>'<label for="pkg-'+id+'">'+label+'</label><input id="pkg-'+id+'" type="number" inputmode="numeric" min="0" step="1" placeholder="'+placeholder+'">';
   const dimension=(id,label)=>'<fieldset class="pkg-dimension"><legend>'+label+'</legend><div class="pkg-dimension-inputs"><div>'+field(id+'-ft','Feet','0')+'</div><div>'+field(id+'-in','Inches (0–11)','0')+'</div></div></fieldset>';
-  document.title='Measure '+projectTitle+' — Nik\\'s Remodeling';
+  document.title="Measure "+projectTitle+" — Nik's Remodeling";
   document.body.innerHTML=header()+
     '<main class="wrap section pkg-measure-page"><a class="project-back" href="'+back+'">← All '+safe(projectTitle)+' Packages</a>'+
     '<h1>'+safe(projectTitle)+' — '+safe(choice.name)+'</h1><p class="lead">Step 1: Measurements · Step 2: Calculated scope · Step 3: Review Cart</p>'+
