@@ -765,8 +765,9 @@ function cartCheckoutSummary(items){
  const laborSubtotal=estimatedLabor.hasServices?Math.max(0,estimatedLabor.total-packagedMaterialTotal):0;
  const combinedEstimatedTotal=payableSubtotal+laborSubtotal;
  // Only separately priced retail merchandise is included in the provisional
- // goods tax base. Labor and project estimates are not treated as retail sales.
- const retailGoodsCents=Math.round(payableSubtotal*100);
+ // goods tax base. Internal installation supplies, labor and unconfirmed project
+ // packages are excluded; tax treatment is confirmed before invoicing.
+ const retailGoodsCents=Math.round(amount*100);
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const shippingChecker=supplierShippingItems.length?
