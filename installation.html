@@ -205,7 +205,7 @@ cabinet.groups.push({id:'approved-cabinet-additions',label:'Cabinet trim & prepa
  {id:'cabinet-lighting',label:'Install cabinet lighting (existing connections)',price:550,unit:'installation',status:'approved',note:'Labor only; uses the established under-cabinet lighting rate. New wiring priced separately.'}
  ]}});
 const kitchen=(label,price,unit='each',note='Labor only; fixtures and materials extra.')=>({id:'kitchen-'+label.toLowerCase().replace(/[^a-z0-9]+/g,'-'),label,price,unit,status:price===null?'pending':'approved',note:price===null?'Priced after an in-person assessment.':note});
-catalog.push({id:'kitchen',label:'Kitchens & countertops',intro:'Kitchen plumbing, countertops and backsplash work.',groups:[
+catalog.push({id:'kitchen',label:'Kitchens',intro:'Kitchen plumbing, countertops and backsplash work.',groups:[
  {id:'kitchen-plumbing',label:'Kitchen sinks & plumbing',actions:{Services:[
  kitchen('Install kitchen sink',225),kitchen('Replace kitchen faucet',175),
  kitchen('Install garbage disposal',275),
