@@ -569,11 +569,12 @@
       ];
       const params=new URLSearchParams(location.search);
       const selected=packages.find(p=>p.id===params.get('accessibilityPackage'))||null;
+      if(selected&&selected.id!=='custom'&&params.get('quote')==='1'){window.beginPackageQuote('accessibility','Accessibility',selected,'accessibility-project-package');return;}
       const original='/project.html?project=accessibility&accessibilityMode=individual';
       const photos=['/assets/idea-accessibility.jpg','/assets/entryways-card.jpg','/assets/approved-94fe00a25a93.jpg'];
       const nav=packages.map((p,index)=>{
         const href=p.id==='custom'?original:'/project.html?project=accessibility&accessibilityPackage='+p.id;
-        return '<div class="bath-photo-tile"><a class="bath-photo-card'+(selected?.id===p.id?' current':'')+'" href="'+href+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' accessibility project" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+p.name+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong><span class="bath-includes-note">Complete project planning includes labor, materials &amp; needed supplies; scope and pricing are confirmed by quote.</span>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>'+(p.id==='custom'?'':'<div class="bath-price-below">Project quote required</div><button class="btn primary bath-card-add" type="button" data-accessibility-package="'+p.id+'">Add to Cart</button>')+'</div>';
+        return '<div class="bath-photo-tile"><a class="bath-photo-card'+(selected?.id===p.id?' current':'')+'" href="'+href+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' accessibility project" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+p.name+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong><span class="bath-includes-note">Complete project planning includes labor, materials &amp; needed supplies; scope and pricing are confirmed by quote.</span>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>'+(p.id==='custom'?'':'<div class="bath-price-below">Project quote required</div><button class="btn primary bath-card-add" type="button" data-accessibility-package="'+p.id+'">Calculate Quote</button>')+'</div>';
       }).join('');
       document.body.innerHTML=header()+
         '<main><section class="section bath-project-chooser"><div class="wrap">'+
@@ -590,12 +591,7 @@
       document.querySelectorAll('[data-accessibility-package]').forEach(button=>button.addEventListener('click',()=>{
         const choice=packages.find(p=>p.id===button.dataset.accessibilityPackage);
         if(!choice)return;
-        const cart=getCart();
-        if(!cart.some(item=>item.source==='accessibility-project-package'&&item.packageId===choice.id)){
-          cart.push({name:'Accessibility — '+choice.name,qty:1,type:'Service',source:'accessibility-project-package',packageId:choice.id,price:null,quoteRequired:true,inPersonQuoteRequired:true,scope:choice.work.slice(),description:'Complete project scope includes labor, materials and standard supplies after site assessment. No fixed price or online payment.'});
-          saveCart(cart);
-        }
-        location.href='/project-cart.html';
+        window.beginPackageQuote('accessibility','Accessibility',choice,'accessibility-project-package');
       }));
       updateCartCount();return;
     }
