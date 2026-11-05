@@ -433,7 +433,21 @@
       document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="Home extension under construction" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${additionTitle}</h1><p>Add a bedroom, family room, sunroom or other living space.</p></div></section><section class="section"><div class="wrap"><p class="lead">Foundations, structural connections, framing, roofing, utilities, permits and finishes must be reviewed on site before pricing.</p>${requestedAddition&&additionTypes.includes(requestedAddition)?'<p class="calc-note"><strong>Selected project:</strong> '+additionTitle+'</p>':''}${customQuoteMarkup(additionTitle)}</div></section></main>`+footer();
       updateCartCount();return;
     }
-    if(isCustomLabel(project.title)){renderCustomQuotePage(project.title);return;}
+    if(isCustomLabel(project.title)){
+      renderCustomQuotePage(project.title);
+      // Custom-labeled specialty work still needs a direct path to its
+      // Basic / Premium / Custom package choices, without bypassing quote review.
+      if(window.PROJECT_PACKAGE_CHOICES?.[id]){
+        const heading=document.querySelector('main h1');
+        const action=document.createElement('a');
+        action.className='btn primary';
+        action.href='/project.html?project='+encodeURIComponent(id)+'&view=packages';
+        action.textContent='Explore Basic, Premium & Custom Packages';
+        action.style.cssText='display:inline-flex;margin:16px 0 20px';
+        heading?.insertAdjacentElement('afterend',action);
+      }
+      return;
+    }
 
     // Isolated Bathroom package pilot. Existing detailed estimator is retained.
     if((id==='bathrooms'||id==='bath-remodel') && new URLSearchParams(location.search).get('bathMode')!=='individual'){
