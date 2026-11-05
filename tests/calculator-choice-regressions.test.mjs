@@ -22,7 +22,13 @@ async function openPage(file, query = '', storage = {}) {
   });
   // The full project UI is assembled by scripts after the document loads.
   // Poll for its work cards rather than using a fixed 100 ms sleep on busy CI.
-  if (file === 'project.html' && query.includes('project=')) {
+  if (file === 'calculators.html') {
+    // Planner + wizard load in separate scripts. Wait for readiness, not a fixed delay.
+    for (let attempt = 0; attempt < 40; attempt++) {
+      if (dom.window.document.querySelector('.calc-workspace[data-step]')) break;
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+  } else if (file === 'project.html' && query.includes('project=')) {
     for (let attempt = 0; attempt < 20; attempt++) {
       if (dom.window.document.querySelector('#project-work-grid .project-work-card')) break;
       await new Promise(resolve => setTimeout(resolve, 100));
