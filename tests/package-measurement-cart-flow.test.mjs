@@ -109,3 +109,32 @@ test('Legacy unmeasured package has direct measurement link; measuring it does n
     assert.equal(items[0].measurements.floorArea,100);
   }finally{page.window.close();}
 });
+
+test('Accessibility package asks relevant feature counts instead of an unrelated room size',async()=>{
+  const dom=await load('project.html','?project=accessibility');
+  try{
+    const w=dom.window,d=w.document;
+    const button=d.querySelector('[data-accessibility-package="basic"]');
+    assert.equal(button?.textContent,'Calculate Quote');
+    button.click();
+    assert.ok(d.querySelector('#pkg-feature-grid')||d.querySelector('.pkg-feature-grid'));
+    assert.equal(d.getElementById('pkg-length-ft'),null,'No whole-room dimensions for grab bars');
+    assert.equal(JSON.parse(w.localStorage.getItem('nr-cart')).length,0);
+    d.getElementById('pkg-grab-bars').value='2';
+    d.getElementById('pkg-handrail-length').value='12';
+    d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    assert.equal(d.getElementById('pkg-measure-result').hidden,false);
+    assert.match(d.getElementById('pkg-measure-summary').textContent,/12 ft/);
+    d.getElementById('pkg-confirm-add').click();
+    const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
+    assert.equal(item.source,'accessibility-project-package');
+    assert.equal(item.measurements.grabBars,2);
+    assert.equal(item.measurements.handrailLength,12);
+    assert.equal(item.quoteRequired,true);
+    assert.equal(item.inPersonQuoteRequired,true);
+    assert.equal(item.price,null);
+    w.renderCart();
+    assert.equal(d.querySelector('.nr-cart-actions a[href="/installation.html"]'),null);
+    assert.match(d.body.textContent,/2 grab bars/);
+  }finally{dom.window.close();}
+});
