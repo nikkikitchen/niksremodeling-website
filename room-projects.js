@@ -51,9 +51,9 @@ Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=im
 // Specialty spaces, outdoor ideas and trade details are nested underneath these.
 const PROJECT_MAIN_ENTRIES=[
  ['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
- ['bathrooms','Bathroom'],['bedroom-guest-room','Bedrooms'],
+ ['bathrooms','Bathroom'],['bedroom-guest-room','Bedroom'],
  ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
- ['garage','Garage'],['kitchen-pantry','Kitchens'],
+ ['garage','Garage'],['kitchen-pantry','Kitchen'],
  ['laundry-utility','Laundry & Utility'],['living-family-room','Living & Family Room'],
  ['custom','More Ideas'],['concrete','Outdoor Projects'],
  ['room-additions','Room Additions'],['themed-rooms','Themed Rooms']
@@ -324,16 +324,16 @@ function buildProjectDropdowns(){
    for(const [id,label] of PROJECT_MAIN_ENTRIES){
      const branch=document.createElement('div');branch.className='project-branch';branch.dataset.project=id;
      const row=document.createElement('div');row.className='project-branch-row';
-     // Bathroom and Kitchens link directly to their four-photo project chooser.
-     // No arrow, flyout, or hover-triggered side dropdown for these two entries.
+     // Bathroom and Kitchen open their project chooser directly; each also has
+     // a clearly labeled link to the matching Installation & Labor category.
      if(id==='bathrooms'||id==='kitchen-pantry'){
        const primary=link(label,projectLink(id));primary.className='project-category-link';primary.style.cssText='color:#0b5aa6;text-decoration:underline;text-underline-offset:3px;font-weight:800;cursor:pointer';
        row.append(primary);branch.append(row);
-       // Offer the same package/custom-items chooser from a visible Remodel sublink.
-       const remodel=link('↳ Remodel',projectLink(id));
-       remodel.className='project-remodel-shortcut';
-       remodel.style.cssText='display:block;padding:6px 12px 10px 27px;color:#0b5aa6;text-decoration:underline;text-underline-offset:3px;font:700 13px/1.3 Arial,sans-serif';
-       branch.append(remodel);menu.append(branch);
+       const laborCategory=id==='bathrooms'?'bathroom':'kitchen';
+       const labor=link('↳ Installation & Labor','/installation.html#labor-category-'+laborCategory);
+       labor.className='project-labor-shortcut';
+       labor.style.cssText='display:block;padding:6px 12px 10px 27px;color:#0b5aa6;text-decoration:underline;text-underline-offset:3px;font:700 13px/1.3 Arial,sans-serif';
+       branch.append(labor);menu.append(branch);
        // A neighboring flyout must not linger over this direct-link row.
        const dismissOtherChoices=()=>{close(menu);};
        branch.addEventListener('mouseenter',dismissOtherChoices);
