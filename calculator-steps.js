@@ -26,7 +26,7 @@
    title.textContent=step===1?'What would you like done?':'Item measurements & options';summary.querySelector('h2').textContent='Your estimate';back.hidden=false;next.hidden=step===3;next.textContent=step===3?'Add to Cart':step===2?'Review Estimate':'Next';own.hidden=['misc','delivery','debris','prep'].includes(document.getElementById('material-type').value);
   }
   next.onclick=()=>{if(current===3){window.addProjectToCart();return;}if(current===1){for(const id of ['material-name','material-type']){const input=document.getElementById(id);if(!input.value.trim()){error.textContent=id==='material-name'?'Name the room or area.':'Choose the work you need.';error.hidden=false;window.highlightMissingField(input);return;}}error.hidden=true;show(2);}else{window.calcMaterial();if(error.hidden&&materialEstimates.length){show(3);summary.scrollIntoView({behavior:'smooth',block:'start'});}else if(!error.hidden){const missing=panel.querySelector('.missing-answer')||(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)?document.activeElement:null);if(missing)window.highlightMissingField(missing);else error.scrollIntoView({behavior:'smooth',block:'center'});}}};
-  back.onclick=()=>{if(saved){window.startMoreProjectWork();show(1);}else if(current===1){if(window.parent!==window)window.parent.postMessage({type:'project-calculator-back'},location.origin);else if(history.length>1)history.back();else location.href='/#projects';}else show(current===3?2:1);};
+  back.onclick=()=>{if(saved){window.startMoreProjectWork();show(1);}else if(current===1){if(window.parent!==window)window.parent.postMessage({type:'project-calculator-back'},location.origin);else if(history.length>1)history.back();else location.href='/#projects';}else if(current===2&&preselectedWorkContext){if(window.parent!==window)window.parent.postMessage({type:'project-calculator-back'},location.origin);else if(history.length>1)history.back();else location.href='/installation.html';}else show(current===3?2:1);};
   document.addEventListener('estimate-rendered',()=>{if(current===3&&!materialEstimates.length)show(2);});
   summary.addEventListener('click',e=>{const button=e.target.closest('button');if(!button)return;if(/Edit|Recalculate/.test(button.textContent))show(2);else if(/Add Work|Add Another/.test(button.textContent)){own.querySelector('input').checked=false;show(1);}});
   document.addEventListener('work-options-change',()=>{if(current!==3)show(current);});
@@ -38,7 +38,8 @@
     (context.get('materials')||'').split('|').some(Boolean);
   const selectedWork=!!(context.get('room')&&context.get('material')&&
     (context.get('embedded')||context.get('work')||context.get('materials')));
-  show(selectedBathroomJob||selectedWork?2:1);
+  const preselectedWorkContext=selectedBathroomJob||selectedWork;
+  show(preselectedWorkContext?2:1);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));else setTimeout(init,0);
 })();
