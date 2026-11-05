@@ -623,6 +623,10 @@ function serviceEstimateMarkup(items){
 }
 function packageMeasurementSummary(item){
  const m=item?.measurements;
+ if(m?.accentOnly)return (m.roomName?m.roomName+': ':'')+
+   Number(m.length||0)+' × '+Number(m.height||0)+' ft. accent wall; '+
+   Number(m.wallArea||0)+' sq. ft. wall area'+
+   (Number(m.paintGallons)>0?'; '+Number(m.paintGallons)+' paint gallons':'')+'.';
  if(m?.accessibility)return (m.roomName?m.roomName+': ':'')+
    Number(m.grabBars||0)+' grab bars, '+Number(m.doorHardware||0)+' door hardware sets, '+
    Number(m.thresholds||0)+' thresholds, '+Number(m.handrailLength||0)+' ft. handrail, '+
