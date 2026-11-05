@@ -232,3 +232,25 @@ test('Audited accent wall recalculates a larger measured scope without charging 
     assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
   }finally{dom.window.close();}
 });
+
+test('Combined project total includes quoted package minimum plus separate product and 8% estimated tax',async()=>{
+  const cart=[
+    {name:'Accent Wall — Basic',source:'room-project-package',projectId:'accents',packageId:'basic',
+      type:'Service',qty:1,price:null,startingAt:350,depositEstimate:147.13,
+      laborEstimate:166.25,overheadAllowance:36.62,quoteRequired:true},
+    {name:'Customer-selected merchandise',source:'supplier-retail',type:'Product',qty:1,price:100}
+  ];
+  const dom=await load('project-cart.html','',cart);
+  try{
+    const d=dom.window.document;
+    const combined=d.getElementById('cart-combined-project-total');
+    assert.ok(combined,'A combined project estimate must be visible');
+    assert.match(d.body.textContent,/Combined Project Total/);
+    assert.equal(combined.textContent,'$458.00+',
+      'Include $350 package starting price plus $100 product and $8 estimated product tax');
+    assert.equal(d.getElementById('cart-due-now').textContent,'$108.00',
+      'The unconfirmed $350 package must never enter the amount due now');
+    assert.equal(d.getElementById('cart-tax-amount').textContent,'$8.00',
+      'Do not assess interim retail tax on unconfirmed package labor');
+  }finally{dom.window.close();}
+});
