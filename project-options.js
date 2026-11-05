@@ -524,6 +524,64 @@
       updateCartCount();return;
     }
 
+
+    // Accessibility package chooser: two meaningful bundles plus custom work.
+    // Scope is a quote request, not a fixed price or promise of code-compliant
+    // installation without an on-site assessment.
+    if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')!=='individual'){
+      const packages=[
+        {id:'basic',name:'Basic Safety',intro:'Everyday safety improvements in key areas.',work:[
+          'Add grab bars or support rails where suitable backing can be confirmed',
+          'Improve accessible door hardware at selected existing doors',
+          'Address minor threshold or floor transitions where practical',
+          'Review mounting points and existing conditions before finalizing work'
+        ]},
+        {id:'premium',name:'Premium Accessibility',intro:'A broader accessibility upgrade for easier movement and safer access.',work:[
+          'Everything in Basic Safety, scoped to the home',
+          'Improve handrails and room-to-room access',
+          'Plan accessible doorway and entry improvements',
+          'Assess ramp, landing or walkway modifications where needed',
+          'Coordinate a site-specific plan for the chosen improvements'
+        ]},
+        {id:'custom',name:'Custom',intro:'Choose only the accessibility improvements you need.',work:[
+          'Select individual accessibility work',
+          'Combine indoor or outdoor improvements',
+          'Request a site-specific estimate'
+        ]}
+      ];
+      const params=new URLSearchParams(location.search);
+      const selected=packages.find(p=>p.id===params.get('accessibilityPackage'))||null;
+      const original='/project.html?project=accessibility&accessibilityMode=individual';
+      const photos=['/assets/idea-accessibility.jpg','/assets/entryways-card.jpg','/assets/approved-94fe00a25a93.jpg'];
+      const nav=packages.map((p,index)=>{
+        const href=p.id==='custom'?original:'/project.html?project=accessibility&accessibilityPackage='+p.id;
+        return '<div class="bath-photo-tile"><a class="bath-photo-card'+(selected?.id===p.id?' current':'')+'" href="'+href+'" aria-label="Explore '+p.name+'"><img src="'+photos[index]+'" alt="'+p.name+' accessibility project" loading="'+(index===0?'eager':'lazy')+'"><span class="bath-photo-label"><strong>'+p.name+'</strong><small>'+p.intro+'</small></span><span class="bath-photo-hover"><strong>Included work</strong><span class="bath-includes-note">Complete project planning includes labor, materials &amp; needed supplies; scope and pricing are confirmed by quote.</span>'+p.work.map(item=>'<span>• '+item+'</span>').join('')+'</span></a>'+(p.id==='custom'?'':'<div class="bath-price-below">Project quote required</div><button class="btn primary bath-card-add" type="button" data-accessibility-package="'+p.id+'">Add to Cart</button>')+'</div>';
+      }).join('');
+      document.body.innerHTML=header()+
+        '<main><section class="section bath-project-chooser"><div class="wrap">'+
+        '<a class="project-back" href="'+(selected?'/project.html?project=accessibility':'/#projects')+'">'+(selected?'← All Accessibility Packages':'← All Projects')+'</a>'+
+        '<h1>Accessibility Projects</h1><p class="bath-chooser-lead">Choose a package below. <span class="bath-desktop-instructions">Hover over a photo to see what is included.</span><span class="bath-touch-instructions">Tap “See what’s included” beneath a photo to review the work.</span> Choose Custom for individual improvements.</p>'+
+        '<nav class="bath-photo-grid" aria-label="Choose an accessibility package">'+nav+'</nav>'+
+        (selected&&selected.id!=='custom'?'<div class="bath-package-action"><p>Complete project estimate includes labor, materials and standard supplies for the agreed scope. Installation details, accessibility requirements and site conditions must be reviewed before final pricing.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I would like an estimate for the '+selected.name+' accessibility project package.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Package scope, material selection and final price are confirmed after site review. No payment is collected online.</p>')+
+        '</div></section></main>'+footer();
+      addMobilePackageDetails();
+      const style=document.createElement('style');
+      style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.bath-photo-tile{min-width:0;display:flex;flex-direction:column;gap:8px}.bath-photo-card{height:380px;position:relative;display:block;overflow:hidden;border-radius:12px;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 28px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;gap:9px;padding:20px;color:#fff;background:rgba(5,31,55,.95);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:18px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}.bath-includes-note{font-weight:700;color:#e1f1ff}.bath-price-below{text-align:center;font-size:16px;font-weight:800;color:#073c70}.bath-card-add{display:block;width:100%;min-height:42px}.bath-package-action{margin-top:24px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}.bath-package-action p{flex:1 1 320px;margin:0}@media(max-width:900px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
+      style.textContent+=mobilePackageDetailsCss;
+      document.head.append(style);
+      document.querySelectorAll('[data-accessibility-package]').forEach(button=>button.addEventListener('click',()=>{
+        const choice=packages.find(p=>p.id===button.dataset.accessibilityPackage);
+        if(!choice)return;
+        const cart=getCart();
+        if(!cart.some(item=>item.source==='accessibility-project-package'&&item.packageId===choice.id)){
+          cart.push({name:'Accessibility — '+choice.name,qty:1,type:'Service',source:'accessibility-project-package',packageId:choice.id,price:null,quoteRequired:true,inPersonQuoteRequired:true,scope:choice.work.slice(),description:'Complete project scope includes labor, materials and standard supplies after site assessment. No fixed price or online payment.'});
+          saveCart(cart);
+        }
+        location.href='/project-cart.html';
+      }));
+      updateCartCount();return;
+    }
+
     const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;
     document.body.innerHTML=header()+`<main><section class="project-detail-hero"><img src="${project.image}" alt="${escapeCartText(project.title)}" class="project-detail-photo"><div class="wrap"><a class="project-back" href="/#projects">← All Projects</a><h1>${escapeCartText(project.title)}</h1><p>Choose the work you want done. We'll ask for measurements only when that item needs them.</p></div></section><section class="section"><div class="wrap"><div class="panel project-measurement-start"><h2>Where is the work?</h2><div class="project-measurement-grid"><div class="field"><label for="scope-room">Room / area</label><select id="scope-room" required><option value="">Select one</option><option>Bathroom</option><option>Bedroom</option><option>Closet / Storage</option><option>Dining Room</option><option>Entry / Mudroom</option><option>Hallway</option><option>Home Office</option><option>Kitchen</option><option>Laundry / Utility</option><option>Living / Family Room</option><option>Outdoor Area</option><option>Other Room / Area</option></select></div><div class="field"><label for="scope-location">Location</label><select id="scope-location" required><option value="">Select one</option><option value="interior">Interior</option><option value="exterior">Exterior</option></select></div><div class="field"><label for="scope-length">Length (ft, optional)</label><input id="scope-length" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-width">Width (ft, optional)</label><input id="scope-width" type="number" min="0" step="1" value="0"></div><div class="field"><label for="scope-height">Height (ft, optional)</label><input id="scope-height" type="number" min="0" step="1" value="0"></div></div></div><h2 class="project-section-title">Choose your work</h2><div class="shop-guide-grid" id="project-work-grid"></div><p class="calc-note">Choose your work, calculate your estimate, and review your cart.</p><a class="btn outline" href="/project-cart.html">Review Project Cart</a></div></section></main>`+footer();
     if(project.exterior||project.outdoorGroup){const back=document.querySelector('.project-back');back.href='/project.html?project=concrete';back.textContent='← Outdoor Projects';}
