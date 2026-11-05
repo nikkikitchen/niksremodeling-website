@@ -264,6 +264,7 @@ window.renderProjectPackageOptions=function(id,project){
     {id:'custom',name:'Custom',intro:'Build your own project with individual work choices.',work:[]}
   ];
   const selected=packs.find(p=>p.id===params.get('roomPackage')&&p.id!=='custom');
+  if(params.get('quote')==='1'&&selected){window.beginPackageQuote(id,project.title,selected,'room-project-package');return true;}
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
     const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
@@ -406,7 +407,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     if(!measured){error.textContent='Calculate the measurements before adding to cart.';error.hidden=false;return;}
     const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:starting,depositEstimate:choice.depositEstimate,laborEstimate:choice.laborEstimate,overheadAllowance:choice.overheadAllowance,price:null,quoteRequired:true,scope:work.slice(),measurements:{...measured},description:'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
     const cart=getCart();
-    const match=cart.findIndex(x=>x.source===source&&x.projectId===projectId&&x.packageId===choice.id);
+    const match=cart.findIndex(x=>x.source===source&&x.packageId===choice.id&&(x.projectId===projectId||(!x.projectId&&['bathroom-project-package','kitchen-project-package'].includes(source)))&&(!x.measurements||x.measurements.roomName===measured.roomName));
     if(match>=0)cart[match]=item;else cart.push(item);
     saveCart(cart);
     location.href='/project-cart.html';
