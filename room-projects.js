@@ -306,6 +306,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const text=work.join(' ').toLowerCase();
   const bathroom=source==='bathroom-project-package';
   const kitchen=source==='kitchen-project-package';
+  const accessibility=source==='accessibility-project-package';
   const wallPaint=kitchen||(/paint.*wall|wall.*paint|washable paint|paint bedroom|refresh paint|paint or finish walls|paint and finish walls|minor painting/.test(text));
   const ceilingPaint=/paint.*ceiling|ceiling.*paint/.test(text);
   const backsplash=/backsplash/.test(text);
@@ -316,30 +317,31 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const back='/project.html?project='+encodeURIComponent(projectId);
   const field=(id,label,placeholder)=>'<label for="pkg-'+id+'">'+label+'</label><input id="pkg-'+id+'" type="number" inputmode="numeric" min="0" step="1" placeholder="'+placeholder+'">';
   const dimension=(id,label)=>'<fieldset class="pkg-dimension"><legend>'+label+'</legend><div class="pkg-dimension-inputs"><div>'+field(id+'-ft','Feet','0')+'</div><div>'+field(id+'-in','Inches (0–11)','0')+'</div></div></fieldset>';
+  const feature=(id,label)=>'<div class="pkg-feature-field">'+field(id,label,'0')+'</div>';
   document.title="Measure "+projectTitle+" — Nik's Remodeling";
   document.body.innerHTML=header()+
     '<main class="wrap section pkg-measure-page"><a class="project-back" href="'+back+'">← All '+safe(projectTitle)+' Packages</a>'+
     '<h1>'+safe(projectTitle)+' — '+safe(choice.name)+'</h1><p class="lead">Step 1: Measurements · Step 2: Calculated scope · Step 3: Review Cart</p>'+
     '<section class="panel"><h2>What your package includes</h2><ul>'+work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul>'+
     (starting?'<p><strong>Starting at '+money(starting)+'+</strong> — confirmed after measurements, materials, and site conditions. This is not an automatic charge.</p>':'<p><strong>Price by quote</strong> — measurements help us calculate the work before a final price is confirmed.</p>')+'</section>'+
-    '<form id="pkg-measure-form" class="panel"><h2>Enter room measurements</h2><p>One set of dimensions for this room. Use feet and inches, not decimal feet.</p>'+
+    '<form id="pkg-measure-form" class="panel"><h2>'+(accessibility?'Enter project quantities':'Enter room measurements')+'</h2><p>'+(accessibility?'Count the features you want updated. Exact measurements and safe mounting conditions are confirmed on site.':'One set of dimensions for this room. Use feet and inches, not decimal feet.')+'</p>'+
     '<label class="field" for="pkg-room-name">Room name (optional)<input type="text" id="pkg-room-name" maxlength="60" placeholder="Example: Main bathroom"></label>'+
-    '<div class="pkg-dimension-grid">'+dimension('length','Length')+dimension('width','Width')+dimension('height','Ceiling height')+'</div>'+
+    (accessibility?'<div class="pkg-feature-grid">'+feature('grab-bars','Grab bars / support rails (count)')+feature('door-hardware','Door hardware sets (count)')+feature('thresholds','Threshold transitions (count)')+feature('handrail-length','Handrail length (ft)')+feature('ramp-length','Ramp length (ft, if planned)')+'</div>':'<div class="pkg-dimension-grid">'+dimension('length','Length')+dimension('width','Width')+dimension('height','Ceiling height')+'</div>')+
     (wallPaint?'<div class="field">'+field('openings','Doors and windows to subtract from painted walls (sq. ft., optional)','0')+'</div>':'')+
     (backsplash?'<div class="field">'+field('backsplash','Backsplash to cover (sq. ft., optional)','0')+'</div>':'')+
     (cabinets?'<div class="field">'+field('cabinets','Cabinet boxes involved (optional)','0')+'</div>':'')+
     (counters?'<div class="field">'+field('counters','Countertop length (linear ft., optional)','0')+'</div>':'')+
-    '<p class="calc-note">We use your measurements to calculate surface areas and known material quantities. Fixtures, product choices, prep, and site conditions are confirmed before a firm quote. All package labor, supplies and coordination/contingency allowances remain included in the quote review.</p>'+
+    '<p class="calc-note">'+(accessibility?'Please include the approximate quantities for your project. Final compliance, support, access and structural suitability require a site assessment.':'We use your measurements to calculate surface areas and known material quantities. Fixtures, product choices and site conditions are confirmed before a firm quote.')+' Labor, materials, supplies and project fees are included in complete package pricing.</p>'+
     '<p id="pkg-measure-error" class="calc-error" role="alert" hidden></p><button class="btn primary" type="submit">Calculate My Estimate</button></form>'+
     '<section id="pkg-measure-result" class="panel" hidden aria-live="polite"><h2>Measured Project Estimate</h2><div id="pkg-measure-summary"></div>'+
-    '<p class="calc-note">Measurements and applicable calculated quantities are saved with this package. A complete project price still requires confirmation of all package labor, materials, supplies, overhead and site conditions.</p>'+
+    '<p class="calc-note">Measurements and quantities are saved with this package. A complete project price still requires confirmation of labor, materials, supplies, project fees and site conditions.</p>'+
     '<button class="btn primary" id="pkg-confirm-add" type="button">Add Measured Project to Cart</button> <button class="btn outline" id="pkg-edit-size" type="button">Edit Measurements</button></section>'+
     '</main>'+footer();
   const styles=document.createElement('style');
   styles.textContent='.pkg-measure-page{max-width:850px;padding-top:28px;padding-bottom:75px}.pkg-measure-page>.panel{margin:19px 0;padding:24px}.pkg-measure-page li{margin:8px 0}.pkg-dimension-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.pkg-dimension{min-width:0;border:1px solid #cbd7e2;border-radius:9px;padding:12px}.pkg-dimension legend{font-weight:800;padding:0 5px}.pkg-dimension-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.pkg-dimension-inputs label{display:block;font-weight:600;font-size:13px}.pkg-measure-page input{box-sizing:border-box;width:100%;padding:10px;border:1px solid #aebfcc;border-radius:6px}.pkg-measure-page #pkg-measure-summary p{margin:8px 0}.pkg-measure-page .calc-error{color:#af2222;font-weight:700}@media(max-width:680px){.pkg-dimension-grid{grid-template-columns:1fr}.pkg-measure-page>.panel{padding:16px}.pkg-dimension-inputs{grid-template-columns:1fr 1fr}}';
+  styles.textContent+='.pkg-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}.pkg-feature-grid label{display:block;font-weight:650}@media(max-width:600px){.pkg-feature-grid{grid-template-columns:1fr}}';
   document.head.append(styles);
-  ['length','width','height'].forEach(axis=>{document.getElementById('pkg-'+axis+'-in').value='0';});
-  document.getElementById('pkg-height-ft').value='8';
+  if(!accessibility){['length','width','height'].forEach(axis=>{document.getElementById('pkg-'+axis+'-in').value='0';});document.getElementById('pkg-height-ft').value='8';}
   const form=document.getElementById('pkg-measure-form');
   const summary=document.getElementById('pkg-measure-summary');
   const result=document.getElementById('pkg-measure-result');
@@ -363,6 +365,23 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   form.addEventListener('submit',e=>{
     e.preventDefault();
     try{
+      if(accessibility){
+        const grabBars=number('grab-bars',true),doorHardware=number('door-hardware',true);
+        const thresholds=number('thresholds',true),handrailLength=number('handrail-length',true),rampLength=number('ramp-length',true);
+        if([grabBars,doorHardware,thresholds,handrailLength,rampLength].some(v=>v>10000||!Number.isInteger(v)))
+          throw Error('Enter whole numbers for the item counts and approximate lengths.');
+        if(grabBars+doorHardware+thresholds+handrailLength+rampLength<=0)
+          throw Error('Enter at least one item or approximate length to plan the accessibility work.');
+        const roomName=document.getElementById('pkg-room-name').value.trim()||'Accessibility project';
+        measured={accessibility:true,roomName,grabBars,doorHardware,thresholds,handrailLength,rampLength};
+        summary.innerHTML='<p><strong>Area:</strong> '+safe(roomName)+'</p>'+
+          '<p><strong>Grab bars / rails:</strong> '+grabBars+'</p><p><strong>Door hardware sets:</strong> '+doorHardware+'</p>'+
+          '<p><strong>Threshold transitions:</strong> '+thresholds+'</p><p><strong>Handrail length:</strong> '+handrailLength+' ft.</p>'+
+          '<p><strong>Planned ramp length:</strong> '+rampLength+' ft.</p>'+
+          '<p><strong>Final price:</strong> In-person quote required. Labor, materials, supplies and project fees included.</p>';
+        error.hidden=true;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'start'});
+        return;
+      }
       const length=dimensionValue('length'),width=dimensionValue('width'),height=dimensionValue('height');
       if(height<5||height>30)throw Error('Enter a reasonable ceiling height from 5 to 30 feet.');
       const floorArea=length*width,perimeter=2*(length+width),ceilingArea=floorArea;
@@ -405,9 +424,9 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   document.getElementById('pkg-edit-size').onclick=()=>{form.scrollIntoView({behavior:'smooth',block:'start'});};
   document.getElementById('pkg-confirm-add').onclick=()=>{
     if(!measured){error.textContent='Calculate the measurements before adding to cart.';error.hidden=false;return;}
-    const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:starting,depositEstimate:choice.depositEstimate,laborEstimate:choice.laborEstimate,overheadAllowance:choice.overheadAllowance,price:null,quoteRequired:true,scope:work.slice(),measurements:{...measured},description:'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
+    const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:starting,depositEstimate:choice.depositEstimate,laborEstimate:choice.laborEstimate,overheadAllowance:choice.overheadAllowance,price:null,quoteRequired:true,inPersonQuoteRequired:accessibility,scope:work.slice(),measurements:{...measured},description:accessibility?'Accessibility work: '+measured.grabBars+' grab bars, '+measured.doorHardware+' door hardware sets, '+measured.thresholds+' thresholds, '+measured.handrailLength+' ft. handrail, '+measured.rampLength+' ft. ramp. In-person site quote required.':'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
     const cart=getCart();
-    const match=cart.findIndex(x=>x.source===source&&x.packageId===choice.id&&(x.projectId===projectId||(!x.projectId&&['bathroom-project-package','kitchen-project-package'].includes(source)))&&(!x.measurements||x.measurements.roomName===measured.roomName));
+    const match=cart.findIndex(x=>x.source===source&&x.packageId===choice.id&&(x.projectId===projectId||(!x.projectId&&['bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(source)))&&(!x.measurements||x.measurements.roomName===measured.roomName));
     if(match>=0)cart[match]=item;else cart.push(item);
     saveCart(cart);
     location.href='/project-cart.html';
