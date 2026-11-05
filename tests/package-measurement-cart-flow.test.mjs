@@ -164,3 +164,40 @@ test('Accent package measures only the chosen wall length × height and uses app
     assert.match(d.body.textContent,/12 × 8 ft\. accent wall/);
   }finally{dom.window.close();}
 });
+
+test('Audited Basic Accent Wall includes real materials, consumables, discount and a cart starting price',async()=>{
+  const dom=await load('project.html','?project=accents');
+  try{
+    const w=dom.window,d=w.document;
+    const spec=w.NIK_AUDITED_PACKAGE_PRICES?.accents?.basic;
+    assert.ok(spec,'Accent package must have itemized pricing');
+    assert.ok(!spec.consumables.some(x=>/silicone|paint roller frame|drop cloth/i.test(x.name)),
+      'Do not bill unsuitable caulk or reusable painting equipment');
+    const quote=w.NIK_CALCULATE_PACKAGE_BASELINE(spec);
+    assert.equal(quote.startingAt,350);
+    assert.equal(quote.depositEstimate,147.13);
+    assert.equal(quote.laborEstimate,166.25);
+    assert.equal(quote.priceBasis.laborDiscount,8.75);
+    assert.equal(quote.overheadAllowance,36.62);
+    assert.equal(quote.startingAt,quote.depositEstimate+quote.laborEstimate+quote.overheadAllowance);
+    assert.match(d.querySelector('.pkg-pricing')?.textContent||'',/Starting at \$350/);
+    const button=d.querySelector('.pkg-add[data-package="basic"]');
+    assert.ok(button);
+    button.click();
+    d.getElementById('pkg-length-ft').value='12';
+    d.getElementById('pkg-height-ft').value='8';
+    assert.equal(d.getElementById('pkg-width-ft'),null,'A single accent wall must not request full room dimensions');
+    d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+    assert.equal(d.getElementById('pkg-measure-result').hidden,false);
+    d.getElementById('pkg-confirm-add').click();
+    const cart=JSON.parse(w.localStorage.getItem('nr-cart'));
+    assert.equal(cart.length,1);
+    assert.equal(cart[0].startingAt,350);
+    assert.equal(cart[0].quoteRequired,true,'Starting estimates are not invoices');
+    assert.equal(cart[0].price,null,'Do not collect a project deposit automatically');
+    assert.deepEqual(cart[0].priceBasis.materials.map(x=>x.unitPrice),[48.60,47.22]);
+    w.renderCart();
+    assert.match(d.querySelector('.nr-cart-line-price').textContent,/Starting at \$350/);
+    assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
+  }finally{dom.window.close();}
+});
