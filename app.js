@@ -686,7 +686,7 @@ function cartPriceMarkup(x){
  return (known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
 }
 function cartSchedulingMarkup(c){
- const hasProjectPackages=c.some(item=>['bathroom-project-package','kitchen-project-package'].includes(item.source));
+ const hasProjectPackages=c.some(item=>['bathroom-project-package','kitchen-project-package','accessibility-project-package','room-project-package'].includes(item.source));
  return `<section class="panel nr-cart-next-step" id="cart-scheduling" aria-labelledby="cart-scheduling-heading">
  <h3 id="cart-scheduling-heading">Next Step</h3>
  ${hasProjectPackages?'<p class="calc-note"><strong>Next:</strong> Request your finalized project estimate, materials-and-supplies deposit amount, and proposed weekly draw schedule. No payment is collected here.</p>':''}
