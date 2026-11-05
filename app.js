@@ -694,7 +694,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
- if(['bathroom-project-package','kitchen-project-package'].includes(x.source)&&Number.isFinite(Number(x.startingAt)))return 'Starting at '+Number(x.startingAt).toLocaleString('en-US',{style:'currency',currency:'USD'})+'<small class="cart-price-scope">Complete project estimate · confirm scope before payment</small>';
+ if(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package'].includes(x.source)&&Number(x.startingAt)>0)return 'Starting at '+Number(x.startingAt).toLocaleString('en-US',{style:'currency',currency:'USD'})+'<small class="cart-price-scope">Complete project estimate · confirm scope before payment</small>';
  if(x.source==='retail-installation'&&(x.price==null||x.pricingPending))return 'Installation quote needed';
  if(customEstimate(x)||requiresInPersonQuote(x))return 'In-person quote required';
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
