@@ -623,6 +623,10 @@ function serviceEstimateMarkup(items){
 }
 function packageMeasurementSummary(item){
  const m=item?.measurements;
+ if(m?.accessibility)return (m.roomName?m.roomName+': ':'')+
+   Number(m.grabBars||0)+' grab bars, '+Number(m.doorHardware||0)+' door hardware sets, '+
+   Number(m.thresholds||0)+' thresholds, '+Number(m.handrailLength||0)+' ft. handrail, '+
+   Number(m.rampLength||0)+' ft. ramp. In-person assessment required.';
  if(!m||!Number.isFinite(Number(m.length))||!Number.isFinite(Number(m.width)))return '';
  const n=value=>Number(value||0).toLocaleString('en-US',{maximumFractionDigits:2});
  return (m.roomName?m.roomName+': ':'')+n(m.length)+' × '+n(m.width)+' ft., ceiling '+n(m.height)+' ft.; floor '+n(m.floorArea)+' sq. ft.; paintable walls '+n(m.wallArea)+' sq. ft.; perimeter '+n(m.perimeter)+' linear ft.'+
@@ -898,9 +902,9 @@ function initCartTaxPreview(){
 
 function packageQuoteLink(item){
  const kind=item?.source;
- const field=kind==='bathroom-project-package'?'bathPackage':kind==='kitchen-project-package'?'kitchenPackage':kind==='room-project-package'?'roomPackage':null;
+ const field=kind==='bathroom-project-package'?'bathPackage':kind==='kitchen-project-package'?'kitchenPackage':kind==='room-project-package'?'roomPackage':kind==='accessibility-project-package'?'accessibilityPackage':null;
  if(!field||!/^[a-z0-9-]{1,64}$/.test(String(item.packageId||'')))return '';
- const project=kind==='bathroom-project-package'?'bathrooms':kind==='kitchen-project-package'?'kitchen-pantry':item.projectId;
+ const project=kind==='bathroom-project-package'?'bathrooms':kind==='kitchen-project-package'?'kitchen-pantry':kind==='accessibility-project-package'?'accessibility':item.projectId;
  if(!/^[a-z0-9-]{1,80}$/.test(String(project||'')))return '';
  return '/project.html?'+new URLSearchParams({project,[field]:item.packageId,quote:'1'}).toString();
 }
@@ -908,7 +912,7 @@ function renderCart(){
  const c=reconcileBathroomFixtureAllowances(getCart());
  const visible=c.map((item,index)=>({item,index})).filter(({item})=>!item.hiddenFromCustomer);
  const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
-  const packageSources=new Set(['bathroom-project-package','kitchen-project-package','room-project-package']);
+  const packageSources=new Set(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package']);
   const hasCompletePackage=visible.some(({item})=>packageSources.has(item.source));
   const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
  document.title='Review Cart | Nik\'s Remodeling';
