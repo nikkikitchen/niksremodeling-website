@@ -769,6 +769,10 @@ function cartCheckoutSummary(items){
  const payableSubtotal=amount+standaloneSupplies+laborCatalogTotal+packagedMaterialTotal;
  const laborSubtotal=estimatedLabor.hasServices?Math.max(0,estimatedLabor.total-packagedMaterialTotal):0;
  const combinedEstimatedTotal=payableSubtotal+laborSubtotal;
+ // Package starting prices are planning minimums, not collectible charges.
+ // Display a combined estimate separately so the package is visible to customers
+ // without adding the unconfirmed price to the payable subtotal or "Due now".
+ const combinedStartingBaseCents=Math.round(combinedEstimatedTotal*100)+Math.round(packageStartingTotal*100);
  // Provisional taxable merchandise includes separately priced retail goods and
  // identifiable material/supply portions of labor packages, but excludes labor.
  // Actual tax treatment is verified before invoicing.
@@ -795,6 +799,8 @@ function cartCheckoutSummary(items){
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
  <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Priced items subtotal (excludes pending packages)':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  <div class="cart-item"><span>Due now</span><strong id="cart-due-now">${money((Math.round(payableSubtotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
+ <div class="cart-item cart-combined-project-row"><span><strong>Combined Project Total${unconfirmedPackages.length?' (starting estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money((combinedStartingBaseCents+Math.round(retailGoodsCents*0.08))/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''}</strong></div>
+ ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Combined project starting estimate includes the approved package minimums and estimated tax on separately priced merchandise. Tax on unconfirmed package materials and any pending delivery remains subject to the written quote. No package deposit is due online.</p>':''}
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
  <p class="calc-note"><a href="/terms.html">Estimate only — details &amp; terms</a>. No payment collected.</p>
@@ -877,6 +883,7 @@ function initCartTaxPreview(){
  const rateLabel=document.getElementById('cart-tax-rate-label');
  const total=document.getElementById('cart-estimated-total');
  const dueNow=document.getElementById('cart-due-now');
+ const combined=document.getElementById('cart-combined-project-total');
  if(!tax||!info||!total)return;
  const retailCents=Number(total.dataset.retailCents);
  if(!Number.isSafeInteger(retailCents)||retailCents<0)return;
@@ -896,6 +903,11 @@ function initCartTaxPreview(){
   total.textContent=money(baseCents+(shippingCents??0)+taxCents);
   if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0)
    dueNow.textContent=money(payableCents+(shippingCents??0)+taxCents);
+  const combinedBase=Number(combined?.dataset.baseCents);
+  if(combined&&Number.isSafeInteger(combinedBase)&&combinedBase>=0)
+   combined.textContent=money(combinedBase+(shippingCents??0)+taxCents)+
+    (combined.dataset.hasStarting==='true'?'+':'')+
+    (combined.dataset.hasUnpriced==='true'?' + quote required':'');
  };
  calculate();
  if(!form)return;
