@@ -185,10 +185,10 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
   }
   // Menu groups link to existing expandable labor sections; installation.html
   // supplies the current catalog, while all other pages use matching group IDs.
-  const laborNavFallback=[{"id":"appliances","label":"Appliances","groups":[]},{"id":"bathroom","label":"Bathroom","groups":[{"id":"toilet","label":"Toilets"},{"id":"faucet","label":"Faucets"},{"id":"sink","label":"Sinks"},{"id":"vanity","label":"Vanities"},{"id":"vanity-lights","label":"Vanity Lights"},{"id":"tub","label":"Bathtubs"},{"id":"shower","label":"Walk-in Showers"},{"id":"glass","label":"Shower Doors"},{"id":"fan","label":"Vent Fans"},{"id":"accessory","label":"Mirrors & Accessories"},{"id":"bath-tile","label":"Tile & Grout"},{"id":"bath-surfaces","label":"Walls & Ceilings"}]},{"id":"cabinets","label":"Cabinets & Vanities","groups":[{"id":"cabinet","label":"Cabinet Installation & Removal"},{"id":"refinishing","label":"Cabinet Refinishing"},{"id":"hardware","label":"Hardware"},{"id":"cabinet-adjustment","label":"Cabinet Adjustment"},{"id":"approved-cabinet-additions","label":"Trim & Preparation"}]},{"id":"carpentry","label":"Carpentry & Trim","groups":[{"id":"stairs","label":"Stairs & Railings"},{"id":"custom","label":"Custom Carpentry"},{"id":"carpentry-reviewed","label":"Carpentry & Trim Services"}]},{"id":"doors","label":"Doors & Windows","groups":[{"id":"doors-reviewed","label":"Doors & Windows"}]},{"id":"drywall","label":"Drywall & Texture","groups":[{"id":"drywall-reviewed","label":"Drywall Services"},{"id":"drywall-sheet-work","label":"Drywall Installation & Removal"},{"id":"drywall-packages","label":"Drywall Room Packages"},{"id":"ceiling-drywall","label":"Ceiling Drywall"},{"id":"ceiling-patches","label":"Ceiling Repairs"},{"id":"wall-ceiling-packages","label":"Walls & Ceiling Packages"}]},{"id":"electrical","label":"Electrical & Smart Home","groups":[{"id":"electrical-reviewed","label":"Electrical & Smart Home"}]},{"id":"exterior","label":"Exterior & Outdoor","groups":[{"id":"siding","label":"Siding"},{"id":"deck","label":"Decks & Steps"},{"id":"concrete","label":"Concrete"},{"id":"insulation","label":"Insulation"}]},{"id":"flooring","label":"Flooring & Tile","groups":[{"id":"flooring-calc","label":"Flooring Installation"},{"id":"floor-repair","label":"Flooring Repairs"},{"id":"grout","label":"Grout & Caulk"}]},{"id":"kitchen","label":"Kitchens & Countertops","groups":[{"id":"kitchen-plumbing","label":"Kitchen Sinks & Plumbing"},{"id":"kitchen-surfaces","label":"Countertops & Backsplash"}]},{"id":"other","label":"Other Labor & Delivery","groups":[{"id":"misc","label":"Miscellaneous Labor"},{"id":"assembly","label":"Furniture Assembly"},{"id":"delivery","label":"Delivery & Debris"},{"id":"approved-support","label":"Delivery, Placement & Demolition"}]},{"id":"paint","label":"Painting & Wallpaper","groups":[{"id":"painting","label":"Painting"},{"id":"wallpaper","label":"Wallpaper"},{"id":"door-finish","label":"Door Painting & Staining"},{"id":"paint-room-prices","label":"Room Painting"},{"id":"ceiling-room-paint","label":"Ceiling Painting"}]}];
+  const laborNavFallback=[{"id":"appliances","label":"Appliances","groups":[]},{"id":"bathroom","label":"Bathroom","groups":[{"id":"toilet","label":"Toilets"},{"id":"faucet","label":"Faucets"},{"id":"sink","label":"Sinks"},{"id":"vanity","label":"Vanities"},{"id":"vanity-lights","label":"Vanity Lights"},{"id":"tub","label":"Bathtubs"},{"id":"shower","label":"Walk-in Showers"},{"id":"glass","label":"Shower Doors"},{"id":"fan","label":"Vent Fans"},{"id":"accessory","label":"Mirrors & Accessories"},{"id":"bath-tile","label":"Tile & Grout"},{"id":"bath-surfaces","label":"Walls & Ceilings"}]},{"id":"cabinets","label":"Cabinets & Vanities","groups":[{"id":"cabinet","label":"Cabinet Installation & Removal"},{"id":"refinishing","label":"Cabinet Refinishing"},{"id":"hardware","label":"Hardware"},{"id":"cabinet-adjustment","label":"Cabinet Adjustment"},{"id":"approved-cabinet-additions","label":"Trim & Preparation"}]},{"id":"carpentry","label":"Carpentry & Trim","groups":[{"id":"stairs","label":"Stairs & Railings"},{"id":"custom","label":"Custom Carpentry"},{"id":"carpentry-reviewed","label":"Carpentry & Trim Services"}]},{"id":"doors","label":"Doors & Windows","groups":[{"id":"doors-reviewed","label":"Doors & Windows"}]},{"id":"drywall","label":"Drywall & Texture","groups":[{"id":"drywall-reviewed","label":"Drywall Services"},{"id":"drywall-sheet-work","label":"Drywall Installation & Removal"},{"id":"drywall-packages","label":"Drywall Room Packages"},{"id":"ceiling-drywall","label":"Ceiling Drywall"},{"id":"ceiling-patches","label":"Ceiling Repairs"},{"id":"wall-ceiling-packages","label":"Walls & Ceiling Packages"}]},{"id":"electrical","label":"Electrical & Smart Home","groups":[{"id":"electrical-reviewed","label":"Electrical & Smart Home"}]},{"id":"exterior","label":"Exterior & Outdoor","groups":[{"id":"siding","label":"Siding"},{"id":"deck","label":"Decks & Steps"},{"id":"concrete","label":"Concrete"},{"id":"insulation","label":"Insulation"}]},{"id":"flooring","label":"Flooring & Tile","groups":[{"id":"flooring-calc","label":"Flooring Installation"},{"id":"floor-repair","label":"Flooring Repairs"},{"id":"grout","label":"Grout & Caulk"}]},{"id":"kitchen","label":"Kitchens","groups":[{"id":"kitchen-plumbing","label":"Kitchen Sinks & Plumbing"},{"id":"kitchen-surfaces","label":"Countertops & Backsplash"}]},{"id":"other","label":"Other Labor & Delivery","groups":[{"id":"misc","label":"Miscellaneous Labor"},{"id":"assembly","label":"Furniture Assembly"},{"id":"delivery","label":"Delivery & Debris"},{"id":"approved-support","label":"Delivery, Placement & Demolition"}]},{"id":"paint","label":"Painting & Wallpaper","groups":[{"id":"painting","label":"Painting"},{"id":"wallpaper","label":"Wallpaper"},{"id":"door-finish","label":"Door Painting & Staining"},{"id":"paint-room-prices","label":"Room Painting"},{"id":"ceiling-room-paint","label":"Ceiling Painting"}]}];
   function syncLaborMenus(){
     document.querySelectorAll('#labor-menu,#mobile-labor-menu').forEach(menu=>{
-      if(menu.dataset.unifiedLabor==='labor-all-v1')return;
+      if(menu.dataset.unifiedLabor==='labor-all-v2')return;
       bindShoppingHover(menu);
       const categories=window.LABOR_CATALOG||laborNavFallback;
       menu.replaceChildren();
@@ -204,19 +204,25 @@ button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&e
         const allCategory=document.createElement('a');allCategory.href=main;allCategory.textContent='All '+category.label;if(category.id!=='appliances')submenu.append(allCategory);
         const groups=category.id==='appliances'&&window.APPLIANCE_LABOR_GROUPS
           ? window.APPLIANCE_LABOR_GROUPS.map(g=>({id:g.id,label:g.label}))
-          : category.groups||[];
+          : (category.groups||[]).slice();
+        // Both labor dropdowns are rebuilt here, so include the same Remodel
+        // shortcuts as the main catalog. Alphabetical placement puts Bathroom
+        // Remodel between Mirrors & Accessories and Shower Doors.
+        if(category.id==='bathroom')groups.push({id:'remodel',label:'Remodel',remodelUrl:'/project.html?project=bathrooms'});
+        if(category.id==='kitchen')groups.push({id:'remodel',label:'Remodel',remodelUrl:'/project.html?project=kitchen-pantry'});
         if(groups.length>1||category.id==='appliances'){
           for(const group of groups.slice().sort((a,b)=>a.label.localeCompare(b.label))){
             const link=document.createElement('a');link.textContent=group.label;
-            link.href=category.id==='appliances'
+            if(group.remodelUrl)link.className='nav-remodel-shortcut';
+            link.href=group.remodelUrl||(category.id==='appliances'
               ? '/installation.html?appliance='+encodeURIComponent(group.id)+'#labor-category-appliances'
-              : '/installation.html#labor-group-'+category.id+'-'+group.id;
+              : '/installation.html#labor-group-'+category.id+'-'+group.id);
             submenu.append(link);
           }
         }
         branch.append(button,submenu);menu.append(branch);bindCategoryBranch(branch);
       }
-      menu.dataset.unifiedLabor='labor-all-v1';
+      menu.dataset.unifiedLabor='labor-all-v2';
     });
   }
   function connectSearchForms(){
