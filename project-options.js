@@ -438,13 +438,13 @@
       // Custom-labeled specialty work still needs a direct path to its
       // Basic / Premium / Custom package choices, without bypassing quote review.
       if(window.PROJECT_PACKAGE_CHOICES?.[id]){
-        const heading=document.querySelector('main h1');
+        const container=document.querySelector('main');
         const action=document.createElement('a');
         action.className='btn primary';
         action.href='/project.html?project='+encodeURIComponent(id)+'&view=packages';
         action.textContent='Explore Basic, Premium & Custom Packages';
         action.style.cssText='display:inline-flex;margin:16px 0 20px';
-        heading?.insertAdjacentElement('afterend',action);
+        container?.insertAdjacentElement('afterbegin',action);
       }
       return;
     }
