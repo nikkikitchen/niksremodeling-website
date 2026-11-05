@@ -41,6 +41,18 @@
   const preselectedWorkContext=selectedBathroomJob||selectedWork;
   show(preselectedWorkContext?2:1);
  }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));else setTimeout(init,0);
+ // The planner is created by another script after page load.
+ // Observe when it is ready rather than trusting a one-time timer.
+ function ready(){
+  const panel=document.getElementById('room-planner');
+  if(!panel||!document.getElementById('project-summary')||!document.getElementById('work-services'))return false;
+  init();
+  return panel.dataset.stepsReady==='1';
+ }
+ if(!ready()){
+  const observer=new MutationObserver(()=>{if(ready())observer.disconnect();});
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{if(ready())observer.disconnect();},{once:true});
+ }
 })();
 
