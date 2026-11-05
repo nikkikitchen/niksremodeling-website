@@ -309,6 +309,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const accessibility=source==='accessibility-project-package';
   const accentOnly=projectId==='accents';
   const basement=projectId==='basement';
+  const outdoorSurface=!!PROJECT_CATALOG[projectId]?.exterior || !!PROJECT_CATALOG[projectId]?.outdoorGroup;
   const wallPaint=kitchen||(/paint.*wall|wall.*paint|washable paint|paint bedroom|refresh paint|paint or finish walls|paint and finish walls|minor painting/.test(text));
   const ceilingPaint=/paint.*ceiling|ceiling.*paint/.test(text);
   const backsplash=/backsplash/.test(text);
@@ -326,9 +327,9 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     '<h1>'+safe(projectTitle)+' — '+safe(choice.name)+'</h1><p class="lead">Step 1: Measurements · Step 2: Calculated scope · Step 3: Review Cart</p>'+
     '<section class="panel"><h2>What your package includes</h2><ul>'+work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul>'+
     (starting?'<p><strong>Starting at '+money(starting)+'+</strong> — confirmed after measurements, materials, and site conditions. This is not an automatic charge.</p>':'<p><strong>Price by quote</strong> — measurements help us calculate the work before a final price is confirmed.</p>')+'</section>'+
-    '<form id="pkg-measure-form" class="panel"><h2>'+(accessibility?'Enter project quantities':accentOnly?'Enter accent wall measurements':'Enter room measurements')+'</h2><p>'+(accessibility?'Count the features you want updated. Exact measurements and safe mounting conditions are confirmed on site.':accentOnly?'Measure the one wall you want to improve: wall length × wall height.':'One set of dimensions for this room. Use feet and inches, not decimal feet.')+'</p>'+
+    '<form id="pkg-measure-form" class="panel"><h2>'+(accessibility?'Enter project quantities':accentOnly?'Enter accent wall measurements':outdoorSurface?'Enter outdoor project measurements':'Enter room measurements')+'</h2><p>'+(accessibility?'Count the features you want updated. Exact measurements and safe mounting conditions are confirmed on site.':accentOnly?'Measure the one wall you want to improve: wall length × wall height.':outdoorSurface?'Enter the deck or outdoor surface length and width. No ceiling height is needed.':'One set of dimensions for this room. Use feet and inches, not decimal feet.')+'</p>'+
     '<label class="field" for="pkg-room-name">Room name (optional)<input type="text" id="pkg-room-name" maxlength="60" placeholder="Example: Main bathroom"></label>'+
-    (accessibility?'<div class="pkg-feature-grid">'+feature('grab-bars','Grab bars / support rails (count)')+feature('door-hardware','Door hardware sets (count)')+feature('thresholds','Threshold transitions (count)')+feature('handrail-length','Handrail length (ft)')+feature('ramp-length','Ramp length (ft, if planned)')+'</div>':'<div class="pkg-dimension-grid">'+dimension('length',accentOnly?'Wall length':'Length')+(accentOnly?'':dimension('width','Width'))+dimension('height',accentOnly?'Wall height':'Ceiling height')+'</div>')+
+    (accessibility?'<div class="pkg-feature-grid">'+feature('grab-bars','Grab bars / support rails (count)')+feature('door-hardware','Door hardware sets (count)')+feature('thresholds','Threshold transitions (count)')+feature('handrail-length','Handrail length (ft)')+feature('ramp-length','Ramp length (ft, if planned)')+'</div>':'<div class="pkg-dimension-grid">'+dimension('length',accentOnly?'Wall length':'Length')+(accentOnly?'':dimension('width','Width'))+(outdoorSurface?'':dimension('height',accentOnly?'Wall height':'Ceiling height'))+'</div>')+
     (basement?'<div class="field"><label for="pkg-basement-floor">Existing concrete floor work</label><select id="pkg-basement-floor"><option value="none">No concrete floor treatment selected</option><option value="paint">Paint sound concrete — $2.50/sq. ft. labor</option><option value="seal">Seal sound concrete — $2.00/sq. ft. labor</option></select></div><div class="field">'+field('existing-lights','Existing-connection lights to replace (count)','0')+'</div>':'')+
     (wallPaint?'<div class="field">'+field('openings','Doors and windows to subtract from painted walls (sq. ft., optional)','0')+'</div>':'')+
     (backsplash?'<div class="field">'+field('backsplash','Backsplash to cover (sq. ft., optional)','0')+'</div>':'')+
@@ -344,7 +345,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   styles.textContent='.pkg-measure-page{max-width:850px;padding-top:28px;padding-bottom:75px}.pkg-measure-page>.panel{margin:19px 0;padding:24px}.pkg-measure-page li{margin:8px 0}.pkg-dimension-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.pkg-dimension{min-width:0;border:1px solid #cbd7e2;border-radius:9px;padding:12px}.pkg-dimension legend{font-weight:800;padding:0 5px}.pkg-dimension-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.pkg-dimension-inputs label{display:block;font-weight:600;font-size:13px}.pkg-measure-page input{box-sizing:border-box;width:100%;padding:10px;border:1px solid #aebfcc;border-radius:6px}.pkg-measure-page #pkg-measure-summary p{margin:8px 0}.pkg-measure-page .calc-error{color:#af2222;font-weight:700}@media(max-width:680px){.pkg-dimension-grid{grid-template-columns:1fr}.pkg-measure-page>.panel{padding:16px}.pkg-dimension-inputs{grid-template-columns:1fr 1fr}}';
   styles.textContent+='.pkg-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}.pkg-feature-grid label{display:block;font-weight:650}@media(max-width:600px){.pkg-feature-grid{grid-template-columns:1fr}}';
   document.head.append(styles);
-  if(!accessibility){(accentOnly?['length','height']:['length','width','height']).forEach(axis=>{document.getElementById('pkg-'+axis+'-in').value='0';});document.getElementById('pkg-height-ft').value='8';}
+  if(!accessibility){(outdoorSurface?['length','width']:accentOnly?['length','height']:['length','width','height']).forEach(axis=>{document.getElementById('pkg-'+axis+'-in').value='0';});if(!outdoorSurface)document.getElementById('pkg-height-ft').value='8';}
   const form=document.getElementById('pkg-measure-form');
   const summary=document.getElementById('pkg-measure-summary');
   const result=document.getElementById('pkg-measure-result');
@@ -385,12 +386,12 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
         error.hidden=true;result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'start'});
         return;
       }
-      const length=dimensionValue('length'),width=accentOnly?0:dimensionValue('width'),height=dimensionValue('height');
-      if(height<(accentOnly?1:5)||height>30)throw Error('Enter a reasonable wall or ceiling height.');
-      const floorArea=accentOnly?0:length*width,perimeter=accentOnly?0:2*(length+width),ceilingArea=floorArea;
+      const length=dimensionValue('length'),width=accentOnly?0:dimensionValue('width'),height=outdoorSurface?0:dimensionValue('height');
+      if(!outdoorSurface&&(height<(accentOnly?1:5)||height>30))throw Error('Enter a reasonable wall or ceiling height.');
+      const floorArea=accentOnly?0:length*width,perimeter=accentOnly?0:2*(length+width),ceilingArea=outdoorSurface?0:floorArea;
       const openings=wallPaint?number('openings',true):0;
-      const rawWalls=accentOnly?length*height:perimeter*height;
-      if(openings>=rawWalls)throw Error('Door and window area must be smaller than total wall area.');
+      const rawWalls=outdoorSurface?0:accentOnly?length*height:perimeter*height;
+      if(!outdoorSurface&&openings>=rawWalls)throw Error('Door and window area must be smaller than total wall area.');
       const wallArea=rawWalls-openings;
       const backsplashArea=backsplash?number('backsplash',true):0;
       const cabinetBoxes=cabinets?number('cabinets',true):0;
@@ -413,10 +414,10 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
       const basementLightLabor=basement?basementLights*150:0;
       const row=(label,value)=>'<p><strong>'+safe(label)+':</strong> '+safe(value)+'</p>';
       summary.innerHTML=row('Room',document.getElementById('pkg-room-name').value.trim()||projectTitle)+
-        row('Dimensions',accentOnly?length.toFixed(2)+' ft. wall length × '+height.toFixed(2)+' ft. wall height':length.toFixed(2)+' × '+width.toFixed(2)+' ft.; ceiling '+height.toFixed(2)+' ft.')+
-        (accentOnly?'':row('Floor / ceiling area',pretty(floorArea)+' sq. ft.'))+
-        row(accentOnly?'Accent wall area':'Wall area',pretty(wallArea)+' sq. ft.'+(openings?' after subtracting '+pretty(openings)+' sq. ft. openings':''))+
-        (accentOnly?'':row('Room perimeter',pretty(perimeter)+' linear ft.'))+
+        row('Dimensions',accentOnly?length.toFixed(2)+' ft. wall length × '+height.toFixed(2)+' ft. wall height':outdoorSurface?length.toFixed(2)+' × '+width.toFixed(2)+' ft. outdoor surface':length.toFixed(2)+' × '+width.toFixed(2)+' ft.; ceiling '+height.toFixed(2)+' ft.')+
+        (accentOnly?'':row(outdoorSurface?'Deck / outdoor surface area':'Floor / ceiling area',pretty(floorArea)+' sq. ft.'))+
+        (outdoorSurface?'':row(accentOnly?'Accent wall area':'Wall area',pretty(wallArea)+' sq. ft.'+(openings?' after subtracting '+pretty(openings)+' sq. ft. openings':'')))+
+        (accentOnly?'':row(outdoorSurface?'Deck perimeter':'Room perimeter',pretty(perimeter)+' linear ft.'))+
         (wallPaint?row('Two-coat wall paint',wallGallons+' gallons; measured painting labor '+money(wallLabor)):'')+
         (ceilingPaint?row('One-coat ceiling paint',ceilingGallons+' gallons; measured painting labor '+money(ceilingLabor)):'')+
         (basementFloor!=='none'?row('Concrete floor '+basementFloor+' labor',pretty(floorArea)+' sq. ft. = '+money(basementFloorLabor)+' (materials and prep not yet priced)'):'')+
