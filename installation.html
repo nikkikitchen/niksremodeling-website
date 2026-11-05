@@ -257,7 +257,7 @@ Object.assign(painting.actions.Paint.find(t=>t.id==='paint-wall'),{label:'Paint 
 painting.actions.Paint.push(approvedTask('paint-wall-one','Paint walls — one coat',0.75,'sq. ft.'),approvedTask('paint-accent','Accent wall painting — two coats, up to 96 sq. ft.',175,'wall','Labor only; additional cutting-in included. Paint materials unchanged.'));
 Object.assign(painting.actions.Prep.find(t=>t.id==='paint-prime'),{label:'Prime drywall walls — one coat',price:0.75,unit:'sq. ft.',status:'approved',note:'Labor only. Specialty stain blocking requires a separate quote.'});
 catalog.find(c=>c.id==='paint').groups.push({id:'paint-room-prices',label:'Small, medium & large room painting',actions:{Calculate:[roomPackageTask('paint1'),roomPackageTask('paint2'),roomPackageTask('prime')]}});
-for(const g of cabinet.groups)for(const tasks of Object.values(g.actions))for(const t of tasks)if(t.id==='cabinet-crown')t.price=4;
+for(const g of cabinet.groups)for(const tasks of Object.values(g.actions))for(const t of tasks)if(t.id==='cabinet-crown')t.price=3;
 const bathSurface=bath.groups.find(g=>g.id==='bath-surfaces');if(bathSurface){const t=bathSurface.actions.Install.find(t=>t.id==='bath-drywall');Object.assign(t,roomPackageTask('hang-finish'),{id:'bath-drywall'});const paint=bathSurface.actions.Install.find(t=>t.id==='bath-wall-paint');Object.assign(paint,roomPackageTask('paint2'),{id:'bath-wall-paint'});}
 // Ceiling work is 20% higher than corresponding wall labor, including package discounts.
 const ceilNote='Labor only. Ceiling work is 20% higher than matching wall work because it is performed overhead.';
