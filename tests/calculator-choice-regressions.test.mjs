@@ -645,7 +645,7 @@ test('Preselected standard toilet skips duplicate work screen and retains same l
   assert.equal(doc.querySelector('#material-type').value,'bathroom');
   assert.equal(doc.querySelector('#material-name').value,'Bathroom');
   const choices=[...doc.querySelectorAll('[data-item-option="Bowl shape"] option')].map(x=>x.value).filter(Boolean);
-  assert.deepEqual(choices,['Round','Elongated (oval)']);
+  assert.deepEqual(choices,['Round','Elongated (oval)','Help me choose']);
   assert.equal(w.BATHROOM_PACKAGES.find(p=>p.id==='toilet-install').labor,175);
   assert.equal(doc.querySelector('#room-planner h2').textContent,'Item measurements & options');
  }finally{dom.window.close();}
