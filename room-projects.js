@@ -265,15 +265,7 @@ function buildProjectDropdowns(){
      choices.push(['Standard Upgrade',projectLink(id,'kitchenPackage=standard')]);
      choices.push(['Deluxe Remodel',projectLink(id,'kitchenPackage=deluxe')]);
      choices.push(['Choose Custom Items',projectLink(id,'kitchenMode=individual')]);
-   }else if(id==='accessibility'){
-      choices.push(['Basic Safety',projectLink(id,'accessibilityPackage=basic')]);
-      choices.push(['Premium Accessibility',projectLink(id,'accessibilityPackage=premium')]);
-      choices.push(['Custom',projectLink(id,'accessibilityMode=individual')]);
-    }else if(window.PROJECT_PACKAGE_CHOICES?.[id]){
-      choices.push(['Basic',projectLink(id,'roomPackage=basic')]);
-      choices.push(['Premium',projectLink(id,'roomPackage=premium')]);
-      choices.push(['Custom',projectLink(id,'roomMode=individual')]);
-    }else if(['themed-rooms','concrete','custom'].includes(id)){
+   }else if(['themed-rooms','concrete','custom'].includes(id)){
      for(const item of window.projectGroupChoices(id))choices.push([item.title,item.href]);
    }else if(id==='room-additions'){
      for(const name of ['Bedroom Addition','Family Room Addition','Garage Addition','Sunroom Addition'])
@@ -344,7 +336,7 @@ function buildProjectDropdowns(){
        branch.addEventListener('focusin',dismissOtherChoices);
        continue;
      }
-     const multiJob=false; // Main titles are links; arrows expose package quick links.
+     const multiJob=!['bathrooms','kitchen-pantry','themed-rooms','concrete','custom','room-additions'].includes(id);
      const primary=multiJob?document.createElement('button'):link(label,projectLink(id));primary.className='project-category-link';
      if(multiJob){primary.type='button';primary.textContent=label;primary.setAttribute('aria-expanded','false');primary.setAttribute('aria-label','Choose '+label+' jobs');}
      const button=document.createElement('button');button.type='button';button.className='project-category-toggle';
@@ -385,7 +377,7 @@ function buildProjectDropdowns(){
        nav.querySelector('input[type="checkbox"],a')?.focus();
      }});
      nav.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();close(menu);button.focus()}});
-     // Menu opens by intentional arrow click, avoiding lingering hover submenus.
+     branch.addEventListener('mouseenter',()=>{if(hover()){if(button.getAttribute('aria-expanded')!=='true')open(menu,branch);menu.closest('.nav-menu')?.classList.add('open')}});
    }
    const wrapper=menu.closest('.nav-menu');let leaveTimer;
    const stay=()=>{clearTimeout(leaveTimer);fit(menu)};
@@ -417,7 +409,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 // idempotent pass on load keeps the Projects menu consistent everywhere.
 window.addEventListener('load',()=>buildProjectDropdowns());
 
-
 /* Room project bundles share this one catalog with the Projects dropdown.
    These are scopes for an estimate, not fixed-price offers. */
 window.PROJECT_PACKAGE_CHOICES={"attic":[["Access and storage platform","Existing-connection lighting","Basic access safety review"],["More storage and access","Insulation and ventilation improvements","Finished surfaces where feasible"]],"basement":[["Paint or seal existing concrete floor","Refresh existing walls and trim","Update existing lighting"],["Frame and finish selected walls","Install selected floor covering","Improve ceiling and storage areas"]],"bedroom-guest-room":[["Paint bedroom walls and ceiling","Refresh trim and caulking","Replace a compatible existing light"],["Install selected flooring","Add one feature wall","Upgrade closet organization"]],"closets-storage":[["Shelving and rods","Paint and trim touch-ups","Replace selected hardware"],["Custom organizers and cabinets","Upgraded flooring and lighting","Matching wall and ceiling finish"]],"dining-room":[["Paint and finish walls","Refresh trim","Replace suitable existing dining light"],["Selected new flooring","Feature wall or wainscoting","Coordinated decorative trim"]],"garage":[["Install shelving and wall storage","Seal or paint sound concrete floor","Update existing lights"],["Cabinets and workbench","Floor coating and preparation","Ventilation and utility planning"]],"laundry-utility":[["Paint laundry walls and trim","Install shelves and hooks","Connect compatible existing appliances"],["New cabinets and folding surface","Upgrade floor and ventilation","Coordinate selected appliances"]],"living-family-room":[["Paint walls and ceiling","Refresh trim","Update compatible existing lighting"],["New selected flooring","Feature wall or mantel detail","Upgrade storage and light fixtures"]],"adult-room":[["Refresh paint and surfaces","Update existing lighting","Add suitable storage"],["Feature wall and flooring","Fitted display or cabinetry","Coordinated finish lighting"]],"kids-room":[["Washable paint and trim","Toy storage and shelving","Suitable existing lighting"],["Durable floor finish","Themed feature wall","Organized play and study zones"]],"home-theater":[["Plan screen and seating placement","Media mounting and cable management","Update existing lighting"],["Acoustic finishes","Media cabinetry and theater seating","Coordinated lighting and snack features"]],"entry-mudroom":[["Hooks, bench and shelving","Refresh trim and thresholds","Update door hardware"],["Built-in cubbies and cabinets","Durable flooring","Improved lighting and finishing"]],"home-office":[["Paint and trim refresh","Shelves and cable organization","Improve task lighting"],["Built-in desk and cabinets","Selected flooring and feature wall","Coordinated lighting"]],"music-creative-studio":[["Refresh walls and flooring","Instrument or supply storage","Task lighting"],["Acoustic surface treatments","Creative workstations and cabinets","Finishing and lighting upgrade"]],"fitness-wellness":[["Gym flooring","Secure mirror and rack mounting","Paint and lighting refresh"],["Custom equipment storage","Ventilation planning","Upgraded flooring and finish work"]],"games-hobbies":[["Refresh surfaces and lights","Hobby shelving","Assemble selected work tables"],["Custom workbench or game area","Built-in display and storage","New flooring or wall finishes"]],"pet-room":[["Easy-clean finishes","Feeding and leash storage","Washable wall paint"],["Fitted kennel and shelves","Pet-wash planning subject to connections","Durable flooring and splash guards"]],"snack-beverage":[["Counter storage and shelves","Basic prep surface","Existing counter lighting"],["Beverage cabinets and countertop","Water/sink assessment","Coordinated task lighting"]],"vault-safe-room":[["Assess safe storage needs","Storage cabinetry","Review mounting and door conditions"],["Reinforced-room assessment","Door and ventilation plan","Site-specific structural quote"]],"accents":[["Prepare and paint one accent wall","Edge and trim finish"],["Wood, shiplap or stone-look surface","Additional trim and finishing","Coordinated paint or sealant"]],"murals":[["Prepare a selected wall","Simple decorative paint treatment"],["Custom mural design and planning","Complex decorative finish","Protective coating as appropriate"]],"wallpaper":[["Prepare suitable accent wall","Standard wallpaper installation"],["Larger matching-pattern coverage","Specialty wallcovering details","Additional wall preparation"]],"arches":[["Refresh decorative arch trim","Nonstructural molding installation"],["Custom decorative arch finish","Columns or additional trim","Finish painting"]],"fireplaces":[["Refresh compatible mantel and trim","Decorative paint on safe surfaces"],["Surround and mantel upgrade","Tile or stone-look details","Safety and appliance assessment"]],"stairs":[["Stair trim touch-ups","Suitable handrail work","Finish selected treads"],["Selected new treads or risers","Matching railing improvements","Stain and finish details"]],"decks-railings":[["Inspect existing deck","Selected board and railing repairs","Basic finishing"],["Larger surface upgrade","Stairs and railing upgrades","Structural site assessment"]],"exterior-improvements":[["Caulk and repair exterior trim","Small prepared paint areas"],["Expanded trim and siding details","Selected exterior doors or windows","Weatherproof finishes"]],"backyard-retreat":[["Seating zone and privacy screen","Selected outdoor features"],["Pergola or gazebo details","Path and accent lights","Expanded privacy and shade"]],"outdoor-kitchen":[["Basic grill and prep station","Weather-rated storage and surface"],["Outdoor cabinets and countertop","Water and power assessment","Complete cooking layout"]],"mechanic-shop":[["Workbench and tool storage","Existing shop lighting","Parts and hose organization"],["Durable flooring plan","Fitted cabinetry","Ventilation and utility assessment"]],"car-wash":[["Hose and wash station storage","Detailing area layout"],["Wash-bay surface plan","Drainage and supply assessment","Equipment and lighting"]],"recycling-scrap":[["Sorting bins and scrap racks","Basic covered storage"],["Defined sorting shelter","Stable pad and access area","Expanded racks and storage"]],"pools":[["Poolside storage","Safety and access review"],["Deck and step planning","Railing and walkway upgrades","Pool installer coordination"]],"bus-stop":[["Covered bench and weather protection","Safe waiting position"],["Expanded shelter and walkway","Accessible approach review","Exterior lighting planning"]],"mailboxes":[["Install mailbox and post","Add address numbers"],["Secure parcel box or multiple boxes","Masonry base planning","Improved delivery station"]],"outdoor-sound":[["Mount weather-rated media fixtures","Cable routing assessment"],["Outdoor audio/video setup","Power and lighting coordination","Protected controls"]],"garden-greenhouse":[["Raised beds and potting bench","Garden tool storage"],["Greenhouse kit assembly","Paths and water planning","Expanded sheltered storage"]],"playground":[["Playset assembly","Safety clearance assessment"],["Play surface and borders","Shade and seating","Play-area storage"]],"patios-concrete":[["Prepare and coat sound existing concrete","Selected surface repairs"],["Concrete and outdoor finish upgrades","Transitions and edging","Coordinated path lighting"]],"porches-entryways":[["Porch trim and step finish","Railing touch-ups"],["Stairs and railing upgrades","Posts and entry surfaces","Outdoor lighting"]]};
@@ -426,6 +417,7 @@ window.renderProjectPackageOptions=function(id,project){
   if(!scopes||new URLSearchParams(location.search).get('roomMode')==='individual')return false;
   const safe=value=>escapeCartText(String(value));
   const base='/project.html?project='+encodeURIComponent(id);
+  const listing=base+'&view=packages';
   const params=new URLSearchParams(location.search);
   const packs=[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes[0]},
@@ -435,7 +427,7 @@ window.renderProjectPackageOptions=function(id,project){
   const selected=packs.find(p=>p.id===params.get('roomPackage')&&p.id!=='custom');
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
-    const href=custom?base+'&roomMode=individual':base+'&roomPackage='+p.id;
+    const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
       '<a class="pkg-image" href="'+href+'"><img src="'+safe(custom?'/assets/custom-projects-card.jpg':project.image)+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+
       '<div class="pkg-content"><p>'+safe(p.intro)+'</p>'+
@@ -445,7 +437,7 @@ window.renderProjectPackageOptions=function(id,project){
        '<button class="btn primary pkg-add" type="button" data-package="'+p.id+'">Add to Cart</button>')+
       '</div></article>';
   }).join('');
-  const back=selected?base:project.themedGroup?'/project.html?project=themed-rooms':project.exterior||project.outdoorGroup?'/project.html?project=concrete':project.customGroup?'/project.html?project=custom':'/#projects';
+  const back=selected?listing:project.themedGroup?'/project.html?project=themed-rooms':project.exterior||project.outdoorGroup?'/project.html?project=concrete':project.customGroup?'/project.html?project=custom':'/#projects';
   const after=selected?'<div class="pkg-next"><p><strong>'+safe(selected.name)+' '+safe(project.title)+'</strong> package: labor, materials and supplies included once scope, measurements and site conditions are confirmed. No payment is collected online.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('Please quote the '+selected.name+' '+project.title+' project package.')+'">Request Package Estimate</a></div>':
     '<p class="calc-note">These are package scopes, not fixed site-unseen bids. Pricing uses measurements, the approved labor schedule and confirmed material and supply costs. Structural work requires a site assessment.</p>';
   document.body.innerHTML=header()+'<main class="wrap section pkg-page"><a class="project-back" href="'+back+'">← '+(selected?'All '+safe(project.title)+' Packages':'All Projects')+'</a>'+
