@@ -900,6 +900,9 @@ function renderCart(){
  const c=reconcileBathroomFixtureAllowances(getCart());
  const visible=c.map((item,index)=>({item,index})).filter(({item})=>!item.hiddenFromCustomer);
  const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
+  const packageSources=new Set(['bathroom-project-package','kitchen-project-package','room-project-package']);
+  const hasCompletePackage=visible.some(({item})=>packageSources.has(item.source));
+  const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
  <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
@@ -909,11 +912,12 @@ function renderCart(){
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
  <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
+  ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
   ${packageMeasurementSummary(x)?`<div class="nr-cart-meta"><strong>Measurements:</strong> ${escapeCartText(packageMeasurementSummary(x))}</div>`:''}
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
- <div class="nr-cart-actions"><a class="btn outline" href="/installation.html">Add Installation</a><a class="btn outline" href="/?open=shopping">Add Products</a></div>
+ <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}<a class="btn outline" href="/?open=shopping">Add Products</a></div>
  </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
