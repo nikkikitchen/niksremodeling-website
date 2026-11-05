@@ -24,10 +24,13 @@ test('whole Bathroom packages include material deposits, labor, and overhead wit
 
 test('cart displays complete package labor and deposit separately from cash due now',()=>{
  assert.ok(projects.includes('source:\'bathroom-project-package\''));
- for(const term of ['Bathroom package starting total','Materials and supplies (proposed deposit)','Labor included in package','Overhead and contingency','Remaining balance after deposit (progress draws)']){
+ for(const term of ['Package starting total','Materials and supplies (proposed deposit)','Labor included in package','Project fees (included)','Remaining balance after deposit (progress draws)']){
   assert.ok(app.includes(term),term+' missing');
  }
  assert.ok(app.includes("Request Deposit Invoice"));
+ assert.ok(app.includes("They are already included in the starting price, not charged twice."));
+ assert.ok(app.includes("No separate installation charge for included work."));
+ assert.ok(!app.includes('Overhead and contingency'),'Old confusing fee label must not appear in customer cart.');
  assert.ok(app.includes('No deposit or other payment can be made through this cart yet.'));
  assert.ok(terms.includes('weekly progress draws'));
 });
