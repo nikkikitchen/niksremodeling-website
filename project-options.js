@@ -551,13 +551,13 @@
     // reconstruction are excluded from the advertised starting scenario.
     const accessibilityBaselines={
       basic:{
-        scenario:'Install one 18-inch peened stainless grab bar into confirmed solid structural backing, plus up to one hour of minor nonstructural maintenance on an existing accessible ramp. Allowance includes one replacement treated deck board and standard fasteners if needed; only work safely completed within one hour. No structural ramp repairs, rail rebuild, major board replacement, new ramp, or threshold alterations.',
+        scenario:'Install two 18-inch peened stainless grab bars into confirmed solid structural backing, plus up to one hour of minor nonstructural maintenance on an existing accessible ramp. Allowance includes one replacement treated deck board and standard fasteners if needed; only work safely completed within one hour. No structural ramp repairs, rail rebuild, major board replacement, new ramp, or threshold alterations.',
         labor:[
-          {name:'Install one grab bar in sound existing backing',quantity:1,unitPrice:250},
+          {name:'Install grab bars in sound existing backing',quantity:2,unitPrice:250},
           {name:'Minor nonstructural existing-ramp maintenance, up to one hour',quantity:1,unitPrice:75}
         ],
         materials:[
-          {name:'Moen 18-inch stainless grab bar, reference price $23.35 + 35%',quantity:1,unitPrice:31.52},
+          {name:'Moen 18-inch stainless grab bars, reference price $23.35 + 35%',quantity:2,unitPrice:31.52},
           {name:'Pressure-Treated 5/4x6x12 Decking Board',quantity:1,unitPrice:22.28},
           {name:'Deck Screws (#8 x 2-1/2-in, 5-lb box)',quantity:1,unitPrice:48.60}
         ],
@@ -584,8 +584,8 @@
     // installation without an on-site assessment.
     if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')!=='individual'){
       const packages=[
-        {id:'basic',name:'Basic Safety',intro:'One grab bar plus up to one hour of minor existing-ramp maintenance.',work:[
-          'Install one 18-inch grab bar into verified sound structural backing',
+        {id:'basic',name:'Basic Safety',intro:'Two grab bars plus up to one hour of minor existing-ramp maintenance.',work:[
+          'Install two 18-inch grab bars into verified sound structural backing',
           'Up to one hour of minor nonstructural repairs to an existing ramp, such as tightening fasteners or replacing one accessible deck board',
           'Includes standard fasteners and up to one 12-foot treated deck board where needed',
           'Structural repairs, new ramps, major railing work and threshold changes require a separate quote'
