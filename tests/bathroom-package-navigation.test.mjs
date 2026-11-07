@@ -3,63 +3,45 @@ import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 
-test('Bathroom packages lead to Custom work while preset packages stay simple', async()=>{
- const html=readFileSync('project.html','utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(_,src)=>{
-  const path=src.split('?')[0].replace(/^\//,'');
-  return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
- });
- for(const tier of ['basic','standard','deluxe']){
-  const dom=new JSDOM(html,{url:'https://niksremodeling.com/project.html?project=bathrooms&bathPackage='+tier,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};}});
-  try{
-   await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
-   const doc=dom.window.document;
-   assert.equal(doc.querySelector('h1').textContent,'Bathroom Projects');
-   const cards=[...doc.querySelectorAll('.bath-photo-card')];
-   assert.equal(cards.length,4,'Package links must keep the four-photo chooser visible');
-   assert.ok(cards.find(c=>c.classList.contains('current'))?.href.endsWith('bathPackage='+tier));
-   assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4,'Each photo must describe the included work');
-   assert.equal(doc.querySelector('.bath-photo-card.current .bath-hover-price'),null,'Price should not repeat in hover');
-   assert.ok(doc.querySelector('.bath-photo-tile:has(.bath-photo-card.current) .bath-price-below')?.textContent.includes('Starting at '));
-   assert.ok(doc.querySelector('.project-back')?.href.endsWith('/project.html?project=bathrooms'));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Request Package Estimate'));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials and standard supplies included'));
-   assert.equal(doc.querySelector('#bath-package-detail ul'),null,'No duplicate checklist below photo tiles');
-   assert.ok(!doc.querySelector('#bath-package-detail')?.textContent.includes('Installation Only'));
-   assert.equal(doc.querySelector('#bath-package-detail a[href*="/installation.html"]'),null);
-   assert.equal(doc.querySelector('#project-work-grid'),null);
-  }finally{dom.window.close();}
- }
- const chooser=new JSDOM(html,{url:'https://niksremodeling.com/project.html?project=bathrooms',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};}});
- try{
-  await new Promise(resolve=>chooser.window.addEventListener('load',resolve,{once:true}));
-  assert.equal(chooser.window.document.querySelectorAll('.bath-photo-card').length,4);
-  assert.equal(chooser.window.document.querySelectorAll('.bath-photo-hover').length,4);
-  assert.ok([...chooser.window.document.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('bathMode=individual')));
-  assert.equal(chooser.window.document.querySelector('.bath-photo-card.current'),null);
-  assert.equal(chooser.window.document.querySelector('#project-work-grid'),null);
- }finally{chooser.window.close();}
+const source=readFileSync('project.html','utf8').replace(/<script\\b[^>]*src=["']([^"']+)["'][^>]*><\\/script>/g,(_,src)=>{
+ const file=src.split('?')[0].replace(/^\\//,'');
+ return existsSync(file)?'<script>'+readFileSync(file,'utf8').replace(/<\\/script/gi,'<\\/script')+'</script>':'';
 });
+async function load(id,query=''){
+ const dom=new JSDOM(source,{url:'https://niksremodeling.com/project.html?project='+id+query,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){
+   w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};
+ }});
+ await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
+ return dom;
+}
 
-test('Kitchen project tiles match Bathroom and retain prices and Custom choice', async()=>{
- const html=readFileSync('project.html','utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(_,src)=>{
-  const path=src.split('?')[0].replace(/^\//,'');
-  return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
- });
- for(const [tier,price] of [['basic','1,995'],['standard','6,495'],['deluxe','17,995']]){
-  const dom=new JSDOM(html,{url:'https://niksremodeling.com/project.html?project=kitchen-pantry&kitchenPackage='+tier,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};}});
+for(const {id,tiers,prices} of [
+ {id:'bathrooms',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$995','$2,195','$3,195']},
+ {id:'kitchen-pantry',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$1,995','$6,495','$17,995']},
+ {id:'accessibility',tiers:['Basic','Premium','Custom'],prices:['$3,915']}
+]){
+ test(id+' uses the same compact package cards without duplicate instructions',async()=>{
+  const dom=await load(id);
   try{
-   await new Promise(resolve=>dom.window.addEventListener('load',resolve,{once:true}));
    const doc=dom.window.document;
-   assert.equal(doc.querySelector('h1')?.textContent,'Kitchen Projects');
-   assert.equal(doc.querySelectorAll('.bath-photo-card').length,4);
-   assert.equal(doc.querySelectorAll('.bath-photo-hover').length,4);
-   assert.equal(doc.querySelectorAll('.bath-card-add').length,3);
-   assert.ok(doc.querySelector('.bath-photo-card.current')?.href.endsWith('kitchenPackage='+tier));
-   assert.equal(doc.querySelector('.bath-photo-card.current .bath-hover-price'),null,'Price should not repeat in hover');
-   assert.ok(doc.querySelector('.bath-photo-tile:has(.bath-photo-card.current) .bath-price-below')?.textContent.includes(price));
-   assert.ok(doc.querySelector('#bath-package-detail')?.textContent.includes('Labor, materials, and needed supplies are included'));
-   assert.ok([...doc.querySelectorAll('.bath-photo-card')].some(c=>c.href.endsWith('kitchenMode=individual')));
-   assert.equal(doc.querySelector('#project-work-grid'),null);
-  }finally{dom.window.close();}
- }
+   const cards=[...doc.querySelectorAll('.pkg-choice')];
+   assert.equal(cards.length,tiers.length);
+   assert.deepEqual(cards.map(x=>x.querySelector('.pkg-image strong')?.textContent),tiers);
+   assert.equal(doc.querySelectorAll('.pkg-image-overlay').length,tiers.length-1);
+   assert.equal(doc.querySelectorAll('.pkg-mobile-details').length,tiers.length-1);
+   assert.equal(doc.querySelectorAll('.pkg-add').length,tiers.length-1);
+   assert.ok(cards.every(x=>x.querySelector('.pkg-image img')?.getAttribute('src')));
+   assert.ok(prices.every(price=>doc.querySelector('main').textContent.includes(price)));
+   assert.ok(!doc.querySelector('main').textContent.includes('Choose a package below'));
+   assert.ok(!doc.querySelector('main').textContent.includes('Hover over a photo'));
+   assert.ok(!doc.querySelector('main').textContent.includes('Tap “See what'));
+   assert.ok(cards.at(-1).querySelector('a[href*="roomMode=individual"]'));
+  }finally{dom.window.close()}
+ });
+}
+
+test('An existing Bathroom package deep link retains its selected card',async()=>{
+ const dom=await load('bathrooms','&bathPackage=standard');
+ try{assert.match(dom.window.document.querySelector('.pkg-choice.selected .pkg-image strong')?.textContent||'',/Standard/)}
+ finally{dom.window.close()}
 });
