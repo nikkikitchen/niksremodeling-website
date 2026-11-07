@@ -46,6 +46,22 @@ if(!roomSource.includes('Explore Accent Wall Projects') ||
    !['startingAt:395','startingAt:695','startingAt:1495'].every(s=>roomSource.includes(s)) ||
    !roomSource.includes('Consultation if requested or required'))
   throw Error('Accent Wall project packages or room navigation are missing.');
+// Keep the homepage pictures, desktop Projects menu, and phone Projects menu
+// in the same order. An absent category must fail before Cloudflare publishes.
+const mainMatch=roomSource.match(/const PROJECT_MAIN_ENTRIES=\[([\s\S]*?)\];/);
+if(!mainMatch)throw Error('Main Projects menu source not found.');
+const mainIds=[...mainMatch[1].matchAll(/\['([a-z0-9-]+)','[^']+'\]/g)].map(m=>m[1]);
+const homeSource=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+const tileSection=homeSource.split('<div class="tile-grid project-grid">')[1]?.split('</div>')[0]||'';
+const tileIds=[...tileSection.matchAll(/href="\/project\.html\?project=([a-z0-9-]+)"/g)].map(m=>m[1]);
+if(JSON.stringify(tileIds)!==JSON.stringify(mainIds))
+  throw Error('Homepage Projects picture tiles do not match the Projects dropdown.');
+for(const id of ['projects-menu','mobile-projects-menu']){
+ const menu=homeSource.match(new RegExp('id="'+id+'" class="nav-dropdown">([\\s\\S]*?)<\\/div>'))?.[1]||'';
+ const menuIds=[...menu.matchAll(/href="\/project\.html\?project=([a-z0-9-]+)"/g)].map(m=>m[1]);
+ if(JSON.stringify(menuIds)!==JSON.stringify(mainIds))
+   throw Error(id+' fallback navigation differs from the shared Projects list.');
+}
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
 // Guard the one-layout-for-all-projects customer experience.
 if(!roomSource.includes("['accents','Accent Walls']") ||
