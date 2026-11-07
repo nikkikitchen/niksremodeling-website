@@ -565,15 +565,13 @@
         laborDiscountPercent:5,projectFeePercent:10
       },
       premium:{
-        scenario:'Three 18-inch grab bars installed in confirmed structural backing, two like-for-like interior passage lever replacements, one hour of planning, plus a simple single-run ramp to be measured and priced separately before any complete package total is shown. Ramp handrails and safe top/bottom transitions are part of the ramp scope. Required level top and bottom landing areas are included in the intended design; intermediate or turning landings, switchbacks and raised platforms belong in Custom. No unverified ramp price is promised.',
+        scenario:'Three 18-inch grab bars installed in confirmed structural backing, one hour of accessibility/ramp planning, plus a simple single-run ramp whose complete materials and installation costs are to be calculated before a starting price is advertised. Ramp handrails and safe top/bottom transitions are part of the ramp scope. Required level top and bottom landing areas are included in the intended design; intermediate or turning landings, switchbacks and raised platforms belong in Custom. No unverified ramp price is promised.',
         labor:[
           {name:'Install grab bars in sound existing backing',quantity:3,unitPrice:250},
-          {name:'Like-for-like passage lever exchanges, one labor hour each',quantity:2,unitPrice:75},
           {name:'Additional on-site access and handrail review, one hour',quantity:1,unitPrice:75}
         ],
         materials:[
-          {name:'Moen 18-inch stainless grab bars, reference price $23.35 + 35%',quantity:3,unitPrice:31.52},
-          {name:'Kwikset Balboa passage levers, reference price $21.47 + 35%',quantity:2,unitPrice:28.98}
+          {name:'Moen 18-inch stainless grab bars, reference price $23.35 + 35%',quantity:3,unitPrice:31.52}
         ],
         consumables:[{name:'Silicone tub-and-tile sealant, 10.1 oz',quantity:1,unitPrice:10.12}],
         laborDiscountPercent:8,projectFeePercent:10
@@ -590,9 +588,8 @@
           'Includes standard fasteners and up to one 12-foot treated deck board where needed',
           'Structural repairs, new ramps, major railing work and threshold changes require a separate quote'
         ]},
-        {id:'premium',name:'Premium Accessibility',intro:'Three grab bars, two door levers and a simple straight ramp.',work:[
+        {id:'premium',name:'Premium Accessibility',intro:'Three grab bars and one complete straight-run access ramp.',work:[
           'Install up to three 18-inch grab bars into verified sound structural backing',
-          'Replace two existing interior passage levers, like for like',
           'Build one simple straight-run ramp, with length based on the measured entry rise and available space',
           'Include required handrails, edge protection, supports, and level top and bottom landing areas in the ramp scope',
           'Ramps with intermediate or turning landings, switchbacks, or large elevated platforms belong under Custom; final price requires site measurements'
