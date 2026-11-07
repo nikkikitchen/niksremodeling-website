@@ -539,7 +539,11 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     if(!measured){error.textContent='Calculate the measurements before adding to cart.';error.hidden=false;return;}
     const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:measuredQuote?.startingAt||starting,depositEstimate:measuredQuote?.depositEstimate??choice.depositEstimate,laborEstimate:measuredQuote?.laborEstimate??choice.laborEstimate,overheadAllowance:measuredQuote?.overheadAllowance??choice.overheadAllowance,priceBasis:measuredQuote?.priceBasis||choice.priceBasis||null,price:null,quoteRequired:true,inPersonQuoteRequired:accessibility,scope:work.slice(),measurements:{...measured},description:accessibility?'Accessibility work: '+measured.grabBars+' grab bars, '+measured.doorHardware+' door hardware sets, '+measured.thresholds+' thresholds, '+measured.handrailLength+' ft. handrail, '+measured.rampLength+' ft. ramp. In-person site quote required.':accentOnly?'Measured '+measured.roomName+': '+measured.length+' × '+measured.height+' ft. accent wall; '+measured.wallArea+' sq. ft. surface, '+measured.paintGallons+' paint gallons where applicable. Package quote pending.':'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
     const cart=getCart();
-    const match=cart.findIndex(x=>x.source===source&&x.packageId===choice.id&&(x.projectId===projectId||(!x.projectId&&['bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(source)))&&(!x.measurements||x.measurements.roomName===measured.roomName));
+    // Replace legacy pre-measurement package entries instead of double-counting them.
+    const priorSource=projectId==='bathrooms'?'bathroom-project-package':projectId==='kitchen-pantry'?'kitchen-project-package':projectId==='accessibility'?'accessibility-project-package':null;
+    const match=cart.findIndex(x=>(x.source===source||(priorSource&&x.source===priorSource))&&x.packageId===choice.id&&
+      (x.projectId===projectId||(!x.projectId&&x.source===priorSource))&&
+      (!x.measurements||x.measurements.roomName===measured.roomName));
     if(match>=0)cart[match]=item;else cart.push(item);
     saveCart(cart);
     location.href='/project-cart.html';
