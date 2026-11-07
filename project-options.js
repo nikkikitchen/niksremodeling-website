@@ -564,7 +564,7 @@
         laborDiscountPercent:5,projectFeePercent:10
       },
       premium:{
-        scenario:'Three 18-inch grab bars installed in confirmed structural backing, two like-for-like interior passage lever replacements, and one hour of access planning. Ramp construction, ramp handrails, landings, walkways, thresholds, wall reinforcement and doorway widening are additional, separately measured and priced work.',
+        scenario:'Three 18-inch grab bars installed in confirmed structural backing, two like-for-like interior passage lever replacements, one hour of planning, plus a simple single-run ramp to be measured and priced separately before any complete package total is shown. Ramp handrails and safe top/bottom transitions are part of the ramp scope. No switchback, raised deck, intermediate platform or unverified ramp price is promised.',
         labor:[
           {name:'Install grab bars in sound existing backing',quantity:3,unitPrice:250},
           {name:'Like-for-like passage lever exchanges, one labor hour each',quantity:2,unitPrice:75},
@@ -588,11 +588,12 @@
           'Replace one existing interior passage lever, like for like',
           'New structural backing, wall repairs and threshold changes are not included'
         ]},
-        {id:'premium',name:'Premium Accessibility',intro:'Three grab bars, two door levers and one hour of access planning.',work:[
+        {id:'premium',name:'Premium Accessibility',intro:'Three grab bars, two door levers and a simple straight ramp.',work:[
           'Install up to three 18-inch grab bars into verified sound structural backing',
           'Replace two existing interior passage levers, like for like',
-          'Include one hour to review threshold and handrail improvement options',
-          'Ramp construction, its handrails and landings are separate measured projects; no ramp is included in this starting price'
+          'Build one simple, straight-run access ramp, sized for the measured rise and available space',
+          'Include suitable ramp handrails, safe top and bottom transitions, and appropriate structural supports in the ramp quote',
+          'No switchbacks or elevated deck platforms; final ramp scope and total depend on the site measurements'
         ]},
         {id:'custom',name:'Custom',intro:'Choose only the accessibility improvements you need.',work:[
           'Select individual accessibility work',
@@ -603,6 +604,16 @@
       for(const p of packages){
         const spec=accessibilityBaselines[p.id];
         if(spec)Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
+        // The ramp is required in Premium, but no complete audited ramp materials
+        // list exists yet. Never advertise the non-ramp subtotal as its price.
+        if(p.id==='premium'){
+          p.componentEstimate=p.startingAt;
+          p.startingAt=null;
+          p.depositEstimate=null;
+          p.laborEstimate=null;
+          p.overheadAllowance=null;
+          p.priceBasis=null;
+        }
       }
       const params=new URLSearchParams(location.search);
       const selected=packages.find(p=>p.id===params.get('accessibilityPackage'))||null;
