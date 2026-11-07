@@ -5,7 +5,7 @@ import {JSDOM} from 'jsdom';
 const root=new URL('../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root),'utf8');
 const main=[
- ['accessibility','Accessibility Updates'],['accents','Accent Walls'],['attic','Attic'],['basement','Basement'],
+ ['accents','Accent Walls'],['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedroom'],['closets-storage','Closets & Storage'],
  ['dining-room','Dining Room'],['garage','Garage'],['kitchen-pantry','Kitchen'],
  ['laundry-utility','Laundry & Utility'],['living-family-room','Living & Family Room'],
