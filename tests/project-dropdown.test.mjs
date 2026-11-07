@@ -5,7 +5,7 @@ import {JSDOM} from 'jsdom';
 const root=new URL('../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root),'utf8');
 const main=[
- ['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
+ ['accessibility','Accessibility Updates'],['accents','Accent Walls'],['attic','Attic'],['basement','Basement'],
  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedroom'],['closets-storage','Closets & Storage'],
  ['dining-room','Dining Room'],['garage','Garage'],['kitchen-pantry','Kitchen'],
  ['laundry-utility','Laundry & Utility'],['living-family-room','Living & Family Room'],
@@ -29,7 +29,7 @@ async function load(file='index.html',query=''){
  return dom;
 }
 const page=(id,extra='')=>load('project.html','?project='+id+extra);
-test('Projects is the same 15 direct links on homepage, desktop and phone',async()=>{
+test('Projects is the same 16 direct links on homepage, desktop and phone',async()=>{
  const dom=await load();
  try{
   const doc=dom.window.document;
