@@ -565,7 +565,7 @@
         laborDiscountPercent:5,projectFeePercent:10
       },
       premium:{
-        scenario:'Three 18-inch grab bars installed in confirmed structural backing, one hour of accessibility/ramp planning, plus one straight-run ramp up to 12 feet of sloped run, whose complete materials and installation costs must be calculated before advertising a starting price. Ramp handrails and safe top/bottom transitions are part of the ramp scope. Required level top and bottom landing areas are included in the intended design; intermediate or turning landings, switchbacks and raised platforms belong in Custom. No unverified ramp price is promised.',
+        scenario:'Three 18-inch grab bars installed in confirmed structural backing, one hour of accessibility/ramp planning, plus one straight-run ramp up to 12 feet of sloped run, whose complete materials and installation costs must be calculated before advertising a starting price. Ramp handrails and safe top/bottom transitions are part of the ramp scope. Existing suitable, level entry and exit surfaces are required; no new landings or platforms are included. Building landings, turning sections, or raised platforms belongs in Custom. No unverified ramp price is promised.',
         labor:[
           {name:'Install grab bars in sound existing backing',quantity:3,unitPrice:250},
           {name:'Additional on-site access and handrail review, one hour',quantity:1,unitPrice:75}
@@ -591,11 +591,11 @@
         {id:'premium',name:'Premium Accessibility',intro:'Three grab bars and one straight access ramp up to 12 feet.',work:[
           'Install up to three 18-inch grab bars into verified sound structural backing',
           'Build one straight-run ramp, up to 12 feet of sloped run, where the entry rise and available space allow',
-          'Include required handrails, edge protection, supports, and safe level areas at the top and bottom',
-          'For ramps longer than 12 feet, extra landings, or additional features, see Custom.'
+          'Include required handrails, edge protection, and ramp supports; existing safe level entry and exit surfaces are required',
+          'For longer ramps, new landings, or additional features, see Custom.'
         ]},
         {id:'custom',name:'Custom',intro:'Multi-run ramps, turning landings and individual access projects.',work:[
-          'Design ramps with intermediate or turning landings, switchbacks, or raised platforms',
+          'Build new landings, multi-section ramps, turns, switchbacks, or raised platforms',
           'Select additional handrails, existing ramp repairs, doors or threshold improvements',
           'Request a site-specific estimate for structural design, labor, materials, and supplies'
         ]}
