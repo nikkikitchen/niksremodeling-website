@@ -620,10 +620,10 @@
       const original='/project.html?project=accessibility&accessibilityMode=individual';
       // Public-domain reference photographs (Wikimedia Commons); do not present as Nik's own completed work.
 // Basic: Changing Places Accessible Toilet for Disabled Inclusion (CC0).
-// Premium: Sandford-House-wheelchair-ramp.JPG by Kelliejojo (public domain).
+// Premium: U.S. Navy / PO1 Daniel Stevenson, DVIDS Photo ID 9134033 (public domain); example image, not Nik's work.
 const photos=[
   'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
-  'https://commons.wikimedia.org/wiki/Special:FilePath/Sandford-House-wheelchair-ramp.JPG?width=900',
+  'https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/2506/9134033/1000w_q95.jpg',
   '/assets/idea-accessibility.jpg'
 ];
       const nav=packages.map((p,index)=>{
