@@ -603,15 +603,21 @@
       for(const p of packages){
         const spec=accessibilityBaselines[p.id];
         if(spec)Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
-        // The ramp is required in Premium, but no complete audited ramp materials
-        // list exists yet. Never advertise the non-ramp subtotal as its price.
+        // Owner-approved provisional Premium starting price (2026-11-06).
+        // Includes three grab bars and a straight 4 ft × up-to-12 ft ramp,
+        // basic 2x4/4x4 handrails, no newly constructed landings.
+        // The ramp allowance uses 24 labor-hours at $75/hr; the package
+        // applies an 8% labor discount. Full material takeoff and suitability
+        // remain subject to site verification. Do not present as a fixed quote
+        // or as a fully audited bill of materials.
         if(p.id==='premium'){
           p.componentEstimate=p.startingAt;
-          p.startingAt=null;
+          p.startingAt=3915;
           p.depositEstimate=null;
           p.laborEstimate=null;
           p.overheadAllowance=null;
           p.priceBasis=null;
+          p.intro='Three grab bars and a straight ramp up to 12 feet. Starting price is provisional; final quote follows site inspection.';
         }
       }
       const params=new URLSearchParams(location.search);
