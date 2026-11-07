@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {readFileSync, existsSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 
-const source=readFileSync('project.html','utf8').replace(/<script\\b[^>]*src=["']([^"']+)["'][^>]*><\\/script>/g,(_,src)=>{
- const file=src.split('?')[0].replace(/^\\//,'');
- return existsSync(file)?'<script>'+readFileSync(file,'utf8').replace(/<\\/script/gi,'<\\/script')+'</script>':'';
+const source=readFileSync('project.html','utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(_,src)=>{
+ const file=src.split('?')[0].replace(/^\//,'');
+ return existsSync(file)?'<script>'+readFileSync(file,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
 });
 async function load(id,query=''){
  const dom=new JSDOM(source,{url:'https://niksremodeling.com/project.html?project='+id+query,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){
