@@ -629,7 +629,7 @@
 // Premium: original short-ramp illustration, example only (not a completed Nik's Remodeling job).
 const photos=[
   'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
-  '/assets/accessibility-premium-short-ramp.svg',
+  '/assets/accessibility-premium-wooden-ramp.webp',
   '/assets/idea-accessibility.jpg'
 ];
       const nav=packages.map((p,index)=>{
