@@ -479,7 +479,7 @@
     }
 
     // Isolated Bathroom package pilot. Existing detailed estimator is retained.
-    if((id==='bathrooms'||id==='bath-remodel') && new URLSearchParams(location.search).get('bathMode')!=='individual'){
+    if((id==='bathrooms'||id==='bath-remodel') && new URLSearchParams(location.search).get('bathMode')==='legacy'){
       const packages=[
         {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',discount:5,startingAt:995,depositEstimate:320,laborEstimate:525,overheadAllowance:150,work:['Minor Painting','Standard fixture replacement','Simple finishing touches']},
         {id:'standard',name:'Standard Upgrade',intro:'Update your bathroom with freshly painted walls and select fixture improvements.',discount:7,startingAt:2195,depositEstimate:545,laborEstimate:1350,overheadAllowance:300,work:['Two coats of paint on bathroom walls, including a color change if desired','Paint existing baseboards','Paint one side of the bathroom door and its casing','Replace the existing vanity light and bathroom mirror','Minor finishing touches']},
@@ -517,7 +517,7 @@
     }
 
     // Kitchen packages mirror Bathroom's four-photo chooser; custom keeps every original work option.
-    if((id==='kitchen-pantry'||id==='kitchen-remodel') && new URLSearchParams(location.search).get('kitchenMode')!=='individual'){
+    if((id==='kitchen-pantry'||id==='kitchen-remodel') && new URLSearchParams(location.search).get('kitchenMode')==='legacy'){
       // Advertised SMALL-KITCHEN starting allowances, not fixed site-unseen bids.
       // Labor uses the approved $75/hour and installed-item rates; material allowances
       // must be confirmed with suppliers before a customer receives a firm quote.
@@ -596,7 +596,7 @@
     // Accessibility package chooser: two meaningful bundles plus custom work.
     // Scope is a quote request, not a fixed price or promise of code-compliant
     // installation without an on-site assessment.
-    if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')!=='individual'){
+    if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')==='legacy'){
       const packages=[
         {id:'basic',name:'Basic Safety',intro:'Two grab bars plus up to one hour of minor existing-ramp maintenance.',work:[
           'Install two 18-inch grab bars into verified sound structural backing',
