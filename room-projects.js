@@ -323,7 +323,7 @@ window.renderProjectPackageOptions=function(id,project){
   const base='/project.html?project='+encodeURIComponent(id);
   const listing=base+'&view=packages';
   const params=new URLSearchParams(location.search);
-  const packs=id==='accents'?[
+  let packs=id==='accents'?[
     {id:'basic',name:'Basic',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395},
     {id:'deluxe',name:'Deluxe',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695},
     {id:'premium',name:'Premium',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495},
@@ -333,22 +333,23 @@ window.renderProjectPackageOptions=function(id,project){
     {id:'premium',name:'Premium',intro:'A coordinated set of additional project improvements.',work:[...scopes[0],...scopes[1]]},
     {id:'custom',name:'Custom',intro:'Build your own project with individual work choices.',work:[]}
   ];
+  if(window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])packs=window.NIK_ROOM_PACKAGE_OVERRIDES[id];
   // Price only a defined and fully costed baseline; do not hide unpriced work.
   for(const choice of packs){
     const spec=window.NIK_AUDITED_PACKAGE_PRICES?.[id]?.[choice.id];
-    if(spec && id!=='accents')Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
+    if(spec && id!=='accents' && !window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
   }
-  const selected=packs.find(p=>p.id===params.get('roomPackage')&&p.id!=='custom');
+  const selected=packs.find(p=>p.id===(params.get('roomPackage')||params.get('bathPackage')||params.get('kitchenPackage'))&&p.id!=='custom');
   if(params.get('quote')==='1'&&selected){window.beginPackageQuote(id,project.title,selected,'room-project-package');return true;}
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
     const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
-      '<div class="pkg-image-wrap"><a class="pkg-image" href="'+href+'"><img src="'+safe(id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='premium'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':project.image):(custom?'/assets/custom-projects-card.jpg':project.image))+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
+      '<div class="pkg-image-wrap"><a class="pkg-image" href="'+href+'"><img src="'+safe(p.photo||(id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='premium'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':project.image):(custom?'/assets/custom-projects-card.jpg':project.image)))+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
       '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='premium'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
       (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:New_attic_floor_at_Cattle_Chosen.jpg" target="_blank" rel="noopener">Sam Wilson / Wikimedia Commons</a>, CC BY-SA 4.0</small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
        '<details class="pkg-mobile-details"'+(selected?.id===p.id?' open':'')+'><summary>Package details</summary><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></details>'+
-       '<p class="pkg-pricing"><strong>'+(p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required')+'</strong><small>'+(id==='accents'?'Prices adjust to measurements and selected finish.':p.priceBasis?'Includes labor, reference-priced materials, consumables, project fees and a '+p.priceBasis.laborDiscountPercent+'% labor discount. '+safe(p.priceBasis.scenario):'Labor, materials and standard supplies included in the final estimate. Unpriced items must be confirmed before publishing a starting price.')+'</small></p>'+
+       '<p class="pkg-pricing"><strong>'+(p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required')+'</strong></p>'+
        '<button class="btn primary pkg-add" type="button" data-package="'+p.id+'">Calculate Quote</button>')+
       '</div></article>';
   }).join('');
@@ -356,8 +357,7 @@ window.renderProjectPackageOptions=function(id,project){
   const accentRooms=new Set(['bathrooms','bedroom-guest-room','closets-storage','dining-room','entry-mudroom','home-office','home-theater','kids-room','kitchen-pantry','laundry-utility','living-family-room','adult-room','basement']);
   const accentLink=accentRooms.has(id)?'<p class="pkg-accent-link"><a class="btn outline" href="/project.html?project=accents">Explore Accent Wall Projects</a></p>':'';
   const back=selected?listing:project.themedGroup?'/project.html?project=themed-rooms':project.exterior||project.outdoorGroup?'/project.html?project=concrete':project.customGroup?'/project.html?project=custom':'/#projects';
-  const after=selected?'<div class="pkg-next"><p><strong>'+safe(selected.name)+' '+safe(project.title)+'</strong> package: labor, materials and supplies included once scope, measurements and site conditions are confirmed. No payment is collected online.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('Please quote the '+selected.name+' '+project.title+' project package.')+'">Request Package Estimate</a></div>':
-    '<p class="calc-note">These are package scopes, not fixed site-unseen bids. Pricing uses measurements, the approved labor schedule and confirmed material and supply costs. Structural work requires a site assessment.</p>';
+  const after='';
   document.body.innerHTML=header()+'<main class="wrap section pkg-page"><a class="project-back" href="'+back+'">← '+(selected?'All '+safe(project.title)+' Packages':'All Projects')+'</a>'+
     '<h1>'+safe(project.title)+' Projects</h1><p class="lead">'+safe(project.intro)+'</p>'+
     '<div class="pkg-grid">'+cards+'</div>'+accentLink+after+'</main>'+footer();
