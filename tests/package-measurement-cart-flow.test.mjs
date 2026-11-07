@@ -43,7 +43,7 @@ for(const entry of packageCases)test(entry.project+' package collects measuremen
     assert.equal(JSON.parse(w.localStorage.getItem('nr-cart')).length,0,'No unmeasured cart entry');
     assert.equal(d.querySelector('#pkg-measure-result').hidden,true);
     const set=(id,value)=>d.getElementById(id).value=value;
-    set('pkg-length-ft','10');set('pkg-width-ft','10');
+    set('pkg-length-ft','10');set('pkg-width-ft','10');set('pkg-height-ft','8');
     d.querySelector('#pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
     assert.equal(d.querySelector('#pkg-measure-result').hidden,false,'Measured estimate should display');
     assert.match(d.querySelector('#pkg-measure-summary').textContent,/100 sq\. ft\./);
@@ -71,6 +71,7 @@ test('Bathroom measured paint and estimate do not silently add separate labor ch
     d.querySelector('.pkg-add[data-package="standard"]').click();
     d.getElementById('pkg-length-ft').value='10';
     d.getElementById('pkg-width-ft').value='10';
+    d.getElementById('pkg-height-ft').value='8';
     d.getElementById('pkg-openings').value='20';
     d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
     assert.match(d.getElementById('pkg-measure-summary').textContent,/300 sq\. ft\./);
@@ -102,6 +103,7 @@ test('Legacy unmeasured package has direct measurement link; measuring it does n
     assert.ok(d.getElementById('pkg-measure-form'),'Link should open measurements directly');
     d.getElementById('pkg-length-ft').value='10';
     d.getElementById('pkg-width-ft').value='10';
+    d.getElementById('pkg-height-ft').value='8';
     d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
     d.getElementById('pkg-confirm-add').click();
     const items=JSON.parse(w.localStorage.getItem('nr-cart'));
@@ -150,6 +152,7 @@ test('Accent package measures only the chosen wall length × height and uses app
     assert.ok(d.getElementById('pkg-height-ft'));
     assert.equal(d.getElementById('pkg-width-ft'),null,'Accent walls must not ask for room width');
     d.getElementById('pkg-length-ft').value='12';
+    d.getElementById('pkg-height-ft').value='8';
     d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
     assert.equal(d.getElementById('pkg-measure-result').hidden,false);
     assert.match(d.getElementById('pkg-measure-summary').textContent,/96 sq\. ft\./);
