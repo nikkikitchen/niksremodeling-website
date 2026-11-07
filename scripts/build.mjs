@@ -39,6 +39,13 @@ if (shoppingSource.includes('http-equiv="refresh"') ||
     (shoppingSource.match(/class="photo-category-tile"/g)||[]).length !== 8 ||
     shoppingSource.includes('/project.html?project=custom'))
   throw Error('Shopping must have eight product-only picture cards, with no custom project category.');
+// Ensure accent-wall packages remain reachable from room projects on every screen.
+const roomSource=readFileSync(new URL('../room-projects.js',import.meta.url),'utf8');
+if(!roomSource.includes('Explore Accent Wall Projects') ||
+   !roomSource.includes('/project.html?project=accents') ||
+   !['startingAt:395','startingAt:695','startingAt:1495'].every(s=>roomSource.includes(s)) ||
+   !roomSource.includes('Consultation if requested or required'))
+  throw Error('Accent Wall project packages or room navigation are missing.');
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
 const access=projectSource.match(/accessibility:\{interior:\[([^\]]+)\],exterior:\[([^\]]+)\]\}/);
 if (!access || /'(?:doors|floor|lighting|concrete|stairs|framing)'/.test(access[1]+access[2]))
