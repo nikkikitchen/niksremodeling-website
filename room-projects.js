@@ -318,7 +318,7 @@ window.NIK_CALCULATE_PACKAGE_BASELINE=function(spec){
 };
 window.renderProjectPackageOptions=function(id,project){
   const scopes=window.PROJECT_PACKAGE_CHOICES?.[id];
-  if(!scopes||new URLSearchParams(location.search).get('roomMode')==='individual')return false;
+  if((!scopes&&!window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])||new URLSearchParams(location.search).get('roomMode')==='individual')return false;
   const safe=value=>escapeCartText(String(value));
   const base='/project.html?project='+encodeURIComponent(id);
   const listing=base+'&view=packages';
