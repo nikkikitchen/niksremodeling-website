@@ -618,7 +618,14 @@
       const selected=packages.find(p=>p.id===params.get('accessibilityPackage'))||null;
       if(selected&&selected.id!=='custom'&&params.get('quote')==='1'){window.beginPackageQuote('accessibility','Accessibility',selected,'accessibility-project-package');return;}
       const original='/project.html?project=accessibility&accessibilityMode=individual';
-      const photos=['/assets/approved-94fe00a25a93.jpg','/assets/entryways-card.jpg','/assets/idea-accessibility.jpg'];
+      // Public-domain reference photographs (Wikimedia Commons); do not present as Nik's own completed work.
+// Basic: Changing Places Accessible Toilet for Disabled Inclusion (CC0).
+// Premium: Sandford-House-wheelchair-ramp.JPG by Kelliejojo (public domain).
+const photos=[
+  'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
+  'https://commons.wikimedia.org/wiki/Special:FilePath/Sandford-House-wheelchair-ramp.JPG?width=900',
+  '/assets/idea-accessibility.jpg'
+];
       const nav=packages.map((p,index)=>{
         const href=p.id==='custom'?original:'/project.html?project=accessibility&accessibilityPackage='+p.id;
         const price=p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required';
