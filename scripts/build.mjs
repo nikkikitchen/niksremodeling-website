@@ -47,6 +47,13 @@ if(!roomSource.includes('Explore Accent Wall Projects') ||
    !roomSource.includes('Consultation if requested or required'))
   throw Error('Accent Wall project packages or room navigation are missing.');
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
+// Guard the one-layout-for-all-projects customer experience.
+if(!roomSource.includes("['accents','Accent Walls']") ||
+   !roomSource.includes('pkg-mobile-details') ||
+   !roomSource.includes('NIK_ROOM_PACKAGE_OVERRIDES') ||
+   !projectSource.includes('window.NIK_ROOM_PACKAGE_OVERRIDES') ||
+   projectSource.includes('Choose a package below.'))
+  throw Error('Projects menu or unified package layout regressed.');
 const access=projectSource.match(/accessibility:\{interior:\[([^\]]+)\],exterior:\[([^\]]+)\]\}/);
 if (!access || /'(?:doors|floor|lighting|concrete|stairs|framing)'/.test(access[1]+access[2]))
   throw Error('Accessibility has unrelated generic trade options.');
