@@ -323,7 +323,12 @@ window.renderProjectPackageOptions=function(id,project){
   const base='/project.html?project='+encodeURIComponent(id);
   const listing=base+'&view=packages';
   const params=new URLSearchParams(location.search);
-  const packs=[
+  const packs=id==='accents'?[
+    {id:'basic',name:'Basic',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395},
+    {id:'deluxe',name:'Deluxe',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695},
+    {id:'premium',name:'Premium',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495},
+    {id:'custom',name:'Custom',intro:'Design your own accent wall.',work:[]}
+  ]:[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes[0]},
     {id:'premium',name:'Premium',intro:'A coordinated set of additional project improvements.',work:[...scopes[0],...scopes[1]]},
     {id:'custom',name:'Custom',intro:'Build your own project with individual work choices.',work:[]}
@@ -331,7 +336,7 @@ window.renderProjectPackageOptions=function(id,project){
   // Price only a defined and fully costed baseline; do not hide unpriced work.
   for(const choice of packs){
     const spec=window.NIK_AUDITED_PACKAGE_PRICES?.[id]?.[choice.id];
-    if(spec)Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
+    if(spec && id!=='accents')Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
   }
   const selected=packs.find(p=>p.id===params.get('roomPackage')&&p.id!=='custom');
   if(params.get('quote')==='1'&&selected){window.beginPackageQuote(id,project.title,selected,'room-project-package');return true;}
@@ -340,10 +345,10 @@ window.renderProjectPackageOptions=function(id,project){
     const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
       '<div class="pkg-image-wrap"><a class="pkg-image" href="'+href+'"><img src="'+safe(id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='premium'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':project.image):(custom?'/assets/custom-projects-card.jpg':project.image))+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
-      '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='attic'&&p.id==='premium'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
+      '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='premium'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
       (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:New_attic_floor_at_Cattle_Chosen.jpg" target="_blank" rel="noopener">Sam Wilson / Wikimedia Commons</a>, CC BY-SA 4.0</small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
        '<details'+(selected?.id===p.id?' open':'')+'><summary>See what\'s included</summary><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></details>'+
-       '<p class="pkg-pricing"><strong>'+(p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required')+'</strong><small>'+(p.priceBasis?'Includes labor, reference-priced materials, consumables, project fees and a '+p.priceBasis.laborDiscountPercent+'% labor discount. '+safe(p.priceBasis.scenario):'Labor, materials and standard supplies included in the final estimate. Unpriced items must be confirmed before publishing a starting price.')+'</small></p>'+
+       '<p class="pkg-pricing"><strong>'+(p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required')+'</strong><small>'+(id==='accents'?'Prices adjust to measurements and selected finish.':p.priceBasis?'Includes labor, reference-priced materials, consumables, project fees and a '+p.priceBasis.laborDiscountPercent+'% labor discount. '+safe(p.priceBasis.scenario):'Labor, materials and standard supplies included in the final estimate. Unpriced items must be confirmed before publishing a starting price.')+'</small></p>'+
        '<button class="btn primary pkg-add" type="button" data-package="'+p.id+'">Calculate Quote</button>')+
       '</div></article>';
   }).join('');
@@ -351,7 +356,7 @@ window.renderProjectPackageOptions=function(id,project){
   const after=selected?'<div class="pkg-next"><p><strong>'+safe(selected.name)+' '+safe(project.title)+'</strong> package: labor, materials and supplies included once scope, measurements and site conditions are confirmed. No payment is collected online.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('Please quote the '+selected.name+' '+project.title+' project package.')+'">Request Package Estimate</a></div>':
     '<p class="calc-note">These are package scopes, not fixed site-unseen bids. Pricing uses measurements, the approved labor schedule and confirmed material and supply costs. Structural work requires a site assessment.</p>';
   document.body.innerHTML=header()+'<main class="wrap section pkg-page"><a class="project-back" href="'+back+'">← '+(selected?'All '+safe(project.title)+' Packages':'All Projects')+'</a>'+
-    '<h1>'+safe(project.title)+' Projects</h1><p class="lead">'+safe(project.intro)+'</p><p>Choose Basic, Premium, or Custom. Tap <strong>See what\'s included</strong> on any screen to review the work.</p>'+
+    '<h1>'+safe(project.title)+' Projects</h1><p class="lead">'+safe(project.intro)+'</p><p>'+(id==='accents'?'Choose Basic, Deluxe, Premium, or Custom.':'Choose Basic, Premium, or Custom.')+' Tap <strong>See what\'s included</strong> on any screen to review the work.</p>'+
     '<div class="pkg-grid">'+cards+'</div>'+after+'</main>'+footer();
   const style=document.createElement('style');
   style.textContent='.pkg-page{padding-top:32px;padding-bottom:75px}.pkg-page h1{font:700 clamp(32px,4.5vw,52px)/1.12 Georgia,serif;margin:20px 0 12px}.pkg-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:25px 0}.pkg-choice{border:0;border-radius:0;min-width:0;overflow:visible;display:flex;flex-direction:column;background:transparent;box-shadow:none}.pkg-choice.selected{outline:3px solid #0b5aa6;outline-offset:2px}.pkg-image-wrap{position:relative;overflow:hidden;border-radius:12px;box-shadow:0 8px 24px #10223216}.pkg-image{height:360px;position:relative;display:block;background:#204d72;overflow:hidden}.pkg-image img{width:100%;height:100%;object-fit:cover}.pkg-image:after{content:"";position:absolute;inset:28% 0 0;background:linear-gradient(transparent,#071d38cf)}.pkg-image strong{position:absolute;z-index:1;bottom:18px;left:19px;font:700 30px Georgia,serif;color:white}.pkg-image-overlay{position:absolute;inset:0;background:rgba(6,30,52,.94);color:#fff;padding:18px;overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none}.pkg-image-overlay strong{display:block;font-size:18px}.pkg-image-overlay ul{margin:10px 0;padding-left:20px;font-size:14px;line-height:1.45}.pkg-image-wrap:hover .pkg-image-overlay{opacity:1;visibility:visible;transform:none}.pkg-choice:focus-within .pkg-image-overlay{opacity:1;visibility:visible;transform:none}@media(hover:none),(pointer:coarse){.pkg-image-overlay{display:none}}.pkg-content{padding:14px 0 0;display:flex;flex:1;flex-direction:column;gap:10px;background:transparent}.pkg-content>p{margin:0}.pkg-content .pkg-pricing{order:0}.pkg-content .pkg-add{order:1}.pkg-content .pkg-caption{order:2;color:#445c70;font-size:14px;line-height:1.45}.pkg-content details{order:3}.pkg-content .btn.outline{order:1}.pkg-content .pkg-pricing strong{display:block;font-size:20px;color:#073c70}.pkg-content .pkg-add{margin-top:0}.pkg-content details summary{cursor:pointer;color:#0b5aa6;font-weight:800}.pkg-content ul{padding-left:20px;margin:12px 0}.pkg-content li{margin:7px 0}.pkg-content .btn{min-height:44px;width:100%;text-align:center}.pkg-pricing{font-size:14px;color:#445c70}.pkg-pricing small{display:block;margin-top:5px}.pkg-next{border-top:1px solid #dbe2ea;padding-top:22px;margin-top:25px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}.pkg-next p{flex:1 1 320px;margin:0}@media(max-width:920px){.pkg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){.pkg-grid{grid-template-columns:1fr} .pkg-image{height:320px}}';
@@ -395,7 +400,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   document.body.innerHTML=header()+
     '<main class="wrap section pkg-measure-page"><a class="project-back" href="'+back+'">← All '+safe(projectTitle)+' Packages</a>'+
     '<h1>'+safe(projectTitle)+' — '+safe(choice.name)+'</h1><p class="lead">Step 1: Measurements · Step 2: Calculated scope · Step 3: Review Cart</p>'+
-    '<section class="panel"><h2>What your package includes</h2><ul>'+work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul>'+
+    '<section class="panel"><h2>What your package includes</h2><ul>'+work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul>'+(accentOnly?'<p>Consultation if requested or required. Any $75 fee disclosed before scheduling.</p>':'')+
     (starting?'<p><strong>Starting at '+money(starting)+'+</strong> — confirmed after measurements, materials, and site conditions. This is not an automatic charge.</p>':'<p><strong>Price by quote</strong> — measurements help us calculate the work before a final price is confirmed.</p>')+'</section>'+
     '<form id="pkg-measure-form" class="panel"><h2>'+(accessibility?'Enter project quantities':accentOnly?'Enter accent wall measurements':outdoorSurface?'Enter outdoor project measurements':'Enter room measurements')+'</h2><p>'+(accessibility?'Count the features you want updated. Exact measurements and safe mounting conditions are confirmed on site.':accentOnly?'Measure the one wall you want to improve: wall length × wall height.':outdoorSurface?'Enter the deck or outdoor surface length and width. No ceiling height is needed.':'One set of dimensions for this room. Use feet and inches, not decimal feet.')+'</p>'+
     '<label class="field" for="pkg-room-name">Room name (optional)<input type="text" id="pkg-room-name" maxlength="60" placeholder="Example: Main bathroom"></label>'+
@@ -431,7 +436,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
     return value;
   }
   function dimensionValue(axis){
-    const ft=number(axis+'-ft',false),inch=number(axis+'-in',false);
+    const ft=number(axis+'-ft',false),inch=number(axis+'-in',true);
     if(!Number.isInteger(ft)||!Number.isInteger(inch)||inch>11||ft>250||ft+inch/12<=0)throw Error('Enter '+axis+' in whole feet and inches (0 to 11).');
     return Math.round((ft+inch/12)*10000)/10000;
   }
@@ -482,7 +487,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
       // square footage. The original $350 reference remains the minimum; larger
       // surfaces need more paint, primer, and labor. This is still a quote, not a bill.
       measuredQuote=null;
-      if(accentOnly&&choice.id==='basic'&&starting){
+      if(false&&accentOnly&&choice.id==='basic'&&starting){
         const original=window.NIK_AUDITED_PACKAGE_PRICES?.accents?.basic;
         if(original){
           const scaled={
