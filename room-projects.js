@@ -324,9 +324,9 @@ window.renderProjectPackageOptions=function(id,project){
   const listing=base+'&view=packages';
   const params=new URLSearchParams(location.search);
   let packs=id==='accents'?[
-    {id:'basic',name:'Basic',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395},
-    {id:'deluxe',name:'Deluxe',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695},
-    {id:'premium',name:'Premium',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495},
+    {id:'basic',name:'Basic',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395},
+    {id:'deluxe',name:'Deluxe',photo:'/assets/accent-walls-card.jpg',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695},
+    {id:'premium',name:'Premium',photo:'/assets/project-stone-real.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495},
     {id:'custom',name:'Custom',intro:'Design your own accent wall.',work:[]}
   ]:[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes[0]},
