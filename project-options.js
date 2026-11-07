@@ -592,7 +592,7 @@
           'Install up to three 18-inch grab bars into verified sound structural backing',
           'Build one simple straight-run ramp, with length based on the measured entry rise and available space',
           'Include required handrails, edge protection, supports, and level top and bottom landing areas in the ramp scope',
-          'For ramps with turns, extra landings, or raised platforms, choose Custom. Final price depends on your measurements.'
+          'For landings or additional features, see Custom.'
         ]},
         {id:'custom',name:'Custom',intro:'Multi-run ramps, turning landings and individual access projects.',work:[
           'Design ramps with intermediate or turning landings, switchbacks, or raised platforms',
