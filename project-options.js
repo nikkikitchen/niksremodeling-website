@@ -420,11 +420,27 @@
       tile.insertBefore(details,tile.querySelector('.bath-price-below')||tile.querySelector('.bath-card-add')||null);
     });
   }
+  // Bathroom and Kitchen share the same card renderer as every other Project.
+  // Their original package scopes, approved prices, and photos are preserved.
+  window.NIK_ROOM_PACKAGE_OVERRIDES={
+    bathrooms:[
+        {id:'basic',name:'Basic Refresh',intro:'Freshen up the bathroom without a full remodel.',discount:5,startingAt:995,depositEstimate:320,laborEstimate:525,overheadAllowance:150,work:['Minor Painting','Standard fixture replacement','Simple finishing touches']},
+        {id:'standard',name:'Standard Upgrade',intro:'Update your bathroom with freshly painted walls and select fixture improvements.',discount:7,startingAt:2195,depositEstimate:545,laborEstimate:1350,overheadAllowance:300,work:['Two coats of paint on bathroom walls, including a color change if desired','Paint existing baseboards','Paint one side of the bathroom door and its casing','Replace the existing vanity light and bathroom mirror','Minor finishing touches']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'Refresh the entire bathroom with comprehensive painting, sealing and accessory updates.',startingAt:3195,depositEstimate:745,laborEstimate:1950,overheadAllowance:500,work:['Two coats of paint on walls and one coat of white paint on ceiling','Paint all existing trim, including baseboards, door casing, doors and existing crown molding','Recaulking and sealing around existing fixtures as needed','Replace all standard bathroom accessories, including towel bars, towel rings and toilet paper holder','Upgrade the existing vanity light and bathroom mirror']},
+        {id:'custom',name:'Custom',intro:'Choose exactly what you need, even a single job.',work:['Choose individual bathroom work','Select materials and finishes','Combine as many tasks as you need']}
+      ].map((p,i)=>({...p,photo:(['https://images.pexels.com/photos/35505451/pexels-photo-35505451.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/34574595/pexels-photo-34574595.jpeg?auto=compress&cs=tinysrgb&w=900','/assets/bathroom-deluxe-black-white.jpg','/assets/tile-shower.jpg'])[i]})),
+    'kitchen-pantry':[
+        {id:'basic',name:'Basic Refresh',intro:'A fresh look without changing cabinets, counters or layout.',discount:5,startingAt:1995,depositEstimate:495,laborEstimate:1050,overheadAllowance:450,work:['Prepare and paint kitchen walls (two coats)','Replace up to 10 existing cabinet knobs or pulls','Replace one standard existing light fixture using safe existing wiring','Recaulk sink and countertop edges where needed','Minor existing trim and finish touch-ups']},
+        {id:'standard',name:'Standard Upgrade',intro:'Cabinet painting, backsplash and coordinated fixture upgrades.',discount:7,startingAt:6495,depositEstimate:1695,laborEstimate:3650,overheadAllowance:1150,work:['Everything in Basic, with one existing light fixture','Prep, prime and paint existing cabinet faces and boxes (up to 12 doors and 6 drawers)','Replace up to 15 existing cabinet knobs or pulls','Install a modest backsplash on prepared wall (up to 25 sq. ft.)','Replace existing kitchen faucet using compatible connections','Final caulking, trim touch-ups and cleanup']},
+        {id:'deluxe',name:'Deluxe Remodel',intro:'A coordinated small-kitchen remodel with new cabinet and counter finishes.',discount:10,startingAt:17995,depositEstimate:7995,laborEstimate:6550,overheadAllowance:3450,work:['Remove and replace up to 8 standard cabinet boxes in the existing layout','Install selected standard countertops on existing-layout cabinets (up to 25 linear ft.)','Install backsplash on prepared wall (up to 30 sq. ft.)','Install standard sink and faucet on compatible existing connections','Paint kitchen walls and ceiling, plus existing trim','Replace up to 2 standard existing light fixtures using safe existing wiring','Standard finishing, caulking, removal and haul-off of included old cabinets']},
+        {id:'custom',name:'Custom',intro:'Choose individual jobs and combine as many as you need.',work:['Choose individual kitchen work','Select materials and finishes','Build a custom kitchen project estimate']}
+      ].map((p,i)=>({...p,photo:(['https://images.pexels.com/photos/35505446/pexels-photo-35505446.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/35289464/pexels-photo-35289464.jpeg?auto=compress&cs=tinysrgb&w=900','https://images.pexels.com/photos/36777912/pexels-photo-36777912.jpeg?auto=compress&cs=tinysrgb&w=900','/assets/kitchen.jpg'])[i]}))
+  };
   window.renderProjectOptions=(id,project)=>{
     const projectParams=new URLSearchParams(location.search);
     // Package-first is the one customer journey. Deep links to a chosen
     // individual job still open the existing estimator without extra questions.
-    const detailWork=projectParams.get('roomMode')==='individual' ||
+    const detailWork=['roomMode','bathMode','kitchenMode','accessibilityMode'].some(key=>projectParams.get(key)==='individual') ||
       projectParams.has('selectedWorks') || projectParams.has('work');
     if(!detailWork && window.renderProjectPackageOptions?.(id,project))return;
     if(id==='custom'&&!new URLSearchParams(location.search).has('customWork')){window.renderCustomProjects();return;}
