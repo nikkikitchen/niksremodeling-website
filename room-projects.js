@@ -382,9 +382,9 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   const safe=v=>escapeCartText(String(v==null?'':v));
   const work=Array.isArray(choice.work)?choice.work.filter(x=>typeof x==='string'):[];
   const text=work.join(' ').toLowerCase();
-  const bathroom=source==='bathroom-project-package';
-  const kitchen=source==='kitchen-project-package';
-  const accessibility=source==='accessibility-project-package';
+  const bathroom=projectId==='bathrooms'||source==='bathroom-project-package';
+  const kitchen=projectId==='kitchen-pantry'||source==='kitchen-project-package';
+  const accessibility=projectId==='accessibility'||source==='accessibility-project-package';
   const accentOnly=projectId==='accents';
   const basement=projectId==='basement';
   const outdoorSurface=!!PROJECT_CATALOG[projectId]?.exterior || !!PROJECT_CATALOG[projectId]?.outdoorGroup;
