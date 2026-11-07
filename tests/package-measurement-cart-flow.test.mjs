@@ -206,7 +206,7 @@ test('Larger accent walls keep their measured size and require a confirmed quote
   assert.equal(item.measurements.wallPaintLabor,300);
   assert.equal(item.quoteRequired,true);
   assert.equal(item.price,null);
-  assert.ok(item.startingAt>=395);
+  assert.ok(item.startingAt>395,'Larger accent walls must increase the measured starting estimate');
  }finally{dom.window.close()}
 });
 
