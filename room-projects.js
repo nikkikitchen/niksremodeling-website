@@ -50,7 +50,7 @@ Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=im
 // Shared Projects menu entries for desktop and mobile, including Accent Walls.
 // Specialty spaces, outdoor ideas and trade details are nested underneath these.
 const PROJECT_MAIN_ENTRIES=[
- ['accessibility','Accessibility Updates'],['accents','Accent Walls'],['attic','Attic'],['basement','Basement'],
+ ['accents','Accent Walls'],['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedroom'],
  ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
  ['garage','Garage'],['kitchen-pantry','Kitchen'],
