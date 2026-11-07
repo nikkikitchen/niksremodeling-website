@@ -551,14 +551,15 @@
     // reconstruction are excluded from the advertised starting scenario.
     const accessibilityBaselines={
       basic:{
-        scenario:'One 18-inch grab bar installed into confirmed sound structural backing, one like-for-like interior passage lever replacement. Existing door prep and sound backing required; threshold work, wall repair and new backing excluded.',
+        scenario:'Install one 18-inch peened stainless grab bar into confirmed solid structural backing, plus up to one hour of minor nonstructural maintenance on an existing accessible ramp. Allowance includes one replacement treated deck board and standard fasteners if needed; only work safely completed within one hour. No structural ramp repairs, rail rebuild, major board replacement, new ramp, or threshold alterations.',
         labor:[
           {name:'Install one grab bar in sound existing backing',quantity:1,unitPrice:250},
-          {name:'Like-for-like passage lever exchange, one labor hour',quantity:1,unitPrice:75}
+          {name:'Minor nonstructural existing-ramp maintenance, up to one hour',quantity:1,unitPrice:75}
         ],
         materials:[
           {name:'Moen 18-inch stainless grab bar, reference price $23.35 + 35%',quantity:1,unitPrice:31.52},
-          {name:'Kwikset Balboa passage lever, reference price $21.47 + 35%',quantity:1,unitPrice:28.98}
+          {name:'Pressure-Treated 5/4x6x12 Decking Board',quantity:1,unitPrice:22.28},
+          {name:'Deck Screws (#8 x 2-1/2-in, 5-lb box)',quantity:1,unitPrice:48.60}
         ],
         consumables:[{name:'Silicone tub-and-tile sealant, 10.1 oz',quantity:1,unitPrice:10.12}],
         laborDiscountPercent:5,projectFeePercent:10
@@ -583,10 +584,11 @@
     // installation without an on-site assessment.
     if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')!=='individual'){
       const packages=[
-        {id:'basic',name:'Basic Safety',intro:'One grab bar and one easier-to-use door lever.',work:[
+        {id:'basic',name:'Basic Safety',intro:'One grab bar plus up to one hour of minor existing-ramp maintenance.',work:[
           'Install one 18-inch grab bar into verified sound structural backing',
-          'Replace one existing interior passage lever, like for like',
-          'New structural backing, wall repairs and threshold changes are not included'
+          'Up to one hour of minor nonstructural repairs to an existing ramp, such as tightening fasteners or replacing one accessible deck board',
+          'Includes standard fasteners and up to one 12-foot treated deck board where needed',
+          'Structural repairs, new ramps, major railing work and threshold changes require a separate quote'
         ]},
         {id:'premium',name:'Premium Accessibility',intro:'Three grab bars, two door levers and a simple straight ramp.',work:[
           'Install up to three 18-inch grab bars into verified sound structural backing',
