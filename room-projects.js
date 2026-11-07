@@ -47,10 +47,10 @@ INDOOR_ROOM_PROJECT_IDS.forEach(id=>{
 const TOPIC_PHOTOS={"pet-room": "/assets/idea-pet-room.jpg", "outdoor-kitchen": "/assets/idea-outdoor-kitchen.jpg", "mechanic-shop": "/assets/idea-mechanic-shop.jpg", "car-wash": "/assets/idea-car-wash.jpg", "recycling-scrap": "/assets/idea-recycling-scrap.jpg", "vault-safe-room": "/assets/idea-vault-safe-room.jpg", "snack-beverage": "/assets/idea-snack-beverage.jpg", "pools": "/assets/idea-pools.jpg", "bus-stop": "/assets/idea-bus-stop.jpg", "mailboxes": "/assets/idea-mailboxes.jpg", "outdoor-sound": "/assets/idea-outdoor-sound.jpg", "garden-greenhouse": "/assets/idea-garden-greenhouse.jpg", "fitness-wellness": "/assets/idea-fitness-wellness.jpg", "games-hobbies": "/assets/idea-games-hobbies.jpg", "accessibility": "/assets/idea-accessibility.jpg", "backyard-retreat": "/assets/idea-backyard-retreat.jpg"};
 Object.entries(TOPIC_PHOTOS).forEach(([id,image])=>{PROJECT_CATALOG[id].image=image;});
 // Customer-approved project photos have priority over general catalog covers.
-// Exactly the 15 picture-card Projects approved for the site's primary menu.
+// Shared Projects menu entries for desktop and mobile, including Accent Walls.
 // Specialty spaces, outdoor ideas and trade details are nested underneath these.
 const PROJECT_MAIN_ENTRIES=[
- ['accessibility','Accessibility Updates'],['attic','Attic'],['basement','Basement'],
+ ['accessibility','Accessibility Updates'],['accents','Accent Walls'],['attic','Attic'],['basement','Basement'],
  ['bathrooms','Bathroom'],['bedroom-guest-room','Bedroom'],
  ['closets-storage','Closets & Storage'],['dining-room','Dining Room'],
  ['garage','Garage'],['kitchen-pantry','Kitchen'],
@@ -202,7 +202,7 @@ INDOOR_ROOM_IDS.forEach(id=>{
  window.ROOM_PROJECT_SCOPES[id]=[...CORE_ROOM_WORK,...existing.filter(key=>!CORE_ROOM_WORK.includes(key))];
 });
 
-// Both desktop and mobile use the same 15 first-level Projects.
+// Both desktop and mobile use the same first-level Projects.
 // One straightforward Projects menu, on both phone and computer.
 // Every category name is a real link to its project options; no hover side flyouts.
 function buildProjectDropdowns(){
