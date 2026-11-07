@@ -486,22 +486,28 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
       const wallLabor=wallPaint?(accentOnly?Math.max(175,Math.ceil(wallArea*1.50/5)*5):Math.round(wallArea*1.50*100)/100):0;
       const ceilingLabor=ceilingPaint?Math.round(ceilingArea*0.75*1.2*100)/100:0;
       const paintMaterial=paintGallons*50;
-      // Reprice the fully audited accent-wall scope using the customer's measured
-      // square footage. The original $350 reference remains the minimum; larger
-      // surfaces need more paint, primer, and labor. This is still a quote, not a bill.
+      // Advertising starting prices assume a straightforward 12 x 8 ft accent wall.
+      // Larger walls increase the estimated minimum; this is never a payable bill.
+      // Paint-only reference lines are not reused as if they fully priced chair rail.
       measuredQuote=null;
-      if(false&&accentOnly&&choice.id==='basic'&&starting){
-        const original=window.NIK_AUDITED_PACKAGE_PRICES?.accents?.basic;
-        if(original){
-          const scaled={
-            ...original,
-            scenario:'One sound '+length.toFixed(2)+' × '+height.toFixed(2)+' ft. interior accent wall ('+pretty(wallArea)+' sq. ft.), two paint coats and one bonding-primer coat. Repairs and specialty finishes excluded.',
-            labor:original.labor.map(line=>({...line,unitPrice:wallLabor})),
-            materials:original.materials.map(line=>({...line,quantity:/primer/i.test(line.name)?Math.max(1,Math.ceil(wallArea/350)):wallGallons})),
-            consumables:original.consumables.map(line=>({...line,quantity:/painters tape/i.test(line.name)?Math.max(1,Math.ceil(2*(length+height)/180)):/roller sleeves/i.test(line.name)?Math.max(1,Math.ceil(wallArea/600)):line.quantity}))
-          };
-          measuredQuote=window.NIK_CALCULATE_PACKAGE_BASELINE(scaled);
+      if(accentOnly&&starting){
+        const baselineArea=96;
+        const rounded5=n=>Math.ceil(n/5)*5;
+        let measuredMinimum=starting;
+        if(choice.id==='basic'){
+          const extraPaintLabor=Math.max(0,wallLabor-175);
+          const extraPaintGallons=Math.max(0,wallGallons-1);
+          const extraPrimerGallons=Math.max(0,Math.ceil(wallArea/350)-1);
+          // Trim material selections are confirmed with the customer before final pricing.
+          // Allow approved $3/ft trim-install reference labor for extra wall length.
+          const extraTrimLabor=Math.max(0,length-12)*3;
+          const extraScope=extraPaintLabor+extraPaintGallons*48.60+extraPrimerGallons*47.22+extraTrimLabor;
+          measuredMinimum=rounded5(starting+extraScope*1.10);
+        }else{
+          // Provisional area scaling for specialty surfaces until materials are selected.
+          measuredMinimum=rounded5(starting*Math.max(1,wallArea/baselineArea));
         }
+        measuredQuote={startingAt:Math.max(starting,measuredMinimum)};
       }
       const basementFloor=basement?document.getElementById('pkg-basement-floor').value:'none';
       const basementLights=basement?number('existing-lights',true):0;
@@ -518,7 +524,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
         (ceilingPaint?row('One-coat ceiling paint',ceilingGallons+' gallons; measured painting labor '+money(ceilingLabor)):'')+
         (basementFloor!=='none'?row('Concrete floor '+basementFloor+' labor',pretty(floorArea)+' sq. ft. = '+money(basementFloorLabor)+' (materials and prep not yet priced)'):'')+
         (basementLights?row('Existing-connection light replacement labor',basementLights+' × $150 = '+money(basementLightLabor)+' (fixtures not yet priced)'):'')+
-        (paintGallons?(measuredQuote?row('Paint and primer materials',money(measuredQuote.priceBasis.materialsTotal)+' (included in measured package)'):row('Paint material allowance',paintGallons+' gallons × $50 = '+money(paintMaterial))):'')+
+        (paintGallons?row('Paint material allowance',paintGallons+' gallons × $50 = '+money(paintMaterial)+' (part of project estimate)'):'')+
         (backsplash?row('Backsplash',pretty(backsplashArea)+' sq. ft. (to verify)'):'')+
         (cabinets?row('Cabinet boxes',cabinetBoxes+' (to verify)'):'')+
         (counters?row('Countertops',pretty(counterLength)+' linear ft. (to verify)'):'')+
