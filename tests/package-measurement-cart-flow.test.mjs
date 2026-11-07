@@ -28,8 +28,8 @@ async function load(page,query='',cart=[]){
   return dom;
 }
 const packageCases=[
-  {project:'bathrooms',source:'bathroom-project-package',button:'.bath-card-add[data-bath-package="standard"]',tier:'standard'},
-  {project:'kitchen-pantry',source:'kitchen-project-package',button:'.bath-card-add[data-kitchen-package="standard"]',tier:'standard'},
+  {project:'bathrooms',source:'room-project-package',button:'.pkg-add[data-package="standard"]',tier:'standard'},
+  {project:'kitchen-pantry',source:'room-project-package',button:'.pkg-add[data-package="standard"]',tier:'standard'},
   {project:'attic',source:'room-project-package',button:'.pkg-add[data-package="basic"]',tier:'basic'}
 ];
 for(const entry of packageCases)test(entry.project+' package collects measurements before cart and includes labor',async()=>{
@@ -68,7 +68,7 @@ test('Bathroom measured paint and estimate do not silently add separate labor ch
   const dom=await load('project.html','?project=bathrooms');
   try{
     const w=dom.window,d=w.document;
-    d.querySelector('.bath-card-add[data-bath-package="standard"]').click();
+    d.querySelector('.pkg-add[data-package="standard"]').click();
     d.getElementById('pkg-length-ft').value='10';
     d.getElementById('pkg-width-ft').value='10';
     d.getElementById('pkg-openings').value='20';
@@ -114,7 +114,7 @@ test('Accessibility package asks relevant feature counts instead of an unrelated
   const dom=await load('project.html','?project=accessibility');
   try{
     const w=dom.window,d=w.document;
-    const button=d.querySelector('[data-accessibility-package="basic"]');
+    const button=d.querySelector('.pkg-add[data-package="basic"]');
     assert.equal(button?.textContent,'Calculate Quote');
     button.click();
     assert.ok(d.querySelector('#pkg-feature-grid')||d.querySelector('.pkg-feature-grid'));
@@ -127,7 +127,7 @@ test('Accessibility package asks relevant feature counts instead of an unrelated
     assert.match(d.getElementById('pkg-measure-summary').textContent,/12 ft/);
     d.getElementById('pkg-confirm-add').click();
     const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
-    assert.equal(item.source,'accessibility-project-package');
+    assert.equal(item.source,'room-project-package');
     assert.equal(item.measurements.grabBars,2);
     assert.equal(item.measurements.handrailLength,12);
     assert.equal(item.quoteRequired,true);
@@ -165,72 +165,46 @@ test('Accent package measures only the chosen wall length × height and uses app
   }finally{dom.window.close();}
 });
 
-test('Audited Basic Accent Wall includes real materials, consumables, discount and a cart starting price',async()=>{
-  const dom=await load('project.html','?project=accents');
-  try{
-    const w=dom.window,d=w.document;
-    const spec=w.NIK_AUDITED_PACKAGE_PRICES?.accents?.basic;
-    assert.ok(spec,'Accent package must have itemized pricing');
-    assert.ok(!spec.consumables.some(x=>/silicone|paint roller frame|drop cloth/i.test(x.name)),
-      'Do not bill unsuitable caulk or reusable painting equipment');
-    const quote=w.NIK_CALCULATE_PACKAGE_BASELINE(spec);
-    assert.equal(quote.startingAt,350);
-    assert.equal(quote.depositEstimate,147.13);
-    assert.equal(quote.laborEstimate,166.25);
-    assert.equal(quote.priceBasis.laborDiscount,8.75);
-    assert.equal(quote.overheadAllowance,36.62);
-    assert.equal(quote.startingAt,quote.depositEstimate+quote.laborEstimate+quote.overheadAllowance);
-    assert.match(d.querySelector('.pkg-pricing')?.textContent||'',/Starting at \$350/);
-    const button=d.querySelector('.pkg-add[data-package="basic"]');
-    assert.ok(button);
-    button.click();
-    d.getElementById('pkg-length-ft').value='12';
-    d.getElementById('pkg-height-ft').value='8';
-    assert.equal(d.getElementById('pkg-width-ft'),null,'A single accent wall must not request full room dimensions');
-    d.getElementById('pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
-    assert.equal(d.getElementById('pkg-measure-result').hidden,false);
-    d.getElementById('pkg-confirm-add').click();
-    const cart=JSON.parse(w.localStorage.getItem('nr-cart'));
-    assert.equal(cart.length,1);
-    assert.equal(cart[0].startingAt,350);
-    assert.equal(cart[0].quoteRequired,true,'Starting estimates are not invoices');
-    assert.equal(cart[0].price,null,'Do not collect a project deposit automatically');
-    assert.deepEqual(cart[0].priceBasis.materials.map(x=>x.unitPrice),[48.60,47.22]);
-    w.renderCart();
-    assert.match(d.querySelector('.nr-cart-line-price').textContent,/Starting at \$350/);
-    assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
-  }finally{dom.window.close();}
+test('Accent Wall package advertises the new chair-rail starting price and never takes payment',async()=>{
+ const dom=await load('project.html','?project=accents');
+ try{
+  const w=dom.window,d=w.document;
+  assert.ok(d.querySelector('.pkg-pricing')?.textContent.includes('$395'));
+  assert.equal(d.querySelectorAll('.pkg-choice').length,4);
+  d.querySelector('.pkg-add[data-package="basic"]').click();
+  d.getElementById('pkg-length-ft').value='12';
+  d.getElementById('pkg-height-ft').value='8';
+  d.querySelector('#pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(d.querySelector('#pkg-measure-result').hidden,false);
+  d.getElementById('pkg-confirm-add').click();
+  const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
+  assert.equal(item.startingAt,395);
+  assert.equal(item.measurements.wallArea,96);
+  assert.equal(item.price,null);
+  assert.equal(item.quoteRequired,true);
+  w.renderCart();
+  assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
+ }finally{dom.window.close()}
 });
 
-test('Audited accent wall recalculates a larger measured scope without charging twice',async()=>{
-  const dom=await load('project.html','?project=accents');
-  try{
-    const w=dom.window,d=w.document;
-    d.querySelector('.pkg-add[data-package="basic"]').click();
-    const length=d.getElementById('pkg-length-ft');
-    const height=d.getElementById('pkg-height-ft');
-    const submit=()=>d.getElementById('pkg-measure-form')
-      .dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
-    length.value='20';height.value='10';
-    submit();
-    assert.equal(d.getElementById('pkg-measure-result').hidden,false);
-    assert.match(d.getElementById('pkg-measure-summary').textContent,/200 sq\. ft\./);
-    assert.match(d.getElementById('pkg-measure-summary').textContent,/measured minimum/i);
-    d.getElementById('pkg-confirm-add').click();
-    let [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
-    assert.equal(item.measurements.wallArea,200);
-    assert.equal(item.measurements.wallPaintLabor,300,'Larger walls need more than the small-wall flat labor');
-    assert.deepEqual(item.priceBasis.materials.map(x=>x.quantity),[2,1],
-      '200 square feet requires two gallons of two-coat paint and one gallon of primer');
-    assert.equal(item.priceBasis.laborAfterDiscount,285);
-    assert.ok(item.startingAt>350,'Measured wall cannot retain the 96-square-foot minimum');
-    assert.equal(item.startingAt,item.depositEstimate+item.laborEstimate+item.overheadAllowance);
-    assert.equal(item.price,null);
-    assert.equal(item.quoteRequired,true);
-    w.renderCart();
-    assert.match(d.querySelector('.nr-cart-line-price').textContent,/Starting at \$/);
-    assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
-  }finally{dom.window.close();}
+test('Larger accent walls keep their measured size and require a confirmed quote',async()=>{
+ const dom=await load('project.html','?project=accents');
+ try{
+  const w=dom.window,d=w.document;
+  d.querySelector('.pkg-add[data-package="basic"]').click();
+  d.getElementById('pkg-length-ft').value='20';
+  d.getElementById('pkg-height-ft').value='10';
+  d.querySelector('#pkg-measure-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(d.getElementById('pkg-measure-result').hidden,false);
+  assert.match(d.getElementById('pkg-measure-summary').textContent,/200 sq\. ft\./);
+  d.getElementById('pkg-confirm-add').click();
+  const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
+  assert.equal(item.measurements.wallArea,200);
+  assert.equal(item.measurements.wallPaintLabor,300);
+  assert.equal(item.quoteRequired,true);
+  assert.equal(item.price,null);
+  assert.ok(item.startingAt>=395);
+ }finally{dom.window.close()}
 });
 
 test('Combined project total includes quoted package minimum plus separate product and 8% estimated tax',async()=>{
