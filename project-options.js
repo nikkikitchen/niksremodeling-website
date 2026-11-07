@@ -551,7 +551,7 @@
     // reconstruction are excluded from the advertised starting scenario.
     const accessibilityBaselines={
       basic:{
-        scenario:'One 18-inch grab bar installed into confirmed sound structural backing, one like-for-like interior passage lever replacement, and visual threshold review. Existing door prep; no wall repair, new backing or threshold construction.',
+        scenario:'One 18-inch grab bar installed into confirmed sound structural backing, one like-for-like interior passage lever replacement. Existing door prep and sound backing required; threshold work, wall repair and new backing excluded.',
         labor:[
           {name:'Install one grab bar in sound existing backing',quantity:1,unitPrice:250},
           {name:'Like-for-like passage lever exchange, one labor hour',quantity:1,unitPrice:75}
@@ -583,17 +583,15 @@
     // installation without an on-site assessment.
     if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')!=='individual'){
       const packages=[
-        {id:'basic',name:'Basic Safety',intro:'A grab bar, easier door hardware, and threshold review.',work:[
+        {id:'basic',name:'Basic Safety',intro:'One grab bar and one easier-to-use door lever.',work:[
           'Install one 18-inch grab bar into verified sound structural backing',
           'Replace one existing interior passage lever, like for like',
-          'Visually review one threshold and existing mounting conditions',
-          'Additional backing, threshold repairs, and structural work quoted separately'
+          'New structural backing, wall repairs and threshold changes are not included'
         ]},
-        {id:'premium',name:'Premium Accessibility',intro:'Two grab bars, two door levers and access planning.',work:[
+        {id:'premium',name:'Premium Accessibility',intro:'Two grab bars, two door levers and one hour of access planning.',work:[
           'Install two 18-inch grab bars into verified sound structural backing',
           'Replace two existing interior passage levers, like for like',
-          'Visually review thresholds and existing handrail conditions',
-          'One additional hour of access improvement planning',
+          'Include one hour to review threshold and handrail improvement options',
           'Ramps, new handrails, doorway widening and structural changes quoted separately'
         ]},
         {id:'custom',name:'Custom',intro:'Choose only the accessibility improvements you need.',work:[
