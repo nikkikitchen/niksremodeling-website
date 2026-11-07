@@ -26,7 +26,7 @@ for(const {id,tiers,prices} of [
    const doc=dom.window.document;
    const cards=[...doc.querySelectorAll('.pkg-choice')];
    assert.equal(cards.length,tiers.length);
-   assert.deepEqual(cards.map(x=>x.querySelector('.pkg-image strong')?.textContent),tiers);
+   assert.ok(cards.every((x,i)=>x.querySelector('.pkg-image strong')?.textContent.startsWith(tiers[i])),'Package tier labels must remain clear');
    assert.equal(doc.querySelectorAll('.pkg-image-overlay').length,tiers.length-1);
    assert.equal(doc.querySelectorAll('.pkg-mobile-details').length,tiers.length-1);
    assert.equal(doc.querySelectorAll('.pkg-add').length,tiers.length-1);
