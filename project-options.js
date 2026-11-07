@@ -564,7 +564,7 @@
         laborDiscountPercent:5,projectFeePercent:10
       },
       premium:{
-        scenario:'Three 18-inch grab bars installed in confirmed structural backing, two like-for-like interior passage lever replacements, one hour of planning, plus a simple single-run ramp to be measured and priced separately before any complete package total is shown. Ramp handrails and safe top/bottom transitions are part of the ramp scope. No switchback, raised deck, intermediate platform or unverified ramp price is promised.',
+        scenario:'Three 18-inch grab bars installed in confirmed structural backing, two like-for-like interior passage lever replacements, one hour of planning, plus a simple single-run ramp to be measured and priced separately before any complete package total is shown. Ramp handrails and safe top/bottom transitions are part of the ramp scope. Required level top and bottom landing areas are included in the intended design; intermediate or turning landings, switchbacks and raised platforms belong in Custom. No unverified ramp price is promised.',
         labor:[
           {name:'Install grab bars in sound existing backing',quantity:3,unitPrice:250},
           {name:'Like-for-like passage lever exchanges, one labor hour each',quantity:2,unitPrice:75},
@@ -591,14 +591,14 @@
         {id:'premium',name:'Premium Accessibility',intro:'Three grab bars, two door levers and a simple straight ramp.',work:[
           'Install up to three 18-inch grab bars into verified sound structural backing',
           'Replace two existing interior passage levers, like for like',
-          'Build one simple, straight-run access ramp, sized for the measured rise and available space',
-          'Include suitable ramp handrails, safe top and bottom transitions, and appropriate structural supports in the ramp quote',
-          'No switchbacks or elevated deck platforms; final ramp scope and total depend on the site measurements'
+          'Build one simple straight-run ramp, with length based on the measured entry rise and available space',
+          'Include required handrails, edge protection, supports, and level top and bottom landing areas in the ramp scope',
+          'Ramps with intermediate or turning landings, switchbacks, or large elevated platforms belong under Custom; final price requires site measurements'
         ]},
-        {id:'custom',name:'Custom',intro:'Choose only the accessibility improvements you need.',work:[
-          'Select individual accessibility work',
-          'Combine indoor or outdoor improvements',
-          'Request a site-specific estimate'
+        {id:'custom',name:'Custom',intro:'Multi-run ramps, turning landings and individual access projects.',work:[
+          'Design ramps with intermediate or turning landings, switchbacks, or raised platforms',
+          'Select additional handrails, existing ramp repairs, doors or threshold improvements',
+          'Request a site-specific estimate for structural design, labor, materials, and supplies'
         ]}
       ];
       for(const p of packages){
@@ -619,7 +619,7 @@
       const selected=packages.find(p=>p.id===params.get('accessibilityPackage'))||null;
       if(selected&&selected.id!=='custom'&&params.get('quote')==='1'){window.beginPackageQuote('accessibility','Accessibility',selected,'accessibility-project-package');return;}
       const original='/project.html?project=accessibility&accessibilityMode=individual';
-      const photos=['/assets/idea-accessibility.jpg','/assets/entryways-card.jpg','/assets/approved-94fe00a25a93.jpg'];
+      const photos=['/assets/approved-94fe00a25a93.jpg','/assets/entryways-card.jpg','/assets/idea-accessibility.jpg'];
       const nav=packages.map((p,index)=>{
         const href=p.id==='custom'?original:'/project.html?project=accessibility&accessibilityPackage='+p.id;
         const price=p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required';
