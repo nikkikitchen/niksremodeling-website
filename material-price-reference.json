@@ -572,6 +572,46 @@
       "priceStatus": "research-provisional",
       "lastChecked": "2026-11-08",
       "restrictions": "Only if manufacturer requires/allows separate underlayment; avoid duplicate pad; check vapor barrier and substrate."
+    },
+    {
+      "id": 74,
+      "name": "BEHR Premium Plus 1-Gallon Eggshell Enamel Interior Paint and Primer, Selected Standard Color",
+      "unit": "gallon",
+      "price": 51.27,
+      "retailBaseline": 37.98,
+      "retailSources": [
+        "https://www.homedepot.com/p/205279646",
+        "https://www.homedepot.com/p/204886747"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Actual tinted color and selected product pricing must be confirmed."
+    },
+    {
+      "id": 75,
+      "name": "Legrand Wiremold CordMate II C50 5-ft Three-Cable Surface Raceway",
+      "unit": "each",
+      "price": 30.12,
+      "retailBaseline": 22.31,
+      "retailSources": [
+        "https://www.homedepot.com/p/202264865"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "For approved low-voltage or permitted cord routing only; no in-wall power cord concealment."
+    },
+    {
+      "id": 76,
+      "name": "Mount-It MI-3991L 32–70-in Full-Motion TV Wall Bracket",
+      "unit": "each",
+      "price": 67.49,
+      "retailBaseline": 49.99,
+      "retailSources": [
+        "https://www.lowes.com/pd/Mount-It-TV-Mount-Indoor-Tv-Mount-Hardware-Included/5015287517"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Verify actual TV VESA, weight, stud spacing and site structure. Do not use to conceal power wiring."
     }
   ]
 }
