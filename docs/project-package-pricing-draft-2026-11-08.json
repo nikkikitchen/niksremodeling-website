@@ -27,7 +27,10 @@
       "shiplap",
       "grabBar",
       "mailboxKit",
-      "underlayment100"
+      "underlayment100",
+      "eggshellPaint",
+      "surfaceRaceway",
+      "tvMount"
     ]
   },
   "packages": [
@@ -257,7 +260,7 @@
         "materials": 383.36,
         "consumables": 11.48,
         "planningFees": 166.98,
-        "preDiscount": 1836.8200000000002,
+        "preDiscount": 1836.82,
         "wholePackageDiscount": 128.58
       },
       "startingPriceDraft": 1710,
@@ -319,7 +322,7 @@
       "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
       "scenario": "12×16 ft / 192 sq ft raised storage deck and two compatible shelf runs; same structural and access assumptions",
       "workIncluded": [
-        "Deck up to 192 sq ft using six 3/4-in 4×8 sheets over suitable raised structure",
+        "Deck up to 192 sq ft using seven 3/4-in 4×8 sheets over suitable raised structure",
         "Install two 6-ft closet shelving runs",
         "Replace one light at existing suitable box"
       ],
@@ -333,15 +336,15 @@
       ],
       "componentCosts": {
         "laborGross": 2175,
-        "materials": 593.18,
+        "materials": 675.17,
         "consumables": 11.48,
-        "planningFees": 277.97,
-        "preDiscount": 3057.63,
-        "wholePackageDiscount": 214.03
+        "planningFees": 286.17,
+        "preDiscount": 3147.82,
+        "wholePackageDiscount": 220.35
       },
-      "startingPriceDraft": 2845,
-      "dueNowDraftMaterialAllowance": 604.66,
-      "laborAndFeeBalanceDraft": 2240.34,
+      "startingPriceDraft": 2930,
+      "dueNowDraftMaterialAllowance": 686.65,
+      "laborAndFeeBalanceDraft": 2243.35,
       "labor": [
         {
           "name": "Decking install and cleanup",
@@ -368,7 +371,7 @@
       "materials": [
         {
           "name": "Six plywood sheets",
-          "quantity": 6,
+          "quantity": 7,
           "unit": "listed units",
           "unitPrice": 70.2,
           "source": "approved marked-up material reference"
@@ -382,7 +385,7 @@
         },
         {
           "name": "Two bracket sets",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -432,15 +435,15 @@
       ],
       "componentCosts": {
         "laborGross": 2525,
-        "materials": 956.33,
+        "materials": 1038.32,
         "consumables": 11.48,
-        "planningFees": 349.28,
-        "preDiscount": 3842.09,
-        "wholePackageDiscount": 268.95
+        "planningFees": 357.48,
+        "preDiscount": 3932.28,
+        "wholePackageDiscount": 275.26
       },
-      "startingPriceDraft": 3575,
-      "dueNowDraftMaterialAllowance": 967.81,
-      "laborAndFeeBalanceDraft": 2607.19,
+      "startingPriceDraft": 3660,
+      "dueNowDraftMaterialAllowance": 1049.8,
+      "laborAndFeeBalanceDraft": 2610.2,
       "labor": [
         {
           "name": "Decking",
@@ -474,7 +477,7 @@
       "materials": [
         {
           "name": "Six plywood sheets",
-          "quantity": 6,
+          "quantity": 7,
           "unit": "listed units",
           "unitPrice": 70.2,
           "source": "approved marked-up material reference"
@@ -488,7 +491,7 @@
         },
         {
           "name": "Two bracket packs",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -781,15 +784,15 @@
       ],
       "componentCosts": {
         "laborGross": 1802.6,
-        "materials": 918.8,
+        "materials": 930.59,
         "consumables": 51.31,
-        "planningFees": 277.27,
-        "preDiscount": 3049.9799999999996,
-        "wholePackageDiscount": 213.5
+        "planningFees": 278.45,
+        "preDiscount": 3062.95,
+        "wholePackageDiscount": 214.41
       },
-      "startingPriceDraft": 2840,
-      "dueNowDraftMaterialAllowance": 970.11,
-      "laborAndFeeBalanceDraft": 1869.89,
+      "startingPriceDraft": 2850,
+      "dueNowDraftMaterialAllowance": 981.9,
+      "laborAndFeeBalanceDraft": 1868.1,
       "labor": [
         {
           "name": "384 sq ft wall paint",
@@ -872,7 +875,7 @@
         },
         {
           "name": "Two bracket packs",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -928,15 +931,15 @@
       ],
       "componentCosts": {
         "laborGross": 525,
-        "materials": 118.02,
+        "materials": 129.81,
         "consumables": 19.58,
-        "planningFees": 66.26,
-        "preDiscount": 728.86,
-        "wholePackageDiscount": 51.02
+        "planningFees": 67.44,
+        "preDiscount": 741.83,
+        "wholePackageDiscount": 51.93
       },
-      "startingPriceDraft": 680,
-      "dueNowDraftMaterialAllowance": 137.6,
-      "laborAndFeeBalanceDraft": 542.4,
+      "startingPriceDraft": 690,
+      "dueNowDraftMaterialAllowance": 149.39,
+      "laborAndFeeBalanceDraft": 540.61,
       "labor": [
         {
           "name": "Shelf installation, layout and finish touch-ups",
@@ -956,7 +959,7 @@
         },
         {
           "name": "Two bracket sets",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -1007,15 +1010,15 @@
       ],
       "componentCosts": {
         "laborGross": 1511,
-        "materials": 490.34,
+        "materials": 513.92,
         "consumables": 43.21,
-        "planningFees": 204.46,
-        "preDiscount": 2249.0099999999998,
-        "wholePackageDiscount": 157.43
+        "planningFees": 206.81,
+        "preDiscount": 2274.94,
+        "wholePackageDiscount": 159.25
       },
-      "startingPriceDraft": 2095,
-      "dueNowDraftMaterialAllowance": 533.55,
-      "laborAndFeeBalanceDraft": 1561.45,
+      "startingPriceDraft": 2120,
+      "dueNowDraftMaterialAllowance": 557.13,
+      "laborAndFeeBalanceDraft": 1562.87,
       "labor": [
         {
           "name": "Install 4 shelf runs",
@@ -1056,7 +1059,7 @@
         },
         {
           "name": "Four bracket sets",
-          "quantity": 4,
+          "quantity": 6,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -1354,15 +1357,15 @@
       ],
       "componentCosts": {
         "laborGross": 1350,
-        "materials": 296.12,
+        "materials": 307.91,
         "consumables": 43.21,
-        "planningFees": 168.93,
-        "preDiscount": 1858.26,
-        "wholePackageDiscount": 130.08
+        "planningFees": 170.11,
+        "preDiscount": 1871.23,
+        "wholePackageDiscount": 130.99
       },
-      "startingPriceDraft": 1730,
-      "dueNowDraftMaterialAllowance": 339.33,
-      "laborAndFeeBalanceDraft": 1390.67,
+      "startingPriceDraft": 1745,
+      "dueNowDraftMaterialAllowance": 351.12,
+      "laborAndFeeBalanceDraft": 1393.88,
       "labor": [
         {
           "name": "240 sq ft concrete floor paint labor $2.50/sf",
@@ -1410,7 +1413,7 @@
         },
         {
           "name": "Two bracket packs",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -1468,15 +1471,15 @@
       ],
       "componentCosts": {
         "laborGross": 1157,
-        "materials": 166.62,
+        "materials": 178.41,
         "consumables": 43.21,
-        "planningFees": 136.68,
-        "preDiscount": 1503.51,
-        "wholePackageDiscount": 105.25
+        "planningFees": 137.86,
+        "preDiscount": 1516.48,
+        "wholePackageDiscount": 106.15
       },
-      "startingPriceDraft": 1400,
-      "dueNowDraftMaterialAllowance": 209.83,
-      "laborAndFeeBalanceDraft": 1190.17,
+      "startingPriceDraft": 1415,
+      "dueNowDraftMaterialAllowance": 221.62,
+      "laborAndFeeBalanceDraft": 1193.38,
       "labor": [
         {
           "name": "288 sq ft wall paint",
@@ -1524,7 +1527,7 @@
         },
         {
           "name": "Two bracket packs",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -1577,7 +1580,7 @@
         "materials": 248.36,
         "consumables": 43.21,
         "planningFees": 137.04,
-        "preDiscount": 1507.4099999999999,
+        "preDiscount": 1507.41,
         "wholePackageDiscount": 105.52
       },
       "startingPriceDraft": 1405,
@@ -1683,7 +1686,7 @@
         "materials": 1098.32,
         "consumables": 43.21,
         "planningFees": 319.53,
-        "preDiscount": 3514.8599999999997,
+        "preDiscount": 3514.86,
         "wholePackageDiscount": 246.04
       },
       "startingPriceDraft": 3270,
@@ -1813,15 +1816,15 @@
       ],
       "componentCosts": {
         "laborGross": 1101,
-        "materials": 269.18,
+        "materials": 280.97,
         "consumables": 43.21,
-        "planningFees": 141.34,
-        "preDiscount": 1554.73,
-        "wholePackageDiscount": 108.83
+        "planningFees": 142.52,
+        "preDiscount": 1567.7,
+        "wholePackageDiscount": 109.74
       },
-      "startingPriceDraft": 1450,
-      "dueNowDraftMaterialAllowance": 312.39,
-      "laborAndFeeBalanceDraft": 1137.61,
+      "startingPriceDraft": 1460,
+      "dueNowDraftMaterialAllowance": 324.18,
+      "laborAndFeeBalanceDraft": 1135.82,
       "labor": [
         {
           "name": "Wall painting",
@@ -1869,7 +1872,7 @@
         },
         {
           "name": "Two bracket sets",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -1904,7 +1907,7 @@
       "projectName": "Kids' Room",
       "tier": "Basic",
       "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
-      "scenario": "12×12 ft existing child's room, washable coating to be selected, two shelf runs, existing light",
+      "scenario": "12×12 ft existing child's room, washable eggshell coating, two shelf runs, existing light",
       "workIncluded": [
         "Paint up to 384 sq ft sound walls",
         "Install two six-foot shelves safely anchored",
@@ -1915,19 +1918,19 @@
         "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
         "Exact material product and quantities confirmed before binding quote",
         "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
-        "Chosen paint must be appropriate washable finish: flat price is provisional only; adjust product before publication"
+        "Chosen paint must be appropriate washable finish: Selected standard eggshell product is provisional; confirm finish/color and washability before publication"
       ],
       "componentCosts": {
         "laborGross": 1101,
-        "materials": 269.18,
+        "materials": 288.98,
         "consumables": 43.21,
-        "planningFees": 141.34,
-        "preDiscount": 1554.73,
-        "wholePackageDiscount": 108.83
+        "planningFees": 143.32,
+        "preDiscount": 1576.51,
+        "wholePackageDiscount": 110.36
       },
-      "startingPriceDraft": 1450,
-      "dueNowDraftMaterialAllowance": 312.39,
-      "laborAndFeeBalanceDraft": 1137.61,
+      "startingPriceDraft": 1470,
+      "dueNowDraftMaterialAllowance": 332.19,
+      "laborAndFeeBalanceDraft": 1137.81,
       "labor": [
         {
           "name": "Wall painting",
@@ -1953,11 +1956,11 @@
       ],
       "materials": [
         {
-          "name": "3 gal wall paint—finish suitability to confirm",
+          "name": "3 gallons washable eggshell paint",
           "quantity": 3,
           "unit": "listed units",
-          "unitPrice": 48.6,
-          "source": "approved marked-up material reference"
+          "unitPrice": 51.27,
+          "source": "researched provisional retail baseline plus 35% markup"
         },
         {
           "name": "Two shelves",
@@ -1968,7 +1971,7 @@
         },
         {
           "name": "Two bracket sets",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -2021,20 +2024,20 @@
         "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
         "Exact material product and quantities confirmed before binding quote",
         "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
-        "Mounting bracket, raceway, TV/projector, and audiovisual equipment are NOT priced; add confirmed compatible product allowance before advertising",
-        "No hidden in-wall power extension"
+        "No hidden in-wall power extension",
+        "Confirm TV bracket fit, TV weight, wall fasteners and allowable cord routing; TV remains owner-provided"
       ],
       "componentCosts": {
         "laborGross": 750,
-        "materials": 53.96,
+        "materials": 151.57,
         "consumables": 11.48,
-        "planningFees": 81.54,
-        "preDiscount": 896.98,
-        "wholePackageDiscount": 62.79
+        "planningFees": 91.31,
+        "preDiscount": 1004.36,
+        "wholePackageDiscount": 70.31
       },
-      "startingPriceDraft": 835,
-      "dueNowDraftMaterialAllowance": 65.44,
-      "laborAndFeeBalanceDraft": 769.56,
+      "startingPriceDraft": 935,
+      "dueNowDraftMaterialAllowance": 163.05,
+      "laborAndFeeBalanceDraft": 771.95,
       "labor": [
         {
           "name": "Mounting/layout/cable work",
@@ -2057,6 +2060,20 @@
           "quantity": 1,
           "unit": "listed units",
           "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "One compatible TV wall bracket, 32–70 inches, model MI-3991L",
+          "unit": "each",
+          "quantity": 1,
+          "unitPrice": 67.49,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "One 5-ft surface raceway, Wiremold CordMate II",
+          "unit": "each",
+          "quantity": 1,
+          "unitPrice": 30.12,
           "source": "researched provisional retail baseline plus 35% markup"
         }
       ],
@@ -2090,15 +2107,15 @@
       ],
       "componentCosts": {
         "laborGross": 1101,
-        "materials": 269.18,
+        "materials": 280.97,
         "consumables": 43.21,
-        "planningFees": 141.34,
-        "preDiscount": 1554.73,
-        "wholePackageDiscount": 108.83
+        "planningFees": 142.52,
+        "preDiscount": 1567.7,
+        "wholePackageDiscount": 109.74
       },
-      "startingPriceDraft": 1450,
-      "dueNowDraftMaterialAllowance": 312.39,
-      "laborAndFeeBalanceDraft": 1137.61,
+      "startingPriceDraft": 1460,
+      "dueNowDraftMaterialAllowance": 324.18,
+      "laborAndFeeBalanceDraft": 1135.82,
       "labor": [
         {
           "name": "Wall painting",
@@ -2139,7 +2156,7 @@
         },
         {
           "name": "Two bracket sets",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -2196,15 +2213,15 @@
       ],
       "componentCosts": {
         "laborGross": 1101,
-        "materials": 269.18,
+        "materials": 280.97,
         "consumables": 43.21,
-        "planningFees": 141.34,
-        "preDiscount": 1554.73,
-        "wholePackageDiscount": 108.83
+        "planningFees": 142.52,
+        "preDiscount": 1567.7,
+        "wholePackageDiscount": 109.74
       },
-      "startingPriceDraft": 1450,
-      "dueNowDraftMaterialAllowance": 312.39,
-      "laborAndFeeBalanceDraft": 1137.61,
+      "startingPriceDraft": 1460,
+      "dueNowDraftMaterialAllowance": 324.18,
+      "laborAndFeeBalanceDraft": 1135.82,
       "labor": [
         {
           "name": "Paint walls",
@@ -2245,7 +2262,7 @@
         },
         {
           "name": "Two brackets",
-          "quantity": 2,
+          "quantity": 3,
           "unit": "listed units",
           "unitPrice": 11.79,
           "source": "researched provisional retail baseline plus 35% markup"
@@ -2390,7 +2407,7 @@
         "materials": 64.74,
         "consumables": 18.22,
         "planningFees": 35.6,
-        "preDiscount": 391.56000000000006,
+        "preDiscount": 391.56,
         "wholePackageDiscount": 27.41
       },
       "startingPriceDraft": 365,
@@ -2467,7 +2484,7 @@
         "materials": 48.6,
         "consumables": 41.18,
         "planningFees": 46.48,
-        "preDiscount": 511.26000000000005,
+        "preDiscount": 511.26,
         "wholePackageDiscount": 35.79
       },
       "startingPriceDraft": 480,
@@ -2716,7 +2733,7 @@
         "materials": 62.74,
         "consumables": 11.48,
         "planningFees": 29.92,
-        "preDiscount": 329.14000000000004,
+        "preDiscount": 329.14,
         "wholePackageDiscount": 23.04
       },
       "startingPriceDraft": 310,
@@ -2909,5 +2926,6 @@
     "pricedDraftScenarios": 27,
     "projectTypesWithDraftPrice": 20,
     "quoteOrAuditPendingProjectTypes": 27
-  }
+  },
+  "lastUpdated": "2026-11-08"
 }
