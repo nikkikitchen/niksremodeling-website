@@ -2773,14 +2773,183 @@
           "source": "approved internal supplies"
         }
       ]
+    },
+    {
+      "projectId": "accessibility",
+      "projectName": "Accessibility Updates",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Assumes sound structural backing for grab bars and minor nonstructural ramp fixes only; verify onsite. Current code says TWO bars under Basic, while prior owner discussion allowed ONE; resolve scope before use.",
+      "workIncluded": [
+        "Install up to two 18-inch grab bars on confirmed suitable backing",
+        "Up to one hour minor existing ramp tightening or swap of one accessible pressure-treated deck board",
+        "No new ramp"
+      ],
+      "conditions": [
+        "In-person inspection required: structural backing, location and suitability of every grab bar",
+        "Only minor nonstructural existing ramp work; no change in ramp dimensions or safety-rail system",
+        "Product selection and location-dependent accessibility requirements must be confirmed before customer quote"
+      ],
+      "componentCosts": {
+        "laborGross": 575,
+        "materials": 133.92,
+        "consumables": 11.48,
+        "planningFees": 72.04,
+        "preDiscount": 792.44,
+        "wholePackageDiscount": 55.47
+      },
+      "startingPriceDraft": 740,
+      "dueNowDraftMaterialAllowance": 145.39999999999998,
+      "laborAndFeeBalanceDraft": 594.6,
+      "labor": [
+        {
+          "name": "Grab bar installation",
+          "quantity": 2,
+          "unit": "job/service",
+          "unitPrice": 250,
+          "source": "owner-approved labor service reference"
+        },
+        {
+          "name": "Existing ramp minor maintenance",
+          "quantity": 1,
+          "unit": "job/service",
+          "unitPrice": 75,
+          "source": "owner-approved labor service reference"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Moen R8718P 18-in peened grab bars",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 31.52,
+          "source": "researched provisional price incl 35% material markup"
+        },
+        {
+          "name": "Pressure treated 5/4×6×12 board",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 22.28,
+          "source": "owner-approved reference incl 35% material markup"
+        },
+        {
+          "name": "Screws/fasteners box",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "owner-approved reference incl 35% material markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Surface protection and cleanup",
+          "quantity": 1,
+          "unit": "standard allowance",
+          "unitPrice": 11.48,
+          "source": "approved internal supply reference"
+        }
+      ]
+    },
+    {
+      "projectId": "accessibility",
+      "projectName": "Accessibility Updates",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Assumes sound structural backing for grab bars and minor nonstructural ramp fixes only; verify onsite. Current code says TWO bars under Basic, while prior owner discussion allowed ONE; resolve scope before use.",
+      "workIncluded": [
+        "Everything in Basic",
+        "Replace one compatible entry door lockset",
+        "Up to one hour adjust existing threshold; no structural changes"
+      ],
+      "conditions": [
+        "In-person inspection required: structural backing, location and suitability of every grab bar",
+        "Only minor nonstructural existing ramp work; no change in ramp dimensions or safety-rail system",
+        "Product selection and location-dependent accessibility requirements must be confirmed before customer quote",
+        "No new or replaced threshold hardware if new threshold needed, quote separately"
+      ],
+      "componentCosts": {
+        "laborGross": 725,
+        "materials": 194.67,
+        "consumables": 11.48,
+        "planningFees": 93.12,
+        "preDiscount": 1024.27,
+        "wholePackageDiscount": 71.7
+      },
+      "startingPriceDraft": 955,
+      "dueNowDraftMaterialAllowance": 206.14999999999998,
+      "laborAndFeeBalanceDraft": 748.85,
+      "labor": [
+        {
+          "name": "Grab bar installation",
+          "quantity": 2,
+          "unit": "job/service",
+          "unitPrice": 250,
+          "source": "owner-approved labor service reference"
+        },
+        {
+          "name": "Ramp maintenance",
+          "quantity": 1,
+          "unit": "job/service",
+          "unitPrice": 75,
+          "source": "owner-approved labor service reference"
+        },
+        {
+          "name": "Door hardware replacement",
+          "quantity": 1,
+          "unit": "job/service",
+          "unitPrice": 75,
+          "source": "owner-approved labor service reference"
+        },
+        {
+          "name": "Existing threshold adjustment",
+          "quantity": 1,
+          "unit": "job/service",
+          "unitPrice": 75,
+          "source": "owner-approved labor service reference"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Moen 18-in grab bars",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 31.52,
+          "source": "researched provisional price incl 35% material markup"
+        },
+        {
+          "name": "Standard entry lockset",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 60.75,
+          "source": "owner-approved reference incl 35% material markup"
+        },
+        {
+          "name": "One pressure treated deck board",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 22.28,
+          "source": "owner-approved reference incl 35% material markup"
+        },
+        {
+          "name": "Screws/fasteners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "owner-approved reference incl 35% material markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Protection and cleanup",
+          "quantity": 1,
+          "unit": "standard allowance",
+          "unitPrice": 11.48,
+          "source": "approved internal supply reference"
+        }
+      ]
     }
   ],
   "quoteRequiredCategories": [
-    {
-      "projectId": "accessibility",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Grab bar prices researched, but load-bearing walls, installation safety and ramp slope/handrail/landing requirements must be confirmed; retain on-site quote for ramps."
-    },
     {
       "projectId": "bathrooms",
       "status": "Quote required or existing pricing audit pending",
@@ -2923,9 +3092,13 @@
   ],
   "summary": {
     "projectTypesCovered": 47,
-    "pricedDraftScenarios": 27,
-    "projectTypesWithDraftPrice": 20,
-    "quoteOrAuditPendingProjectTypes": 27
+    "pricedDraftScenarios": 29,
+    "projectTypesWithDraftPrice": 21,
+    "quoteOrAuditPendingProjectTypes": 26
   },
-  "lastUpdated": "2026-11-08"
+  "lastUpdated": "2026-11-08",
+  "tierNotes": {
+    "accessibility": "Owner scope conflict: previous Basic allowed up to 1 grab bar, current source code includes 2; Standard Safety is a proposed new tier; Premium straight ramp must remain quote-only pending elevation, width, landing, handrail, support and permit assessment.",
+    "other": "Provisional package scopes are for owner review; several differ from existing live-site cards and must not replace them without matched labor/material/supply audit."
+  }
 }
