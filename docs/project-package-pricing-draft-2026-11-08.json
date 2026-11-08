@@ -2947,6 +2947,479 @@
           "source": "approved internal supply reference"
         }
       ]
+    },
+    {
+      "projectId": "entry-mudroom",
+      "projectName": "Mudroom",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "6-ft wooden bench, one shelf, 5-hook rack, standard lockset and minor trim/threshold adjustment at sound existing entry",
+      "workIncluded": [
+        "Build a basic 6-ft bench",
+        "Install a 6-ft shelf and 5-hook rail",
+        "Replace existing compatible lockset",
+        "Two hours simple trim/threshold touchups"
+      ],
+      "conditions": [
+        "Confirm bench anchorage and load suitability; no structural threshold replacement or new door.",
+        "Existing suitable safe surfaces and normal access only; exact product, dimensions and hidden conditions must be verified before any offer"
+      ],
+      "componentCosts": {
+        "laborGross": 975,
+        "materials": 359.86,
+        "consumables": 19.58,
+        "planningFees": 135.44,
+        "preDiscount": 1489.88,
+        "wholePackageDiscount": 104.29
+      },
+      "startingPriceDraft": 1390,
+      "dueNowDraftMaterialAllowance": 379.44,
+      "laborAndFeeBalanceDraft": 1010.56,
+      "labor": [
+        {
+          "name": "Bench fabrication/finish",
+          "quantity": 7,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Shelves/hooks fitting",
+          "quantity": 3,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Swap door hardware",
+          "quantity": 1,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Minor trim touchups",
+          "quantity": 2,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "8 2x4 studs",
+          "quantity": 8,
+          "unitPrice": 5.6,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "One 3/4-in plywood sheet",
+          "quantity": 1,
+          "unitPrice": 70.2,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Wood screws",
+          "quantity": 1,
+          "unitPrice": 48.6,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Interior paint",
+          "quantity": 1,
+          "unitPrice": 48.6,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "6-ft shelf",
+          "quantity": 1,
+          "unitPrice": 22.92,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Bracket 2-packs",
+          "quantity": 2,
+          "unitPrice": 11.79,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "5-hook rail",
+          "quantity": 1,
+          "unitPrice": 40.41,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Entry lockset",
+          "quantity": 1,
+          "unitPrice": 60.75,
+          "source": "approved or researched reference, 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unitPrice": 8.1,
+          "source": "owner internal consumables"
+        }
+      ]
+    },
+    {
+      "projectId": "exterior-improvements",
+      "projectName": "Exterior Improvements",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Up to 40 linear ft low-access existing wood trim and small adjacent paint areas",
+      "workIncluded": [
+        "Routine prep and caulk, sanding",
+        "Spot-paint existing suitable low-access trim with exterior satin finish",
+        "Basic cleanup"
+      ],
+      "conditions": [
+        "No working above 8ft, no rotten timber replacement; weather, primer and paint adhesion to verify.",
+        "Existing suitable safe surfaces and normal access only; exact product, dimensions and hidden conditions must be verified before any offer"
+      ],
+      "componentCosts": {
+        "laborGross": 525,
+        "materials": 77.59,
+        "consumables": 51.98,
+        "planningFees": 65.46,
+        "preDiscount": 720.03,
+        "wholePackageDiscount": 50.4
+      },
+      "startingPriceDraft": 670,
+      "dueNowDraftMaterialAllowance": 129.57,
+      "laborAndFeeBalanceDraft": 540.43,
+      "labor": [
+        {
+          "name": "Exterior trim prep/paint",
+          "quantity": 7,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "1-gal exterior satin paint",
+          "quantity": 1,
+          "unitPrice": 67.47,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Caulk",
+          "quantity": 1,
+          "unitPrice": 10.12,
+          "source": "approved or researched reference, 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unitPrice": 8.1,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Drop cloth",
+          "quantity": 1,
+          "unitPrice": 32.4,
+          "source": "owner internal consumables"
+        }
+      ]
+    },
+    {
+      "projectId": "fitness-wellness",
+      "projectName": "Fitness & Wellness Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "PROPOSED narrower Basic: 10x10 ft space; rubber floor tiles, 320 sq ft painted walls and existing light",
+      "workIncluded": [
+        "Install up to 100 sq ft compatible rubber interlocking floor tiles",
+        "Paint up to 320 sq ft walls two coats",
+        "Replace one standard existing light"
+      ],
+      "conditions": [
+        "Mirror and rack NOT included—proposed changed Basic tier only. Verify equipment loads, flooring compatibility and transitions.",
+        "Existing suitable safe surfaces and normal access only; exact product, dimensions and hidden conditions must be verified before any offer"
+      ],
+      "componentCosts": {
+        "laborGross": 1080,
+        "materials": 536.46,
+        "consumables": 43.21,
+        "planningFees": 165.97,
+        "preDiscount": 1825.64,
+        "wholePackageDiscount": 127.79
+      },
+      "startingPriceDraft": 1700,
+      "dueNowDraftMaterialAllowance": 579.67,
+      "laborAndFeeBalanceDraft": 1120.33,
+      "labor": [
+        {
+          "name": "Rubber floor layout/installation",
+          "quantity": 6,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "320-sq-ft wall painting",
+          "quantity": 320,
+          "unitPrice": 1.5,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Light on existing box",
+          "quantity": 1,
+          "unitPrice": 150,
+          "source": "owner approved service rate; planned hours need review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Eco-Lock rubber floor 25.7 sqft 6-packs",
+          "quantity": 4,
+          "unitPrice": 94.99,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Washable eggshell paint gallons",
+          "quantity": 2,
+          "unitPrice": 51.27,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "LED fixture",
+          "quantity": 1,
+          "unitPrice": 53.96,
+          "source": "approved or researched reference, 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Roller sleeves",
+          "quantity": 1,
+          "unitPrice": 18.9,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unitPrice": 12.83,
+          "source": "owner internal consumables"
+        }
+      ]
+    },
+    {
+      "projectId": "games-hobbies",
+      "projectName": "Game & Hobby Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12x12 room: 384 sq ft painted walls, two shelf runs, existing light, assemble one CUSTOMER-OWNED standard hobby table",
+      "workIncluded": [
+        "Paint walls two coats",
+        "Install two 6-ft shelves",
+        "Replace one existing compatible light",
+        "Assemble one customer-provided flat-pack hobby table (2hr allowance)"
+      ],
+      "conditions": [
+        "Does not include price of any table; if customer expects new furniture, add exact product first.",
+        "Existing suitable safe surfaces and normal access only; exact product, dimensions and hidden conditions must be verified before any offer"
+      ],
+      "componentCosts": {
+        "laborGross": 1251,
+        "materials": 280.97,
+        "consumables": 43.21,
+        "planningFees": 157.52,
+        "preDiscount": 1732.7,
+        "wholePackageDiscount": 121.29
+      },
+      "startingPriceDraft": 1615,
+      "dueNowDraftMaterialAllowance": 324.18,
+      "laborAndFeeBalanceDraft": 1290.82,
+      "labor": [
+        {
+          "name": "Wall painting",
+          "quantity": 384,
+          "unitPrice": 1.5,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Shelf installation",
+          "quantity": 5,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Table assembly",
+          "quantity": 2,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Existing light",
+          "quantity": 1,
+          "unitPrice": 150,
+          "source": "owner approved service rate; planned hours need review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Interior flat paint gallons",
+          "quantity": 3,
+          "unitPrice": 48.6,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Shelves",
+          "quantity": 2,
+          "unitPrice": 22.92,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Bracket packs",
+          "quantity": 3,
+          "unitPrice": 11.79,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "LED light",
+          "quantity": 1,
+          "unitPrice": 53.96,
+          "source": "approved or researched reference, 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Roller sleeves",
+          "quantity": 1,
+          "unitPrice": 18.9,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unitPrice": 12.83,
+          "source": "owner internal consumables"
+        }
+      ]
+    },
+    {
+      "projectId": "pet-room",
+      "projectName": "Pet Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12x12 ft existing room with washable eggshell paint, one shelf, one 5-hook rack and existing light",
+      "workIncluded": [
+        "Paint up to 384 sq ft walls, two coats washable finish",
+        "Install one 6-ft shelf and leash hook rail",
+        "Replace one existing suitable light"
+      ],
+      "conditions": [
+        "No wash station, drain, pet door or kennel; confirm pet-safe finish and curing time.",
+        "Existing suitable safe surfaces and normal access only; exact product, dimensions and hidden conditions must be verified before any offer"
+      ],
+      "componentCosts": {
+        "laborGross": 1026,
+        "materials": 294.68,
+        "consumables": 43.21,
+        "planningFees": 136.39,
+        "preDiscount": 1500.28,
+        "wholePackageDiscount": 105.02
+      },
+      "startingPriceDraft": 1400,
+      "dueNowDraftMaterialAllowance": 337.89,
+      "laborAndFeeBalanceDraft": 1062.11,
+      "labor": [
+        {
+          "name": "Wall painting",
+          "quantity": 384,
+          "unitPrice": 1.5,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Shelf/hook fitting",
+          "quantity": 4,
+          "unitPrice": 75,
+          "source": "owner approved service rate; planned hours need review"
+        },
+        {
+          "name": "Replace existing light",
+          "quantity": 1,
+          "unitPrice": 150,
+          "source": "owner approved service rate; planned hours need review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Eggshell paint gallons",
+          "quantity": 3,
+          "unitPrice": 51.27,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Shelf",
+          "quantity": 1,
+          "unitPrice": 22.92,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Bracket packs",
+          "quantity": 2,
+          "unitPrice": 11.79,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Hook rail",
+          "quantity": 1,
+          "unitPrice": 40.41,
+          "source": "approved or researched reference, 35% markup already included"
+        },
+        {
+          "name": "Light",
+          "quantity": 1,
+          "unitPrice": 53.96,
+          "source": "approved or researched reference, 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Rollers",
+          "quantity": 1,
+          "unitPrice": 18.9,
+          "source": "owner internal consumables"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unitPrice": 12.83,
+          "source": "owner internal consumables"
+        }
+      ]
     }
   ],
   "quoteRequiredCategories": [
@@ -2959,26 +3432,6 @@
       "projectId": "kitchen-pantry",
       "status": "Quote required or existing pricing audit pending",
       "reason": "Existing legacy Basic/Standard/Deluxe site prices need reconciliation; cabinets/counters selection, sink, faucet, backsplash, removal and tax split are not fully costed."
-    },
-    {
-      "projectId": "entry-mudroom",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Bench, door hardware/threshold and mounting details vary; source exact bench and compatible hardware before advertising complete package."
-    },
-    {
-      "projectId": "fitness-wellness",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Gym floor product, mirror anchoring, substrate/weight-bearing review and ventilation equipment remain unspecified."
-    },
-    {
-      "projectId": "games-hobbies",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Customer-specific worktable/game table and specialty equipment costs unresolved."
-    },
-    {
-      "projectId": "pet-room",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Washable coating, kennel materials and pet door/weather seals not yet specified."
     },
     {
       "projectId": "snack-beverage",
@@ -3004,11 +3457,6 @@
       "projectId": "decks-railings",
       "status": "Quote required or existing pricing audit pending",
       "reason": "Structural design, load ratings, fasteners and full deck assembly labor require site-specific estimate."
-    },
-    {
-      "projectId": "exterior-improvements",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Exterior paint product, prep, height/access and waterproofing specifications incomplete."
     },
     {
       "projectId": "backyard-retreat",
@@ -3092,9 +3540,9 @@
   ],
   "summary": {
     "projectTypesCovered": 47,
-    "pricedDraftScenarios": 29,
-    "projectTypesWithDraftPrice": 21,
-    "quoteOrAuditPendingProjectTypes": 26
+    "pricedDraftScenarios": 34,
+    "projectTypesWithDraftPrice": 26,
+    "quoteOrAuditPendingProjectTypes": 21
   },
   "lastUpdated": "2026-11-08",
   "tierNotes": {
