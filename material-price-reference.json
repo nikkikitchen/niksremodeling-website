@@ -358,6 +358,174 @@
         "https://www.homedepot.com/p/100169081",
         "https://www.homedepot.com/b/Flooring-Flooring-Supplies-Surface-Prep-Waterproofing-Membranes/Red/Waterproofing-membrane/N-5yc1vZ2fkooofZ1z0mdvqZ1z0vjtq"
       ]
+    },
+    {
+      "id": 57,
+      "name": "R-30 Unfaced Fiberglass Insulation Roll (15 in x 25 ft; 31.25 sq ft)",
+      "unit": "roll",
+      "price": 49.01,
+      "retailBaseline": 36.3,
+      "retailSources": [
+        "https://www.homedepot.com/p/202585906"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 58,
+      "name": "R-30 Faced Fiberglass Insulation Batts (16 in x 48 in; 58.67 sq ft bag)",
+      "unit": "bag",
+      "price": 116.1,
+      "retailBaseline": 86,
+      "retailSources": [
+        "https://www.homedepot.com/p/100320328"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 59,
+      "name": "4-ft LED Utility Strip Light (existing compatible connection)",
+      "unit": "each",
+      "price": 53.96,
+      "retailBaseline": 39.97,
+      "retailSources": [
+        "https://www.homedepot.com/p/337198942"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 60,
+      "name": "6-ft x 12-in Wire Closet Shelf with Hanging Rod",
+      "unit": "each",
+      "price": 22.92,
+      "retailBaseline": 16.98,
+      "retailSources": [
+        "https://www.homedepot.com/p/314184181"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 61,
+      "name": "12-in Wire Closet Shelf Support Brackets (2-pack)",
+      "unit": "2-pack",
+      "price": 11.79,
+      "retailBaseline": 8.73,
+      "retailSources": [
+        "https://www.homedepot.com/p/333349720"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 62,
+      "name": "48-in Hanging Closet Rod",
+      "unit": "each",
+      "price": 14.13,
+      "retailBaseline": 10.47,
+      "retailSources": [
+        "https://www.homedepot.com/p/100000580"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 63,
+      "name": "White Laminated Shelf (12 in x 72 in)",
+      "unit": "each",
+      "price": 24.27,
+      "retailBaseline": 17.98,
+      "retailSources": [
+        "https://www.homedepot.com/p/100679081"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 64,
+      "name": "11.5-in Heavy-Duty Steel Shelf Bracket (white)",
+      "unit": "each",
+      "price": 8.75,
+      "retailBaseline": 6.48,
+      "retailSources": [
+        "https://www.homedepot.com/b/Storage-Organization-Shelving/Everbilt/12-in/N-5yc1vZc89kZ402Z1z1wc8v"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 65,
+      "name": "Primed Pine Chair Rail (2.5 in x 8 ft)",
+      "unit": "8-ft piece",
+      "price": 10.77,
+      "retailBaseline": 7.98,
+      "retailSources": [
+        "https://www.lowes.com/pd/RELIABILT-2-1-2-in-x-8-ft-Pine-Unfinished-Chair-Rail-Moulding/5004712479"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 66,
+      "name": "Primed Pine Nickel Gap Shiplap Board (5.25 in x 8 ft)",
+      "unit": "8-ft piece",
+      "price": 14.43,
+      "retailBaseline": 10.69,
+      "retailSources": [
+        "https://www.homedepot.com/b/Lumber-Composites-Boards-Planks/Primed/Shiplap/8-ft/N-5yc1vZ1z18h41Z1z0jphxZ1z0sfkyZ1z1rkql"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 67,
+      "name": "Primed MDF 1x2 Trim Board (8 ft)",
+      "unit": "8-ft piece",
+      "price": 8.07,
+      "retailBaseline": 5.98,
+      "retailSources": [
+        "https://www.homedepot.com/b/Lumber-Composites-Boards-Planks-MDF-Boards/Primed/N-5yc1vZchzsZ1z0sfky"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 68,
+      "name": "Werner Insulated Aluminum Attic Ladder (22.5 in x 54 in; AE2210)",
+      "unit": "each",
+      "price": 363.15,
+      "retailBaseline": 269,
+      "retailSources": [
+        "https://www.homedepot.com/p/203647696"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 69,
+      "name": "5/6-in LED Recessed Retrofit Light (existing can; HALO RL56)",
+      "unit": "each",
+      "price": 29.66,
+      "retailBaseline": 21.97,
+      "retailSources": [
+        "https://www.homedepot.com/p/324803607"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 70,
+      "name": "72-in Closet Wire Shelf Kit with Rod (ClosetMaid SuperSlide)",
+      "unit": "kit",
+      "price": 64.77,
+      "retailBaseline": 47.98,
+      "retailSources": [
+        "https://www.homedepot.com/b/Storage-Organization-Shelving-Wall-Mounted-Shelves/White/12-in/72-in/N-5yc1vZcksoZ1z18ckcZ1z1rsyaZ1z1rtdv"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08"
     }
   ]
 }
