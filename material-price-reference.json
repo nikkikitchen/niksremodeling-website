@@ -651,6 +651,58 @@
       "priceStatus": "research-provisional",
       "lastChecked": "2026-11-08",
       "restrictions": "Load capacity and secure stud mounting must be verified."
+    },
+    {
+      "id": 80,
+      "name": "Brewster Paintable White Vinyl Prepasted Wallpaper ASC93995, 20.5 in x 33 ft (56.4 sq ft double roll)",
+      "unit": "double roll",
+      "price": 94.5,
+      "retailBaseline": 70,
+      "retailSources": [
+        "https://www.homedepot.com/p/312722438"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Check pattern match, strip drop, real usable coverage, wall suitability and extra rolls for larger or patterned surfaces."
+    },
+    {
+      "id": 81,
+      "name": "ROMAN PRO-977 Ultra Prime Wallpaper Primer/Sealer (1 Gallon)",
+      "unit": "gallon",
+      "price": 66.45,
+      "retailBaseline": 49.22,
+      "retailSources": [
+        "https://www.homedepot.com/b/Paint-Primers/Roman/1-Gallon/Primer/N-5yc1vZbt0tZnqjZ1z0kq4jZ1z1dquo"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Confirm primer matches substrate and selected wallcovering."
+    },
+    {
+      "id": 82,
+      "name": "Hampton Bay Recessed Panel KB36-UF 36-in Assembled Unfinished Base Cabinet",
+      "unit": "each",
+      "price": 255.15,
+      "retailBaseline": 189,
+      "retailSources": [
+        "https://www.homedepot.com/b/Kitchen-Kitchen-Cabinets-In-Stock-Kitchen-Cabinets/Unfinished/36-in/Base/N-5yc1vZchbpZ1z118ifZ1z11zf9Z1z1dvpd"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Unfinished cabinet requires separately costed finish and owner acceptance of quality; mounting and fit verified."
+    },
+    {
+      "id": 83,
+      "name": "Hampton Bay 4-ft x 25-in Finished Engineered Birch Butcher Block Countertop",
+      "unit": "each",
+      "price": 168.4,
+      "retailBaseline": 124.74,
+      "retailSources": [
+        "https://www.homedepot.com/b/Kitchen-Countertops-Butcher-Block-Countertops/Hampton-Bay/25-in/4-ft/N-5yc1vZcgrcZp4Z1z1c3h7Z1z2249h"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Confirm countertop cutout, edge, fasteners, load support and finish suitability; plumbing/sink openings excluded."
     }
   ]
 }
