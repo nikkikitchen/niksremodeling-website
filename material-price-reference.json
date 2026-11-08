@@ -369,7 +369,8 @@
         "https://www.homedepot.com/p/202585906"
       ],
       "priceStatus": "research-provisional",
-      "lastChecked": "2026-11-08"
+      "lastChecked": "2026-11-08",
+      "priceVerificationNote": "Retailer product page price corroborated by web search on 2026-11-08; price still provisional until purchase and owner's review."
     },
     {
       "id": 58,
@@ -393,7 +394,8 @@
         "https://www.homedepot.com/p/337198942"
       ],
       "priceStatus": "research-provisional",
-      "lastChecked": "2026-11-08"
+      "lastChecked": "2026-11-08",
+      "priceVerificationNote": "Retailer product page price corroborated by web search on 2026-11-08; price still provisional until purchase and owner's review."
     },
     {
       "id": 60,
@@ -405,19 +407,21 @@
         "https://www.homedepot.com/p/314184181"
       ],
       "priceStatus": "research-provisional",
-      "lastChecked": "2026-11-08"
+      "lastChecked": "2026-11-08",
+      "priceVerificationNote": "Retailer product page price corroborated by web search on 2026-11-08; price still provisional until purchase and owner's review."
     },
     {
       "id": 61,
       "name": "12-in Wire Closet Shelf Support Brackets (2-pack)",
       "unit": "2-pack",
-      "price": 11.79,
-      "retailBaseline": 8.73,
+      "price": 12.12,
+      "retailBaseline": 8.98,
       "retailSources": [
         "https://www.homedepot.com/p/333349720"
       ],
       "priceStatus": "research-provisional",
-      "lastChecked": "2026-11-08"
+      "lastChecked": "2026-11-08",
+      "priceVerificationNote": "Higher price from current retailer category listing used as conservative allowance; local pricing may vary."
     },
     {
       "id": 62,
@@ -435,13 +439,14 @@
       "id": 63,
       "name": "White Laminated Shelf (12 in x 72 in)",
       "unit": "each",
-      "price": 24.27,
-      "retailBaseline": 17.98,
+      "price": 21.57,
+      "retailBaseline": 15.98,
       "retailSources": [
         "https://www.homedepot.com/p/100679081"
       ],
       "priceStatus": "research-provisional",
-      "lastChecked": "2026-11-08"
+      "lastChecked": "2026-11-08",
+      "priceVerificationNote": "Retailer product page lists 12 in x 72 in Rubbermaid laminated shelf, brackets sold separately."
     },
     {
       "id": 64,
@@ -501,7 +506,8 @@
         "https://www.homedepot.com/p/203647696"
       ],
       "priceStatus": "research-provisional",
-      "lastChecked": "2026-11-08"
+      "lastChecked": "2026-11-08",
+      "priceVerificationNote": "Retailer product page price corroborated by web search on 2026-11-08; price still provisional until purchase and owner's review."
     },
     {
       "id": 69,
