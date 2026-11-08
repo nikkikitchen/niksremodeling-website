@@ -532,6 +532,46 @@
       ],
       "priceStatus": "research-provisional",
       "lastChecked": "2026-11-08"
+    },
+    {
+      "id": 71,
+      "name": "Moen R8718P 18-in x 1-1/4-in Peened Stainless Steel Grab Bar",
+      "unit": "each",
+      "retailBaseline": 23.35,
+      "price": 31.52,
+      "retailSources": [
+        "https://www.homedepot.com/p/203993501",
+        "https://www.homedepot.com/b/Bath-Bathroom-Safety-Grab-Bars/Stainless-Steel/18-in/N-5yc1vZcfvbZ1z0vm5gZ1z1wbgy"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Verify structural backing, installation rating and site-specific suitability."
+    },
+    {
+      "id": 72,
+      "name": "Gibraltar Freemont Freestanding Post-Mount Mailbox and Post Kit, Black (FC000B01)",
+      "unit": "kit",
+      "retailBaseline": 34.98,
+      "price": 47.22,
+      "retailSources": [
+        "https://www.homedepot.com/p/202105934"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Carrier-approved location, installation and concrete optional; includes post already."
+    },
+    {
+      "id": 73,
+      "name": "QuietWalk Luxury Vinyl Underlayment Roll, 100 sq ft",
+      "unit": "100-sq-ft roll",
+      "retailBaseline": 54.98,
+      "price": 74.22,
+      "retailSources": [
+        "https://www.lowes.com/pd/QuietWalk-Luxury-Vinyl-Acoustical-and-Vapor-Barrier-33-4-ft-x-3-ft-x-1-4-mm-Premium-Felt-Flooring-Underlayment-100-sq-ft-Roll/5014522221"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Only if manufacturer requires/allows separate underlayment; avoid duplicate pad; check vapor barrier and substrate."
     }
   ]
 }
