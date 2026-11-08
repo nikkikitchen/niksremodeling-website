@@ -612,6 +612,45 @@
       "priceStatus": "research-provisional",
       "lastChecked": "2026-11-08",
       "restrictions": "Verify actual TV VESA, weight, stud spacing and site structure. Do not use to conceal power wiring."
+    },
+    {
+      "id": 77,
+      "name": "BEHR Premium Plus Exterior Satin Paint & Primer 1-Gallon, White",
+      "unit": "gallon",
+      "retailBaseline": 49.98,
+      "price": 67.47,
+      "retailSources": [
+        "https://www.homedepot.com/p/204383518"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Verify selected base/tint, exterior substrate and coverage."
+    },
+    {
+      "id": 78,
+      "name": "Survivor SportFloor Eco-Lock Grey Rubber Gym Tiles 6-Pack, 25.7 Sq Ft",
+      "unit": "6-tile pack",
+      "retailBaseline": 70.36,
+      "price": 94.99,
+      "retailSources": [
+        "https://www.homedepot.com/b/Flooring-Gym-Flooring-Gym-Floor-Tiles/Interlocking/24-x-24/6/N-5yc1vZc4oeZ1z14163Z1z1bviqZ1z1cldm"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Rubber floor only, not cheaper EVA foam. Check flooring weight, warranty, suitability, approved adhesive/floating installation and equipment impact."
+    },
+    {
+      "id": 79,
+      "name": "Home Decorators Collection 27-in White Rack with 5 Satin Nickel Hooks",
+      "unit": "each",
+      "retailBaseline": 29.93,
+      "price": 40.41,
+      "retailSources": [
+        "https://www.homedepot.com/b/Storage-Organization-Hooks/Hook-Racks/Wall-Mounted/5/N-5yc1vZc89iZ1z0jpmeZ1z1cknzZ1z25zhy"
+      ],
+      "priceStatus": "research-provisional",
+      "lastChecked": "2026-11-08",
+      "restrictions": "Load capacity and secure stud mounting must be verified."
     }
   ]
 }
