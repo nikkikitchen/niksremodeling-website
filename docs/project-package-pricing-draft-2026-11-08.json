@@ -1,0 +1,2913 @@
+{
+  "created": "2026-11-08",
+  "purpose": "Private GitHub review branch only; not published or an offer. Draft costs for Nik's Remodeling project packages. Confirm scope, trade suitability, product compatibility, permits and owner approval before displaying an advertised starting price.",
+  "policy": {
+    "laborHourly": 75,
+    "minimumVisit": 150,
+    "materialMarkup": "Already included in reference unit prices; never add again.",
+    "discountPct": 7,
+    "discountBasis": "Complete labor + materials + supplies + provisional fees",
+    "feePct": 10,
+    "feeStatus": "Planning reserve derived from existing site model; confirm owner approval",
+    "rounding": "round UP to nearest $5",
+    "taxShipping": "excluded; separate estimate based on destination"
+  },
+  "materialsReference": {
+    "source": "material-price-reference.json",
+    "provisionalKeys": [
+      "utilityLight",
+      "closetShelf",
+      "shelfBrackets",
+      "laminateShelf",
+      "heavyBrackets",
+      "closetKit",
+      "atticLadder",
+      "trim1x2",
+      "chair",
+      "shiplap",
+      "grabBar",
+      "mailboxKit",
+      "underlayment100"
+    ]
+  },
+  "packages": [
+    {
+      "projectId": "accents",
+      "projectName": "Accent Walls",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One sound 12×8 ft wall, 12 linear ft of chair rail, two-tone paint, existing baseboard",
+      "workIncluded": [
+        "Install up to 12 ft nonstructural chair rail",
+        "Prime and paint up to 96 sq ft in two colors, two coats total",
+        "Caulk/mask edges and tidy"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment"
+      ],
+      "componentCosts": {
+        "laborGross": 211,
+        "materials": 165.96,
+        "consumables": 51.31,
+        "planningFees": 42.83,
+        "preDiscount": 471.1,
+        "wholePackageDiscount": 32.98
+      },
+      "startingPriceDraft": 440,
+      "dueNowDraftMaterialAllowance": 217.27,
+      "laborAndFeeBalanceDraft": 222.73,
+      "labor": [
+        {
+          "name": "Two-coat accent wall paint labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 175,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "12 linear ft chair rail installation at $3/ft",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 36,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Two 8-ft chair-rail sticks",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 10.77,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two 1-gallon interior colors",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "One gallon bonding primer",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 47.22,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Painter's tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Roller sleeve pack",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Paint tray liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper pack",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "accents",
+      "projectName": "Accent Walls",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One 12×8 ft sound accent wall with 64 ft decorative picture-frame trim and two coats paint",
+      "workIncluded": [
+        "Install up to 64 linear ft 1×2 decorative trim",
+        "Caulk, prime and paint the feature wall",
+        "Standard cleanup"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment"
+      ],
+      "componentCosts": {
+        "laborGross": 517,
+        "materials": 160.38,
+        "consumables": 48.6,
+        "planningFees": 72.6,
+        "preDiscount": 798.58,
+        "wholePackageDiscount": 55.9
+      },
+      "startingPriceDraft": 745,
+      "dueNowDraftMaterialAllowance": 208.98,
+      "laborAndFeeBalanceDraft": 536.02,
+      "labor": [
+        {
+          "name": "Decorative trim install 64lf at $3/lf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 192,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Two coat accent wall labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 175,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Finish and caulk trim",
+          "quantity": 2,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Eight 8-ft MDF decorative boards",
+          "quantity": 8,
+          "unit": "listed units",
+          "unitPrice": 8.07,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "1-gal interior paint",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "1-gal bonding primer",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 47.22,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Painter's tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Paint roller sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Caulk tube",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 10.12,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "attic",
+      "projectName": "Attic",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "10×12 ft / 120 sq ft raised storage deck on independently verified adequate raised framing, using four 4×8×3/4 ACX sheets",
+      "workIncluded": [
+        "Deck up to 120 sq ft using rated framing already suitable for safe storage",
+        "Replace one basic utility light at an existing appropriate box and connection",
+        "Fasteners, standard protection and job debris cleanup"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Do not install over unverified ceiling joists or compress insulation; adequate air baffles/ventilation must remain"
+      ],
+      "componentCosts": {
+        "laborGross": 1275,
+        "materials": 383.36,
+        "consumables": 11.48,
+        "planningFees": 166.98,
+        "preDiscount": 1836.8200000000002,
+        "wholePackageDiscount": 128.58
+      },
+      "startingPriceDraft": 1710,
+      "dueNowDraftMaterialAllowance": 394.84,
+      "laborAndFeeBalanceDraft": 1315.16,
+      "labor": [
+        {
+          "name": "Storage deck installation and basic cleanup",
+          "quantity": 15,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Replace one compatible existing light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Four 3/4-in plywood 4×8 sheets",
+          "quantity": 4,
+          "unit": "listed units",
+          "unitPrice": 70.2,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "4-ft utility LED at existing suitable connection",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "5-lb wood screws",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Miscellaneous surface protection and cleanup consumables",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "attic",
+      "projectName": "Attic",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×16 ft / 192 sq ft raised storage deck and two compatible shelf runs; same structural and access assumptions",
+      "workIncluded": [
+        "Deck up to 192 sq ft using six 3/4-in 4×8 sheets over suitable raised structure",
+        "Install two 6-ft closet shelving runs",
+        "Replace one light at existing suitable box"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Existing suitable framing and accessible properly backed shelf locations are mandatory",
+        "No added insulation or ventilation modifications included"
+      ],
+      "componentCosts": {
+        "laborGross": 2175,
+        "materials": 593.18,
+        "consumables": 11.48,
+        "planningFees": 277.97,
+        "preDiscount": 3057.63,
+        "wholePackageDiscount": 214.03
+      },
+      "startingPriceDraft": 2845,
+      "dueNowDraftMaterialAllowance": 604.66,
+      "laborAndFeeBalanceDraft": 2240.34,
+      "labor": [
+        {
+          "name": "Decking install and cleanup",
+          "quantity": 23,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Two shelf runs and anchoring",
+          "quantity": 4,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Replace one compatible existing light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Six plywood sheets",
+          "quantity": 6,
+          "unit": "listed units",
+          "unitPrice": 70.2,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two 6-ft wire shelf units",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket sets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "4-ft utility LED",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Wood screw box",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Surface protection",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "attic",
+      "projectName": "Attic",
+      "tier": "Deluxe",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×16 ft storage deck, two shelves, one light plus replacement of an attic ladder in a suitable EXISTING opening",
+      "workIncluded": [
+        "Everything in Standard",
+        "Replace ladder at an existing compatible opening; no resizing or structural modifications"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Ladder replacement requires verified rough opening, ceiling height, clearance, permissible load and code; no opening changes",
+        "Do not market as habitable conversion"
+      ],
+      "componentCosts": {
+        "laborGross": 2525,
+        "materials": 956.33,
+        "consumables": 11.48,
+        "planningFees": 349.28,
+        "preDiscount": 3842.09,
+        "wholePackageDiscount": 268.95
+      },
+      "startingPriceDraft": 3575,
+      "dueNowDraftMaterialAllowance": 967.81,
+      "laborAndFeeBalanceDraft": 2607.19,
+      "labor": [
+        {
+          "name": "Decking",
+          "quantity": 23,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Two shelf runs",
+          "quantity": 4,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Existing compatible ladder replacement labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 350,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing compatible light replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Six plywood sheets",
+          "quantity": 6,
+          "unit": "listed units",
+          "unitPrice": 70.2,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two 6-ft shelf units",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket packs",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LED utility light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Insulated attic ladder",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 363.15,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Wood screw box",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Protection",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "basement",
+      "projectName": "Basement",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Sound dry 12×12 ft basement area: refresh up to 384 sq ft existing walls and trim; concrete floor paint and existing light",
+      "workIncluded": [
+        "Paint existing walls two coats, 384 sq ft",
+        "Paint up to 48 linear ft existing trim",
+        "Paint sound concrete floor 144 sq ft, with routine prep",
+        "Replace one compatible light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Floor must test dry and accept coating; moisture, vapor intrusion, cracks, heavy grinding and radon work excluded"
+      ],
+      "componentCosts": {
+        "laborGross": 1308,
+        "materials": 372.5,
+        "consumables": 51.31,
+        "planningFees": 173.18,
+        "preDiscount": 1904.99,
+        "wholePackageDiscount": 133.35
+      },
+      "startingPriceDraft": 1775,
+      "dueNowDraftMaterialAllowance": 423.81,
+      "laborAndFeeBalanceDraft": 1351.19,
+      "labor": [
+        {
+          "name": "Paint walls 384×$1.50/sq ft",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Paint existing trim 48×$1.50/lf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 72,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Paint sound concrete 144×$2.50/sq ft",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 360,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Routine washing/masking floor prep",
+          "quantity": 2,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Replace one existing light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Three gallons flat interior paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two gallons concrete floor paint",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 86.37,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Utility LED fixture",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Painter's tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Roller sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Tray liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "bedroom-guest-room",
+      "projectName": "Bedroom",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×12 ft room, eight-foot ceilings: 384 sq ft walls, 144 sq ft ceiling, existing trim and one existing fixture",
+      "workIncluded": [
+        "Two coats on existing sound walls",
+        "One coat white ceiling",
+        "Paint 48 linear ft of existing trim",
+        "Replace one compatible existing light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Fixtures selected separately; this light allowance is a basic fixture only"
+      ],
+      "componentCosts": {
+        "laborGross": 927.6,
+        "materials": 248.36,
+        "consumables": 51.31,
+        "planningFees": 122.73,
+        "preDiscount": 1350,
+        "wholePackageDiscount": 94.5
+      },
+      "startingPriceDraft": 1260,
+      "dueNowDraftMaterialAllowance": 299.67,
+      "laborAndFeeBalanceDraft": 960.33,
+      "labor": [
+        {
+          "name": "384 sq ft wall paint labor $1.50/sf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "144 sq ft one-coat ceiling $0.90/sf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 129.6,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "48 ft trim finish $1.50/lf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 72,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing light $150",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gallons wall paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "1 gallon ceiling paint",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Utility LED allowance",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "bedroom-guest-room",
+      "projectName": "Bedroom",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Same 12×12 bedroom refresh plus 144 sq ft LVP (159 sf materials with waste) and two six-foot shelf runs",
+      "workIncluded": [
+        "Everything in Basic",
+        "Replace sound subfloor finish with 144 sq ft LVP; no existing-floor removal or underlayment if incompatible",
+        "Two 6-ft closet shelf runs"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "LVP assumes manufacturer-approved attached pad and suitable smooth flat subfloor; separate underlayment not double-counted",
+        "Product thresholds/transition materials need confirmation"
+      ],
+      "componentCosts": {
+        "laborGross": 1802.6,
+        "materials": 918.8,
+        "consumables": 51.31,
+        "planningFees": 277.27,
+        "preDiscount": 3049.9799999999996,
+        "wholePackageDiscount": 213.5
+      },
+      "startingPriceDraft": 2840,
+      "dueNowDraftMaterialAllowance": 970.11,
+      "laborAndFeeBalanceDraft": 1869.89,
+      "labor": [
+        {
+          "name": "384 sq ft wall paint",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "144 sq ft white ceiling",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 129.6,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "48 lf trim",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 72,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "One existing light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Average 144 sq ft LVP install labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 575,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Two closet shelf runs",
+          "quantity": 4,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gallons wall paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "1 gallon ceiling paint",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Utility LED light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LVP including 10% cutting allowance (159 sq ft)",
+          "quantity": 159,
+          "unit": "listed units",
+          "unitPrice": 3.78,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket packs",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "closets-storage",
+      "projectName": "Closets & Storage",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Single sound existing small closet; install two 6-ft wire shelves with hanging rods, minor finish touchups",
+      "workIncluded": [
+        "Install two wire-shelf and hanging-rod runs into proven suitable backing",
+        "Paint minor trim touchups; no cabinet installation"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Specialty closet organizers, full-room painting, missing wall studs or hidden backing repairs priced separately"
+      ],
+      "componentCosts": {
+        "laborGross": 525,
+        "materials": 118.02,
+        "consumables": 19.58,
+        "planningFees": 66.26,
+        "preDiscount": 728.86,
+        "wholePackageDiscount": 51.02
+      },
+      "startingPriceDraft": 680,
+      "dueNowDraftMaterialAllowance": 137.6,
+      "laborAndFeeBalanceDraft": 542.4,
+      "labor": [
+        {
+          "name": "Shelf installation, layout and finish touch-ups",
+          "quantity": 7,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Two wire shelves with rods",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket sets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "One 1-gal touch-up paint allowance",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "closets-storage",
+      "projectName": "Closets & Storage",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "8×6 ft walk-in closet: four 6-ft shelves with rods, 48 sq ft LVP on sound subfloor, one light",
+      "workIncluded": [
+        "Four 6-ft wire shelves with rods",
+        "Install 48 sq ft LVP with 10% material allowance",
+        "One standard existing-light replacement",
+        "Paint existing closet walls (up to 224 sq ft, two coats)"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Sound adequately flat subfloor; flooring transitions and moisture protection assessed before quote"
+      ],
+      "componentCosts": {
+        "laborGross": 1511,
+        "materials": 490.34,
+        "consumables": 43.21,
+        "planningFees": 204.46,
+        "preDiscount": 2249.0099999999998,
+        "wholePackageDiscount": 157.43
+      },
+      "startingPriceDraft": 2095,
+      "dueNowDraftMaterialAllowance": 533.55,
+      "laborAndFeeBalanceDraft": 1561.45,
+      "labor": [
+        {
+          "name": "Install 4 shelf runs",
+          "quantity": 9,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Small LVP installation",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 350,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing light replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Paint 224 sq ft walls at $1.50/sf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 336,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Four shelves",
+          "quantity": 4,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Four bracket sets",
+          "quantity": 4,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LVP 53 sq ft",
+          "quantity": 53,
+          "unit": "listed units",
+          "unitPrice": 3.78,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "2 gal wall paint",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "LED fixture",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "dining-room",
+      "projectName": "Dining Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×12 ft dining room, existing sound 384 sq ft wall finish, 48 lf trim, one dining light",
+      "workIncluded": [
+        "Paint walls two coats",
+        "Repaint existing trim, 48 lf",
+        "Replace suitable standard light on sound existing wiring"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Decorative/special-order chandeliers may require higher support/labor"
+      ],
+      "componentCosts": {
+        "laborGross": 798,
+        "materials": 199.76,
+        "consumables": 43.21,
+        "planningFees": 104.1,
+        "preDiscount": 1145.07,
+        "wholePackageDiscount": 80.15
+      },
+      "startingPriceDraft": 1065,
+      "dueNowDraftMaterialAllowance": 242.97,
+      "laborAndFeeBalanceDraft": 822.03,
+      "labor": [
+        {
+          "name": "Walls 384×$1.50/sf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing trim 48×$1.50/lf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 72,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Light replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gallons interior flat",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "One basic fixture allowance",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Rollers",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "dining-room",
+      "projectName": "Dining Room",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Basic plus 144 sq ft LVP, 12 ft chair rail and 96 sq ft two-tone accent wall",
+      "workIncluded": [
+        "Everything in Basic",
+        "144 sq ft LVP with 10% material waste",
+        "One chair-rail accent wall up to 12 ft × 8 ft"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Subfloor must be sound and suitable; does not include demolition or repairs"
+      ],
+      "componentCosts": {
+        "laborGross": 1584,
+        "materials": 870.92,
+        "consumables": 43.21,
+        "planningFees": 249.81,
+        "preDiscount": 2747.94,
+        "wholePackageDiscount": 192.36
+      },
+      "startingPriceDraft": 2560,
+      "dueNowDraftMaterialAllowance": 914.13,
+      "laborAndFeeBalanceDraft": 1645.87,
+      "labor": [
+        {
+          "name": "Existing wall paint",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Trim finish",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 72,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Replace light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "144 sq ft LVP",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 575,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "One accent wall color/edge finish",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 175,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Chair-rail install 12 lf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 36,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gal primary wall paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "One accent color",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Dining light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LVP 159 sq ft",
+          "quantity": 159,
+          "unit": "listed units",
+          "unitPrice": 3.78,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Chair rail 2 sticks",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 10.77,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Roller sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "garage",
+      "projectName": "Garage",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×20 ft dry sound existing garage floor, two six-foot wall shelves and compatible light",
+      "workIncluded": [
+        "Clean/mask and paint 240 sq ft concrete floor",
+        "Install two 6-ft wire shelves with rated fasteners",
+        "Replace one existing light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Floor coating only if product is confirmed garage/vehicle-use compatible; grind/moisture mitigation/cracks excluded",
+        "Material coverage must be checked for the selected coating and required number of coats"
+      ],
+      "componentCosts": {
+        "laborGross": 1350,
+        "materials": 296.12,
+        "consumables": 43.21,
+        "planningFees": 168.93,
+        "preDiscount": 1858.26,
+        "wholePackageDiscount": 130.08
+      },
+      "startingPriceDraft": 1730,
+      "dueNowDraftMaterialAllowance": 339.33,
+      "laborAndFeeBalanceDraft": 1390.67,
+      "labor": [
+        {
+          "name": "240 sq ft concrete floor paint labor $2.50/sf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 600,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Floor wash, tape and ordinary prep",
+          "quantity": 3,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Install two shelf runs",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Existing light replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "2 gal concrete floor paint allowance",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 86.37,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket packs",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LED light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "laundry-utility",
+      "projectName": "Laundry & Utility",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "8×10 ft utility room, standard existing laundry hookups, two shelf runs, 288 sq ft paint walls",
+      "workIncluded": [
+        "Paint up to 288 sq ft existing sound walls",
+        "Install two 6-ft shelves",
+        "Connect one washer and one dryer to safe compatible existing hookups"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Washer/dryer customer-provided or separately purchased; new supply, drain or electrical/vent alterations quoted separately",
+        "New hoses and connectors must be model-compatible and priced at quote"
+      ],
+      "componentCosts": {
+        "laborGross": 1157,
+        "materials": 166.62,
+        "consumables": 43.21,
+        "planningFees": 136.68,
+        "preDiscount": 1503.51,
+        "wholePackageDiscount": 105.25
+      },
+      "startingPriceDraft": 1400,
+      "dueNowDraftMaterialAllowance": 209.83,
+      "laborAndFeeBalanceDraft": 1190.17,
+      "labor": [
+        {
+          "name": "288 sq ft wall paint",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 432,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Existing washer hookup labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 175,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing dryer hookup labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 175,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "2 gal interior paint",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket packs",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Rollers",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "living-family-room",
+      "projectName": "Living & Family Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×16 ft room, 8-ft ceiling, existing walls, ceiling/trim and one standard fixture",
+      "workIncluded": [
+        "Paint existing walls two coats, 448 sq ft",
+        "One white ceiling coat, 192 sq ft",
+        "Finish 56 lf existing trim",
+        "Replace one compatible light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment"
+      ],
+      "componentCosts": {
+        "laborGross": 1078.8,
+        "materials": 248.36,
+        "consumables": 43.21,
+        "planningFees": 137.04,
+        "preDiscount": 1507.4099999999999,
+        "wholePackageDiscount": 105.52
+      },
+      "startingPriceDraft": 1405,
+      "dueNowDraftMaterialAllowance": 291.57,
+      "laborAndFeeBalanceDraft": 1113.43,
+      "labor": [
+        {
+          "name": "448 sq ft wall labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 672,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "192 sq ft ceiling one-coat labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 172.8,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "56 lf trim finish",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 84,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gallons wall paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "1 gal ceiling white",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Utility LED",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "living-family-room",
+      "projectName": "Living & Family Room",
+      "tier": "Standard",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Basic room refresh plus 192 sq ft LVP and a 12×8 two-tone feature wall",
+      "workIncluded": [
+        "Everything in Basic",
+        "Install up to 192 sq ft LVP on sound subfloor",
+        "One two-tone accent wall up to 96 sq ft (without new trim)"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Labor-only LVP tier is a planning minimum; exact floor prep/trim transitions separately quoted"
+      ],
+      "componentCosts": {
+        "laborGross": 2053.8,
+        "materials": 1098.32,
+        "consumables": 43.21,
+        "planningFees": 319.53,
+        "preDiscount": 3514.8599999999997,
+        "wholePackageDiscount": 246.04
+      },
+      "startingPriceDraft": 3270,
+      "dueNowDraftMaterialAllowance": 1141.53,
+      "laborAndFeeBalanceDraft": 2128.47,
+      "labor": [
+        {
+          "name": "Walls",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 672,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Ceiling",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 172.8,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Trim",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 84,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Large LVP package labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 800,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Accent wall edge/color work",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 175,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gal wall paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "1 gal ceiling",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "1 gal feature color",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "LVP 212 sf with 10% waste",
+          "quantity": 212,
+          "unit": "listed units",
+          "unitPrice": 3.78,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Utility LED",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "adult-room",
+      "projectName": "Adult Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×12 ft existing room walls, one light, two shelf runs",
+      "workIncluded": [
+        "Paint 384 sq ft walls two coats",
+        "Replace one suitable existing light",
+        "Install two six-foot shelf runs"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment"
+      ],
+      "componentCosts": {
+        "laborGross": 1101,
+        "materials": 269.18,
+        "consumables": 43.21,
+        "planningFees": 141.34,
+        "preDiscount": 1554.73,
+        "wholePackageDiscount": 108.83
+      },
+      "startingPriceDraft": 1450,
+      "dueNowDraftMaterialAllowance": 312.39,
+      "laborAndFeeBalanceDraft": 1137.61,
+      "labor": [
+        {
+          "name": "Wall painting",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Existing light labor",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Shelf runs",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gal wall paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "LED light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket sets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Rollers",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "kids-room",
+      "projectName": "Kids' Room",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×12 ft existing child's room, washable coating to be selected, two shelf runs, existing light",
+      "workIncluded": [
+        "Paint up to 384 sq ft sound walls",
+        "Install two six-foot shelves safely anchored",
+        "Replace one suitable existing light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Chosen paint must be appropriate washable finish: flat price is provisional only; adjust product before publication"
+      ],
+      "componentCosts": {
+        "laborGross": 1101,
+        "materials": 269.18,
+        "consumables": 43.21,
+        "planningFees": 141.34,
+        "preDiscount": 1554.73,
+        "wholePackageDiscount": 108.83
+      },
+      "startingPriceDraft": 1450,
+      "dueNowDraftMaterialAllowance": 312.39,
+      "laborAndFeeBalanceDraft": 1137.61,
+      "labor": [
+        {
+          "name": "Wall painting",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Shelving",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Light replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3 gal wall paint—finish suitability to confirm",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket sets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LED fixture",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Rollers",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "home-theater",
+      "projectName": "Home Theater",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Existing 12×12 ft theater area, customer-provided screen, existing safe wall fixings, cable concealment in surface raceway, suitable light",
+      "workIncluded": [
+        "Confirm layout and mount one customer-provided screen/TV to rated suitable framing",
+        "Install surface cable raceway; no new circuit",
+        "Replace one existing compatible light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Mounting bracket, raceway, TV/projector, and audiovisual equipment are NOT priced; add confirmed compatible product allowance before advertising",
+        "No hidden in-wall power extension"
+      ],
+      "componentCosts": {
+        "laborGross": 750,
+        "materials": 53.96,
+        "consumables": 11.48,
+        "planningFees": 81.54,
+        "preDiscount": 896.98,
+        "wholePackageDiscount": 62.79
+      },
+      "startingPriceDraft": 835,
+      "dueNowDraftMaterialAllowance": 65.44,
+      "laborAndFeeBalanceDraft": 769.56,
+      "labor": [
+        {
+          "name": "Mounting/layout/cable work",
+          "quantity": 8,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Replace existing light",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Basic LED fixture",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Surface masking",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "home-office",
+      "projectName": "Home Office",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×12 ft home office with 384 sq ft existing walls, two six-foot shelving runs, one existing light",
+      "workIncluded": [
+        "Paint walls two coats",
+        "Install two 6-ft anchored shelves",
+        "Replace one existing light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Custom furniture, desk, cabinetry and new wiring not included"
+      ],
+      "componentCosts": {
+        "laborGross": 1101,
+        "materials": 269.18,
+        "consumables": 43.21,
+        "planningFees": 141.34,
+        "preDiscount": 1554.73,
+        "wholePackageDiscount": 108.83
+      },
+      "startingPriceDraft": 1450,
+      "dueNowDraftMaterialAllowance": 312.39,
+      "laborAndFeeBalanceDraft": 1137.61,
+      "labor": [
+        {
+          "name": "Wall painting",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Shelf installation",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Existing fixture replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3gal paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two bracket sets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LED light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Roller sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "music-creative-studio",
+      "projectName": "Music & Creative Studio",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "12×12 ft existing creative space, paint walls, two shelves and compatible task light",
+      "workIncluded": [
+        "Paint up to 384 sq ft existing walls",
+        "Install two 6-ft shelves",
+        "Replace one existing task light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "No acoustical products or room isolation are included"
+      ],
+      "componentCosts": {
+        "laborGross": 1101,
+        "materials": 269.18,
+        "consumables": 43.21,
+        "planningFees": 141.34,
+        "preDiscount": 1554.73,
+        "wholePackageDiscount": 108.83
+      },
+      "startingPriceDraft": 1450,
+      "dueNowDraftMaterialAllowance": 312.39,
+      "laborAndFeeBalanceDraft": 1137.61,
+      "labor": [
+        {
+          "name": "Paint walls",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 576,
+          "source": "owner-approved fixed labor price"
+        },
+        {
+          "name": "Install shelving",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Replace fixture",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "3gal paint",
+          "quantity": 3,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two shelves",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Two brackets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Light",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "murals",
+      "projectName": "Custom Painting & Murals",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One sound 12×8 ft wall, simple two-color geometric painted design, no commissioned drawing or lettering",
+      "workIncluded": [
+        "Mask and paint simple color-block treatment, up to 96 sq ft",
+        "Apply compatible primer where needed",
+        "Job cleanup"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Hand-painted artwork, complex patterns and mural design quoted separately"
+      ],
+      "componentCosts": {
+        "laborGross": 600,
+        "materials": 144.42,
+        "consumables": 76.29,
+        "planningFees": 82.07,
+        "preDiscount": 902.78,
+        "wholePackageDiscount": 63.19
+      },
+      "startingPriceDraft": 840,
+      "dueNowDraftMaterialAllowance": 220.71,
+      "laborAndFeeBalanceDraft": 619.29,
+      "labor": [
+        {
+          "name": "Decorative layout, 2 colors, edge prep and paint",
+          "quantity": 8,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Two paint colors (1gal each)",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Bonding primer 1gal",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 47.22,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sleeves",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 18.9,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Liners",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 12.83,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Brush",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 21.6,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "arches",
+      "projectName": "Custom Carpentry",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Nonstructural flat decorative arch trim on sound existing surface: up to 16 ft primed MDF trim; touchup coat",
+      "workIncluded": [
+        "Cut/install up to 16 lf decorative nonstructural trim",
+        "Caulk, fill nail holes and paint trim",
+        "No cutting into bearing wall"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Existing decorative trim only; no new opening or load-bearing alterations"
+      ],
+      "componentCosts": {
+        "laborGross": 273,
+        "materials": 64.74,
+        "consumables": 18.22,
+        "planningFees": 35.6,
+        "preDiscount": 391.56000000000006,
+        "wholePackageDiscount": 27.41
+      },
+      "startingPriceDraft": 365,
+      "dueNowDraftMaterialAllowance": 82.96,
+      "laborAndFeeBalanceDraft": 282.04,
+      "labor": [
+        {
+          "name": "Prep and finishing",
+          "quantity": 3,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Install trim 16lf at $3/lf",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 48,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Two 8ft MDF 1×2",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 8.07,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "1 gal trim paint",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Caulk",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 10.12,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "fireplaces",
+      "projectName": "Fireplaces",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Paint/refresh an existing NON-HEATED decorative mantel and nearby trim; fire safety verified",
+      "workIncluded": [
+        "Prep and paint nonheated mantel and trim",
+        "Mask adjacent safe surfaces and clean"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "No paint on firebox, hearth, hot rated surfaces or combustible clearance areas; appliance and code inspection required"
+      ],
+      "componentCosts": {
+        "laborGross": 375,
+        "materials": 48.6,
+        "consumables": 41.18,
+        "planningFees": 46.48,
+        "preDiscount": 511.26000000000005,
+        "wholePackageDiscount": 35.79
+      },
+      "startingPriceDraft": 480,
+      "dueNowDraftMaterialAllowance": 89.78,
+      "laborAndFeeBalanceDraft": 390.22,
+      "labor": [
+        {
+          "name": "Decorative mantel refresh",
+          "quantity": 5,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Interior paint 1gal",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Brush",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 21.6,
+          "source": "approved internal supplies"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 8.1,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "mechanic-shop",
+      "projectName": "Mechanic Shop",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One nonstructural 6-ft wood workbench with 2 shelf runs and one replacement LED",
+      "workIncluded": [
+        "Build basic 6-ft plywood/stud workbench on suitable floor",
+        "Install two 6-ft wall shelves",
+        "Replace one compatible existing shop light"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "No heavy industrial loads, vehicle lifts, power distribution or water supply included"
+      ],
+      "componentCosts": {
+        "laborGross": 1050,
+        "materials": 286.98,
+        "consumables": 11.48,
+        "planningFees": 134.85,
+        "preDiscount": 1483.31,
+        "wholePackageDiscount": 103.83
+      },
+      "startingPriceDraft": 1380,
+      "dueNowDraftMaterialAllowance": 298.46,
+      "laborAndFeeBalanceDraft": 1081.54,
+      "labor": [
+        {
+          "name": "Workbench construction",
+          "quantity": 8,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Shelving",
+          "quantity": 4,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        },
+        {
+          "name": "Existing fixture replacement",
+          "quantity": 1,
+          "unit": "job",
+          "unitPrice": 150,
+          "source": "owner-approved fixed labor price"
+        }
+      ],
+      "materials": [
+        {
+          "name": "8 standard 2x4 studs",
+          "quantity": 8,
+          "unit": "listed units",
+          "unitPrice": 5.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "One 3/4in ACX plywood sheet",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 70.2,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Two wire shelf units",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 22.92,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Brackets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 11.79,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "LED strip",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 53.96,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "Screw box",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Surface protection",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "recycling-scrap",
+      "projectName": "Recycling & Scrap Area",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One 6-ft covered-location scrap rack built from nonstructural framing and plywood; sorting bins not included",
+      "workIncluded": [
+        "Build basic wood rack in already-covered site",
+        "Add two basic sorting shelves",
+        "No slab or new roof"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "No bins, weather protection, foundation or hazardous material handling included"
+      ],
+      "componentCosts": {
+        "laborGross": 600,
+        "materials": 233.8,
+        "consumables": 11.48,
+        "planningFees": 84.53,
+        "preDiscount": 929.81,
+        "wholePackageDiscount": 65.09
+      },
+      "startingPriceDraft": 865,
+      "dueNowDraftMaterialAllowance": 245.28,
+      "laborAndFeeBalanceDraft": 619.72,
+      "labor": [
+        {
+          "name": "Build and secure rack",
+          "quantity": 8,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "8 stud boards",
+          "quantity": 8,
+          "unit": "listed units",
+          "unitPrice": 5.6,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "2 plywood 3/4in sheets",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 70.2,
+          "source": "approved marked-up material reference"
+        },
+        {
+          "name": "Wood screws",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 48.6,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Cleanup protection",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    },
+    {
+      "projectId": "mailboxes",
+      "projectName": "Mailboxes & Package Stations",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One standard post-mount mailbox and included post in soil location compliant with carrier guidance",
+      "workIncluded": [
+        "Install one mailbox/post kit at pre-approved location",
+        "Set with up to two bags of concrete, normal soil",
+        "Add standard cleanup"
+      ],
+      "conditions": [
+        "Sound, accessible existing surfaces; normal working access",
+        "No structural or hidden damage; removal, haul-off of existing finishes, permits and new wiring excluded unless explicitly listed",
+        "Exact material product and quantities confirmed before binding quote",
+        "Basic preparation only; unusual moisture, mold, lead paint or asbestos requires assessment",
+        "Concrete pricing must use $7.76 per 60-lb bag, not concrete floor paint",
+        "Call 811/confirm buried lines; comply with USPS and road authority mounting/setback rules"
+      ],
+      "componentCosts": {
+        "laborGross": 225,
+        "materials": 62.74,
+        "consumables": 11.48,
+        "planningFees": 29.92,
+        "preDiscount": 329.14000000000004,
+        "wholePackageDiscount": 23.04
+      },
+      "startingPriceDraft": 310,
+      "dueNowDraftMaterialAllowance": 74.22,
+      "laborAndFeeBalanceDraft": 235.78,
+      "labor": [
+        {
+          "name": "Install and align standard mailbox",
+          "quantity": 3,
+          "unit": "hours",
+          "unitPrice": 75,
+          "source": "owner-approved $75 per hour; planning hours require owner review"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Gibraltar mailbox and post kit",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 47.22,
+          "source": "researched provisional retail baseline plus 35% markup"
+        },
+        {
+          "name": "60lb concrete bags",
+          "quantity": 2,
+          "unit": "listed units",
+          "unitPrice": 7.76,
+          "source": "approved marked-up material reference"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape/cleanup allowance",
+          "quantity": 1,
+          "unit": "listed units",
+          "unitPrice": 11.48,
+          "source": "approved internal supplies"
+        }
+      ]
+    }
+  ],
+  "quoteRequiredCategories": [
+    {
+      "projectId": "accessibility",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Grab bar prices researched, but load-bearing walls, installation safety and ramp slope/handrail/landing requirements must be confirmed; retain on-site quote for ramps."
+    },
+    {
+      "projectId": "bathrooms",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Existing legacy Basic/Standard/Deluxe site prices need component audit; missing priced fixtures, sizes, removal terms and painting component breakdown. Do not overwrite approved numbers until reconciled."
+    },
+    {
+      "projectId": "kitchen-pantry",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Existing legacy Basic/Standard/Deluxe site prices need reconciliation; cabinets/counters selection, sink, faucet, backsplash, removal and tax split are not fully costed."
+    },
+    {
+      "projectId": "entry-mudroom",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Bench, door hardware/threshold and mounting details vary; source exact bench and compatible hardware before advertising complete package."
+    },
+    {
+      "projectId": "fitness-wellness",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Gym floor product, mirror anchoring, substrate/weight-bearing review and ventilation equipment remain unspecified."
+    },
+    {
+      "projectId": "games-hobbies",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Customer-specific worktable/game table and specialty equipment costs unresolved."
+    },
+    {
+      "projectId": "pet-room",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Washable coating, kennel materials and pet door/weather seals not yet specified."
+    },
+    {
+      "projectId": "snack-beverage",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Countertop surface, cabinets and lighting model unselected; water/plumbing changes require quote."
+    },
+    {
+      "projectId": "vault-safe-room",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Structural/security design, safe anchoring, doors and ventilation require on-site assessment."
+    },
+    {
+      "projectId": "wallpaper",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Wallpaper double-roll material, repeat/waste and paste type not selected; labor alone is $75/double roll standard, $90 specialty."
+    },
+    {
+      "projectId": "stairs",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Handrail and tread safety-critical condition; lumber, railing and stair components not priced as installed assembly."
+    },
+    {
+      "projectId": "decks-railings",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Structural design, load ratings, fasteners and full deck assembly labor require site-specific estimate."
+    },
+    {
+      "projectId": "exterior-improvements",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Exterior paint product, prep, height/access and waterproofing specifications incomplete."
+    },
+    {
+      "projectId": "backyard-retreat",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Pergola/gazebo footing size, kit product and weather-rated assembly not selected."
+    },
+    {
+      "projectId": "outdoor-kitchen",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Outdoor cabinet, countertop, grill and plumbing/electrical products not specified."
+    },
+    {
+      "projectId": "car-wash",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Drainage/water handling, containment and wash equipment are site-specific."
+    },
+    {
+      "projectId": "pools",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Pool equipment and safety requirements require pool contractor coordination; no equipment quote."
+    },
+    {
+      "projectId": "bus-stop",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Shelter footing, local accessibility/siting code and structural plans missing."
+    },
+    {
+      "projectId": "outdoor-sound",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Equipment is customer-specific, weather-rated and often electrical; choose exact parts before pricing."
+    },
+    {
+      "projectId": "garden-greenhouse",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Kit size, foundation, treated lumber, soil and required anchoring vary."
+    },
+    {
+      "projectId": "playground",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Equipment kit manufacturer/anchoring and safety surfacing need verified specification."
+    },
+    {
+      "projectId": "patios-concrete",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "New slab requires concrete yardage, access, base, forms, reinforcement and site prep; existing paint use depends on exterior coating specs."
+    },
+    {
+      "projectId": "porches-entryways",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Stairs/rails/door condition may be structural/weatherproof; site assessment."
+    },
+    {
+      "projectId": "room-additions",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Permits, engineering, foundation, framing, electrical/HVAC, trades and structural assessment mandatory."
+    },
+    {
+      "projectId": "custom",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Open-ended specialty work cannot have meaningful starting package total."
+    },
+    {
+      "projectId": "concrete",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Outdoor Projects acts as category; price individual safe scopes only."
+    },
+    {
+      "projectId": "themed-rooms",
+      "status": "Quote required or existing pricing audit pending",
+      "reason": "Category landing page; apply prices to individual selected themed projects."
+    }
+  ],
+  "highRiskFlags": [
+    "Attic load capacity and insulation/ventilation clearances",
+    "Any electrical work beyond verified safe existing fixtures",
+    "Accessibility ramps and load-bearing supports",
+    "Decks, stair/handrail structural components and additions",
+    "Showers, wet area waterproofing, concealed plumbing and unsafe substrates",
+    "Cabinets, countertops, furniture or appliances with unselected product model",
+    "Paint coverage / surface preparation / prep outside stated scope"
+  ],
+  "summary": {
+    "projectTypesCovered": 47,
+    "pricedDraftScenarios": 27,
+    "projectTypesWithDraftPrice": 20,
+    "quoteOrAuditPendingProjectTypes": 27
+  }
+}
