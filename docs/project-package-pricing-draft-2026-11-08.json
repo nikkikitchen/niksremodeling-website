@@ -3420,6 +3420,187 @@
           "source": "owner internal consumables"
         }
       ]
+    },
+    {
+      "projectId": "wallpaper",
+      "projectName": "Wallpaper",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "Single 12x8 ft sound clean interior wall, plain white prepasted vinyl wallpaper with straight no-repeat pattern. Two 56.4-sq-ft double rolls provide 112.8 sq ft gross for a 96-sq-ft wall.",
+      "workIncluded": [
+        "Prepare and seal one wall using compatible wallcovering primer",
+        "Install up to two double rolls of standard prepasted white wallpaper",
+        "Cleanup of application debris"
+      ],
+      "conditions": [
+        "Confirm pattern, usable strip count, wall repair and manufacturer instructions; paintable white finish left unpainted. New wall color, extra rolls, specialty pattern or removal require separate quote.",
+        "Pricing is not final; verify product stock, relevant code, minimum scope and quantities before any advertised offer"
+      ],
+      "componentCosts": {
+        "laborGross": 375,
+        "materials": 255.45,
+        "consumables": 43.88,
+        "planningFees": 67.43,
+        "preDiscount": 741.76,
+        "wholePackageDiscount": 51.92
+      },
+      "startingPriceDraft": 690,
+      "dueNowDraftMaterialAllowance": 299.33,
+      "laborAndFeeBalanceDraft": 390.67,
+      "labor": [
+        {
+          "name": "Standard wallpaper install, two double rolls",
+          "quantity": 2,
+          "unitPrice": 75,
+          "source": "approved labor rate or service, planned hours to confirm"
+        },
+        {
+          "name": "Wall cleaning, primer and edge prep",
+          "quantity": 3,
+          "unitPrice": 75,
+          "source": "approved labor rate or service, planned hours to confirm"
+        }
+      ],
+      "materials": [
+        {
+          "name": "Prepasted wallpaper double rolls",
+          "quantity": 2,
+          "unitPrice": 94.5,
+          "source": "approved/researched material with 35% markup already included"
+        },
+        {
+          "name": "Wallpaper primer 1gal",
+          "quantity": 1,
+          "unitPrice": 66.45,
+          "source": "approved/researched material with 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "approved internal consumable"
+        },
+        {
+          "name": "Drop cloth",
+          "quantity": 1,
+          "unitPrice": 32.4,
+          "source": "approved internal consumable"
+        }
+      ]
+    },
+    {
+      "projectId": "snack-beverage",
+      "projectName": "Snack & Beverage Center",
+      "tier": "Basic",
+      "reviewStatus": "DRAFT—NEEDS OWNER REVIEW; DO NOT PUBLISH",
+      "scenario": "One 36-in existing-layout coffee/snack prep cabinet with finished 48-in engineered wood top, one shelf and one replacement suitable light, no water or electrical changes.",
+      "workIncluded": [
+        "Install one 36-in stock base cabinet and paint outside",
+        "Fit up to 4-ft finished butcher-block-style counter to existing straight area",
+        "Install one anchored six-foot wall shelf",
+        "Replace one compatible existing light fixture"
+      ],
+      "conditions": [
+        "Product compatibility, countertop support and finish must be reviewed. No sink, water line, countertop cutouts, specialty coffee appliance or added circuits; unselected components quoted separately.",
+        "Pricing is not final; verify product stock, relevant code, minimum scope and quantities before any advertised offer"
+      ],
+      "componentCosts": {
+        "laborGross": 900,
+        "materials": 572.61,
+        "consumables": 19.58,
+        "planningFees": 149.22,
+        "preDiscount": 1641.41,
+        "wholePackageDiscount": 114.9
+      },
+      "startingPriceDraft": 1530,
+      "dueNowDraftMaterialAllowance": 592.19,
+      "laborAndFeeBalanceDraft": 937.81,
+      "labor": [
+        {
+          "name": "Cabinet box install",
+          "quantity": 1,
+          "unitPrice": 150,
+          "source": "approved labor rate or service, planned hours to confirm"
+        },
+        {
+          "name": "Paint cabinet exterior only",
+          "quantity": 1,
+          "unitPrice": 150,
+          "source": "approved labor rate or service, planned hours to confirm"
+        },
+        {
+          "name": "Cut/fix prep countertop and finish",
+          "quantity": 3,
+          "unitPrice": 75,
+          "source": "approved labor rate or service, planned hours to confirm"
+        },
+        {
+          "name": "Shelving install",
+          "quantity": 3,
+          "unitPrice": 75,
+          "source": "approved labor rate or service, planned hours to confirm"
+        },
+        {
+          "name": "Existing light replacement",
+          "quantity": 1,
+          "unitPrice": 150,
+          "source": "approved labor rate or service, planned hours to confirm"
+        }
+      ],
+      "materials": [
+        {
+          "name": "36-in unfinished cabinet",
+          "quantity": 1,
+          "unitPrice": 255.15,
+          "source": "approved/researched material with 35% markup already included"
+        },
+        {
+          "name": "4-ft finished engineered wood countertop",
+          "quantity": 1,
+          "unitPrice": 168.4,
+          "source": "approved/researched material with 35% markup already included"
+        },
+        {
+          "name": "One gallon cabinet compatible paint allowance",
+          "quantity": 1,
+          "unitPrice": 48.6,
+          "source": "approved/researched material with 35% markup already included"
+        },
+        {
+          "name": "One six-foot shelf",
+          "quantity": 1,
+          "unitPrice": 22.92,
+          "source": "approved/researched material with 35% markup already included"
+        },
+        {
+          "name": "One bracket two pack",
+          "quantity": 2,
+          "unitPrice": 11.79,
+          "source": "approved/researched material with 35% markup already included"
+        },
+        {
+          "name": "Existing-compatible utility LED",
+          "quantity": 1,
+          "unitPrice": 53.96,
+          "source": "approved/researched material with 35% markup already included"
+        }
+      ],
+      "supplies": [
+        {
+          "name": "Tape",
+          "quantity": 1,
+          "unitPrice": 11.48,
+          "source": "approved internal consumable"
+        },
+        {
+          "name": "Sandpaper",
+          "quantity": 1,
+          "unitPrice": 8.1,
+          "source": "approved internal consumable"
+        }
+      ]
     }
   ],
   "quoteRequiredCategories": [
@@ -3434,19 +3615,9 @@
       "reason": "Existing legacy Basic/Standard/Deluxe site prices need reconciliation; cabinets/counters selection, sink, faucet, backsplash, removal and tax split are not fully costed."
     },
     {
-      "projectId": "snack-beverage",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Countertop surface, cabinets and lighting model unselected; water/plumbing changes require quote."
-    },
-    {
       "projectId": "vault-safe-room",
       "status": "Quote required or existing pricing audit pending",
       "reason": "Structural/security design, safe anchoring, doors and ventilation require on-site assessment."
-    },
-    {
-      "projectId": "wallpaper",
-      "status": "Quote required or existing pricing audit pending",
-      "reason": "Wallpaper double-roll material, repeat/waste and paste type not selected; labor alone is $75/double roll standard, $90 specialty."
     },
     {
       "projectId": "stairs",
@@ -3540,9 +3711,9 @@
   ],
   "summary": {
     "projectTypesCovered": 47,
-    "pricedDraftScenarios": 34,
-    "projectTypesWithDraftPrice": 26,
-    "quoteOrAuditPendingProjectTypes": 21
+    "pricedDraftScenarios": 36,
+    "projectTypesWithDraftPrice": 28,
+    "quoteOrAuditPendingProjectTypes": 19
   },
   "lastUpdated": "2026-11-08",
   "tierNotes": {
