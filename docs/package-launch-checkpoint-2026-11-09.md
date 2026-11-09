@@ -4,7 +4,7 @@
 
 ## What is now in the site
 
-- All 40 project scope groups use the same Basic, Standard, Deluxe, Custom cards and work scopes, with quote-required labels where full component costs are not known. Accessibility now has Basic, Standard, Premium, Custom.
+- General project categories now use Basic, Standard, Deluxe, and Custom cards and work scopes, with quote-required labels where full component costs are not known. Accent Walls currently uses Basic, Deluxe, Premium, Custom; Accessibility now uses Basic, Standard, Premium, Custom. Consistent four-tile layout is in place, but Accent tier naming still needs reconciliation.
 - 27 costed **provisional** package tiers in 19 generic project categories are backed by saved, bounded labor/material/supply lines. A previously itemized Attic Basic starts at **$1,760** (older 5% discount basis; review before launch).
 - Historical special-category advertised starts remain Bathroom Basic/Standard/Deluxe **$995/$2,195/$3,195**, Kitchen **$1,995/$6,495/$17,995**, Accent Walls **$395/$695/$1,495**, and Premium Accessibility **$3,915** (ramp scope not fully re-costed).
 - Basic and Standard Accessibility Safety now have separately itemized bounded scopes, and are not the same tier.
@@ -52,7 +52,7 @@ All provisional scopes assume the exact sizes, quantities, surface conditions, a
 
 Many Standard/Deluxe tiers and special projects remain **quote required**, including custom cabinetry, unsupported or structural ramps, large outdoor decks and railings, gas appliances/fireplaces, remodel additions, specialty acoustic floors, pergolas, and complex utilities. Do not invent a price for missing fixtures, structural components, compliance requirements, or installation labor.
 
-Wallpaper Basic is drafted but deliberately **not advertised at a numeric price** until the wallcovering and adhesive selection is included or clearly customer-supplied and approved. Full package calculations for legacy Bathroom, Kitchen, and Premium Accessibility need component-level reconciliation; their visible prices have been preserved rather than silently changed.
+Wallpaper Basic is drafted but deliberately **not advertised at a numeric price** until the wallcovering and adhesive selection is included or clearly customer-supplied and approved. Full package calculations for legacy Bathroom, Kitchen, Accent Walls (especially whether $395 covers chair rail and two-color paint), and Premium Accessibility need component-level reconciliation; their visible prices have been preserved rather than silently changed.
 
 ## Remaining launch-gate checks
 
