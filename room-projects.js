@@ -269,7 +269,7 @@ window.NIK_AUDITED_PACKAGE_PRICES={
         {name:'Exterior-rated wood screws, 5-lb box (owner price)',quantity:1,unitPrice:48.60}
       ],
       consumables:[{name:'Miscellaneous protective consumables and cleanup allowance',quantity:1,unitPrice:10}],
-      laborDiscountPercent:5,
+      laborDiscountPercent:7,
       projectFeePercent:10
     }
   },
@@ -287,7 +287,7 @@ window.NIK_AUDITED_PACKAGE_PRICES={
         {name:'9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)',quantity:1,unitPrice:18.90},
         {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
       ],
-      laborDiscountPercent:5,
+      laborDiscountPercent:7,
       projectFeePercent:10
     }
   }
@@ -330,10 +330,12 @@ window.renderProjectPackageOptions=function(id,project){
   const base='/project.html?project='+encodeURIComponent(id);
   const listing=base+'&view=packages';
   const params=new URLSearchParams(location.search);
+  // Retain Accent Walls legacy URL IDs (deluxe/premium) while showing the
+  // common customer-facing Basic / Standard / Deluxe / Custom tiers.
   let packs=id==='accents'?[
-    {id:'basic',name:'Basic',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395},
-    {id:'deluxe',name:'Deluxe',photo:'/assets/accent-walls-card.jpg',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695},
-    {id:'premium',name:'Premium',photo:'/assets/project-stone-real.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495},
+    {id:'basic',name:'Basic',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395,priceStatus:'research-provisional'},
+    {id:'deluxe',name:'Standard',photo:'/assets/accent-walls-card.jpg',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695,priceStatus:'research-provisional'},
+    {id:'premium',name:'Deluxe',photo:'/assets/project-stone-real.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495,priceStatus:'research-provisional'},
     {id:'custom',name:'Custom',intro:'Design your own accent wall.',work:[]}
   ]:[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes?.[0]||[]},
