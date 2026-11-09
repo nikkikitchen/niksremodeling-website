@@ -1,6 +1,6 @@
 {
   "asOf": "2026-11-09",
-  "status": "Draft bounded package pricing (correctly distinguish material-reference tape and sandpaper from approved-supply catalog IDs); owner confirmation required before final offers",
+  "status": "Provisional bounded package cost bases using $75/hr planning assumptions and marked-up material references; owner scope approval and on-site verification needed before firm quotation.",
   "currency": "USD",
   "markupAlreadyIncluded": true,
   "baselines": {
@@ -1022,6 +1022,391 @@
             1
           ]
         ]
+      }
+    },
+    "attic": {
+      "standard": {
+        "scenario": "Up to 192 sq. ft. (12 x 16 ft) of attic storage decking on existing structurally sound, suitably raised framing; six 4 x 8 sheets of 3/4-in plywood and two deck-screw boxes. One replacement 4-ft LED at an existing compatible safe electrical connection and routine debris cleanup. No support framing, added insulation, vapor-barrier changes, ventilation changes, ladder changes, landings, new circuits, or structural reinforcement. Engineer/site inspection needed before accepting job.",
+        "work": [
+          "Install up to 192 sq. ft. of plywood storage decking over confirmed sound, properly raised attic framing",
+          "Replace one compatible existing attic light fixture",
+          "Include standard fasteners and remove our construction debris"
+        ],
+        "labor": [
+          [
+            "Install 192 sq ft attic storage decking, 24 labor-hours at $75",
+            24,
+            75
+          ],
+          [
+            "One safe existing-connection attic light replacement",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            4,
+            6
+          ],
+          [
+            35,
+            2
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            31,
+            1
+          ]
+        ],
+        "consumables": [],
+        "materialConsumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "adult-room": {
+      "basic": {
+        "scenario": "Sound 10 x 10 ft existing adult bedroom/retreat, 8-ft ceiling; two-coat wall refresh up to 320 sq ft, trim touch-ups up to 40 linear ft, one 72-in shelf with three sturdy brackets in verified backing, and one compatible existing recessed light retrofit. No new wiring, flooring, cabinetry, window coverings or custom furnishings.",
+        "work": [
+          "Paint up to 320 sq. ft. of sound existing walls in two coats and touch up existing trim",
+          "Install one 72-in storage/display shelf on suitable wall framing",
+          "Retrofit one compatible existing recessed light; no new wiring"
+        ],
+        "labor": [
+          [
+            "Wall paint and routine prep",
+            8,
+            75
+          ],
+          [
+            "Existing trim touch-ups",
+            2,
+            75
+          ],
+          [
+            "Install display shelf and verify backing",
+            3,
+            75
+          ],
+          [
+            "Existing light retrofit",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            3
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            69,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "arches": {
+      "basic": {
+        "scenario": "Cosmetic refresh of one existing, nonstructural decorative arch opening on sound backing, up to 16 linear ft of primed MDF 1x2 trim installed and painted, plus routine prep and one matching paint gallon. No framing cuts, columns, load-bearing changes, electrical work or damaged plaster/drywall restoration.",
+        "work": [
+          "Refresh one existing nonstructural decorative arch opening",
+          "Install up to 16 linear ft of primed decorative MDF trim on suitable existing backing",
+          "Prime, paint and clean up the selected trim and adjacent touch-up area"
+        ],
+        "labor": [
+          [
+            "Trim layout, cutting and installation",
+            5,
+            75
+          ],
+          [
+            "Preparation, painting and finishing",
+            4,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            67,
+            3
+          ],
+          [
+            53,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            32,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "murals": {
+      "basic": {
+        "scenario": "One sound 12 x 8 ft accent wall, up to 96 sq ft, simple customer-chosen two-color geometric paint motif, one appropriate primer coat and normal preparation. No original artwork design, hand-painted characters, wallpaper, plaster replacement, specialty paint or complex murals.",
+        "work": [
+          "Prepare and prime one sound 12 × 8 ft wall",
+          "Paint one simple two-color geometric accent treatment",
+          "Finish clean edges and remove normal masking and painting debris"
+        ],
+        "labor": [
+          [
+            "Masking, layout and surface preparation",
+            3,
+            75
+          ],
+          [
+            "Two-color geometric painting and finish",
+            5,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            2
+          ],
+          [
+            54,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "pet-room": {
+      "basic": {
+        "scenario": "Sound 10 x 10 ft pet room with 8-ft walls, apply two coats using up to one 5-gal semi-gloss interior paint pail (existing sound 320 sq ft wall area), touch up 40 ft trim and fit one 72-in feeding/leash storage shelf with three suitable brackets in verified wall backing. No pet door, kennels, washing station, new floor or water connections.",
+        "work": [
+          "Prepare and apply two coats of washable semi-gloss paint to up to 320 sq. ft. of existing walls",
+          "Refresh up to 40 linear ft of existing trim",
+          "Install one 72-in feeding and leash storage shelf in structurally suitable backing"
+        ],
+        "labor": [
+          [
+            "Paint sound pet-room walls and prepare surfaces",
+            8,
+            75
+          ],
+          [
+            "Trim touch-up and caulking",
+            2,
+            75
+          ],
+          [
+            "Shelf mounting and anchors",
+            3,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            7,
+            1
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "games-hobbies": {
+      "basic": {
+        "scenario": "Sound 10 x 10 ft hobby room, 8-ft walls; paint up to 320 sq ft walls, install one 72-in shelf with three brackets in verified backing, construct one basic freestanding 4-ft plywood-and-stud worktable (non-load-rated; not a machinery bench), and swap one compatible existing 4-ft utility light. No new wiring, outlets or structural/cabinet work.",
+        "work": [
+          "Paint up to 320 sq. ft. of sound existing hobby-room walls",
+          "Build one simple freestanding 4-ft plywood worktable and install one 72-in storage shelf",
+          "Replace one compatible 4-ft light at existing safe electrical connection"
+        ],
+        "labor": [
+          [
+            "Walls and routine preparation painting",
+            8,
+            75
+          ],
+          [
+            "Build basic 4-ft freestanding hobby worktable",
+            5,
+            75
+          ],
+          [
+            "Install storage shelf in sound backing",
+            3,
+            75
+          ],
+          [
+            "Replace one compatible existing light",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            35,
+            1
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
       }
     }
   }
