@@ -116,7 +116,7 @@ test('Accessibility package asks relevant feature counts instead of an unrelated
   const dom=await load('project.html','?project=accessibility');
   try{
     const w=dom.window,d=w.document;
-    const button=d.querySelector('.pkg-add[data-package="basic"]');
+    const button=d.querySelector('.pkg-add[data-package="standard"]');
     assert.equal(button?.textContent,'Calculate Quote');
     button.click();
     assert.ok(d.querySelector('#pkg-feature-grid')||d.querySelector('.pkg-feature-grid'));
