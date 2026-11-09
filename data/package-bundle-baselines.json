@@ -1,6 +1,6 @@
 {
   "asOf": "2026-11-09",
-  "status": "Provisional bounded package cost bases using $75/hr planning assumptions and marked-up material references; owner scope approval and on-site verification needed before firm quotation.",
+  "status": "Bounded, itemized preliminary examples at $75/hour, 7% labor discount and 10% fees. Price already includes reference material markup; owner and site verification required.",
   "currency": "USD",
   "markupAlreadyIncluded": true,
   "baselines": {
@@ -207,6 +207,113 @@
             1
           ]
         ]
+      },
+      "deluxe": {
+        "scenario": "Sound 10 x 12 ft bedroom, 8-ft ceiling, all Bedroom Standard painting, existing light and up to 120 sq ft LVP with quarter-round; add one two-tone accent paint feature with 16 ft of chair rail and one 72-in closet shelf with three matching brackets in verified backing. No cabinets, new wiring, flooring removal, major plaster repairs or built-ins.",
+        "work": [
+          "All Bedroom Standard painting, trim, compatible light, click-lock LVP and quarter-round",
+          "Add one two-color feature wall with up to 16 ft of chair rail",
+          "Install one 72-in closet storage shelf on verified suitable framing"
+        ],
+        "labor": [
+          [
+            "Walls and ceiling preparation and painting",
+            9,
+            75
+          ],
+          [
+            "Trim touch-up and caulk",
+            2,
+            75
+          ],
+          [
+            "Existing-connection light replacement",
+            1,
+            150
+          ],
+          [
+            "Install 120 sq ft LVP on sound prepared subfloor",
+            1,
+            575
+          ],
+          [
+            "Install 44 ft quarter round at $1.25/ft",
+            1,
+            55
+          ],
+          [
+            "Accent wall two-tone paint, 12 ft segment",
+            1,
+            175
+          ],
+          [
+            "Install and paint 16 ft chair rail",
+            2,
+            75
+          ],
+          [
+            "Install closet shelf",
+            3,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            4
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            12,
+            132
+          ],
+          [
+            38,
+            6
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
       }
     },
     "closets-storage": {
@@ -467,6 +574,91 @@
             1
           ]
         ]
+      },
+      "deluxe": {
+        "scenario": "Sound 10 x 12 ft dining room, 8-ft ceiling, with all bounded Dining Standard painting, accent chair-rail, one existing light; install up to 120 sq ft click-lock LVP over a verified dry, flat existing subfloor, plus 44 ft quarter-round. No old floor removal, stairs, subfloor repairs, moisture remediation or electrical work.",
+        "work": [
+          "All Dining Room Standard painting, trim, chair rail, two-tone accent and existing light",
+          "Install up to 120 sq. ft. click-lock LVP on suitable existing subfloor",
+          "Finish up to 44 linear ft. with matching quarter-round"
+        ],
+        "labor": [
+          [
+            "Dining Basic painting, trim and light",
+            11,
+            75
+          ],
+          [
+            "Existing light replacement",
+            1,
+            150
+          ],
+          [
+            "Chair rail installation, finishing and painting",
+            1,
+            75
+          ],
+          [
+            "Accent two-tone masking and finishing",
+            2,
+            75
+          ],
+          [
+            "Install up to 120 sq ft click-lock LVP over suitable existing subfloor",
+            1,
+            575
+          ],
+          [
+            "Install 44 linear ft quarter round at $1.25/ft",
+            1,
+            55
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            5
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            12,
+            132
+          ],
+          [
+            38,
+            6
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
       }
     },
     "garage": {
@@ -724,6 +916,176 @@
             1
           ]
         ]
+      },
+      "standard": {
+        "scenario": "Sound 12 x 16 ft family room with 8-ft ceiling, 448 sq ft walls two coats and 192 sq ft ceiling one white coat; 56 ft existing trim, one compatible light, one 16-ft chair rail on sound existing 12-ft wall plus two-tone accent. No wallpaper, new circuit or structure changes.",
+        "work": [
+          "All Living & Family Room Basic wall, ceiling, trim and light refresh",
+          "Add one two-color feature wall with up to 16 linear ft. chair rail",
+          "Finish paint and caulk on the selected accent wall"
+        ],
+        "labor": [
+          [
+            "Wall and ceiling prep and painting",
+            12,
+            75
+          ],
+          [
+            "Touch up existing trim",
+            2,
+            75
+          ],
+          [
+            "Existing-connection light replacement",
+            1,
+            150
+          ],
+          [
+            "Install, finish and paint up to 16 ft chair rail",
+            2,
+            75
+          ],
+          [
+            "Two-color accent layout and edge finishing",
+            2,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            5
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            65,
+            2
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      },
+      "deluxe": {
+        "scenario": "All bounded 12 x 16 ft Living & Family Standard with feature chair rail, two-color accent wall and existing light, plus 192 sq ft click-lock LVP flooring over verified dry flat subfloor with up to 56 linear ft quarter round. No flooring removal, moisture repair, structural work or fireplace conversion.",
+        "work": [
+          "All Living & Family Room Standard paint, feature wall and existing lighting",
+          "Install up to 192 sq. ft. click-lock LVP on suitable existing subfloor",
+          "Install up to 56 linear ft of matching quarter-round trim"
+        ],
+        "labor": [
+          [
+            "Wall and ceiling prep and painting",
+            12,
+            75
+          ],
+          [
+            "Touch up existing trim",
+            2,
+            75
+          ],
+          [
+            "Existing-connection light replacement",
+            1,
+            150
+          ],
+          [
+            "Install, finish and paint up to 16 ft chair rail",
+            2,
+            75
+          ],
+          [
+            "Two-color accent layout and edge finishing",
+            2,
+            75
+          ],
+          [
+            "Install up to 192 sq ft click-lock LVP on ready subfloor",
+            12,
+            75
+          ],
+          [
+            "Install up to 56 linear ft quarter-round",
+            1,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            5
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            65,
+            2
+          ],
+          [
+            12,
+            212
+          ],
+          [
+            38,
+            7
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
       }
     },
     "home-office": {
@@ -1369,6 +1731,154 @@
           ],
           [
             35,
+            1
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "mechanic-shop": {
+      "basic": {
+        "scenario": "Existing 12 x 12 ft dry shop on sound floor; build one non-engineered 4-ft plywood and stud workbench, mount one 72-in parts shelf in sound backing, add one 48-in rod with compatible brackets for light hoses, and replace one existing 4-ft utility light at safe connection. Excludes heavy equipment, lifts, utility modifications, ventilation and cabinets.",
+        "work": [
+          "Build one simple freestanding 4-ft plywood workbench for light-duty shop use",
+          "Install one 72-in parts shelf and one 48-in hose storage rod in verified backing",
+          "Replace one compatible 4-ft shop light on existing safe wiring"
+        ],
+        "labor": [
+          [
+            "Basic shop layout, workbench construction and finish",
+            7,
+            75
+          ],
+          [
+            "Shelf and light hose-rod installation",
+            4,
+            75
+          ],
+          [
+            "Existing light replacement",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            35,
+            1
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            61,
+            1
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            46,
+            1
+          ]
+        ],
+        "materialConsumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "music-creative-studio": {
+      "basic": {
+        "scenario": "Existing sound 10 x 10 ft studio with dry, sound concrete floor and 8-ft walls; two coats painted up to 320 sq ft walls, coat 100 sq ft existing concrete slab with standard floor paint after routine cleaning, fit one 72-in shelf and compatible light. No carpet, wood floor, soundproofing, acoustic panels, new circuits or instrument furniture.",
+        "work": [
+          "Paint up to 320 sq. ft. of existing sound studio walls",
+          "Coat up to 100 sq. ft. of existing dry, sound concrete floor",
+          "Install one 72-in instrument/supply shelf and replace one compatible existing utility light"
+        ],
+        "labor": [
+          [
+            "Paint and prepare 320 sq ft studio walls",
+            8,
+            75
+          ],
+          [
+            "Paint sound concrete floor at $2.50/sq ft",
+            1,
+            250
+          ],
+          [
+            "Shelf mounting into sound backing",
+            3,
+            75
+          ],
+          [
+            "One safe existing-connection utility light replacement",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            3
+          ],
+          [
+            55,
             1
           ],
           [
