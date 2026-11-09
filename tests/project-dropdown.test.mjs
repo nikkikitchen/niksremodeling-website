@@ -63,7 +63,7 @@ test('Project hub pages show actual nested project pictures',async()=>{
   }
  }finally{dom.window.close()}
 });
-test('All 40 additional packages have Basic and Premium scope',async()=>{
+test('All 40 additional packages have Basic, Standard and Deluxe scope',async()=>{
  const dom=await load();
  try{
   const map=dom.window.PROJECT_PACKAGE_CHOICES;
@@ -77,7 +77,7 @@ test('Room, specialty, themed and outdoor pages open package choices first',asyn
   const dom=await page(id);
   try{
    const doc=dom.window.document;
-   assert.deepEqual([...doc.querySelectorAll('.pkg-choice .pkg-image strong')].map(x=>x.textContent),['Basic','Premium','Custom'],id);
+   assert.deepEqual([...doc.querySelectorAll('.pkg-choice .pkg-image strong')].map(x=>x.textContent),['Basic','Standard','Deluxe','Custom'],id);
    assert.equal(doc.querySelector('#project-work-grid'),null,id);
    assert.ok(doc.querySelector('.pkg-choice:last-child a.btn')?.getAttribute('href').includes('roomMode=individual'),id);
   }finally{dom.window.close()}
