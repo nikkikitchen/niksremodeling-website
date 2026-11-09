@@ -63,7 +63,7 @@ test('Reference page displays every material alphabetically without claiming liv
  const labels=rows.map(tr=>tr.firstElementChild.textContent);
  assert.deepEqual(labels,labels.slice().sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'})));
  assert.equal(doc.querySelectorAll('.reference-material-prices a[href*="checkout"]').length,0);
- assert.match(doc.querySelector('.reference-material-prices .calc-note').textContent,/not confirmed U.S. warehouse stock/i);
+ assert.match(doc.querySelector('.reference-material-prices .calc-note').textContent,/not owner-approved or confirmed U.S. warehouse stock/i);
  dom.window.close();
 });
 
