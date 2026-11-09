@@ -1,0 +1,1001 @@
+{
+  "asOf": "2026-11-09",
+  "status": "Draft material-costed, labor-hour allowances; review before advertising as fixed price",
+  "currency": "USD",
+  "markupAlreadyIncluded": true,
+  "baselines": {
+    "basement": {
+      "basic": {
+        "scenario": "Sound, dry 10 x 12 ft basement, 8-ft ceiling; paint up to 120 sq ft existing concrete floor (no grinding/moisture remediation), two-coat refresh of up to 352 sq ft sound walls, touch up up to 44 linear ft existing painted trim, replace one compatible existing light. No new wiring, framing, flooring replacement, or moisture repairs.",
+        "work": [
+          "Paint up to 120 sq. ft. of sound existing concrete floor",
+          "Refresh up to 352 sq. ft. of existing walls and up to 44 ft. of trim",
+          "Replace one compatible light fixture at an existing safe connection"
+        ],
+        "labor": [
+          [
+            "Concrete-floor preparation and coating, 120 sq ft at $2.50/sq ft",
+            1,
+            300
+          ],
+          [
+            "Wall preparation and painting, up to 352 sq ft",
+            8,
+            75
+          ],
+          [
+            "Existing trim touch-ups and caulk",
+            2,
+            75
+          ],
+          [
+            "Replace one existing-connection light",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            55,
+            1
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "bedroom-guest-room": {
+      "basic": {
+        "scenario": "10 x 12 ft sound bedroom, 8-ft ceiling; two coats on existing walls (up to 352 sq ft), one white ceiling coat (120 sq ft), existing trim touch-up up to 44 linear ft, one compatible ceiling light swapped at existing suitable wiring. No drywall repairs, furniture move, or new wiring.",
+        "work": [
+          "Paint up to 352 sq. ft. of walls in two coats and one white coat on a 120 sq. ft. ceiling",
+          "Touch up up to 44 linear ft. of existing painted trim",
+          "Replace one compatible existing-connection ceiling light"
+        ],
+        "labor": [
+          [
+            "Walls and ceiling preparation and painting",
+            9,
+            75
+          ],
+          [
+            "Trim touch-up and caulk",
+            2,
+            75
+          ],
+          [
+            "Existing-connection light replacement",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            4
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      },
+      "standard": {
+        "scenario": "Bedroom Basic scope plus 120 sq ft click-lock LVP installation on existing flat, dry subfloor and up to 44 linear ft matching quarter-round, no subfloor repair, stairs, removal, or underlayment upgrade; verify flooring manufacturer's underlayment requirements before acceptance.",
+        "work": [
+          "Everything in Bedroom Basic",
+          "Install up to 120 sq. ft. of click-lock LVP over suitable existing subfloor",
+          "Install up to 44 linear ft. of matching quarter-round trim"
+        ],
+        "labor": [
+          [
+            "Walls and ceiling preparation and painting",
+            9,
+            75
+          ],
+          [
+            "Trim touch-up and caulk",
+            2,
+            75
+          ],
+          [
+            "Existing-connection light replacement",
+            1,
+            150
+          ],
+          [
+            "Install 120 sq ft LVP on sound prepared subfloor",
+            1,
+            575
+          ],
+          [
+            "Install 44 ft quarter round at $1.25/ft",
+            1,
+            55
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            4
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            12,
+            132
+          ],
+          [
+            38,
+            6
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "closets-storage": {
+      "basic": {
+        "scenario": "One existing sound 6-ft closet wall; mount a 6-ft wire shelf with hanging rod in suitable backing, with a second hanging rod as needed; minor existing wall/trim touch-ups. No new light wiring, cabinetry or structural work.",
+        "work": [
+          "Install one 6-ft wire shelf and rod system in suitable existing wall backing",
+          "Fit up to two supporting brackets and one additional 48-in rod as needed",
+          "Touch up minor existing closet paint and trim"
+        ],
+        "labor": [
+          [
+            "Layout, stud verification, shelf and rod installation",
+            5,
+            75
+          ],
+          [
+            "Wall and trim paint touch-ups and cleanup",
+            2,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            60,
+            1
+          ],
+          [
+            61,
+            1
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            6,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      },
+      "standard": {
+        "scenario": "Closet Basic plus one 72-inch laminated shelf with three heavy-duty brackets and one compatible existing-connection recessed light retrofit; no new can or wiring. Existing walls sound and suitable for loading.",
+        "work": [
+          "Everything in Closets & Storage Basic",
+          "Add one 72-in laminated storage shelf and three brackets",
+          "Retrofit one existing compatible recessed light and finish paint touch-ups"
+        ],
+        "labor": [
+          [
+            "Closet Basic installation and touch-ups",
+            7,
+            75
+          ],
+          [
+            "Install second storage shelf and brackets",
+            3,
+            75
+          ],
+          [
+            "Replace compatible existing recessed light",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            60,
+            1
+          ],
+          [
+            61,
+            1
+          ],
+          [
+            62,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            69,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "dining-room": {
+      "basic": {
+        "scenario": "10 x 12 ft sound dining room, 8-ft ceiling; paint 352 sq ft existing walls two coats, 120 sq ft ceiling one white coat, touch up 44 linear ft painted trim, change one compatible existing light. No drywall repair, new wiring or flooring.",
+        "work": [
+          "Paint up to 352 sq. ft. of dining room walls and one white ceiling coat",
+          "Touch up up to 44 linear ft. of existing painted trim",
+          "Replace one compatible dining light on existing safe wiring"
+        ],
+        "labor": [
+          [
+            "Wall and ceiling preparation and painting",
+            9,
+            75
+          ],
+          [
+            "Trim touch-ups",
+            2,
+            75
+          ],
+          [
+            "Compatible existing light replacement",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            4
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      },
+      "standard": {
+        "scenario": "Dining Basic plus one 12-foot sound accent wall chair rail (up to 16 ft of trim) with two-tone paint. Excludes wallpaper, structural framing and flooring replacement.",
+        "work": [
+          "Everything in Dining Room Basic",
+          "Install and paint up to 16 linear ft. chair rail on one existing sound wall",
+          "Add a second accent paint color to one wall"
+        ],
+        "labor": [
+          [
+            "Dining Basic painting, trim and light",
+            11,
+            75
+          ],
+          [
+            "Existing light replacement",
+            1,
+            150
+          ],
+          [
+            "Chair rail installation, finishing and painting",
+            1,
+            75
+          ],
+          [
+            "Accent two-tone masking and finishing",
+            2,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            5
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            65,
+            2
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "garage": {
+      "basic": {
+        "scenario": "Sound 10 x 12 ft attached garage floor with no moisture, cracks or coating failure; paint 120 sq ft existing concrete with routine cleaning, install one 72-in storage shelf on adequate backing, replace one compatible existing shop light. No floor grinding/epoxy, moisture remediation, new wiring or cabinets.",
+        "work": [
+          "Prepare and paint up to 120 sq. ft. of sound existing concrete floor",
+          "Mount one 72-in storage shelf in suitable existing framing",
+          "Replace one compatible 4-ft shop light at existing safe connection"
+        ],
+        "labor": [
+          [
+            "Concrete floor paint up to 120 sq ft at $2.50/sq ft",
+            1,
+            300
+          ],
+          [
+            "Shelf layout, anchoring and cleanup",
+            4,
+            75
+          ],
+          [
+            "Existing light installation",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            55,
+            1
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      },
+      "standard": {
+        "scenario": "Garage Basic plus a freestanding 4-ft basic plywood-and-stud workbench on a sound floor, not an engineered load-rated shop platform, and one additional shelf. No outlets, new wiring or flooring repairs.",
+        "work": [
+          "Everything in Garage Basic",
+          "Build one basic freestanding 4-ft workbench from plywood and framing lumber",
+          "Install one additional 72-in wall storage shelf on suitable existing framing"
+        ],
+        "labor": [
+          [
+            "Garage Basic floor, shelf and light",
+            1,
+            750
+          ],
+          [
+            "Build basic 4-ft nonstructural workbench",
+            6,
+            75
+          ],
+          [
+            "Install extra shelf",
+            3,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            55,
+            1
+          ],
+          [
+            63,
+            2
+          ],
+          [
+            64,
+            6
+          ],
+          [
+            59,
+            1
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            35,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "laundry-utility": {
+      "basic": {
+        "scenario": "8 x 10 ft utility room, sound painted walls, 8-ft ceiling; refresh up to 288 sq ft existing walls, install one 72-in shelf with three brackets and up to four hooks supplied by customer, reconnect a customer-supplied standard electric washer and dryer using existing approved lines and cords. No new plumbing/electrical, appliance purchase or repairs.",
+        "work": [
+          "Paint up to 288 sq. ft. of existing laundry walls (two coats)",
+          "Install one 72-in storage shelf and up to four customer-supplied hooks",
+          "Connect one compatible existing electric washer and dryer to approved existing connections; customer supplies suitable hoses and cords"
+        ],
+        "labor": [
+          [
+            "Paint and prep existing walls",
+            7,
+            75
+          ],
+          [
+            "Install shelf and hooks",
+            3,
+            75
+          ],
+          [
+            "Connect standard washer at existing connections",
+            1,
+            175
+          ],
+          [
+            "Connect standard electric dryer at existing connections",
+            1,
+            175
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            3
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "living-family-room": {
+      "basic": {
+        "scenario": "Sound 12 x 16 ft family room, 8-ft ceiling; paint up to 448 sq ft walls two coats and 192 sq ft ceiling one white coat; touch up existing trim up to 56 ft; replace one compatible existing light. Excludes drywall patching and new electrical.",
+        "work": [
+          "Paint up to 448 sq. ft. of walls (two coats) and 192 sq. ft. ceiling (one white coat)",
+          "Refresh existing painted trim up to 56 linear ft.",
+          "Replace one compatible light at an existing safe electrical connection"
+        ],
+        "labor": [
+          [
+            "Wall and ceiling prep and painting",
+            12,
+            75
+          ],
+          [
+            "Touch up existing trim",
+            2,
+            75
+          ],
+          [
+            "Existing-connection light replacement",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            5
+          ],
+          [
+            59,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "home-office": {
+      "basic": {
+        "scenario": "Sound 10 x 10 ft home office, 8-ft ceiling; paint up to 320 sq ft sound walls two coats, refresh 40 ft existing trim, install one 72-in shelf in sound backing, fit customer-supplied cable clips, and retrofit one compatible existing ceiling light. No new wiring/cable runs or built-ins.",
+        "work": [
+          "Paint up to 320 sq. ft. existing walls and refresh up to 40 ft existing trim",
+          "Install one 72-in wall shelf with up to three heavy-duty brackets",
+          "Organize existing visible cables with customer-supplied clips and retrofit one suitable existing light"
+        ],
+        "labor": [
+          [
+            "Paint and prepare sound walls",
+            8,
+            75
+          ],
+          [
+            "Existing trim refresh",
+            2,
+            75
+          ],
+          [
+            "Install shelf, cable organization",
+            4,
+            75
+          ],
+          [
+            "Existing light retrofit",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            3
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            69,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "kids-room": {
+      "basic": {
+        "scenario": "Sound 10 x 12 ft children's room, 8-ft ceiling; washable two-coat wall paint up to 352 sq ft and existing trim touch-up 44 ft, one 72-in storage shelf safely anchored, one suitable existing light retrofit. No play structures or new electrical.",
+        "work": [
+          "Paint up to 352 sq. ft. of sound bedroom walls with washable paint",
+          "Touch up up to 44 ft of existing trim and safely anchor one 72-in toy/storage shelf",
+          "Retrofit one compatible existing ceiling light; no new wiring"
+        ],
+        "labor": [
+          [
+            "Walls prep and washable paint",
+            9,
+            75
+          ],
+          [
+            "Existing trim touch-up",
+            2,
+            75
+          ],
+          [
+            "Shelf anchoring",
+            3,
+            75
+          ],
+          [
+            "Existing light retrofit",
+            1,
+            150
+          ]
+        ],
+        "materials": [
+          [
+            6,
+            3
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            69,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "entry-mudroom": {
+      "basic": {
+        "scenario": "6 x 8 ft existing sound mudroom with suitable backing, one 4-ft simple non-load-rated bench made from plywood and studs, one 72-in shelf, touch up 28 ft existing trim and threshold and replace one compatible existing lockset on an existing door. No door replacement or threshold rebuild.",
+        "work": [
+          "Build one 4-ft basic bench and install one 72-in storage shelf and customer-supplied wall hooks",
+          "Refresh minor existing trim and door threshold finishes",
+          "Replace one compatible existing-entry lockset on an existing sound door"
+        ],
+        "labor": [
+          [
+            "Build one basic 4-ft nonstructural bench",
+            6,
+            75
+          ],
+          [
+            "Shelf and hooks installation",
+            3,
+            75
+          ],
+          [
+            "Touch up trim and existing threshold finish",
+            2,
+            75
+          ],
+          [
+            "Replace compatible door lockset",
+            2,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            63,
+            1
+          ],
+          [
+            64,
+            3
+          ],
+          [
+            52,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "wallpaper": {
+      "basic": {
+        "scenario": "One 12-ft x 8-ft sound accent wall with existing suitable primed surface; install up to 3 customer-supplied standard double rolls of preselected compatible wallpaper. Includes routine layout and cleanup; excludes wallpaper purchase, adhesive supplied separately if required, difficult pattern matching, removal and repairs.",
+        "work": [
+          "Prepare one sound 12 × 8 ft accent wall for standard wallpaper",
+          "Install up to three customer-supplied standard double rolls at $75 per roll",
+          "Routine edge finishing and cleanup (specialty patterns or wallpaper removal quoted separately)"
+        ],
+        "labor": [
+          [
+            "Standard wallpaper installation: 3 double rolls at $75",
+            3,
+            75
+          ],
+          [
+            "Surface inspection, layout, masking and cleanup",
+            2,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            53,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    },
+    "patios-concrete": {
+      "basic": {
+        "scenario": "Existing sound, dry 10 x 12 ft concrete patio slab, paint up to 120 sq ft after routine cleaning/prep and patch one minor cosmetic surface imperfection (up to 1 labor-hour). No structural cracks, drainage issues, concrete replacement, grinding or waterproofing.",
+        "work": [
+          "Clean and paint up to 120 sq. ft. of sound existing concrete patio",
+          "Allow up to one hour for a minor cosmetic surface touch-up",
+          "Routine masking and job cleanup; structural cracks and slab repair quoted separately"
+        ],
+        "labor": [
+          [
+            "Paint sound concrete, 120 sq ft at $2.50/sq ft",
+            1,
+            300
+          ],
+          [
+            "Minor cosmetic repair and cleaning",
+            2,
+            75
+          ]
+        ],
+        "materials": [
+          [
+            55,
+            1
+          ]
+        ],
+        "consumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional"
+      }
+    }
+  }
+}
