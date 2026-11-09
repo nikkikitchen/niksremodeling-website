@@ -336,9 +336,9 @@ window.renderProjectPackageOptions=function(id,project){
     {id:'premium',name:'Premium',photo:'/assets/project-stone-real.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495},
     {id:'custom',name:'Custom',intro:'Design your own accent wall.',work:[]}
   ]:[
-    {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes[0]},
-    {id:'standard',name:'Standard',intro:'A coordinated upgrade with additional finishing work.',work:[...scopes[0],...scopes[1].slice(0,1)]},
-    {id:'deluxe',name:'Deluxe',intro:'Expanded improvements and selected premium finishes.',work:[...scopes[0],...scopes[1]]},
+    {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes?.[0]||[]},
+    {id:'standard',name:'Standard',intro:'A coordinated upgrade with additional finishing work.',work:[...(scopes?.[0]||[]),...(scopes?.[1]||[]).slice(0,1)]},
+    {id:'deluxe',name:'Deluxe',intro:'Expanded improvements and selected premium finishes.',work:[...(scopes?.[0]||[]),...(scopes?.[1]||[])]},
     {id:'custom',name:'Custom',intro:'Build your own project with individual work choices.',work:[]}
   ];
   if(window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])packs=window.NIK_ROOM_PACKAGE_OVERRIDES[id];
