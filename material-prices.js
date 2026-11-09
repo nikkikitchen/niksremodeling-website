@@ -82,6 +82,7 @@
     for(const product of estimate.products){
       const price=priceForProduct(product);
       if(!price)continue;
+      const ref=byId.get(price.referenceId);
       product.price=price.price;
       if(referenceFor(product.name)?.unit==='sq ft')product.unitPrice=price.eachPrice;
       product.referencePriceId=price.referenceId;
