@@ -351,7 +351,7 @@ window.renderProjectPackageOptions=function(id,project){
       choice.priceStatus=spec.priceStatus||'owner-reference';
     }
   }
-  const selected=packs.find(p=>p.id===(params.get('roomPackage')||params.get('bathPackage')||params.get('kitchenPackage'))&&p.id!=='custom');
+  const selected=packs.find(p=>p.id===(params.get('roomPackage')||params.get('bathPackage')||params.get('kitchenPackage')||params.get('accessibilityPackage'))&&p.id!=='custom');
   if(params.get('quote')==='1'&&selected){window.beginPackageQuote(id,project.title,selected,'room-project-package');return true;}
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
