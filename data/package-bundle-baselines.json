@@ -1,6 +1,6 @@
 {
   "asOf": "2026-11-09",
-  "status": "Draft material-costed, labor-hour allowances; review before advertising as fixed price",
+  "status": "Draft bounded package pricing (correctly distinguish material-reference tape and sandpaper from approved-supply catalog IDs); owner confirmation required before final offers",
   "currency": "USD",
   "markupAlreadyIncluded": true,
   "baselines": {
@@ -50,14 +50,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -68,7 +60,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "bedroom-guest-room": {
@@ -108,14 +110,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -126,7 +120,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       },
       "standard": {
         "scenario": "Bedroom Basic scope plus 120 sq ft click-lock LVP installation on existing flat, dry subfloor and up to 44 linear ft matching quarter-round, no subfloor repair, stairs, removal, or underlayment upgrade; verify flooring manufacturer's underlayment requirements before acceptance.",
@@ -182,14 +186,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -200,7 +196,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "closets-storage": {
@@ -243,21 +249,23 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             5,
             1
           ]
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       },
       "standard": {
         "scenario": "Closet Basic plus one 72-inch laminated shelf with three heavy-duty brackets and one compatible existing-connection recessed light retrofit; no new can or wiring. Existing walls sound and suitable for loading.",
@@ -315,21 +323,23 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             5,
             1
           ]
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "dining-room": {
@@ -369,14 +379,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -387,7 +389,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       },
       "standard": {
         "scenario": "Dining Basic plus one 12-foot sound accent wall chair rail (up to 16 ft of trim) with two-tone paint. Excludes wallpaper, structural framing and flooring replacement.",
@@ -434,14 +446,6 @@
         ],
         "consumables": [
           [
-            44,
-            2
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -452,7 +456,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "garage": {
@@ -498,7 +512,11 @@
             1
           ]
         ],
-        "consumables": [
+        "consumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
           [
             44,
             1
@@ -507,10 +525,7 @@
             45,
             1
           ]
-        ],
-        "laborDiscountPercent": 7,
-        "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        ]
       },
       "standard": {
         "scenario": "Garage Basic plus a freestanding 4-ft basic plywood-and-stud workbench on a sound floor, not an engineered load-rated shop platform, and one additional shelf. No outlets, new wiring or flooring repairs.",
@@ -566,7 +581,11 @@
             1
           ]
         ],
-        "consumables": [
+        "consumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
           [
             44,
             1
@@ -575,10 +594,7 @@
             45,
             1
           ]
-        ],
-        "laborDiscountPercent": 7,
-        "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        ]
       }
     },
     "laundry-utility": {
@@ -627,14 +643,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -645,7 +653,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "living-family-room": {
@@ -685,14 +703,6 @@
         ],
         "consumables": [
           [
-            44,
-            2
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -703,7 +713,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            2
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "home-office": {
@@ -756,14 +776,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -774,7 +786,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "kids-room": {
@@ -827,14 +849,6 @@
         ],
         "consumables": [
           [
-            44,
-            1
-          ],
-          [
-            45,
-            1
-          ],
-          [
             2,
             1
           ],
@@ -845,7 +859,17 @@
         ],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
+          [
+            44,
+            1
+          ],
+          [
+            45,
+            1
+          ]
+        ]
       }
     },
     "entry-mudroom": {
@@ -900,7 +924,11 @@
             1
           ]
         ],
-        "consumables": [
+        "consumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
           [
             44,
             1
@@ -909,10 +937,7 @@
             45,
             1
           ]
-        ],
-        "laborDiscountPercent": 7,
-        "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        ]
       }
     },
     "wallpaper": {
@@ -941,7 +966,11 @@
             1
           ]
         ],
-        "consumables": [
+        "consumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
           [
             44,
             1
@@ -950,10 +979,7 @@
             45,
             1
           ]
-        ],
-        "laborDiscountPercent": 7,
-        "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        ]
       }
     },
     "patios-concrete": {
@@ -982,7 +1008,11 @@
             1
           ]
         ],
-        "consumables": [
+        "consumables": [],
+        "laborDiscountPercent": 7,
+        "projectFeePercent": 10,
+        "priceStatus": "research-provisional",
+        "materialConsumables": [
           [
             44,
             1
@@ -991,10 +1021,7 @@
             45,
             1
           ]
-        ],
-        "laborDiscountPercent": 7,
-        "projectFeePercent": 10,
-        "priceStatus": "research-provisional"
+        ]
       }
     }
   }
