@@ -42,3 +42,23 @@ test('Every scoped project has four usable picture packages and an active measur
   }finally{dom.window.close();}
  }
 });
+
+test('Accent Walls uses matching visible tier names and keeps existing package links',async()=>{
+ const dom=await open('accents');
+ try{
+  const cards=[...dom.window.document.querySelectorAll('.pkg-choice')];
+  assert.deepEqual(cards.map(c=>c.querySelector('.pkg-image strong')?.textContent),['Basic','Standard','Deluxe','Custom']);
+  // Preserve existing direct links while customer-facing names are normalized.
+  assert.deepEqual(cards.slice(0,3).map(c=>c.querySelector('.pkg-add')?.dataset.package),['basic','deluxe','premium']);
+  assert.ok(cards.slice(0,3).every(c=>c.querySelector('.pkg-pricing')?.textContent.includes('Preliminary estimate')));
+ }finally{dom.window.close();}
+});
+test('Audited attic Basic applies seven-percent labor discount without double material markup',async()=>{
+ const dom=await open('attic');
+ try{
+  const spec=dom.window.NIK_AUDITED_PACKAGE_PRICES?.attic?.basic;
+  assert.equal(spec.laborDiscountPercent,7);
+  assert.equal(dom.window.NIK_CALCULATE_PACKAGE_BASELINE(spec).startingAt,1735);
+  assert.match(dom.window.document.querySelector('.pkg-pricing')?.textContent||'',/Starting at \$1,735/);
+ }finally{dom.window.close();}
+});
