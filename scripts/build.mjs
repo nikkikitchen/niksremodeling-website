@@ -117,7 +117,7 @@ let packageLinesUpdated=0;
 for(const file of ['room-projects.js','project-options.js']){
   const target=new URL(file,output);
   const original=readFileSync(target,'utf8');
-  const priceLine=/((?:"name"|name)\\s*:\\s*(['"])(.*?)\\2\\s*,\\s*(?:"quantity"|quantity)\\s*:\\s*\\d+(?:\\.\\d+)?\\s*,\\s*(?:"unitPrice"|unitPrice)\\s*:\\s*)(\\d+(?:\\.\\d+)?)/g;
+  const priceLine=/((?:"name"|name)\s*:\s*(['"])(.*?)\2\s*,\s*(?:"quantity"|quantity)\s*:\s*\d+(?:\.\d+)?\s*,\s*(?:"unitPrice"|unitPrice)\s*:\s*)(\d+(?:\.\d+)?)/g;
   const synchronized=original.replace(priceLine,(whole,prefix,quote,name,previous)=>{
     const approved=namedReferencePrices.get(name.toLowerCase());
     if(approved===undefined)return whole;
@@ -139,8 +139,8 @@ if(!paintReference||!(paintReference.price>0))throw Error('Approved interior fla
  const originalRate='const paintMaterial=paintGallons*48.60;';
  if(!content.includes(originalRate))throw Error('Measured paint pricing marker missing.');
  content=content.replace(originalRate,'const paintMaterial=paintGallons*'+String(paintReference.price)+';');
- content=content.replace(/extraPaintGallons\\*48\\.60/g,'extraPaintGallons*'+String(paintReference.price));
- content=content.replace(/extraPrimerGallons\\*47\\.22/g,'extraPrimerGallons*'+String(approvedMaterialPrices.find(x=>x.name==='Interior Bonding Primer (1 Gallon)')?.price??47.22));
+ content=content.replace(/extraPaintGallons\*48\.60/g,'extraPaintGallons*'+String(paintReference.price));
+ content=content.replace(/extraPrimerGallons\*47\.22/g,'extraPrimerGallons*'+String(approvedMaterialPrices.find(x=>x.name==='Interior Bonding Primer (1 Gallon)')?.price??47.22));
  content=content.replace("gallons × $50 = ","gallons × $"+String(paintReference.price.toFixed(2))+" = ");
  writeFileSync(target,content);
  hashes['room-projects.js']=createHash('sha256').update(content).digest('hex');
