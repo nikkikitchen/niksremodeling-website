@@ -533,7 +533,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
       // The painting subtotal is already part of package pricing, not an add-on.
       const wallLabor=wallPaint?(accentOnly?Math.max(175,Math.ceil(wallArea*1.50/5)*5):Math.round(wallArea*1.50*100)/100):0;
       const ceilingLabor=ceilingPaint?Math.round(ceilingArea*0.75*1.2*100)/100:0;
-      const paintMaterial=paintGallons*50;
+      const paintMaterial=paintGallons*48.60;
       // Advertising starting prices assume a straightforward 12 x 8 ft accent wall.
       // Larger walls increase the estimated minimum; this is never a payable bill.
       // Paint-only reference lines are not reused as if they fully priced chair rail.
@@ -572,7 +572,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
         (ceilingPaint?row('One-coat ceiling paint',ceilingGallons+' gallons; measured painting labor '+money(ceilingLabor)):'')+
         (basementFloor!=='none'?row('Concrete floor '+basementFloor+' labor',pretty(floorArea)+' sq. ft. = '+money(basementFloorLabor)+' (materials and prep not yet priced)'):'')+
         (basementLights?row('Existing-connection light replacement labor',basementLights+' × $150 = '+money(basementLightLabor)+' (fixtures not yet priced)'):'')+
-        (paintGallons?row('Paint material allowance',paintGallons+' gallons × $50 = '+money(paintMaterial)+' (part of project estimate)'):'')+
+        (paintGallons?row('Paint material allowance',paintGallons+' gallons × $48.60 = '+money(paintMaterial)+' (part of project estimate)'):'')+
         (backsplash?row('Backsplash',pretty(backsplashArea)+' sq. ft. (to verify)'):'')+
         (cabinets?row('Cabinet boxes',cabinetBoxes+' (to verify)'):'')+
         (counters?row('Countertops',pretty(counterLength)+' linear ft. (to verify)'):'')+
