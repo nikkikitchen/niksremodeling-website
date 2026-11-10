@@ -172,7 +172,7 @@ test('Accent Wall package advertises the new chair-rail starting price and never
  const dom=await load('project.html','?project=accents');
  try{
   const w=dom.window,d=w.document;
-  assert.ok(d.querySelector('.pkg-pricing')?.textContent.includes('$395'));
+  assert.ok(d.querySelector('.pkg-pricing')?.textContent.includes('$585'));
   assert.equal(d.querySelectorAll('.pkg-choice').length,4);
   d.querySelector('.pkg-add[data-package="basic"]').click();
   d.getElementById('pkg-length-ft').value='12';
@@ -181,7 +181,7 @@ test('Accent Wall package advertises the new chair-rail starting price and never
   assert.equal(d.querySelector('#pkg-measure-result').hidden,false);
   d.getElementById('pkg-confirm-add').click();
   const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
-  assert.equal(item.startingAt,395);
+  assert.equal(item.startingAt,585);
   assert.equal(item.measurements.wallArea,96);
   assert.equal(item.price,null);
   assert.equal(item.quoteRequired,true);
@@ -206,7 +206,7 @@ test('Larger accent walls keep their measured size and require a confirmed quote
   assert.equal(item.measurements.wallPaintLabor,300);
   assert.equal(item.quoteRequired,true);
   assert.equal(item.price,null);
-  assert.ok(item.startingAt>395,'Larger accent walls must increase the measured starting estimate');
+  assert.ok(item.startingAt>585,'Larger accent walls must increase the measured starting estimate');
  }finally{dom.window.close()}
 });
 
