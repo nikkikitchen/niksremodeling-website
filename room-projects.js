@@ -361,7 +361,7 @@ window.renderProjectPackageOptions=function(id,project){
         {name:'1-Gallon Interior Flat Latex Paint — second color',quantity:1,unitPrice:48.60},
         {name:'Interior Bonding Primer (1 Gallon)',quantity:1,unitPrice:47.22},
         {name:'Primed Pine Chair Rail (2.5 in x 8 ft)',quantity:2,unitPrice:10.77},
-        {name:'Caulk (10.1 oz Silicone Tub & Tile), provisional general caulk allowance',quantity:1,unitPrice:10.12}
+        {name:'Paintable acrylic-latex trim caulk (provisional $10.12 allowance; SKU confirmation required)',quantity:1,unitPrice:10.12}
       ],
       consumables:[
         {name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48},
