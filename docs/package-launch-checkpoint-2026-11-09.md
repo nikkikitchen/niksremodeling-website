@@ -6,7 +6,7 @@
 
 - General project categories use Basic, Standard, Deluxe, and Custom cards, with quote-required labels where component costs are not known. Accent Walls now shows Basic, Standard, Deluxe, Custom (its legacy internal deluxe/premium IDs remain to preserve existing deep links); Accessibility shows Basic, Standard, Premium, Custom.
 - 27 costed **provisional** package tiers in 19 generic project categories are backed by saved, bounded labor/material/supply lines. Itemized Attic Basic now starts at **$1,735** using the 7% labor discount. Its storage-load and electrical assumptions still require on-site verification.
-- Historical special-category advertised starts remain Bathroom Basic/Standard/Deluxe **$995/$2,195/$3,195**, Kitchen **$1,995/$6,495/$17,995**, Accent Walls **$395/$695/$1,495**, and Premium Accessibility **$3,915** (ramp scope not fully re-costed).
+- Historical special-category advertised starts remain Bathroom Basic/Standard/Deluxe **$995/$2,195/$3,195**, Kitchen **$1,995/$6,495/$17,995**, Accent Walls **$585/$695/$1,495** (Basic re-costed November 9; other two historical), and Premium Accessibility **$3,915** (ramp scope not fully re-costed).
 - Basic and Standard Accessibility Safety now have separately itemized bounded scopes, and are not the same tier.
 - No current starting estimate is an invoice: all measured packages are saved to the Review Cart as a **quote request** (price is null), not a payment request.
 - Pricing uses the $75/hour labor assumption, a 7% **labor** discount on costed provisional tiers and the older itemized Attic Basic scope, a 10% fee allowance on their gross component cost, and **already marked-up** materials (35% markup not applied twice). Actual shipping and tax remain separate and require confirmation.
@@ -52,7 +52,7 @@ All provisional scopes assume the exact sizes, quantities, surface conditions, a
 
 Many Standard/Deluxe tiers and special projects remain **quote required**, including custom cabinetry, unsupported or structural ramps, large outdoor decks and railings, gas appliances/fireplaces, remodel additions, specialty acoustic floors, pergolas, and complex utilities. Do not invent a price for missing fixtures, structural components, compliance requirements, or installation labor.
 
-Wallpaper Basic is drafted but deliberately **not advertised at a numeric price** until the wallcovering and adhesive selection is included or clearly customer-supplied and approved. Full package calculations for legacy Bathroom, Kitchen, Accent Walls (especially whether $395 covers chair rail and two-color paint), and Premium Accessibility need component-level reconciliation. Accent Walls now explicitly marks its historical prices as preliminary estimates rather than final quotes; numeric amounts remain unchanged.
+Wallpaper Basic is drafted but deliberately **not advertised at a numeric price** until the wallcovering and adhesive selection is included or clearly customer-supplied and approved. Full package calculations for legacy Bathroom, Kitchen, Accent Walls Standard/Deluxe, and Premium Accessibility need component-level reconciliation. Accent Walls Basic was re-costed to **$585** for up to 12×8 ft with 16 ft chair rail, two paint colors, primer, paintable caulk allowance and consumables; its price is still provisional until product selection and final dimensions are approved. Accent Walls now explicitly marks its historical prices as preliminary estimates rather than final quotes; numeric amounts remain unchanged.
 
 ## Remaining launch-gate checks
 
