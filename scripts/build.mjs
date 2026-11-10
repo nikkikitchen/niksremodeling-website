@@ -106,6 +106,46 @@ for (const file of files) {
   hashes[file] = createHash('sha256').update(readFileSync(target)).digest('hex');
 }
 
+// Synchronize priced package line items with the same already-marked-up material
+// and supply reference catalogs used by the planning pages. Never add 35% twice.
+// Only exact named, unit-priced materials/consumables are synchronized; labor,
+// unverified fixture allowances, and custom quoted items stay untouched.
+const approvedMaterialPrices=JSON.parse(readFileSync(new URL('../material-price-reference.json',import.meta.url),'utf8')).items;
+const approvedSupplyPrices=supplyReference.items;
+const namedReferencePrices=new Map([...approvedMaterialPrices,...approvedSupplyPrices].map(item=>[item.name.toLowerCase(),item.price]));
+let packageLinesUpdated=0;
+for(const file of ['room-projects.js','project-options.js']){
+  const target=new URL(file,output);
+  const original=readFileSync(target,'utf8');
+  const priceLine=/((?:"name"|name)\\s*:\\s*(['"])(.*?)\\2\\s*,\\s*(?:"quantity"|quantity)\\s*:\\s*\\d+(?:\\.\\d+)?\\s*,\\s*(?:"unitPrice"|unitPrice)\\s*:\\s*)(\\d+(?:\\.\\d+)?)/g;
+  const synchronized=original.replace(priceLine,(whole,prefix,quote,name,previous)=>{
+    const approved=namedReferencePrices.get(name.toLowerCase());
+    if(approved===undefined)return whole;
+    if(Number(previous)!==approved)packageLinesUpdated++;
+    return prefix+String(approved);
+  });
+  writeFileSync(target,synchronized);
+  hashes[file]=createHash('sha256').update(synchronized).digest('hex');
+}
+console.log('Package price references synchronized; changed '+packageLinesUpdated+' unit prices.');
+
+// Expose the source-of-truth paint gallon rate to the measured-project quoting
+// logic without relying on a hard-coded $50/gallon estimate.
+const paintReference=approvedMaterialPrices.find(x=>x.name==='1-Gallon Interior Flat Latex Paint');
+if(!paintReference||!(paintReference.price>0))throw Error('Approved interior flat paint price is missing.');
+{
+ const target=new URL('room-projects.js',output);
+ let content=readFileSync(target,'utf8');
+ const originalRate='const paintMaterial=paintGallons*48.60;';
+ if(!content.includes(originalRate))throw Error('Measured paint pricing marker missing.');
+ content=content.replace(originalRate,'const paintMaterial=paintGallons*'+String(paintReference.price)+';');
+ content=content.replace(/extraPaintGallons\\*48\\.60/g,'extraPaintGallons*'+String(paintReference.price));
+ content=content.replace(/extraPrimerGallons\\*47\\.22/g,'extraPrimerGallons*'+String(approvedMaterialPrices.find(x=>x.name==='Interior Bonding Primer (1 Gallon)')?.price??47.22));
+ content=content.replace("gallons × $50 = ","gallons × $"+String(paintReference.price.toFixed(2))+" = ");
+ writeFileSync(target,content);
+ hashes['room-projects.js']=createHash('sha256').update(content).digest('hex');
+}
+
 // Rebuild the browser price data from the approved JSON source on each
 // production build. Uploading an updated reference never requires retyping
 // the 52 prices in another file.
