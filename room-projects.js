@@ -344,6 +344,40 @@ window.renderProjectPackageOptions=function(id,project){
     {id:'custom',name:'Custom',intro:'Build your own project with individual work choices.',work:[]}
   ];
   if(window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])packs=window.NIK_ROOM_PACKAGE_OVERRIDES[id];
+  // Costed Accent Basic scope replaces the older $395 single-color paint-only
+  // allowance. Chair rail, two paint colors, primer, caulk and job consumables
+  // are all included once; source catalog prices already contain 35% markup.
+  if(id==='accents'){
+    const accentBasic={
+      scenario:'One sound interior accent wall up to 12 ft wide by 8 ft tall, with up to 16 linear ft of primed chair rail, two wall colors (one gallon each), one coat of bonding primer as needed, caulk, ordinary wall preparation and cleanup. Existing baseboards remain. No drywall repair, wallpaper, electrical alterations, crown molding or specialty finishes.',
+      work:['Install and finish up to 16 linear ft of chair rail on one sound wall','Prepare and paint up to 96 sq. ft. of wall in two colors','Caulk, protect adjoining surfaces and clean up'],
+      priceStatus:'research-provisional',
+      labor:[
+        {name:'Two-color accent wall painting and edge finishing',quantity:1,unitPrice:175},
+        {name:'Install, fill and paint chair rail',quantity:2,unitPrice:75}
+      ],
+      materials:[
+        {name:'1-Gallon Interior Flat Latex Paint — first color',quantity:1,unitPrice:48.60},
+        {name:'1-Gallon Interior Flat Latex Paint — second color',quantity:1,unitPrice:48.60},
+        {name:'Interior Bonding Primer (1 Gallon)',quantity:1,unitPrice:47.22},
+        {name:'Primed Pine Chair Rail (2.5 in x 8 ft)',quantity:2,unitPrice:10.77},
+        {name:'Caulk (10.1 oz Silicone Tub & Tile), provisional general caulk allowance',quantity:1,unitPrice:10.12}
+      ],
+      consumables:[
+        {name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48},
+        {name:'Sandpaper Sheets (Assorted Grit, 5-pack)',quantity:1,unitPrice:8.10},
+        {name:'9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)',quantity:1,unitPrice:18.90},
+        {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
+      ],
+      laborDiscountPercent:7,projectFeePercent:10
+    };
+    const basic=packs.find(p=>p.id==='basic');
+    if(basic){
+      basic.work=accentBasic.work.slice();
+      Object.assign(basic,window.NIK_CALCULATE_PACKAGE_BASELINE(accentBasic));
+      basic.priceStatus=accentBasic.priceStatus;
+    }
+  }
   // Price only a defined and fully costed baseline; do not hide unpriced work.
   for(const choice of packs){
     const spec=window.NIK_AUDITED_PACKAGE_PRICES?.[id]?.[choice.id];
