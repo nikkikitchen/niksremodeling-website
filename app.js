@@ -604,39 +604,61 @@ function reconcileBathroomFixtureAllowances(cart){
  }
  return items;
 }
+// Package fixture selections are provisional until verified freight, tax treatment,
+// compatibility, supplier stock and the signed invoice are confirmed.
+const NR_PACKAGE_FIXTURE_SLOTS={
+ basic:[{kind:'faucet',title:'Vanity Faucets',allowance:125,match:/\\b(?:vanity|bathroom|lavatory)\\s+faucet\\b/i,exclude:/shower|tub|wall.mount|wall mount|part|repair|kit only/i},{kind:'accessories',title:'Bathroom Accessories',allowance:45,match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom accessory/i,exclude:/replacement parts|refill/i}],
+ standard:[{kind:'light',title:'Vanity Lights',allowance:150,match:/\\bvanity light\\b|\\bbathroom vanity lighting\\b/i,exclude:/bulb only|replacement parts|light switch|sconce pair/i},{kind:'mirror',title:'Bathroom Mirrors',allowance:100,match:/\\bbathroom mirror\\b|\\bvanity mirror\\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i}],
+ deluxe:[{kind:'light',title:'Vanity Lights',allowance:150,match:/\\bvanity light\\b|\\bbathroom vanity lighting\\b/i,exclude:/bulb only|replacement parts|light switch|sconce pair/i},{kind:'mirror',title:'Bathroom Mirrors',allowance:100,match:/\\bbathroom mirror\\b|\\bvanity mirror\\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},{kind:'accessories',title:'Bathroom Accessories',allowance:70,match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom accessory/i,exclude:/replacement parts|refill/i}]
+};
+function nrPackageSlotAllowance(pkg,slot){
+ const materials=pkg?.priceBasis?.materials||[];
+ const match={faucet:/vanity faucet/i,accessories:/bathroom accessories/i,light:/vanity light/i,mirror:/bathroom mirror/i}[slot.kind];
+ const line=materials.find(x=>match.test(x.name||''));
+ return Number(line?.unitPrice)>0?Number(line.unitPrice):slot.allowance;
+}
+function nrProjectShoppingMarkup(cart){
+ const packages=cart.filter(x=>['room-project-package','bathroom-project-package'].includes(x.source)&&x.projectId==='bathrooms'&&NR_PACKAGE_FIXTURE_SLOTS[x.packageId]);
+ if(packages.length!==1)return '';
+ const pkg=packages[0],slots=NR_PACKAGE_FIXTURE_SLOTS[pkg.packageId];
+ return '<section class="panel" style="margin:14px 0;padding:18px"><h3>Shop Within Your Bathroom Package</h3><p>Browse eligible fixture categories by allowance. Product prices are screened with an 8% planning tax reserve; shipping is confirmed by ZIP before the final quote. An item is not guaranteed included until its delivered cost and fit are verified.</p><div class="btns">'+slots.map(slot=>{
+  const allowance=nrPackageSlotAllowance(pkg,slot);
+  const url='/bathroom.html?'+new URLSearchParams({packageShop:slot.kind,packageBudget:String(allowance),packageTier:pkg.packageId});
+  return '<a class="btn outline" href="'+url+'">'+slot.title+' — up to $'+allowance.toFixed(2)+'</a>';
+ }).join('')+'</div><p class="calc-note">Other products and upgrades are still available through Shopping and priced separately unless approved as a package substitution.</p></section>';
+}
 function reconcileProjectPackageFixtureChoices(cart){
  const items=cart.map(item=>({...item}));
- const packs=items.filter(item=>['room-project-package','bathroom-project-package'].includes(item.source)&&item.projectId==='bathrooms'&&['basic','standard','deluxe'].includes(item.packageId)&&Number(item.startingAt)>0);
+ const packs=items.filter(item=>['room-project-package','bathroom-project-package'].includes(item.source)&&item.projectId==='bathrooms'&&NR_PACKAGE_FIXTURE_SLOTS[item.packageId]);
  if(packs.length!==1)return items;
- const pkg=packs[0],tier=pkg.packageId,used=new Set();
- const coverage={basic:{faucet:125,accessories:45},standard:{light:150,mirror:100},deluxe:{light:150,mirror:100,accessories:70}}[tier];
- const lines=pkg.priceBasis?.materials||[];
+ const pkg=packs[0],used=new Set();
+ const slots=NR_PACKAGE_FIXTURE_SLOTS[pkg.packageId];
  for(const item of items){
   if(!['bathroom-retail','supplier-retail'].includes(item.source)||!item.productId||!item.variantId)continue;
+  // Do not silently credit ambiguous supplier listings or multi-unit orders.
+  if(Number(item.qty)!==1||!Number.isFinite(Number(item.price))||Number(item.price)<=0)continue;
   const name=String(item.name||'');
-  if(/vanity unit|vanity cabinet|cabinet with sink|vanity with sink|sink base cabinet/i.test(name))continue;
-  const kind=/mirror/i.test(name)?'mirror':/vanity light|bathroom light|wall light|light bar|sconce|light fixture over mirror/i.test(name)?'light':/faucet|vanity sink tap|lavatory tap/i.test(name)?'faucet':/towel bar|towel ring|toilet paper holder|robe hook|bathroom hardware/i.test(name)?'accessories':null;
-  if(!kind||!Object.hasOwn(coverage,kind)||used.has(kind))continue;
-  const pattern={light:/vanity light/i,mirror:/bathroom mirror/i,faucet:/vanity faucet/i,accessories:/bathroom accessories/i}[kind];
-  const line=lines.find(x=>pattern.test(x.name));
-  const allowance=Number(line?.unitPrice)>0?Number(line.unitPrice):coverage[kind];
-  const unit=Number(item.price),qty=Number(item.qty)||1;
-  if(!Number.isFinite(unit)||unit<=0||qty<1||!Number.isFinite(allowance)||allowance<=0)continue;
-  const credit=Math.round(Math.min(unit,allowance)*100)/100;
-  item.packageFixtureKind=kind;
+  const dept=String(item.department||'').toLowerCase();
+  if(dept!=='bathroom'&&item.source!=='bathroom-retail')continue;
+  const matches=slots.filter(slot=>slot.match.test(name)&&!slot.exclude.test(name));
+  if(matches.length!==1||used.has(matches[0].kind))continue;
+  const slot=matches[0],allowance=nrPackageSlotAllowance(pkg,slot);
+  const credit=Math.round(Math.min(Number(item.price),allowance)*100)/100;
+  if(credit<=0)continue;
+  item.packageFixtureKind=slot.kind;
   item.packageAllowanceCredit=credit;
   item.packageAllowanceLimit=allowance;
-  item.packageFixturePackage=tier;
-  item.packageOriginalUnitPrice=unit;
-  item.price=Math.round((unit-credit/qty)*100)/100;
-  used.add(kind);
+  item.packageFixturePackage=pkg.packageId;
+  item.packageOriginalUnitPrice=Number(item.price);
+  item.packageCreditProvisional=true;
+  item.price=Math.round((Number(item.price)-credit)*100)/100;
+  used.add(slot.kind);
  }
- // Existing installation labor for a covered fixture is included in the package.
- // Leave any separately purchased vanity cabinet or unmatched fixture labor alone.
  return items.filter(line=>!(line.source==='retail-installation'&&items.some(product=>
   product.packageAllowanceCredit&&product.productId&&product.variantId&&
   String(product.productId)===String(line.productId)&&String(product.variantId)===String(line.variantId))));
 }
+
 function projectEstimateMarkup(items){
  items=items.filter(x=>!customEstimate(x));
  if(!items.length)return '';
@@ -834,7 +856,7 @@ function cartCheckoutSummary(items){
  <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Priced items subtotal (excludes pending packages)':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  <div class="cart-item"><span>Merchandise, estimated freight &amp; tax (not a payment limit)</span><strong id="cart-due-now">${money((Math.round(payableSubtotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
  <div class="cart-item cart-combined-project-row"><span><strong>Combined Project Total${unconfirmedPackages.length?' (starting estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money((combinedStartingBaseCents+Math.round(retailGoodsCents*0.08))/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''}</strong></div>
- ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixtures selected within the package allowance are not charged again. Confirm fit, freight and final materials before invoice.</p>':''}
+ ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits shown are provisional until product compatibility, delivered cost, tax treatment and final invoice are verified.</p>':''}
  ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Combined project starting estimate includes the approved package minimums and estimated tax on separately priced merchandise. Tax on unconfirmed package materials and any pending delivery remains subject to the written quote. No package deposit is due online.</p>':''}
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
@@ -983,7 +1005,7 @@ function renderCart(){
  <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
   ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
-  ${x.packageAllowanceCredit?'<div class="nr-cart-meta"><strong>Included in bathroom package:</strong> $'+x.packageAllowanceCredit.toFixed(2)+' fixture allowance applied. Additional supplier delivery may apply.</div>':''}
+  ${x.packageAllowanceCredit?'<div class="nr-cart-meta"><strong>Included in bathroom package:</strong> $'+x.packageAllowanceCredit.toFixed(2)+' fixture allowance applied. Delivery and applicable tax costs are confirmed before invoice approval.</div>':''}
   ${x.source==='supplier-retail'&&/vanity (?:unit|cabinet)|cabinet with sink/i.test(x.name||'')?'<div class="nr-cart-meta">Separate vanity cabinet. Cabinet replacement labor is not included in this refresh package.</div>':''}
   ${packageMeasurementSummary(x)?`<div class="nr-cart-meta"><strong>Measurements:</strong> ${escapeCartText(packageMeasurementSummary(x))}</div>`:''}
   ${packageSources.has(x.source)&&packageQuoteLink(x)?`<a class="btn outline" href="${escapeCartText(packageQuoteLink(x))}">${packageMeasurementSummary(x)?"Edit Measurements":"Enter Measurements to Complete Quote"}</a>`:''}
@@ -992,6 +1014,7 @@ function renderCart(){
  </article>`).join('')}</div>
  <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}<a class="btn outline" href="/?open=shopping">Add Products</a></div>
  </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
+ ${nrProjectShoppingMarkup(c)}
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
  '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Add what you need directly—no extra picture gallery.</p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0"><a class="btn primary" href="/?open=shopping">Add Products</a><a class="btn outline" href="/installation.html">Add Installation &amp; Labor</a><a class="btn outline" href="/#projects">Start a Project</a></div></div>'}
