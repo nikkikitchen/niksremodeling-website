@@ -192,7 +192,7 @@ async function detailView(target,id,department){
  const saved=retailCatalog.find(p=>p.id===id&&p.department===department)||otherCandidates.find(p=>p.id===id&&department==='other');
  const pageTitle=document.getElementById('retail-page-title');
  const setTitle=name=>{document.title=name+" | Nik's Remodeling";if(pageTitle)pageTitle.textContent=name;};
- const preview=message=>saved?`<article class="store-product"><img src="${esc(saved.image)}" alt="${esc(saved.name)}"><div>${pageTitle?'':'<h2>'+esc(saved.name)+'</h2>'}<p class="price">Last checked price: from ${money(saved.priceCents)}</p><p>Price checked ${esc(saved.priceCheckedAt)}. Shipping, tax and installation extra.</p><p role="status">${message}</p></div></article>`:`<p role="status">${message}</p>`;
+ const preview=message=>saved?`<article class="store-product"><img src="${esc(saved.image)}" alt="${esc(saved.name)}"><div>${pageTitle?'':'<h2>'+esc(saved.name)+'</h2>'}<p class="price">Price and U.S. stock require confirmation</p><p role="status">${message}</p></div></article>`:`<p role="status">${message}</p>`;
  if(saved)setTitle(saved.name);
  target.innerHTML=preview('Checking this item’s current price and availability…');
  try{
@@ -246,9 +246,21 @@ export async function mountCatalog(target,{department,material,type,installKeywo
    target.classList.remove('store-card-grid');target.classList.add('retail-item-preview');
    return detailView(target,id,department);
   }
-  // Real CJ catalog items with actual supplier photographs, never invented prices.
-  // A current US-warehouse variant check is mandatory before any cart add.
-  target.innerHTML=otherCandidates.filter(p=>!requestedCategory||p.category===requestedCategory).map(p=>'<article class="card store-card"><a href="/other.html?product='+encodeURIComponent(p.id)+'"><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy"><div class="store-card-copy"><p class="store-card-category">'+esc(p.category)+'</p><h3>'+esc(p.name)+'</h3><p class="store-card-price">Check current price</p><p class="store-card-note">Supplier product · Price, U.S. stock and shipping must be verified before cart</p><span class="btn primary">View item</span></div></a></article>').join('');
+  // Never expose unverified or out-of-stock supplier candidates as clickable offers.
+  target.innerHTML='<p class="empty" role="status">Checking U.S. warehouse inventory…</p>';
+  const matches=otherCandidates.filter(p=>!requestedCategory||p.category===requestedCategory);
+  const confirmed=await Promise.all(matches.map(async p=>{
+    try{
+      const response=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
+      if(!response.ok)return null;
+      const detail=await response.json(),variants=availableVariants(detail);
+      if(!variants.length)return null;
+      return {...p,priceCents:Math.min(...variants.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)};
+    }catch{return null;}
+  }));
+  const offers=confirmed.filter(Boolean);
+  target.innerHTML=offers.length?offers.map(p=>card(p,true)).join(''):'<p class="empty" role="status">No confirmed in-stock U.S. warehouse items in this category right now.</p>';
+  if(offers.length)await priceCards(target);
   return;
  }
  const flooringTypes={'Hardwood':/\\bhardwood flooring\\b|\\bsolid hardwood\\b|\\bengineered hardwood\\b/i,'Laminate':/\\blaminate flooring\\b/i,'LVP':/\\bvinyl plank flooring\\b|\\bluxury vinyl plank\\b/i,'Luxury Vinyl Plank (LVP)':/\\bvinyl plank flooring\\b|\\bluxury vinyl plank\\b/i,'Floor Tile':/\\bfloor tile\\b|\\bflooring tile\\b/i,'Underlayment':/\\bunderlayment\\b/i};
