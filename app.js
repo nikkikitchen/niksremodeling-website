@@ -1000,7 +1000,7 @@ function renderCart(){
  <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
 
  ${c.length?`<div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
- <h2>Items in Your Cart</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
+ <h2>Items in Your Cart</h2><p class="calc-note">Shopping products are additional purchases unless an eligible fixture is explicitly credited to your package below. Shipping, applicable taxes and installation outside package scope are confirmed before you approve an invoice.</p><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
  <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
