@@ -31,7 +31,7 @@ test('supplier candidates require stocked U.S. variants and relevant product nam
 
 test('a real product detail transfers the chosen supplier variant and retail price to cart',async()=>{
  const old={fetch:globalThis.fetch,document:globalThis.document,location:globalThis.location,getCart:globalThis.getCart,saveCart:globalThis.saveCart};
- const item=retailCatalog[0],dom=new JSDOM('<head></head><main></main>',{url:'https://niksremodeling.com/cabinets.html?product='+item.id});
+ const item=retailCatalog.find(p=>p.department==='cabinets'),dom=new JSDOM('<head></head><main></main>',{url:'https://niksremodeling.com/cabinets.html?product='+item.id});
  globalThis.document=dom.window.document;globalThis.location=dom.window.location;
  const cart=[];globalThis.getCart=()=>cart;globalThis.saveCart=()=>{};
  globalThis.fetch=async()=>Response.json({name:item.name,image:item.image,inStockUS:true,warehouseCountry:'US',variants:[
@@ -50,7 +50,7 @@ test('a real product detail transfers the chosen supplier variant and retail pri
 
 test('a supplier failure cannot turn a dated listing into an addable product',async()=>{
  const old={fetch:globalThis.fetch,document:globalThis.document,location:globalThis.location};
- const item=retailCatalog[0],dom=new JSDOM('<head></head><main></main>',{url:'https://niksremodeling.com/cabinets.html?product='+item.id});
+ const item=retailCatalog.find(p=>p.department==='cabinets'),dom=new JSDOM('<head></head><main></main>',{url:'https://niksremodeling.com/cabinets.html?product='+item.id});
  globalThis.document=dom.window.document;globalThis.location=dom.window.location;
  globalThis.fetch=async()=>Response.json({error:'Unavailable'},{status:503});
  try{
