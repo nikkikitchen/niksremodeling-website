@@ -1,8 +1,8 @@
 // Shared retail listings for Bathroom. Navigation dots and product cards read the same source.
 export const bathroomCatalog=[
   {id:'2005626551095943169',type:'accessories',name:'3-Piece Brushed Nickel Bathroom Hardware Set — Towel Bar, Toilet Paper Holder and Hook',image:'https://cf.cjdropshipping.com/17669664/dd791a9d-e2a0-43e6-927c-837caea41a75.jpg',price:6610},
-  {id:'2005621308835393538',type:'accessories',name:'3-Piece Bathroom Hardware Accessories Set — Towel Bar, Holder and Robe Hook',image:'https://cf.cjdropshipping.com/17669664/da1ab3e7-ece6-48ed-bfb6-d5a6309b4af3.jpg',price:6610},
-  {id:'1872458408031350785',type:'accessories',name:'Round Metal Frame Bathroom Wall Mirror — Multiple Sizes',image:'https://cf.cjdropshipping.com/21ea4ba2-b85a-4e2d-beb4-5b0b3fa4fdc.jpg',price:3732},
+  {id:'2005621308835393538',type:'accessories',name:'3-Piece Bathroom Hardware Accessories Set — Towel Bar, Holder and Robe Hook',image:'https://cf.cjdropshipping.com/17669664/da1ab3e7-ece6-48ed-bfb6-d5a6309b4af3.jpg',price:0},
+  {id:'1872458408031350785',type:'accessories',name:'Round Metal Frame Bathroom Wall Mirror — Multiple Sizes',image:'https://cf.cjdropshipping.com/21ea4ba2-b85a-4e2d-beb4-5b0b3fa4fd3c.jpg',price:3732},
   {id:'2096917349794078722',type:'faucets',name:'Single-Handle Bathroom Vanity Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/e1d2c45530304759aee3765a73e42921.jpg',price:7767},
   {id:'2096656741040947202',type:'faucets',name:'Two-Handle Centerset Bathroom Sink Faucet with Drain',image:'https://cf.cjdropshipping.com/doba-import/97364e3f0c914e4aa3854c8e1fdebb88.jpg',price:5726},
   {id:'2096916661072584706',type:'faucets',name:'Single-Handle Bathroom Sink Faucet',image:'https://cf.cjdropshipping.com/doba-import/20accfa2eaab482f91ea2d2b74d7b88e.jpg',price:8426},
