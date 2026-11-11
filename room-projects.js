@@ -259,6 +259,7 @@ window.NIK_AUDITED_PACKAGE_PRICES={
   attic:{
     basic:{
       scenario:'Up to 120 sq. ft. (10 × 12 ft.) attic storage decking on existing structurally suitable, sufficiently elevated framing, using four 4 × 8 sheets of 3/4-in plywood. Includes one compatible basic utility light at an existing electrical connection, standard fasteners and cleanup. No new wiring, support framing, insulation work, ladder work or structural reinforcement. Site inspection is required to confirm safe storage capacity, insulation clearance and accessibility.',
+      work:['Install up to 120 sq. ft. attic storage decking on structurally suitable existing raised framing','Install one compatible utility light at an existing safe connection','Include required plywood, standard fasteners, protective consumables and ordinary job cleanup; no framing reinforcement or new circuits'],
       labor:[
         {name:'Install 120 sq. ft. attic storage decking, 15 labor-hours at $75',quantity:15,unitPrice:75},
         {name:'Install basic light at suitable existing electrical connection',quantity:1,unitPrice:150}
@@ -276,6 +277,7 @@ window.NIK_AUDITED_PACKAGE_PRICES={
   accents:{
     basic:{
       scenario:'One sound 12 × 8 ft interior accent wall, up to 96 sq. ft.; two paint coats, one bonding-primer coat, routine edge preparation and cleanup. Repairs, specialty finishes and travel outside the service area are not included.',
+      work:['Prepare, prime and paint up to 96 sq. ft. of one sound accent wall','Two paint coats with standard edge finishing','Include required paint, primer and ordinary job consumables'],
       labor:[{name:'Two-coat accent wall painting and edge finishing',quantity:1,unitPrice:175}],
       materials:[
         {name:'1-Gallon Interior Flat Latex Paint',quantity:1,unitPrice:48.60},
