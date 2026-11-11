@@ -101,17 +101,33 @@ const bathVerified=detail=>{
 };
 document.addEventListener('DOMContentLoaded',async()=>{
  const params=new URLSearchParams(location.search);
- const type=bathroomNames[params.get('type')]?params.get('type'):'all';
+ const packageSlotRules={
+  faucet:{type:'faucets',title:'Vanity Faucets',match:/\\b(?:vanity|bathroom|lavatory)\\s+faucet\\b/i,exclude:/shower|tub|wall.mount|wall mount|parts|repair/i},
+  light:{type:'lighting',title:'Vanity Lights',match:/\\bvanity light\\b|\\bbathroom vanity lighting\\b/i,exclude:/bulb only|parts|light switch/i},
+  mirror:{type:'accessories',title:'Bathroom Mirrors',match:/\\bbathroom mirror\\b|\\bvanity mirror\\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},
+  accessories:{type:'accessories',title:'Bathroom Accessories',match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom accessor/i,exclude:/parts|refill/i}
+ };
+ const slot=packageSlotRules[params.get('packageShop')]||null;
+ const budget=Number(params.get('packageBudget'));
+ const packageBudget=slot&&Number.isFinite(budget)&&budget>0&&budget<=10000?budget:null;
+ const eligibleForPackage=(name,priceCents)=>{
+  if(!slot)return true;
+  return slot.match.test(String(name||''))&&!slot.exclude.test(String(name||''))&&
+   Number.isSafeInteger(Number(priceCents))&&Number(priceCents)>0&&
+   (Number(priceCents)/100)*1.08<=packageBudget;
+ };
+ const shopParams=slot?new URLSearchParams({packageShop:params.get('packageShop'),packageBudget:String(packageBudget||0),packageTier:params.get('packageTier')||''}):null;
+ const type=slot?slot.type:bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
  const toiletModel=type==='toilets'&&toiletChoices.some(([id])=>id!=='parts'&&id===params.get('model'))?params.get('model'):null;
- const choosingToilet=type==='toilets'&&!toiletModel&&!product;
+ const choosingToilet=!slot&&type==='toilets'&&!toiletModel&&!product;
  const projectId=['bathrooms','bath-remodel'].includes(params.get('project'))?params.get('project'):null;
  const projectWork=/^[a-z0-9-]{1,60}$/.test(params.get('work')||'')?params.get('work'):null;
  const fromProject=!!projectId&&params.get('fromProject')==='1';
  const projectParams=new URLSearchParams({project:projectId||'bathrooms'});
  if(projectWork)projectParams.set('work',projectWork);
  const projectReturn='/project.html?'+projectParams.toString();
- const selectedCategory=bathroomNames[type]||'Bathroom Products';
+ const selectedCategory=slot?slot.title:(bathroomNames[type]||'Bathroom Products');
  const projectBack='<a class="btn outline" href="'+projectReturn+'">← Back to Project</a>';
  const projectControls=fromProject?'<div class="project-shopping-return">'+projectBack+' <a class="btn outline" href="/project-cart.html">Review Cart</a></div>':'';
  // Preserve a route to project planning when retail warehouse stock is unavailable.
@@ -133,11 +149,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
    bathroomTypes.map(([key,label])=>'<a class="photo-category-tile" href="/bathroom.html?type='+key+'"><img src="'+bathroomCategoryPhotos[key]+'" alt="" loading="lazy"><span><strong>'+bathEsc(label)+'</strong></span></a>').join('')+
    '</nav>';
+ const packageNotice=slot?'<section class="panel" style="padding:16px;margin:12px 0"><strong>'+bathEsc(slot.title)+' — package allowance '+bathMoney(Math.round((packageBudget||0)*100))+'</strong><p>Showing products whose listed price plus an 8% provisional tax reserve fits the allowance. Shipping is not known until your delivery ZIP is checked. These are candidates, not guaranteed included items; any freight or taxes that exceed the remaining allowance become an upgrade in your final quote.</p><a href="/project-cart.html">Back to your project cart</a></section>':'';
  const base='<main class="wrap section"><nav aria-label="Breadcrumb">'+
    (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
    '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(selectedCategory))+'</h1>'+
    '<p class="lead">'+(type==='toilets'?(choosingToilet?'Choose the type of toilet or repair part you need.':'Browse products for the selected toilet type.'):'Choose products and see prices when items are available.')+'</p>'+
-   projectControls+(type!=='all'?'':tabs)+(type==='toilets'&&toiletModel?'<p><a href="/bathroom.html?type=toilets">← All toilet types</a></p>':'');
+   packageNotice+projectControls+(type!=='all'?'':tabs)+(type==='toilets'&&toiletModel?'<p><a href="/bathroom.html?type=toilets">← All toilet types</a></p>':'');
  document.body.innerHTML=header()+base+(choosingToilet?toiletChoiceMarkup:product?
    '<div id="bath-detail" role="status">Checking product options and price…</div>':
    '<h2>'+bathEsc(type==='toilets'?(toiletChoices.find(([id])=>id===toiletModel)?.[1]||'Toilets'):(bathroomNames[type]||'Browse Bathroom'))+'</h2>'+
@@ -250,7 +267,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
  const archiveIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(data=>new Set(Object.entries(data.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
- const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id)&&(type!=='toilets'||toiletMatchesModel(p.name,toiletModel)));
+ const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id)&&(type!=='toilets'||toiletMatchesModel(p.name,toiletModel))&&eligibleForPackage(p.name,Math.round(Number(p.price)*100)));
  async function updateBathroomStock(){
   const jobs=[...savedVisible];
   async function worker(){
@@ -263,7 +280,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
      if(!r.ok)throw Error('Unverified');
      const d=await r.json();
      const verified=bathVerified(d);
-     if(!verified)throw Error('No currently verified, priced U.S. stock');
+     if(!verified||!eligibleForPackage(d.name||p.name,Math.min(...verified.map(v=>v.priceCents))))throw Error('Not currently eligible for package price screen');
      const count=verified.reduce((n,v)=>n+Math.max(0,Number(v.usStock)||0),0);
      node.textContent='In stock (U.S.): '+count;
      node.dataset.state=count>0?'available':'out';
@@ -277,7 +294,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
  }
  if(savedVisible.length){status.textContent='Checking current U.S. warehouse stock before displaying saved products…';}
  grid.insertAdjacentHTML('beforeend',savedVisible.map(p=>{
-  const href='/bathroom.html?'+new URLSearchParams({type:p.type,product:p.id});
+  const query=new URLSearchParams({type:p.type,product:p.id});if(shopParams)for(const [key,value] of shopParams)query.set(key,value);
+  const href='/bathroom.html?'+query;
   return '<article class="store-card" hidden><a href="'+bathEsc(href)+'"><img loading="lazy" src="'+bathEsc(p.image)+'" alt="'+bathEsc(p.name)+'"><div class="store-card-copy"><p class="store-card-category">'+bathEsc(bathroomNames[p.type])+'</p><h3>'+bathEsc(p.name)+'</h3><p class="store-card-price">Last checked: from '+bathMoney(p.price)+'</p><p data-bath-stock="'+bathEsc(p.id)+'" role="status" class="store-card-stock" data-state="unknown">Checking U.S. stock…</p><p class="store-card-note">Price checked October 26, 2026 · Confirm current U.S. stock and price · Shipping and tax extra</p><span class="btn primary">View item</span></div></a></article>';
  }).join(''));
  updateBathroomStock().then(()=>{const visible=grid.querySelectorAll('.store-card:not([hidden])').length;status.textContent=visible?'Showing '+visible+' products with currently confirmed U.S. stock.':'No saved products with confirmed U.S. stock right now.';const help=document.querySelector('.bath-plan-fallback');if(help)help.hidden=visible>0;});
@@ -318,7 +336,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(result.status===503)result=await fetch('/api/store-product?product='+encodeURIComponent(p.id),{cache:'no-store'});
     if(!result.ok)throw Error('Stock unavailable');
     const detail=await result.json(),variants=bathVerified(detail);
-    if(!variants||!bathroomMatch(detail.name,kind)||(kind==='toilets'&&!toiletMatchesModel(detail.name,toiletModel)))continue;
+    if(!variants||!bathroomMatch(detail.name,kind)||(kind==='toilets'&&!toiletMatchesModel(detail.name,toiletModel))||!eligibleForPackage(detail.name,Math.min(...variants.map(v=>v.priceCents))))continue;
     const name=detail.name,image=detail.image||p.image;
     if(seenIds.has(p.id)||seenNames.has(normalized(name))||seenImages.has(image))continue;
     const price=Math.min(...variants.map(v=>v.priceCents));
@@ -328,6 +346,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
       detailParams.set('project',projectId);
       if(projectWork)detailParams.set('work',projectWork);
     }
+    if(shopParams)for(const [key,value] of shopParams)detailParams.set(key,value);
     const href='/bathroom.html?'+detailParams.toString();
     const card=document.createElement('article');card.className='store-card';
     card.innerHTML='<a href="'+href+'"><img loading="lazy" src="'+bathEsc(image)+'" alt="'+bathEsc(name)+'">'+
