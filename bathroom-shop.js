@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const packageSlotRules={
   faucet:{type:'faucets',title:'Vanity Faucets',match:/\\b(?:vanity|bathroom|lavatory)\\s+faucet\\b/i,exclude:/shower|tub|wall.mount|wall mount|parts|repair/i},
   light:{type:'lighting',title:'Vanity Lights',match:/\\bvanity light\\b|\\bbathroom vanity lighting\\b/i,exclude:/bulb only|parts|light switch/i},
-  mirror:{type:'accessories',title:'Bathroom Mirrors',match:/\\bbathroom mirror\\b|\\bvanity mirror\\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},
+  mirror:{type:'accessories',title:'Bathroom Mirrors',match:/\\bbathroom (?:wall |vanity )?mirror\\b|\\bvanity mirror\\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},
   accessories:{type:'accessories',title:'Bathroom Accessories',match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom accessor/i,exclude:/parts|refill/i}
  };
  const slot=packageSlotRules[params.get('packageShop')]||null;
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  // Prices are clearly dated; details/cart still require a fresh US stock check.
 
  const archiveIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(data=>new Set(Object.entries(data.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
- const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id)&&(type!=='toilets'||toiletMatchesModel(p.name,toiletModel))&&eligibleForPackage(p.name,Math.round(Number(p.price)*100)));
+ const savedVisible=bathroomSaved.filter(p=>(type==='all'||p.type===type)&&!archiveIds.has(p.id)&&(type!=='toilets'||toiletMatchesModel(p.name,toiletModel))&&eligibleForPackage(p.name,Number(p.price)));
  async function updateBathroomStock(){
   const jobs=[...savedVisible];
   async function worker(){
