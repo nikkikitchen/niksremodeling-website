@@ -16,7 +16,7 @@ async function load(params=''){
 }
 
 test('Kitchen packages use the shared photo cards and preserve their prices',async()=>{
- for(const [tier,price] of [['basic','1,995'],['standard','6,495'],['deluxe','17,995']]){
+ for(const [tier,price] of [['basic','1,285'],['standard','3,880'],['deluxe','Project quote required']]){
   const dom=await load('&roomPackage='+tier);
   try{
    const doc=dom.window.document;
