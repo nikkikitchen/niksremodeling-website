@@ -631,7 +631,11 @@ function reconcileProjectPackageFixtureChoices(cart){
   item.price=Math.round((unit-credit/qty)*100)/100;
   used.add(kind);
  }
- return items;
+ // Existing installation labor for a covered fixture is included in the package.
+ // Leave any separately purchased vanity cabinet or unmatched fixture labor alone.
+ return items.filter(line=>!(line.source==='retail-installation'&&items.some(product=>
+  product.packageAllowanceCredit&&product.productId&&product.variantId&&
+  String(product.productId)===String(line.productId)&&String(product.variantId)===String(line.variantId))));
 }
 function projectEstimateMarkup(items){
  items=items.filter(x=>!customEstimate(x));
