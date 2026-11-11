@@ -55,7 +55,7 @@ test('a supplier failure cannot turn a dated listing into an addable product',as
  globalThis.fetch=async()=>Response.json({error:'Unavailable'},{status:503});
  try{
   const target=document.querySelector('main');await mountCatalog(target,{department:'cabinets'});
-  assert.match(target.textContent,/Last checked price/);assert.equal(document.getElementById('retail-add'),null);
+  assert.match(target.textContent,/Price and U.S. stock require confirmation/);assert.equal(document.getElementById('retail-add'),null);
  }finally{Object.assign(globalThis,old);dom.window.close();}
 });
 
@@ -73,7 +73,7 @@ test('saved item previews remain visible while stock loads and after a failed ch
   assert.equal(document.getElementById('retail-add'),null);
   finishCheck(Response.json({error:'Unavailable'},{status:503}));await pending;
   assert.equal(target.querySelector('img').getAttribute('src'),item.image);
-  assert.match(target.textContent,/Last checked price/);
+  assert.match(target.textContent,/Price and U.S. stock require confirmation/);
   assert.ok(document.getElementById('retail-retry'));
   assert.equal(document.getElementById('retail-add'),null);
  }finally{Object.assign(globalThis,old);dom.window.close();}
