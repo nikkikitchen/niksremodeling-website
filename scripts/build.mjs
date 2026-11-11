@@ -12,7 +12,7 @@ const files = ['material-price-reference.json', 'material-price-reference.html',
 // Block releases that would reintroduce missing photographs, dead local links,
 // unrelated accessibility choices, or broken browser scripts. A failed build
 // keeps the previous working Cloudflare Pages deployment serving customers.
-const integrityPages = ['material-prices.js','app.js','real-products.js','retail-catalog.js','room-projects.js','project-options.js','project-calculator-options.js','calculator-steps.js','shopping-flow.js','shop-installed.js','shop-installed.html','bathroom-shop.js','store.js','product-search.js','index.html','shopping.html','installation.html'];
+const integrityPages = ['material-prices.js','app.js','real-products.js','store-cards.js','retail-catalog.js','room-projects.js','project-options.js','project-calculator-options.js','calculator-steps.js','shopping-flow.js','shop-installed.js','shop-installed.html','bathroom-shop.js','store.js','product-search.js','index.html','shopping.html','installation.html'];
 // Keep JavaScript module dependencies in the published build; otherwise a missing
 // module can silently stop stock-marker initialization on every shopping page.
 for(const required of ['bathroom-catalog.js','retail-catalog.js','store-catalog.js']){
@@ -46,6 +46,38 @@ if(!roomSource.includes('Explore Accent Wall Projects') ||
    !['startingAt:395','startingAt:695','startingAt:1495'].every(s=>roomSource.includes(s)) ||
    !roomSource.includes('Consultation if requested or required'))
   throw Error('Accent Wall project packages or room navigation are missing.');
+// Fail the build if provisional, itemized package pricing loses its scope,
+// labor discount, fee policy, or required supply breakdown.
+const packageSpecs=(marker,after)=>{
+  const i=roomSource.indexOf(marker),j=roomSource.indexOf(after,i+marker.length);
+  if(i<0||j<0)throw Error('Cannot locate canonical package specs: '+marker);
+  return JSON.parse(roomSource.slice(i+marker.length,j));
+};
+const itemizedPackageGroups=[
+  packageSpecs('window.NIK_PROVISIONAL_PACKAGE_PRICES=',';\\nfor(const [id,tiers]'.replace('\\n','\n')),
+  packageSpecs('window.NIK_RECALCULATED_PACKAGE_SPECS=',';\\nwindow.NIK_CALCULATE_PACKAGE_BASELINE'.replace('\\n','\n'))
+];
+let checkedPackageScopes=0;
+for(const groups of itemizedPackageGroups){
+  for(const [category,tiers] of Object.entries(groups))for(const [tier,spec] of Object.entries(tiers)){
+    if(!Array.isArray(spec.work)||!spec.work.length||
+       !['labor','materials','consumables'].every(key=>Array.isArray(spec[key])&&spec[key].length)||
+       spec.laborDiscountPercent!==7||spec.projectFeePercent!==10)
+      throw Error('Incomplete or inconsistent package price: '+category+'/'+tier);
+    for(const line of [...spec.labor,...spec.materials,...spec.consumables]){
+      if(!Number.isSafeInteger(line.quantity)||line.quantity<=0||!Number.isFinite(line.unitPrice)||line.unitPrice<=0)
+        throw Error('Invalid priced line '+category+'/'+tier+': '+line.name);
+    }
+    checkedPackageScopes++;
+  }
+}
+const realProductCards=readFileSync(new URL('../real-products.js',import.meta.url),'utf8');
+const storeCardsSource=readFileSync(new URL('../store-cards.js',import.meta.url),'utf8');
+if(!realProductCards.includes("current?'':'hidden'")||
+   !realProductCards.includes('target.innerHTML=offers.length?')||
+   !storeCardsSource.includes('card.hidden=true;card.dataset.verified'))
+  throw Error('Unverified supplier cards must remain nonclickable.');
+console.log('Itemized package scope audit passed: '+checkedPackageScopes+' priced packages.');
 // Keep the homepage pictures, desktop Projects menu, and phone Projects menu
 // in the same order. An absent category must fail before Cloudflare publishes.
 const mainMatch=roomSource.match(/const PROJECT_MAIN_ENTRIES=\[([\s\S]*?)\];/);
