@@ -9,6 +9,13 @@ const files = ['material-price-reference.json', 'material-price-reference.html',
   'furniture.html', 'bathroom.html', 'appliances.html', 'cabinets.html', 'installation.html', 'terms.html', 'labor-price-review.html', 'labor-price-chart.html', 'room-labor.html',
   'calculators.html', 'project-cart.html', 'material-flooring.html', 'material-tile-stone.html', 'material-drywall.html', 'material-lumber.html', 'material-trim-molding.html', 'material-paint-finishes.html', 'material-insulation.html', 'material-roofing.html', 'material-siding-exterior.html', 'material-doors-windows.html', 'material-concrete-masonry.html', 'styles.css', 'app.js', 'project-calculator-options.js', 'calculator-simple-flow.js', 'project-options.js',
   '_headers', '.nojekyll'];
+// Only the business phone may be published. Reject the retired personal contact
+// in visible text, tel/sms links, or script-generated contact buttons.
+for(const file of files.filter(name=>/\\.(?:html|js|json)$/.test(name))){
+ const contents=readFileSync(new URL('../'+file,import.meta.url),'utf8');
+ if(/470[\\s().-]*991[\\s().-]*2133/.test(contents))
+  throw Error('Retired personal phone number still appears in '+file);
+}
 // Block releases that would reintroduce missing photographs, dead local links,
 // unrelated accessibility choices, or broken browser scripts. A failed build
 // keeps the previous working Cloudflare Pages deployment serving customers.
