@@ -110,6 +110,36 @@ const categorySearch={
 const materialSearch={'flooring':'vinyl flooring','tile-stone':'ceramic tile','drywall':'drywall panel','lumber':'lumber',
  'trim-molding':'wall molding','paint-finishes':'wallpaper','insulation':'insulation board','roofing':'roof shingle',
  'siding-exterior':'exterior siding','doors-windows':'window','concrete-masonry':'concrete paver'};
+const extraCatalogKeywords={
+ appliances:['dishwasher','range hood','microwave','washing machine','clothes dryer','ice maker','kegerator','coffee maker','wall oven','refrigerator'],
+ cabinets:['kitchen base cabinet','kitchen wall cabinet','bathroom vanity','cabinet handle','cabinet knob','pantry cabinet','storage cabinet'],
+ tools:['electric drill','circular saw','orbital sander','laser level','tile cutter','impact wrench','miter saw'],
+ materials:['vinyl flooring','ceramic tile','porcelain tile','mosaic tile','wallpaper','floor underlayment','door handle','baseboard trim','wall panel'],
+ supplies:['caulk','paint roller','paint brush','wood screws','construction adhesive','grout float','tile spacer','sandpaper','drop cloth'],
+ other:['doorbell','weather station','hose reel','pet door']
+};
+const extraCategoryKeywords={
+ Hardware:['cabinet handle','cabinet pull','cabinet knob','cabinet hinge'],
+ 'Bathroom Vanities':['bathroom vanity','bathroom vanity sink'],
+ 'Refrigerators':['refrigerator','freezer'],
+ 'Microwaves & Hoods':['range hood','microwave'],
+ 'Power Tools':['electric drill','circular saw','orbital sander'],
+ 'Plumbing Supplies':['faucet','plumbing fitting'],
+ 'Electrical Supplies':['light switch','wall outlet'],
+ 'Fasteners & Adhesives':['construction adhesive','wood screws'],
+ 'Protection & Consumables':['dust mask','work gloves','drop cloth']
+};
+const extraMaterialKeywords={
+ flooring:['vinyl flooring','laminate flooring','hardwood flooring','floor underlayment'],
+ 'tile-stone':['ceramic tile','porcelain tile','mosaic tile'],
+ drywall:['drywall panel','drywall tape','joint compound'],
+ lumber:['lumber','plywood'],
+ 'trim-molding':['baseboard trim','chair rail'],
+ 'paint-finishes':['wallpaper','paint brush','paint roller'],
+ insulation:['insulation board','fiberglass insulation'],
+ roofing:['roof shingle','roofing underlayment'],
+ 'doors-windows':['window','exterior door','interior door']
+};
 export function matchesListing(name,keyword){
  const n=String(name).toLowerCase();
  if(/nail art|rhinestone|diamond painting|dollhouse|miniature|toy|cartoon|magnet|conversion|replacement parts|refrigerator (?:magnet|organizer|divider)/i.test(n))return false;
@@ -300,18 +330,41 @@ export async function mountCatalog(target,{department,material,type,installKeywo
   }catch{ /* Never advertise items whose current U.S. stock cannot be checked. */ }
  }
  const keyword=installKeyword||(type?({'LVP':'vinyl flooring','Luxury Vinyl Plank (LVP)':'vinyl flooring','Hardwood':'hardwood flooring','Laminate':'laminate flooring','Floor Tile':'floor tile','Underlayment':'floor underlayment'}[type]||type):material?materialSearch[material]:category?categorySearch[category]:({appliances:'refrigerator',cabinets:'storage cabinet',tools:'electric drill',materials:'wall panel',supplies:'construction adhesive'}[department]));
- if(keyword){try{
-  const r=await fetch('/api/cj-products?keyword='+encodeURIComponent(keyword));const d=await r.json();if(!r.ok)throw Error('Unavailable');
-  for(const p of (d.products||[]).filter(p=>matchesListing(p.name,keyword)).slice(0,6)){
-   if(seen.has(p.id))continue;
-   try{const r=await fetch('/api/store-product?product='+encodeURIComponent(p.id));const data=await r.json();const vs=availableVariants(data);if(!r.ok||!vs.length)continue;
-    const image=data.image||p.image,name=data.name||p.name;if(!/^https:\/\//.test(image)||names.has(name.toLowerCase())||images.has(image)||!matchesListing(name,keyword))continue;
-    target.querySelectorAll('.empty').forEach(el=>el.remove());
-    target.insertAdjacentHTML('beforeend',card({id:p.id,department,name,image,category:category||department,priceCents:Math.min(...vs.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)},true));
-    seen.add(p.id);names.add(name.toLowerCase());images.add(image);
-   }catch{}
-  }
- }catch{}}
- await priceCards(target); // Update newly discovered product cards, including archived inventory decisions.
- if(!target.querySelector('[data-product]'))target.innerHTML='<p class="empty">No confirmed products are available in this category yet. Please check back.</p>';
+ const options=installKeyword||type?[]:category?extraCategoryKeywords[category]||[]:material?extraMaterialKeywords[material]||[]:extraCatalogKeywords[department]||[];
+ const keywords=[...new Set([keyword,...options].filter(Boolean))];
+ const controls=document.createElement('div');controls.className='catalog-more';controls.style.cssText='display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;margin:24px 0';
+ const more=document.createElement('button');more.type='button';more.className='btn outline';more.textContent='Load more verified products';
+ const status=document.createElement('span');status.className='calc-note';status.setAttribute('role','status');
+ controls.append(more,status);target.after(controls);
+ let searchRound=0;
+ async function loadNext(){
+  if(searchRound>=keywords.length*50){more.disabled=true;more.textContent='All catalog pages checked';return;}
+  more.disabled=true;status.textContent='Checking CJ and U.S. warehouse stock…';
+  const round=searchRound++,term=keywords[round%keywords.length],page=1+Math.floor(round/keywords.length);
+  let added=0;
+  try{
+   const response=await fetch('/api/cj-products?'+new URLSearchParams({keyword:term,page:String(page)}),{cache:'no-store'});
+   if(!response.ok)throw Error('Supplier search unavailable');
+   const feed=await response.json();
+   for(const candidate of (feed.products||[]).filter(p=>matchesListing(p.name,term)).slice(0,12)){
+    if(seen.has(candidate.id))continue;
+    try{
+     const check=await fetch('/api/store-product?product='+encodeURIComponent(candidate.id),{cache:'no-store'});
+     if(!check.ok)continue;
+     const detail=await check.json(),variants=availableVariants(detail);
+     const name=String(detail.name||candidate.name),image=String(detail.image||candidate.image);
+     if(!variants.length||!image.startsWith('https://')||!matchesListing(name,term)||names.has(name.toLowerCase())||images.has(image))continue;
+     target.querySelectorAll('.empty').forEach(el=>el.remove());
+     target.insertAdjacentHTML('beforeend',card({id:candidate.id,department,name,image,category:category||department,priceCents:Math.min(...variants.map(v=>v.priceCents)),priceCheckedAt:new Date().toISOString().slice(0,10)},true));
+     seen.add(candidate.id);names.add(name.toLowerCase());images.add(image);added++;
+    }catch{ /* A failed stock check never publishes an offer. */ }
+   }
+   if(added)await priceCards(target);
+   status.textContent=added?added+' verified product'+(added===1?'':'s')+' added to catalog.':'No additional in-stock items on this supplier page.';
+  }catch{searchRound=Math.max(0,searchRound-1);status.textContent='Supplier temporarily unavailable. Retry.';}
+  if(!target.querySelector('[data-product]'))target.innerHTML='<p class="empty">No confirmed products available in this category currently.</p>';
+  more.disabled=searchRound>=keywords.length*50;
+ }
+ more.addEventListener('click',loadNext);
+ if(keywords.length)await loadNext();else controls.remove();
 }
