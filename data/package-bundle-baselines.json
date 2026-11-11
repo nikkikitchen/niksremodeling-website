@@ -209,10 +209,10 @@
         ]
       },
       "deluxe": {
-        "scenario": "Sound 10 x 12 ft bedroom, 8-ft ceiling, all Bedroom Standard painting, existing light and up to 120 sq ft LVP with quarter-round; add one two-tone accent paint feature with 16 ft of chair rail and one 72-in closet shelf with three matching brackets in verified backing. No cabinets, new wiring, flooring removal, major plaster repairs or built-ins.",
+        "scenario": "Sound 10 x 12 ft bedroom, 8-ft ceiling, all Bedroom Standard painting, existing light and up to 120 sq ft LVP with quarter-round; add one two-tone accent paint feature with up to 12 ft of installed chair rail (two 8-ft stock pieces) and one 72-in closet shelf with three matching brackets in verified backing. No cabinets, new wiring, flooring removal, major plaster repairs or built-ins.",
         "work": [
           "All Bedroom Standard painting, trim, compatible light, click-lock LVP and quarter-round",
-          "Add one two-color feature wall with up to 16 ft of chair rail",
+          "Add one two-color feature wall with up to 12 ft of installed chair rail",
           "Install one 72-in closet storage shelf on verified suitable framing"
         ],
         "labor": [
@@ -247,9 +247,9 @@
             175
           ],
           [
-            "Install and paint 16 ft chair rail",
-            2,
-            75
+            "Install, finish and paint 12 ft chair rail at $4.50/ft",
+            1,
+            54
           ],
           [
             "Install closet shelf",
@@ -509,15 +509,15 @@
         ]
       },
       "standard": {
-        "scenario": "Dining Basic plus one 12-foot sound accent wall chair rail (up to 16 ft of trim) with two-tone paint. Excludes wallpaper, structural framing and flooring replacement.",
+        "scenario": "Dining Basic plus one 12-foot sound accent wall chair rail (up to 12 ft installed; two 8-ft stock pieces) with two-tone paint. Excludes wallpaper, structural framing and flooring replacement.",
         "work": [
           "Everything in Dining Room Basic",
-          "Install and paint up to 16 linear ft. chair rail on one existing sound wall",
+          "Install, finish and paint up to 12 linear ft. chair rail on one existing sound wall",
           "Add a second accent paint color to one wall"
         ],
         "labor": [
           [
-            "Dining Basic painting, trim and light",
+            "Dining Basic wall/ceiling painting and trim (11 labor-hours)",
             11,
             75
           ],
@@ -527,9 +527,9 @@
             150
           ],
           [
-            "Chair rail installation, finishing and painting",
+            "Install, finish and paint 12 ft chair rail at $4.50/ft",
             1,
-            75
+            54
           ],
           [
             "Accent two-tone masking and finishing",
@@ -584,7 +584,7 @@
         ],
         "labor": [
           [
-            "Dining Basic painting, trim and light",
+            "Dining Basic wall/ceiling painting and trim (11 labor-hours)",
             11,
             75
           ],
@@ -594,9 +594,9 @@
             150
           ],
           [
-            "Chair rail installation, finishing and painting",
+            "Install, finish and paint 12 ft chair rail at $4.50/ft",
             1,
-            75
+            54
           ],
           [
             "Accent two-tone masking and finishing",
@@ -918,10 +918,10 @@
         ]
       },
       "standard": {
-        "scenario": "Sound 12 x 16 ft family room with 8-ft ceiling, 448 sq ft walls two coats and 192 sq ft ceiling one white coat; 56 ft existing trim, one compatible light, one 16-ft chair rail on sound existing 12-ft wall plus two-tone accent. No wallpaper, new circuit or structure changes.",
+        "scenario": "Sound 12 x 16 ft family room with 8-ft ceiling, 448 sq ft walls two coats and 192 sq ft ceiling one white coat; 56 ft existing trim, one compatible light, one 12-ft installed chair rail on a sound existing 12-ft wall plus two-tone accent. No wallpaper, new circuit or structure changes.",
         "work": [
           "All Living & Family Room Basic wall, ceiling, trim and light refresh",
-          "Add one two-color feature wall with up to 16 linear ft. chair rail",
+          "Add one two-color feature wall with up to 12 linear ft. installed chair rail",
           "Finish paint and caulk on the selected accent wall"
         ],
         "labor": [
@@ -941,9 +941,9 @@
             150
           ],
           [
-            "Install, finish and paint up to 16 ft chair rail",
-            2,
-            75
+            "Install, finish and paint 12 ft chair rail at $4.50/ft",
+            1,
+            54
           ],
           [
             "Two-color accent layout and edge finishing",
@@ -1017,9 +1017,9 @@
             150
           ],
           [
-            "Install, finish and paint up to 16 ft chair rail",
-            2,
-            75
+            "Install, finish and paint 12 ft chair rail at $4.50/ft",
+            1,
+            54
           ],
           [
             "Two-color accent layout and edge finishing",
@@ -1424,7 +1424,16 @@
             1
           ]
         ],
-        "consumables": [],
+        "consumables": [
+          [
+            28,
+            1
+          ],
+          [
+            31,
+            1
+          ]
+        ],
         "materialConsumables": [],
         "laborDiscountPercent": 7,
         "projectFeePercent": 10,
