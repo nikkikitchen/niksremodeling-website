@@ -446,7 +446,7 @@ function calcMaterial(){
   const areaName=document.getElementById('material-name').value.trim();let measurements={};
   if(type==='flooring'){const length=materialPositive('floor-length'),width=materialPositive('floor-width');measurements={area:length*width,coverage:length*width*(1+materialNumber('floor-waste')),perimeter:2*(length+width)}}
   if(type==='paint'){measurements=paintMeasurementPlan()}
-  if(type==='lumber'){measurements={length:materialPositive('wood-length'),studs:Math.ceil(materialPositive('wood-length')*12/materialPositive('wood-spacing'))+1}}
+  if(type==='lumber'){const length=materialPositive('wood-length'),height=materialPositive('wood-height');measurements={length,height,area:length*height,studs:Math.ceil(length*12/materialPositive('wood-spacing'))+1}}
   if(type==='drywall'){measurements={area:materialPositive('dry-length')*materialPositive('dry-height')-materialNumber('dry-openings'),sheets:Math.ceil((materialPositive('dry-length')*materialPositive('dry-height')-materialNumber('dry-openings'))*(1+materialNumber('dry-waste'))/materialPositive('dry-sheet'))}}
   if(type==='concrete'){measurements={area:materialPositive('concrete-length')*materialPositive('concrete-width'),yards:materialPositive('concrete-length')*materialPositive('concrete-width')*materialPositive('concrete-depth')/12/27,perimeter:2*(materialPositive('concrete-length')+materialPositive('concrete-width'))}}
   if(type==='custom')measurements={quantity:materialPositive('custom-quantity'),unit:document.getElementById('custom-unit').value};
