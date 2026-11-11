@@ -231,3 +231,50 @@ test('Combined project total includes quoted package minimum plus separate produ
       'Do not assess interim retail tax on unconfirmed package labor');
   }finally{dom.window.close();}
 });
+
+test('Deluxe Bathroom cart credits included vanity light and mirror, keeps replacement vanity separate, and offers full payment',async()=>{
+ const fixtureLines=[
+  {name:'Standard vanity light (provisional allowance; confirm supplier price)',quantity:1,unitPrice:150},
+  {name:'Standard bathroom mirror (provisional allowance; confirm supplier price)',quantity:1,unitPrice:100}
+ ];
+ const items=[
+  {name:'Bathroom — Deluxe Refresh',qty:1,type:'Service',source:'room-project-package',projectId:'bathrooms',packageId:'deluxe',
+   startingAt:2560,depositEstimate:633.17,laborEstimate:1680.41,overheadAllowance:246.42,priceBasis:{materials:fixtureLines},price:null,quoteRequired:true,
+   measurements:{roomName:'Bathroom',length:14,width:14,height:8,floorArea:196,wallArea:448,perimeter:56,paintGallons:4}},
+  {name:'Bathroom Vanity Light Bar 24-Inch Black',type:'Product',source:'bathroom-retail',department:'bathroom',qty:1,productId:'1111111111111111111',variantId:'a',price:43.10,installationRequested:true},
+  {name:'Black Round Wall Mirror 20-Inch',type:'Product',source:'bathroom-retail',department:'bathroom',qty:1,productId:'2222222222222222222',variantId:'b',price:47.73,installationRequested:true},
+  {name:'White particleboard bathroom vanity unit with two doors',type:'Product',source:'bathroom-retail',department:'bathroom',qty:1,productId:'3333333333333333333',variantId:'c',price:56.03}
+ ];
+ const dom=await load('project-cart.html','',items);
+ try{
+  const w=dom.window,d=w.document;
+  const text=d.querySelector('.nr-cart-products').textContent;
+  assert.match(text,/Included — \$0 extra/);
+  assert.equal((text.match(/Included — \$0 extra/g)||[]).length,2,'Light and mirror should be included exactly once');
+  assert.match(text,/vanity unit/i);
+  assert.match(text,/\$56\.03/,'New vanity cabinet is not part of cosmetic Deluxe');
+  assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$56\.03/);
+  assert.match(d.getElementById('cart-combined-project-total').textContent,/\$2,620\.51/);
+  assert.ok(d.querySelector('button[data-cart-request="full"]'),'Customer can request a single full-payment invoice');
+  assert.ok(d.querySelector('button[data-cart-request="deposit"]'),'Deposit and weekly draws remain optional');
+  assert.equal(d.querySelectorAll('.nr-cart-line').length,4,'Included fixture installation must not be added again');
+  const saved=JSON.parse(w.localStorage.getItem('nr-cart'));
+  assert.equal(saved[1].price,43.10,'Fixture credit is a display calculation and must not corrupt cart storage');
+  assert.equal(saved[2].price,47.73);
+ }finally{dom.window.close();}
+});
+
+test('Basic Bathroom does not silently include a mirror or vanity light',async()=>{
+ const items=[
+  {name:'Bathroom — Basic Refresh',qty:1,type:'Service',source:'room-project-package',projectId:'bathrooms',packageId:'basic',
+   startingAt:875,depositEstimate:300,laborEstimate:450,overheadAllowance:125,
+   priceBasis:{materials:[{name:'Vanity faucet (provisional allowance)',quantity:1,unitPrice:125}]},price:null,quoteRequired:true},
+  {name:'Black Round Wall Mirror 20-Inch',type:'Product',source:'bathroom-retail',qty:1,productId:'2222222222222222222',variantId:'b',price:47.73}
+ ];
+ const dom=await load('project-cart.html','',items);
+ try{
+  const d=dom.window.document;
+  assert.doesNotMatch(d.querySelector('.nr-cart-products').textContent,/Included — \$0 extra/);
+  assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$47\.73/);
+ }finally{dom.window.close()}
+});
