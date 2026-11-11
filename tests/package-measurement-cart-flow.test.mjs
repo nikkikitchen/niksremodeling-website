@@ -81,7 +81,7 @@ test('Bathroom measured paint and estimate do not silently add separate labor ch
     assert.equal(item.measurements.wallArea,300);
     assert.equal(item.measurements.wallPaintGallons,2);
     assert.equal(item.measurements.wallPaintLabor,450);
-    assert.equal(item.startingAt,2195);
+    assert.equal(item.startingAt,1470,'A larger measured bathroom includes the extra paint labor and fees without charging labor twice');
     assert.equal(item.price,null,'Measured painting breakdown must not be added atop bundled starting price');
   } finally {dom.window.close();}
 });
