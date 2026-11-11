@@ -657,7 +657,7 @@ const photos=[
         '<a class="project-back" href="'+(selected?'/project.html?project=accessibility':'/#projects')+'">'+(selected?'← All Accessibility Packages':'← All Projects')+'</a>'+
         '<h1>Accessibility Projects</h1>'+
         '<nav class="bath-photo-grid" aria-label="Choose an accessibility package">'+nav+'</nav>'+
-        (selected&&selected.id!=='custom'?'<div class="bath-package-action"><p>Complete project estimate includes labor, materials and standard supplies for the agreed scope. Installation details, accessibility requirements and site conditions must be reviewed before final pricing.</p><a class="btn primary" href="sms:4709912133?body='+encodeURIComponent('I would like an estimate for the '+selected.name+' accessibility project package.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Package scope, material selection and final price are confirmed after site review. No payment is collected online.</p>')+
+        (selected&&selected.id!=='custom'?'<div class="bath-package-action"><p>Complete project estimate includes labor, materials and standard supplies for the agreed scope. Installation details, accessibility requirements and site conditions must be reviewed before final pricing.</p><a class="btn primary" href="sms:6782314377?body='+encodeURIComponent('I would like an estimate for the '+selected.name+' accessibility project package.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Package scope, material selection and final price are confirmed after site review. No payment is collected online.</p>')+
         '</div></section></main>'+footer();
       addMobilePackageDetails();
       const style=document.createElement('style');
