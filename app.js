@@ -604,6 +604,35 @@ function reconcileBathroomFixtureAllowances(cart){
  }
  return items;
 }
+function reconcileProjectPackageFixtureChoices(cart){
+ const items=cart.map(item=>({...item}));
+ const packs=items.filter(item=>['room-project-package','bathroom-project-package'].includes(item.source)&&item.projectId==='bathrooms'&&['basic','standard','deluxe'].includes(item.packageId)&&Number(item.startingAt)>0);
+ if(packs.length!==1)return items;
+ const pkg=packs[0],tier=pkg.packageId,used=new Set();
+ const coverage={basic:{faucet:125,accessories:45},standard:{light:150,mirror:100},deluxe:{light:150,mirror:100,accessories:70}}[tier];
+ const lines=pkg.priceBasis?.materials||[];
+ for(const item of items){
+  if(!['bathroom-retail','supplier-retail'].includes(item.source)||!item.productId||!item.variantId)continue;
+  const name=String(item.name||'');
+  if(/vanity unit|vanity cabinet|cabinet with sink|vanity with sink|sink base cabinet/i.test(name))continue;
+  const kind=/mirror/i.test(name)?'mirror':/vanity light|bathroom light|wall light|light bar|sconce|light fixture over mirror/i.test(name)?'light':/faucet|vanity sink tap|lavatory tap/i.test(name)?'faucet':/towel bar|towel ring|toilet paper holder|robe hook|bathroom hardware/i.test(name)?'accessories':null;
+  if(!kind||!Object.hasOwn(coverage,kind)||used.has(kind))continue;
+  const pattern={light:/vanity light/i,mirror:/bathroom mirror/i,faucet:/vanity faucet/i,accessories:/bathroom accessories/i}[kind];
+  const line=lines.find(x=>pattern.test(x.name));
+  const allowance=Number(line?.unitPrice)>0?Number(line.unitPrice):coverage[kind];
+  const unit=Number(item.price),qty=Number(item.qty)||1;
+  if(!Number.isFinite(unit)||unit<=0||qty<1||!Number.isFinite(allowance)||allowance<=0)continue;
+  const credit=Math.round(Math.min(unit,allowance)*100)/100;
+  item.packageFixtureKind=kind;
+  item.packageAllowanceCredit=credit;
+  item.packageAllowanceLimit=allowance;
+  item.packageFixturePackage=tier;
+  item.packageOriginalUnitPrice=unit;
+  item.price=Math.round((unit-credit/qty)*100)/100;
+  used.add(kind);
+ }
+ return items;
+}
 function projectEstimateMarkup(items){
  items=items.filter(x=>!customEstimate(x));
  if(!items.length)return '';
@@ -722,7 +751,7 @@ function updateCartRequestButtons(){
 }
 function submitCartRequest(choice){
  if(!document.getElementById('cart-terms-agree')?.checked)return;
- const c=getCart();
+ const c=reconcileProjectPackageFixtureChoices(reconcileBathroomFixtureAllowances(getCart()));
  const heading=choice==='deposit'?'Request proposed project deposit invoice and weekly draw schedule':choice==='supplies'?'Supplies purchase and installation scheduling request':'Free estimate confirmation request';
  const packagePaymentSchedule=c.some(item=>['bathroom-project-package','kitchen-project-package'].includes(item.source))?'\\n\\nPlease confirm the deposit for project materials and supplies and provide a weekly progress-draw schedule based on completed work, to be mutually agreed in the written contract. I understand no payment is due until the quote and terms are approved.':'';
  const message=heading+'\\n\\n'+cartRequestMessage(c)+packagePaymentSchedule+'\\n\\nI agree to the Terms & Conditions and request confirmation before any payment or installation scheduling.';
@@ -932,7 +961,7 @@ function packageQuoteLink(item){
  return '/project.html?'+new URLSearchParams({project,[field]:item.packageId,quote:'1'}).toString();
 }
 function renderCart(){
- const c=reconcileBathroomFixtureAllowances(getCart());
+ const c=reconcileProjectPackageFixtureChoices(reconcileBathroomFixtureAllowances(getCart()));
  const visible=c.map((item,index)=>({item,index})).filter(({item})=>!item.hiddenFromCustomer);
  const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
   const packageSources=new Set(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package']);
