@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const packageSlotRules={
   faucet:{type:'faucets',title:'Vanity Faucets',match:/\b(?:vanity|bathroom|lavatory)\s+faucet\b/i,exclude:/shower|tub|wall.mount|wall mount|parts|repair/i},
   light:{type:'lighting',title:'Vanity Lights',match:/\bvanity light\b|\bbathroom vanity lighting\b/i,exclude:/bulb only|parts|light switch/i},
-  mirror:{type:'accessories',title:'Bathroom Mirrors',match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},
+  mirror:{type:'accessories',title:'Bathroom Mirrors',match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b|\b(?:round |black )?wall mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},
   accessories:{type:'accessories',title:'Bathroom Accessories',match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom accessor/i,exclude:/parts|refill/i}
  };
  const slot=packageSlotRules[params.get('packageShop')]||null;
