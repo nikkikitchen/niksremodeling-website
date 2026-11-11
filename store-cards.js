@@ -7,7 +7,7 @@ export function cardHtml(p){
  const verified=priced&&p.stockVerified===true;
  const price=priced?(verified?'From ':'Last checked: from ')+money(p.priceCents):'Price confirmation needed';
  const note=verified?'U.S. warehouse stock checked':priced?'Price checked '+esc(p.priceCheckedAt)+' · Confirm current price and stock':'Contact us for current price and availability';
- return `<article class="store-card" data-product="${esc(p.id)}" data-verified="${verified?'true':'false'}"${priced&&!verified?` data-saved-price="${p.priceCents}" data-price-checked="${esc(p.priceCheckedAt)}"`:''}><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-stock" aria-live="polite" data-state="unknown">Checking U.S. stock…</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
+ return `<article class="store-card" hidden data-product="${esc(p.id)}" data-verified="false"${priced&&!verified?` data-saved-price="${p.priceCents}" data-price-checked="${esc(p.priceCheckedAt)}"`:''}><a href="/furniture.html?category=${encodeURIComponent(p.category)}&product=${encodeURIComponent(p.id)}"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"><div class="store-card-copy"><p class="store-card-category">${esc(categories[p.category]||p.category)}</p><h3>${esc(p.name)}</h3><p class="store-card-price" aria-live="polite">${price}</p><p class="store-card-stock" aria-live="polite" data-state="unknown">Checking U.S. stock…</p><p class="store-card-note">${note} · Shipping &amp; tax extra</p><span class="btn primary">View item</span></div></a></article>`;
 }
 const activeChecks=new WeakSet();
 const archivedIds=await fetch('/inventory-status.json',{cache:'no-store'}).then(r=>r.ok?r.json():{items:{}}).then(d=>new Set(Object.entries(d.items||{}).filter(([,v])=>v.archived===true).map(([id])=>id))).catch(()=>new Set());
@@ -29,7 +29,7 @@ export async function priceCards(container){
    const prices=(p.variants||[]).filter(v=>Number.isSafeInteger(v.priceCents)&&v.priceCents>0&&Number(v.usStock)>0).map(v=>v.priceCents);
    if(!r.ok||p.warehouseCountry!=='US'||!Array.isArray(p.variants))throw Error('Unconfirmed US warehouse stock');
    if(!prices.length||!p.inStockUS){
-    stock.textContent='In stock (U.S.): 0';stock.dataset.state='out';card.dataset.verified='false';
+    stock.textContent='In stock (U.S.): 0';stock.dataset.state='out';card.dataset.verified='false';card.hidden=true;
     label.textContent='Currently out of stock';note.textContent='No confirmed U.S. stock · Shipping & tax extra';
     continue;
    }
@@ -39,7 +39,7 @@ export async function priceCards(container){
    card.hidden=false;card.dataset.verified='true';
    note.textContent='U.S. warehouse stock checked · Shipping & tax extra';
   }catch{
-   card.hidden=false;card.dataset.verified='false';
+   card.hidden=true;card.dataset.verified='false';
    stock.textContent='Stock not confirmed';stock.dataset.state='unknown';
    const saved=Number(card.dataset.savedPrice);
    label.textContent=Number.isSafeInteger(saved)&&saved>0?'Last checked: from '+money(saved):'Price confirmation needed';
