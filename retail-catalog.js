@@ -1,5 +1,24 @@
 export const retailCatalog = [
   {
+    "id":"2003346457261682690",
+    "department":"supplies",
+    "name":"16.5-Inch Semi-Flush Kitchen Ceiling Light — Gold",
+    "image":"https://cf.cjdropshipping.com/88c3eb28-2eb1-4775-8c1e-f771d68dd979.jpg",
+    "priceCents":12639,
+    "priceCheckedAt":"2026-11-11",
+    "category":"Lighting & Electrical"
+  },
+  {
+    "id":"2005626551095943169",
+    "department":"supplies",
+    "name":"Brushed Nickel Bathroom Hardware Set — Towel Bar, Paper Holder and Hook",
+    "image":"https://cf.cjdropshipping.com/17669664/dd791a9d-e2a0-43e6-927c-837caea41a75.jpg",
+    "priceCents":6610,
+    "priceCheckedAt":"2026-11-11",
+    "category":"Bathroom Hardware"
+  },
+
+  {
     "id": "1947993324614938626",
     "department": "cabinets",
     "name": "Tall Storage Cabinet with Drawers",
