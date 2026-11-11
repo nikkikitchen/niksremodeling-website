@@ -36,10 +36,12 @@ test('cart displays proposed package labor, materials and fees without demanding
  for(const term of ['Package starting total','Materials &amp; supplies (proposed deposit)','Labor (pay later, weekly draws)','Fees (included in package total)','Balance after proposed deposit (weekly draws)']){
   assert.ok(app.includes(term),term+' missing');
  }
- assert.ok(app.includes('Request Deposit Invoice'));
+ assert.ok(app.includes('Request Deposit + Weekly Draws'));
+ assert.ok(app.includes('Request Pay-in-Full Invoice'));
+ assert.ok(app.includes('Request one full-payment invoice for entire approved cart'));
  assert.ok(app.includes('They are already included in the starting price, not charged twice.'));
  assert.ok(app.includes('No separate installation charge for included work.'));
  assert.ok(!app.includes('Overhead and contingency'),'Do not restore confusing fee label.');
- assert.ok(app.includes('No deposit or other payment can be made through this cart yet.'));
+ assert.ok(app.includes('No online payment is taken here yet.'));
  assert.ok(terms.includes('weekly progress draws'));
 });
