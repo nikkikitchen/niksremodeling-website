@@ -9,7 +9,7 @@ test('static local asset links resolve to actual project files',()=>{
  const missing=[];
  for(const file of sources){
   const text=readFileSync(path.join(root,file),'utf8');
-  for(const m of text.matchAll(/\\/assets\\/([A-Za-z0-9_.-]+\\.(?:jpg|jpeg|png|webp|svg|gif))/g)){
+  for(const m of text.matchAll(/\/assets\/([A-Za-z0-9_.-]+\.(?:jpg|jpeg|png|webp|svg|gif))/g)){
    const target=path.join(root,'assets',m[1]);
    if(!existsSync(target))missing.push(file+' -> /assets/'+m[1]);
   }
@@ -20,7 +20,7 @@ test('static local html page links resolve',()=>{
  const missing=[];
  for(const file of sources){
   const text=readFileSync(path.join(root,file),'utf8');
-  for(const m of text.matchAll(/(?:href|src)=["']\\/([A-Za-z0-9_.-]+\\.html)(?:[?#][^"']*)?["']/g)){
+  for(const m of text.matchAll(/(?:href|src)=["']\/([A-Za-z0-9_.-]+\.html)(?:[?#][^"']*)?["']/g)){
    if(!existsSync(path.join(root,m[1])))missing.push(file+' -> /'+m[1]);
   }
  }
