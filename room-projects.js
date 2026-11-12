@@ -664,13 +664,33 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
           // Trim material selections are confirmed with the customer before final pricing.
           // Allow approved $3/ft trim-install reference labor for extra wall length.
           const extraTrimLabor=Math.max(0,length-12)*3;
-          const extraScope=extraPaintLabor+extraPaintGallons*48.60+extraPrimerGallons*47.22+extraTrimLabor;
-          measuredMinimum=rounded5(starting+extraScope*1.10);
+          const extraGrossLabor=extraPaintLabor+extraTrimLabor;
+          const extraMaterials=extraPaintGallons*48.60+extraPrimerGallons*47.22;
+          const extraNetLabor=Math.round(extraGrossLabor*.93*100)/100;
+          const extraFee=Math.round((extraGrossLabor+extraMaterials)*.10*100)/100;
+          measuredMinimum=rounded5(starting+extraNetLabor+extraMaterials+extraFee);
+          const deposit=Math.round(((Number(choice.depositEstimate)||0)+extraMaterials)*100)/100;
+          const labor=Math.round(((Number(choice.laborEstimate)||0)+extraNetLabor)*100)/100;
+          const measuredTotal=Math.max(starting,measuredMinimum);
+          measuredQuote={
+            startingAt:measuredTotal,
+            depositEstimate:deposit,
+            laborEstimate:labor,
+            overheadAllowance:Math.round((measuredTotal-deposit-labor)*100)/100,
+            priceBasis:{...(choice.priceBasis||{}),measuredAccentAdjustment:{
+              extraPaintGrossLabor:extraPaintLabor,extraTrimGrossLabor:extraTrimLabor,
+              extraPaintGallons,extraPrimerGallons,extraMaterials,discountedExtraLabor:extraNetLabor,
+              incrementalProjectFee:extraFee
+            }}
+          };
         }else{
-          // Provisional area scaling for specialty surfaces until materials are selected.
+          // The specialty finish has no verified delivered material price.
+          // Do not invent a deposit/labor breakdown for the larger wall.
           measuredMinimum=rounded5(starting*Math.max(1,wallArea/baselineArea));
+          measuredQuote={startingAt:Math.max(starting,measuredMinimum),
+            depositEstimate:null,laborEstimate:null,overheadAllowance:null,
+            priceBasis:null};
         }
-        measuredQuote={startingAt:Math.max(starting,measuredMinimum)};
       }
       // For larger defined Bathroom/Kitchen packages, increase the measured minimum
       // for additional painting labor and paint. Standard fixture counts remain bounded
@@ -723,7 +743,7 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
   document.getElementById('pkg-edit-size').onclick=()=>{form.scrollIntoView({behavior:'smooth',block:'start'});};
   document.getElementById('pkg-confirm-add').onclick=()=>{
     if(!measured){error.textContent='Calculate the measurements before adding to cart.';error.hidden=false;return;}
-    const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:measuredQuote?.startingAt||starting,depositEstimate:measuredQuote?.depositEstimate??choice.depositEstimate,laborEstimate:measuredQuote?.laborEstimate??choice.laborEstimate,overheadAllowance:measuredQuote?.overheadAllowance??choice.overheadAllowance,priceBasis:measuredQuote?.priceBasis||choice.priceBasis||null,price:null,quoteRequired:true,inPersonQuoteRequired:accessibility,scope:work.slice(),measurements:{...measured},description:accessibility?'Accessibility work: '+measured.grabBars+' grab bars, '+measured.doorHardware+' door hardware sets, '+measured.thresholds+' thresholds, '+measured.handrailLength+' ft. handrail, '+measured.rampLength+' ft. ramp. In-person site quote required.':accentOnly?'Measured '+measured.roomName+': '+measured.length+' × '+measured.height+' ft. accent wall; '+measured.wallArea+' sq. ft. surface, '+measured.paintGallons+' paint gallons where applicable. Package quote pending.':'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
+    const item={name:projectTitle+' — '+choice.name,qty:1,type:'Service',source,projectId,packageId:choice.id,startingAt:measuredQuote?.startingAt||starting,depositEstimate:measuredQuote&&Object.hasOwn(measuredQuote,'depositEstimate')?measuredQuote.depositEstimate:choice.depositEstimate,laborEstimate:measuredQuote&&Object.hasOwn(measuredQuote,'laborEstimate')?measuredQuote.laborEstimate:choice.laborEstimate,overheadAllowance:measuredQuote&&Object.hasOwn(measuredQuote,'overheadAllowance')?measuredQuote.overheadAllowance:choice.overheadAllowance,priceBasis:measuredQuote?.priceBasis||choice.priceBasis||null,price:null,quoteRequired:true,inPersonQuoteRequired:accessibility,scope:work.slice(),measurements:{...measured},description:accessibility?'Accessibility work: '+measured.grabBars+' grab bars, '+measured.doorHardware+' door hardware sets, '+measured.thresholds+' thresholds, '+measured.handrailLength+' ft. handrail, '+measured.rampLength+' ft. ramp. In-person site quote required.':accentOnly?'Measured '+measured.roomName+': '+measured.length+' × '+measured.height+' ft. accent wall; '+measured.wallArea+' sq. ft. surface, '+measured.paintGallons+' paint gallons where applicable. Package quote pending.':'Measured '+measured.roomName+': '+measured.length+' × '+measured.width+' × '+measured.height+' ft.; '+measured.floorArea+' sq. ft. floor; '+measured.wallArea+' sq. ft. walls; '+measured.paintGallons+' paint gallons where applicable. Starting estimate only; full scope and costs to be confirmed.'};
     const cart=getCart();
     // Replace legacy pre-measurement package entries instead of double-counting them.
     const priorSource=projectId==='bathrooms'?'bathroom-project-package':projectId==='kitchen-pantry'?'kitchen-project-package':projectId==='accessibility'?'accessibility-project-package':null;
