@@ -41,3 +41,14 @@ test('Ordinary standalone toilet remains fully priced even in a Deluxe Bathroom 
  const out=reconcile([pkg('deluxe'),product('Deluxe smart toilet',300)]).slice(1);
  assert.equal(charge(out),300);
 });
+
+test('Powered bathroom mirror is not automatically included in a cosmetic mirror slot',()=>{
+ const out=reconcile([pkg('deluxe'),product('Illuminated bathroom vanity mirror with anti-fog defogger',115)]).slice(1);
+ assert.equal(charge(out),115);
+ assert.equal(out[0].packageAllowanceCredit,undefined);
+});
+test('Extra units in a bundled light set must not silently receive included installation',()=>{
+ const out=reconcile([pkg('deluxe'),product('2-Piece bathroom vanity light fixture set',80)]).slice(1);
+ assert.equal(charge(out),80);
+ assert.equal(out[0].packageAllowanceCredit,undefined);
+});
