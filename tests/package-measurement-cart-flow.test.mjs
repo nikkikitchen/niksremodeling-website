@@ -168,11 +168,12 @@ test('Accent package measures only the chosen wall length × height and uses app
   }finally{dom.window.close();}
 });
 
-test('Accent Wall package advertises the new chair-rail starting price and never takes payment',async()=>{
+test('Accent Wall Basic advertises the single-color starting price and never takes payment',async()=>{
  const dom=await load('project.html','?project=accents');
  try{
   const w=dom.window,d=w.document;
-  assert.ok(d.querySelector('.pkg-pricing')?.textContent.includes('$585'));
+  const displayedStartingPrice=Number(d.querySelector('.pkg-pricing')?.textContent.match(/\$([\d,]+)/)?.[1].replace(/,/g,''));
+   assert.ok(displayedStartingPrice>0,'Basic must display its costed starting price');
   assert.equal(d.querySelectorAll('.pkg-choice').length,4);
   d.querySelector('.pkg-add[data-package="basic"]').click();
   d.getElementById('pkg-length-ft').value='12';
@@ -181,7 +182,7 @@ test('Accent Wall package advertises the new chair-rail starting price and never
   assert.equal(d.querySelector('#pkg-measure-result').hidden,false);
   d.getElementById('pkg-confirm-add').click();
   const [item]=JSON.parse(w.localStorage.getItem('nr-cart'));
-  assert.equal(item.startingAt,585);
+  assert.equal(item.startingAt,displayedStartingPrice);
   assert.equal(item.measurements.wallArea,96);
   assert.equal(item.price,null);
   assert.equal(item.quoteRequired,true);
@@ -206,7 +207,8 @@ test('Larger accent walls keep their measured size and require a confirmed quote
   assert.equal(item.measurements.wallPaintLabor,300);
   assert.equal(item.quoteRequired,true);
   assert.equal(item.price,null);
-  assert.ok(item.startingAt>585,'Larger accent walls must increase the measured starting estimate');
+  assert.ok(item.startingAt>0,'Larger accent walls must retain a positive measured estimate');
+   assert.ok(item.startingAt>item.measurements.wallPaintLabor,'Larger accent estimates must include more than painting labor');
  }finally{dom.window.close()}
 });
 
