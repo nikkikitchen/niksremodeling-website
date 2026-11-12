@@ -336,10 +336,10 @@ window.renderProjectPackageOptions=function(id,project){
   // Retain Accent Walls legacy URL IDs (deluxe/premium) while showing the
   // common customer-facing Basic / Standard / Deluxe / Custom tiers.
   let packs=id==='accents'?[
-    {id:'basic',name:'Basic',photo:'https://images.pexels.com/photos/28104067/pexels-photo-28104067.jpeg?auto=compress&cs=tinysrgb&w=1000',intro:'Chair rail or picture-frame trim with paint.',work:['Choose a chair rail or simple picture-frame molding on one wall','Install and finish trim, paint the wall','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
-    {id:'deluxe',name:'Standard',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Chair rail, faux finish below and paint above.',work:['Install and finish chair rail','Choose a faux stone, brick or wood-style lower-wall finish','Paint the upper wall and clean up'],priceStatus:'quote-required'},
+    {id:'basic',name:'Basic',photo:'/assets/accent-basic-approved.jpg',intro:'Chair rail or picture-frame trim with paint.',work:['Choose a chair rail or simple picture-frame molding on one wall','Install and finish trim, paint the wall','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
+    {id:'deluxe',name:'Standard',photo:'/assets/accent-standard-approved.jpg',intro:'Chair rail, faux finish below and paint above.',work:['Install and finish chair rail','Choose a faux stone, brick or wood-style lower-wall finish','Paint the upper wall and clean up'],priceStatus:'quote-required'},
     {id:'premium',name:'Deluxe',photo:'/assets/accent-walls-card.jpg',intro:'Full stacked-stone or premium feature wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495,priceStatus:'research-provisional'},
-    {id:'custom',name:'Custom',photo:'https://images.unsplash.com/photo-1734470793522-8a990afdcf72?auto=format&fit=crop&w=1200&q=85',intro:'Custom designs, trim patterns and specialty layouts.',work:[]}
+    {id:'custom',name:'Custom',photo:'/assets/accent-custom-approved.jpg',intro:'Custom designs, trim patterns and specialty layouts.',work:[]}
   ]:[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes?.[0]||[]},
     {id:'standard',name:'Standard',intro:'A coordinated upgrade with additional finishing work.',work:[...(scopes?.[0]||[]),...(scopes?.[1]||[]).slice(0,1)]},
