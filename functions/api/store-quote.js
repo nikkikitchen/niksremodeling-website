@@ -26,10 +26,10 @@ export async function onRequestGet({request,env}){
  const taxCatalog=await square(env,'/v2/catalog/list?types=TAX');
  const taxes=(taxCatalog.objects||[]).filter(o=>!o.is_deleted&&o.tax_data?.enabled).map(o=>({id:o.id,name:o.tax_data.name,percentage:o.tax_data.percentage,scope:o.tax_data.applies_to_custom_amounts,inclusion:o.tax_data.inclusion_type}));
  const tax=taxes.find(t=>t.id===env.STORE_TAX_ID&&t.scope&&t.inclusion==='ADDITIVE'&&Number.isFinite(Number(t.percentage))&&Number(t.percentage)>0&&Number(t.percentage)<=100);
- // Quotes remain available, but checkout cannot be enabled via environment variables.
+ // Payment is offered only with verified U.S. stock, freight, Square tax and a permitted destination ZIP.
  const allowedZips=String(env.STORE_ALLOWED_ZIPS||'').split(',').map(s=>s.trim()).filter(Boolean);
  const locationId=String(env.SQUARE_LOCATION_ID||'');
- const checkoutEnabled=!!(tax&&locationId&&allowedZips.includes(zip)&&env.SQUARE_ACCESS_TOKEN);
+ const checkoutEnabled=!!(tax&&locationId&&allowedZips.includes(zip)&&(env.SQUARE_ACCESS_TOKEN||env.TOKEN));
  // A configured Square tax and seller-approved shipping ZIP are required.
  // Live Square location status and the full amount are checked again at checkout.
  const taxCents=tax?Math.round(total*Number(tax.percentage)/100):null;
