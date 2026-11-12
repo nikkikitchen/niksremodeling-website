@@ -50,7 +50,7 @@ if (shoppingSource.includes('http-equiv="refresh"') ||
 const roomSource=readFileSync(new URL('../room-projects.js',import.meta.url),'utf8');
 if(!roomSource.includes('Explore Accent Wall Projects') ||
    !roomSource.includes('/project.html?project=accents') ||
-   !['startingAt:395','startingAt:695','startingAt:1495'].every(s=>roomSource.includes(s)) ||
+   !['One painted accent wall.','Two-tone painted wall with chair rail.','Stone, tile or wood statement wall.'].every(label=>roomSource.includes(label)) ||
    !roomSource.includes('Consultation if requested or required'))
   throw Error('Accent Wall project packages or room navigation are missing.');
 // Fail the build if provisional, itemized package pricing loses its scope,
