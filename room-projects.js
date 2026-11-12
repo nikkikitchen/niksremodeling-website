@@ -357,19 +357,18 @@ window.renderProjectPackageOptions=function(id,project){
       {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
     ];
     const accentBasic={
-      scenario:'One sound interior accent wall up to 12 ft wide and 8 ft high, one solid paint color in two coats, one bonding-primer coat as needed, ordinary surface preparation and cleanup. No chair rail, additional paint colors, drywall repair, wallpaper, electrical or specialty finishes.',
-      work:['Prepare and prime up to 96 sq. ft. of one sound wall','Apply two coats of one accent paint color','Protect adjoining surfaces and clean up'],
+      scenario:'One interior wall in paint-ready condition, up to 12 ft wide and 8 ft high. Includes one solid color in two coats, basic preparation and cleanup. Primer, drywall repairs, chair rail, two-tone or specialty finishes require a separate quote.',
+      work:['Prepare up to 96 sq. ft. of one paint-ready wall','Apply two coats of one accent paint color','Protect adjoining surfaces and clean up'],
       priceStatus:'research-provisional',
       labor:[{name:'Two-coat single-color accent wall painting and edge finishing',quantity:1,unitPrice:175}],
       materials:[
-        {name:'1-Gallon Interior Flat Latex Paint',quantity:1,unitPrice:48.60},
-        {name:'Interior Bonding Primer (1 Gallon)',quantity:1,unitPrice:47.22}
+        {name:'1-Gallon Interior Flat Latex Paint',quantity:1,unitPrice:48.60}
       ],
-      consumables:commonConsumables,
+      consumables:[{name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48}],
       laborDiscountPercent:7,projectFeePercent:10
     };
     const accentStandard={
-      scenario:'One sound interior accent wall up to 12 ft wide and 8 ft high, with up to 12 linear ft of primed chair rail installed, filled and painted, two wall colors, bonding primer as needed and ordinary cleanup. Existing baseboards remain. No structural, electrical or specialty finishes.',
+      scenario:'One existing interior accent wall in paint-ready condition, up to 12 ft wide and 8 ft high, with up to 12 linear ft of primed chair rail installed, filled and painted, two wall colors, bonding primer as needed and ordinary cleanup. Existing baseboards remain. No structural, electrical or specialty finishes.',
       work:['Install, fill, caulk and paint up to 12 linear ft of chair rail','Prepare and paint up to 96 sq. ft. of wall in two colors','Protect adjoining surfaces and clean up'],
       priceStatus:'research-provisional',
       labor:[
