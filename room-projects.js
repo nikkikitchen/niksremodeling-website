@@ -488,7 +488,7 @@ window.renderProjectPackageOptions=function(id,project){
   // The Custom closet tile must show a different project, without a person's face.
   if(id==='closets-storage'){
     const customCloset=packs.find(p=>p.id==='custom');
-    if(customCloset)customCloset.photo='/assets/catalog-9.jpg';
+    if(customCloset)customCloset.photo='https://images.pexels.com/photos/11701120/pexels-photo-11701120.jpeg?auto=compress&cs=tinysrgb&w=900';
   }
   // Separate basement photos selected for the actual basement work offered.
   // Keep the existing Basic photo; the other three depict real residential basements.
