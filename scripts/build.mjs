@@ -11,9 +11,9 @@ const files = ['material-price-reference.json', 'material-price-reference.html',
   '_headers', '.nojekyll'];
 // Only the business phone may be published. Reject the retired personal contact
 // in visible text, tel/sms links, or script-generated contact buttons.
-for(const file of files.filter(name=>/\\.(?:html|js|json)$/.test(name))){
+for(const file of files.filter(name=>/\.(?:html|js|json)$/.test(name))){
  const contents=readFileSync(new URL('../'+file,import.meta.url),'utf8');
- if(/470[\\s().-]*991[\\s().-]*2133/.test(contents))
+ if(/470[\s().-]*991[\s().-]*2133/.test(contents))
   throw Error('Retired personal phone number still appears in '+file);
 }
 // Block releases that would reintroduce missing photographs, dead local links,
@@ -126,6 +126,22 @@ for (const [name,work] of Object.entries(specialty)) {
 if (projectSource.includes("keys.includes('plumbing')&&!keys.includes('faucet-service')"))
   throw Error('Global vanity-faucet injection has returned.');
 console.log('Site integrity passed: '+testedPhotos+' photo references, '+testedLinks+' local links, '+browserScripts.length+' JavaScript files, and 15 scoped specialty projects.');
+// Checkout release gate: Cloudflare builds must include the cart payment UI
+// and the server-side checkout handler before being marked successful.
+const checkoutApp=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+const checkoutPage=readFileSync(new URL('../project-cart.html',import.meta.url),'utf8');
+const paymentHandler=readFileSync(new URL('../functions/api/store-checkout.js',import.meta.url),'utf8');
+const quoteHandler=readFileSync(new URL('../functions/api/store-quote.js',import.meta.url),'utf8');
+for(const marker of ['function cartSecureCheckoutPanel(items)','Pay securely with Square','initCartSecureCheckout(c)']){
+ if(!checkoutApp.includes(marker))throw Error('Checkout interface missing: '+marker);
+}
+if(!checkoutPage.includes('src="/app.js?'))throw Error('Cart page does not load the checkout application.');
+for(const marker of ['q.totalCents!==expectedTotal','payment_link','SQUARE_LOCATION_ID']){
+ if(!paymentHandler.includes(marker))throw Error('Square payment handler missing: '+marker);
+}
+if(!quoteHandler.includes('checkoutEnabled'))throw Error('Square quote readiness missing.');
+console.log('Checkout release gate passed: cart button and secured payment handlers present.');
+
 mkdirSync(output, { recursive: true });
 // Validate approved internal supply reference data without publishing it.
 const supplyReference=JSON.parse(readFileSync(new URL('../data/approved-supply-prices.json',import.meta.url),'utf8'));
