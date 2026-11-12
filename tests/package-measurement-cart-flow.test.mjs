@@ -278,3 +278,19 @@ test('Basic Bathroom does not silently include a mirror or vanity light',async()
   assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$47\.73/);
  }finally{dom.window.close()}
 });
+
+test('Deluxe Bathroom includes one of two eligible fixtures, not both',async()=>{
+ const items=[
+  {name:'Bathroom — Deluxe Refresh',qty:1,type:'Service',source:'room-project-package',projectId:'bathrooms',packageId:'deluxe',
+   startingAt:1990,priceBasis:{materials:[{name:'Standard vanity light',quantity:1,unitPrice:150}]},price:null,quoteRequired:true},
+  {name:'Bathroom vanity light bar',type:'Product',source:'bathroom-retail',department:'bathroom',
+   qty:2,productId:'1111111111111111111',variantId:'a',price:100}
+ ];
+ const dom=await load('project-cart.html','',items);
+ try{
+  const d=dom.window.document,txt=d.querySelector('.nr-cart-products').textContent;
+  assert.match(txt,/\$100\.00/,'One light is covered; other light remains a $100 purchase');
+  assert.match(txt,/fixture allowance/i);
+  assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$100\.00/);
+ }finally{dom.window.close();}
+});
