@@ -431,6 +431,17 @@ window.renderProjectPackageOptions=function(id,project){
     };
     packs.forEach(p=>{p.photo=atticPhotos[p.id]||null;});
   }
+  // Separate basement photos selected for the actual basement work offered.
+  // Keep the existing Basic photo; the other three depict real residential basements.
+  if(id==='basement'){
+    const basementPhotos={
+      basic:'/assets/project-basement.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Finished_basement_-_before_and_after.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/2022-05-23_20_09_58_Panoramic_view_across_the_main_living_space_in_the_partially_finished_basement_of_a_house_along_Aquetong_Lane_in_the_Mountainview_section_of_Ewing_Township,_Mercer_County,_New_Jersey.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/2022-05-23_20_11_27_Panoramic_view_of_a_basement_bedroom_inside_a_house_along_Aquetong_Lane_in_the_Mountainview_section_of_Ewing_Township,_Mercer_County,_New_Jersey.jpg?width=900'
+    };
+    packs.forEach(p=>{p.photo=basementPhotos[p.id]||null;});
+  }
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
     const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
