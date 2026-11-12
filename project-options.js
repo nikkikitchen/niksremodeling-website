@@ -464,7 +464,7 @@
         'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
         '/assets/accessibility-premium-wooden-ramp.webp',
         '/assets/idea-accessibility.jpg',
-        'https://images.splitshire.com/full/Accessible-Bathroom-Design-Ideas_29c1c6.jpg'
+        '/assets/accessibility-curbless-shower.webp'
       ][i];
       const oneBar={
         scenario:'One 18-inch stainless grab bar in verified solid backing, up to one hour adjusting accessible existing threshold or ramp fasteners without replacing components or altering a load-bearing assembly. No repairs to failed supports, no new thresholds, ramp boards or structural work. Condition and accessibility requirements reviewed before acceptance.',
