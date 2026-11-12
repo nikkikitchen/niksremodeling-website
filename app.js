@@ -627,34 +627,49 @@ function nrProjectShoppingMarkup(cart){
   return '<a class="btn outline" href="'+url+'">'+slot.title+' — up to $'+allowance.toFixed(2)+'</a>';
  }).join('')+'</div><p class="calc-note">Other products and upgrades are still available through Shopping and priced separately unless approved as a package substitution.</p></section>';
 }
+// Estimate how many separately installed accessories a supplier bundle contains.
+// Unknown sets are priced on the final quote; do not promise free installation.
+function nrPackageFixtureUnits(kind,name){
+ if(kind!=='accessories')return 1;
+ const count=String(name).match(/\b(\d+)[- ]?(?:piece|pc|pcs|pack)\b/i);
+ if(count)return Number(count[1]);
+ if(/\b(?:set|bundle|kit)\b/i.test(name))return null;
+ return 1;
+}
 function reconcileProjectPackageFixtureChoices(cart){
  const items=cart.map(item=>({...item}));
  const packs=items.filter(item=>['room-project-package','bathroom-project-package'].includes(item.source)&&item.projectId==='bathrooms'&&NR_PACKAGE_FIXTURE_SLOTS[item.packageId]);
  if(packs.length!==1)return items;
- const pkg=packs[0],used=new Set();
+ const pkg=packs[0],usage=new Map();
  const slots=NR_PACKAGE_FIXTURE_SLOTS[pkg.packageId];
  for(const item of items){
   if(!['bathroom-retail','supplier-retail'].includes(item.source)||!item.productId||!item.variantId)continue;
-  // Credit at most one eligible fixture for its scoped slot. Additional
-  // quantities remain separate purchases; never credit an entire multi-pack.
-  const quantity=Number(item.qty);
-  if(!Number.isSafeInteger(quantity)||quantity<1||quantity>99||!Number.isFinite(Number(item.price))||Number(item.price)<=0)continue;
+  const quantity=Number(item.qty),unitPrice=Number(item.price);
+  if(!Number.isSafeInteger(quantity)||quantity<1||quantity>99||!Number.isFinite(unitPrice)||unitPrice<=0)continue;
   const name=String(item.name||'');
   const dept=String(item.department||'').toLowerCase();
   if(dept!=='bathroom'&&item.source!=='bathroom-retail')continue;
   const matches=slots.filter(slot=>slot.match.test(name)&&!slot.exclude.test(name));
-  if(matches.length!==1||used.has(matches[0].kind))continue;
+  if(matches.length!==1)continue;
   const slot=matches[0],allowance=nrPackageSlotAllowance(pkg,slot);
-  const credit=Math.round(Math.min(Number(item.price),allowance)*100)/100;
+  const maxUnits=slot.kind==='accessories'?(pkg.packageId==='basic'?2:3):1;
+  const perProductUnits=nrPackageFixtureUnits(slot.kind,name);
+  if(!Number.isSafeInteger(perProductUnits)||perProductUnits<1||perProductUnits>maxUnits)continue;
+  const prior=usage.get(slot.kind)||{units:0,credit:0};
+  const availableUnits=Math.max(0,maxUnits-prior.units);
+  const coveredQty=Math.min(quantity,Math.floor(availableUnits/perProductUnits));
+  const remainingCredit=Math.max(0,Math.round((allowance-prior.credit)*100)/100);
+  if(!coveredQty||remainingCredit<=0)continue;
+  const credit=Math.round(Math.min(unitPrice*coveredQty,remainingCredit)*100)/100;
   if(credit<=0)continue;
   item.packageFixtureKind=slot.kind;
   item.packageAllowanceCredit=credit;
   item.packageAllowanceLimit=allowance;
   item.packageFixturePackage=pkg.packageId;
-  item.packageOriginalUnitPrice=Number(item.price);
+  item.packageOriginalUnitPrice=unitPrice;
   item.packageCreditProvisional=true;
-  item.price=Math.round((Number(item.price)*quantity-credit)*100)/100/quantity;
-  used.add(slot.kind);
+  item.price=Math.round((unitPrice*quantity-credit)*100)/100/quantity;
+  usage.set(slot.kind,{units:prior.units+coveredQty*perProductUnits,credit:Math.round((prior.credit+credit)*100)/100});
  }
  return items.filter(line=>!(line.source==='retail-installation'&&items.some(product=>
   product.packageAllowanceCredit&&product.productId&&product.variantId&&
