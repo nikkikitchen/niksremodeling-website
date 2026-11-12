@@ -64,6 +64,13 @@ export async function onRequestPost({request,env}){
    },
    payment_note:'Verify COMPLETED payment, buyer address ZIP '+zip+', verified CJ stock, and funds before manually ordering from supplier. Refund/contact buyer if address differs.'
   });
+  // Never send a buyer to a payment link whose actual Square order total
+  // differs from the freshly verified amount (rounding/tax settings included).
+  const actualOrder=payment.related_resources?.orders?.find(order=>order.id===payment.payment_link?.order_id)
+    || payment.related_resources?.orders?.[0];
+  if(!Number.isSafeInteger(actualOrder?.total_money?.amount)||
+     actualOrder.total_money.amount!==q.totalCents)
+   return fail('Square tax or order total does not match the verified quote. Checkout was stopped.');
   const url=payment.payment_link?.url;
   if(!url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(url))
    return fail('Square did not return a valid secure checkout link.');
