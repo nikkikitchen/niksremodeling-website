@@ -436,28 +436,28 @@
       {"id":"custom","name":"Custom","intro":"Choose only the work and materials you need.","work":["Choose individual jobs and materials","Request a project quote"],"photo":"/assets/kitchen.jpg"}
     ],
     accessibility:[
-      {id:'basic',name:'Basic Safety',intro:'One grab bar plus up to an hour of simple threshold or existing-ramp fastener adjustment.',work:[
-        'Install one 18-inch grab bar into verified sound structural backing',
-        'Up to one hour of tightening existing, accessible threshold or ramp fasteners where no structural repair or replacement parts are needed',
-        'Include standard mounting fasteners and sealant for the grab bar',
-        'New thresholds, new ramps, structural repairs and additional grab bars need Standard or Custom'
+      {id:'basic',name:'Basic Safety',intro:'Repair an existing ramp and add one grab bar.',work:[
+        'Repair minor damage on one existing ramp, up to two labor hours',
+        'Replace up to one damaged ramp board and tighten loose fasteners',
+        'Install one 18-inch grab bar with secure mounting',
+        'Includes standard repair fasteners, grab-bar mounting hardware and sealant'
       ]},
-      {id:'standard',name:'Standard Safety',intro:'Two grab bars plus up to one hour of minor existing-ramp upkeep.',work:[
-        'Install up to two 18-inch grab bars into verified sound structural backing',
-        'Up to one hour of minor nonstructural existing-ramp maintenance, including one accessible treated deck board if needed',
-        'Include standard fasteners, one replacement board allowance and routine finishing',
-        'New ramp structures, major rail work or door hardware changes require Custom quote'
+      {id:'standard',name:'Standard Safety',intro:'Build or replace a simple straight access ramp.',work:[
+        'Build one new straight ramp or rebuild an existing straight ramp',
+        'Install safe supports, decking, handrails and edge protection',
+        'Include standard fasteners, lumber and installation supplies',
+        'Confirm ramp dimensions and access needs during the site visit'
       ]},
-      {id:'premium',name:'Premium Accessibility',intro:'Three grab bars and one straight access ramp up to 12 feet.',work:[
-        'Install up to three 18-inch grab bars into verified sound structural backing',
-        'Build one straight-run ramp, up to 12 feet of sloped run, where entry rise and available space allow',
-        'Include required handrails, edge protection and supports; existing safe level entry and exit surfaces required',
-        'Longer ramps or landings available under Custom; site assessment required'
+      {id:'premium',name:'Premium Accessibility',intro:'A straight access ramp up to 12 feet plus three grab bars.',work:[
+        'Build one straight access ramp up to 12 feet long',
+        'Include ramp supports, decking, handrails and edge protection',
+        'Install up to three 18-inch grab bars with secure mounting',
+        'Include standard fasteners, sealant, materials and cleanup'
       ]},
-      {id:'custom',name:'Custom',intro:'Longer ramps, landings, turns and custom access work.',work:[
-        'Build landings, multi-run ramps, switchbacks, or raised platforms after a site assessment',
-        'Select additional handrails, grab bars, doors or threshold changes',
-        'Request site-specific labor, materials, compliance and supplies estimate'
+      {id:'custom',name:'Custom',intro:'Custom ramps, access improvements and accessible bathrooms.',work:[
+        'Build longer ramps, landings, turning ramps or access platforms',
+        'Install custom handrails, door and threshold improvements',
+        'Plan curbless showers and other bathroom accessibility upgrades'
       ]}
     ].map((p,i)=>{
       p.photo=[
@@ -466,36 +466,28 @@
         '/assets/idea-accessibility.jpg',
         '/assets/accessibility-curbless-shower.webp'
       ][i];
-      const oneBar={
-        scenario:'One 18-inch stainless grab bar in verified solid backing, up to one hour adjusting accessible existing threshold or ramp fasteners without replacing components or altering a load-bearing assembly. No repairs to failed supports, no new thresholds, ramp boards or structural work. Condition and accessibility requirements reviewed before acceptance.',
+      const basicRepair={
+        scenario:'Minor repairs to one existing ramp, up to two labor hours, including one replacement treated deck board, fastener adjustments and installation of one grab bar into sound structural backing. Larger repairs are separately measured and quoted.',
         labor:[
-          {name:'One grab bar install with sound existing structural backing',quantity:1,unitPrice:250},
-          {name:'Existing threshold or ramp fastener adjustment, up to one hour',quantity:1,unitPrice:75}
+          {name:'Existing ramp repair, up to two labor hours',quantity:2,unitPrice:75},
+          {name:'Install one grab bar into sound structural backing',quantity:1,unitPrice:250}
         ],
         materials:[
-          {name:'Moen 18-inch stainless grab bar; marked-up provisional reference',quantity:1,unitPrice:31.52},
-          {name:'Box of exterior-rated wood fasteners for accessible adjustments',quantity:1,unitPrice:48.60}
-        ],
-        consumables:[{name:'Silicone tub-and-tile sealant 10.1 oz',quantity:1,unitPrice:10.12}],
-        laborDiscountPercent:7,projectFeePercent:10
-      };
-      const twoBars={
-        scenario:'Two 18-inch stainless grab bars in sound structural backing and up to one hour nonstructural upkeep on an existing suitable ramp. Includes one replacement treated deck board and standard fasteners where needed; no structural repairs, new ramps or significant railing work.',
-        labor:[
-          {name:'Two grab bars in sound existing backing',quantity:2,unitPrice:250},
-          {name:'Up to one hour minor nonstructural ramp upkeep',quantity:1,unitPrice:75}
-        ],
-        materials:[
-          {name:'Two 18-inch stainless grab bars; provisional marked-up references',quantity:2,unitPrice:31.52},
+          {name:'One 18-inch grab bar; provisional marked-up reference',quantity:1,unitPrice:31.52},
           {name:'One treated 5/4x6x12 deck board',quantity:1,unitPrice:22.28},
-          {name:'Exterior-rated deck screws, 5-lb box',quantity:1,unitPrice:48.60}
+          {name:'Exterior-rated wood fasteners',quantity:1,unitPrice:48.60}
         ],
         consumables:[{name:'Silicone tub-and-tile sealant 10.1 oz',quantity:1,unitPrice:10.12}],
         laborDiscountPercent:7,projectFeePercent:10
       };
-      if(p.id==='basic')Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(oneBar));
-      if(p.id==='standard')Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(twoBars));
-      if(p.id==='premium')p.startingAt=3915; // Existing provisional owner-approved estimate; structural site quote required.
+      if(p.id==='basic')Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(basicRepair));
+      if(p.id==='standard'){
+        // Ramp rebuilds require confirmed rise, length, structure and landings.
+        // Do not reuse the old minor-maintenance starting price.
+        p.startingAt=null;
+        p.priceStatus='quote-required';
+      }
+      if(p.id==='premium')p.startingAt=3915; // Existing provisional starting estimate; confirm ramp suitability on site.
       return p;
     })
   };
