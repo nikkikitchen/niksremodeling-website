@@ -524,3 +524,18 @@ nav.nav .mobile-top-nav{display:none!important}
    max-height:var(--mobile-menu-max-height,65vh)!important;
  }
 }
+
+/* Approved single-column Review Cart: items, delivery, totals, payment. */
+.nr-cart-page{max-width:900px;margin-inline:auto}
+.nr-cart-page .nr-cart-layout{display:flex;flex-direction:column;gap:16px}
+.nr-cart-page .nr-cart-layout>.nr-cart-products,
+.nr-cart-page .nr-cart-layout>.nr-cart-zip-top,
+.nr-cart-page .nr-cart-layout>.nr-cart-summary{width:100%;min-width:0;box-sizing:border-box}
+.nr-cart-page .nr-cart-summary{position:static}
+.nr-cart-page .nr-cart-zip-top{margin:0}
+.nr-cart-page .nr-cart-column-labels{font-size:.78rem}
+.nr-cart-page .nr-cart-products>p.calc-note{font-size:.83rem;line-height:1.45}
+.nr-cart-page .nr-cart-summary .cart-checkout-summary{padding:22px!important}
+.nr-cart-page [aria-label="Secure online checkout"]{display:flex;flex-direction:column;gap:12px;margin-top:20px!important}
+.nr-cart-page [aria-label="Secure online checkout"] .btn{width:100%;text-align:center;box-sizing:border-box}
+@media(min-width:720px){.nr-cart-page [aria-label="Secure online checkout"]{max-width:none}}
