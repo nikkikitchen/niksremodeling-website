@@ -336,10 +336,10 @@ window.renderProjectPackageOptions=function(id,project){
   // Retain Accent Walls legacy URL IDs (deluxe/premium) while showing the
   // common customer-facing Basic / Standard / Deluxe / Custom tiers.
   let packs=id==='accents'?[
-    {id:'basic',name:'Basic',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Chair rail and two-tone paint.',work:['Install chair rail','Prepare and paint the wall in two colors','Finish trim and clean up'],startingAt:395,priceStatus:'research-provisional'},
-    {id:'deluxe',name:'Standard',photo:'/assets/accent-walls-card.jpg',intro:'Decorative trim with painted finish.',work:['Install decorative board-and-batten or picture-frame trim','Prepare, caulk and paint the wall'],startingAt:695,priceStatus:'research-provisional'},
-    {id:'premium',name:'Deluxe',photo:'/assets/project-stone-real.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495,priceStatus:'research-provisional'},
-    {id:'custom',name:'Custom',intro:'Design your own accent wall.',work:[]}
+    {id:'basic',name:'Basic',photo:'https://images.pexels.com/photos/28104067/pexels-photo-28104067.jpeg?auto=compress&cs=tinysrgb&w=1000',intro:'One painted accent wall.',work:['Prepare and prime one sound accent wall','Paint one solid accent color in two coats','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
+    {id:'deluxe',name:'Standard',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Two-tone painted wall with chair rail.',work:['Install and finish chair rail','Prepare and paint the accent wall in two colors','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
+    {id:'premium',name:'Deluxe',photo:'/assets/accent-walls-card.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495,priceStatus:'research-provisional'},
+    {id:'custom',name:'Custom',photo:'https://images.pexels.com/photos/34598539/pexels-photo-34598539.jpeg?auto=compress&cs=tinysrgb&w=1000',intro:'Design a custom geometric or specialty feature wall.',work:[]}
   ]:[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes?.[0]||[]},
     {id:'standard',name:'Standard',intro:'A coordinated upgrade with additional finishing work.',work:[...(scopes?.[0]||[]),...(scopes?.[1]||[]).slice(0,1)]},
@@ -347,13 +347,30 @@ window.renderProjectPackageOptions=function(id,project){
     {id:'custom',name:'Custom',intro:'Build your own project with individual work choices.',work:[]}
   ];
   if(window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])packs=window.NIK_ROOM_PACKAGE_OVERRIDES[id];
-  // Costed Accent Basic scope replaces the older $395 single-color paint-only
-  // allowance. Chair rail, two paint colors, primer, caulk and job consumables
-  // are all included once; source catalog prices already contain 35% markup.
+  // Scope and price must agree with the photos: Basic is a single paint color;
+  // Standard adds chair rail and a second paint color. Source unit prices include markup.
   if(id==='accents'){
+    const commonConsumables=[
+      {name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48},
+      {name:'Sandpaper Sheets (Assorted Grit, 5-pack)',quantity:1,unitPrice:8.10},
+      {name:'9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)',quantity:1,unitPrice:18.90},
+      {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
+    ];
     const accentBasic={
-      scenario:'One sound interior accent wall up to 12 ft wide by 8 ft tall, with up to 12 linear ft of installed primed chair rail (two 8-ft stock pieces allowing offcuts), two wall colors (one gallon each), one coat of bonding primer as needed, caulk, ordinary wall preparation and cleanup. Existing baseboards remain. No drywall repair, wallpaper, electrical alterations, crown molding or specialty finishes.',
-      work:['Install, fill, caulk and paint up to 12 linear ft of chair rail on one sound wall','Prepare and paint up to 96 sq. ft. of wall in two colors','Caulk, protect adjoining surfaces and clean up'],
+      scenario:'One sound interior accent wall up to 12 ft wide and 8 ft high, one solid paint color in two coats, one bonding-primer coat as needed, ordinary surface preparation and cleanup. No chair rail, additional paint colors, drywall repair, wallpaper, electrical or specialty finishes.',
+      work:['Prepare and prime up to 96 sq. ft. of one sound wall','Apply two coats of one accent paint color','Protect adjoining surfaces and clean up'],
+      priceStatus:'research-provisional',
+      labor:[{name:'Two-coat single-color accent wall painting and edge finishing',quantity:1,unitPrice:175}],
+      materials:[
+        {name:'1-Gallon Interior Flat Latex Paint',quantity:1,unitPrice:48.60},
+        {name:'Interior Bonding Primer (1 Gallon)',quantity:1,unitPrice:47.22}
+      ],
+      consumables:commonConsumables,
+      laborDiscountPercent:7,projectFeePercent:10
+    };
+    const accentStandard={
+      scenario:'One sound interior accent wall up to 12 ft wide and 8 ft high, with up to 12 linear ft of primed chair rail installed, filled and painted, two wall colors, bonding primer as needed and ordinary cleanup. Existing baseboards remain. No structural, electrical or specialty finishes.',
+      work:['Install, fill, caulk and paint up to 12 linear ft of chair rail','Prepare and paint up to 96 sq. ft. of wall in two colors','Protect adjoining surfaces and clean up'],
       priceStatus:'research-provisional',
       labor:[
         {name:'Two-color accent wall painting and edge finishing',quantity:1,unitPrice:175},
@@ -364,21 +381,18 @@ window.renderProjectPackageOptions=function(id,project){
         {name:'1-Gallon Interior Flat Latex Paint — second color',quantity:1,unitPrice:48.60},
         {name:'Interior Bonding Primer (1 Gallon)',quantity:1,unitPrice:47.22},
         {name:'Primed Pine Chair Rail (2.5 in x 8 ft)',quantity:2,unitPrice:10.77},
-        {name:'Paintable acrylic-latex trim caulk (provisional $10.12 allowance; SKU confirmation required)',quantity:1,unitPrice:10.12}
+        {name:'Paintable acrylic-latex trim caulk (provisional allowance)',quantity:1,unitPrice:10.12}
       ],
-      consumables:[
-        {name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48},
-        {name:'Sandpaper Sheets (Assorted Grit, 5-pack)',quantity:1,unitPrice:8.10},
-        {name:'9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)',quantity:1,unitPrice:18.90},
-        {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
-      ],
+      consumables:commonConsumables,
       laborDiscountPercent:7,projectFeePercent:10
     };
-    const basic=packs.find(p=>p.id==='basic');
-    if(basic){
-      basic.work=accentBasic.work.slice();
-      Object.assign(basic,window.NIK_CALCULATE_PACKAGE_BASELINE(accentBasic));
-      basic.priceStatus=accentBasic.priceStatus;
+    for(const [tier,spec] of [['basic',accentBasic],['deluxe',accentStandard]]){
+      const choice=packs.find(p=>p.id===tier);
+      if(choice){
+        choice.work=spec.work.slice();
+        Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
+        choice.priceStatus=spec.priceStatus;
+      }
     }
   }
   // Bathroom and Kitchen formerly used fixed allowances, not costed scopes.
