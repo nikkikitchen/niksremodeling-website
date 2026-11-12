@@ -441,6 +441,49 @@ window.renderProjectPackageOptions=function(id,project){
     };
     packs.forEach(p=>{p.photo=closetPhotos[p.id]||null;});
   }
+  // Package-photo audit: do not repeat the same cover for Basic, Standard,
+  // Deluxe and Custom. Preserve previously approved bathroom/kitchen/attic/basement,
+  // accessibility and outdoor images. Every row uses a different real room image.
+  const auditedPhotoSets={
+    'bedroom-guest-room':{
+      basic:'/assets/approved-807c60a6001a.jpg',
+      standard:'/assets/bed.jpg',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Cozy_bedroom_with_a_large_bed_and_simple_decor_in_a_modern_home.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Balanced_Modern_Bedroom_Design_with_Neutral_Tones_and_Layered_Lighting.jpg?width=900'
+    },
+    'dining-room':{
+      basic:'/assets/approved-a051ee7e1935.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Orange_Dining_Room.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Dining_Rm_panorama.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Dining_room_interior.jpg?width=900'
+    },
+    garage:{
+      basic:'/assets/idea-mechanic-shop.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Tools_and_parts_are_scattered_on_a_workbench_in_a_garage.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench_-_(1).jpg?width=900'
+    },
+    'laundry-utility':{
+      basic:'/assets/approved-b9cdb9084877.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_room_on_main_level.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_time.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_room_in_apartment_building.png?width=900'
+    },
+    'living-family-room':{
+      basic:'/assets/approved-4822ff53e23f.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Living_room.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/02-24-2021-R-124.jpg?width=900',
+      custom:'/assets/fireplace-card.jpg'
+    }
+  };
+  if(auditedPhotoSets[id]){
+    packs.forEach(p=>{p.photo=auditedPhotoSets[id][p.id]||p.photo;});
+  }
+  // The Custom closet tile must show a different project, without a person's face.
+  if(id==='closets-storage'){
+    const customCloset=packs.find(p=>p.id==='custom');
+    if(customCloset)customCloset.photo='/assets/catalog-9.jpg';
+  }
   // Separate basement photos selected for the actual basement work offered.
   // Keep the existing Basic photo; the other three depict real residential basements.
   if(id==='basement'){
@@ -458,7 +501,8 @@ window.renderProjectPackageOptions=function(id,project){
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
       '<div class="pkg-image-wrap"><a class="pkg-image'+(id==='accents'&&custom?' pkg-image-full':'')+'" href="'+href+'"><img src="'+safe(p.photo||(id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='premium'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':project.image):(custom?'/assets/custom-projects-card.jpg':project.image)))+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
       '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='standard'?'<small>Photo: Scott Arneman / <a href="https://commons.wikimedia.org/wiki/File:Attic_Organized.JPG" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 3.0)</a></small>':id==='attic'&&p.id==='deluxe'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
-      (id==='closets-storage'&&p.id==='standard'?'<small>Photo: amslerPIX / <a href="https://commons.wikimedia.org/wiki/File:Master_Closet_Shelves.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':id==='closets-storage'&&p.id==='deluxe'?'<small>Photo: Amy Carroll, Anne Sage & California Closets / <a href="https://commons.wikimedia.org/wiki/File:Walk-In_Closet.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 4.0)</a></small>':id==='closets-storage'&&p.id==='custom'?'<small>Photo: California Closets / <a href="https://commons.wikimedia.org/wiki/File:Sarah_Sherman_Samuel_-_California_Closets.png" target="_blank" rel="noopener">Wikimedia Commons (CC BY 4.0)</a></small>':'')+
+      (id==='closets-storage'&&p.id==='standard'?'<small>Photo: amslerPIX / <a href="https://commons.wikimedia.org/wiki/File:Master_Closet_Shelves.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':id==='closets-storage'&&p.id==='deluxe'?'<small>Photo: Amy Carroll, Anne Sage & California Closets / <a href="https://commons.wikimedia.org/wiki/File:Walk-In_Closet.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 4.0)</a></small>':'')+
+      (auditedPhotoSets[id]&&/^https:\\/\\/commons\\.wikimedia\\.org\\/wiki\\/Special:FilePath\\//.test(p.photo||'')?'<small>Photo source and creator: <a href="'+(p.photo.split('?')[0].replace('/wiki/Special:FilePath/','/wiki/File:'))+'" target="_blank" rel="noopener">Wikimedia Commons (license and attribution)</a></small>':'')+
       (id==='basement'&&p.id==='standard'?'<small>Photo: Thekohser / <a href="https://commons.wikimedia.org/wiki/File:Finished_basement_-_before_and_after.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 4.0)</a></small>':id==='basement'&&(p.id==='deluxe'||p.id==='custom')?'<small>Photo: Famartin / <a href="https://commons.wikimedia.org/wiki/Category:Basements_in_the_United_States" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 4.0)</a></small>':'')+
       (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: Ben Husmann / <a href="https://commons.wikimedia.org/wiki/File:Attic_bedroom.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
        '<details class="pkg-mobile-details"'+(selected?.id===p.id?' open':'')+'><summary>Package details</summary><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></details>'+
