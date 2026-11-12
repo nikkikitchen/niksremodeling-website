@@ -24,6 +24,9 @@ jobs:
         run: npm test
       - name: Run calculator audit
         run: npm run test:calculator
+      - name: Check live Cloudflare checkout release (read-only, non-blocking)
+        run: node scripts/check-live-checkout.mjs
+        continue-on-error: true
       - name: Upload exact publishable dist files
         uses: actions/upload-artifact@v4
         with:
