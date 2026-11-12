@@ -161,11 +161,14 @@ window.renderOutdoorProjects=(themed=false)=>{
  document.body.innerHTML=header()+'<main class="wrap section"><a class="project-back" href="/#projects">← All Projects</a><h1>'+ (themed==='custom'?'More Ideas':themed?'Themed Rooms':'Outdoor Projects') +'</h1><p class="lead">'+(themed==='custom'?'Choose a finish or feature to make your space your own.':themed?'Choose a room to explore ideas and plan your work.':'Choose an outdoor area to explore ideas and plan your work.')+'</p><div class="tile-grid project-grid" id="outdoor-project-grid"></div></main>'+footer();
  const group=themed==='custom'?'custom':themed?'themed-rooms':'concrete';
  const grid=document.getElementById('outdoor-project-grid');
+ const groupPhotos=new Set();
  for(const item of window.projectGroupChoices(group)){
    const a=document.createElement('a');a.className='tile added-room-tile';a.href=item.href;
-   const img=document.createElement('img');img.src=item.image;img.alt=item.title;img.loading='lazy';
-   const text=document.createElement('span');text.textContent=item.title;
-   const small=document.createElement('small');small.textContent=item.intro;text.append(small);a.append(img,text);
+   if(item.image&&!groupPhotos.has(item.image)){
+     const img=document.createElement('img');img.src=item.image;img.alt=item.title;img.loading='lazy';a.append(img);groupPhotos.add(item.image);
+   }else a.classList.add('project-tile-no-photo');
+   const label=document.createElement('span');label.textContent=item.title;
+   const small=document.createElement('small');small.textContent=item.intro;label.append(small);a.append(label);
    grid.append(a);
  }
  updateCartCount();
