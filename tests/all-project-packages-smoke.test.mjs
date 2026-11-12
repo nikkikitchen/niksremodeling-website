@@ -50,7 +50,9 @@ test('Accent Walls uses matching visible tier names and keeps existing package l
   assert.deepEqual(cards.map(c=>c.querySelector('.pkg-image strong')?.textContent),['Basic','Standard','Deluxe','Custom']);
   // Preserve existing direct links while customer-facing names are normalized.
   assert.deepEqual(cards.slice(0,3).map(c=>c.querySelector('.pkg-add')?.dataset.package),['basic','deluxe','premium']);
-  assert.ok(cards.slice(0,3).every(c=>c.querySelector('.pkg-pricing')?.textContent.includes('Preliminary estimate')));
+  assert.ok(cards[0].querySelector('.pkg-pricing')?.textContent.includes('Preliminary estimate'));
+  assert.ok(cards[1].querySelector('.pkg-pricing')?.textContent.includes('Project quote required'),'Standard faux finishes require a scoped quote');
+  assert.ok(cards[2].querySelector('.pkg-pricing')?.textContent.includes('Preliminary estimate'));
  }finally{dom.window.close();}
 });
 test('Audited attic Basic applies seven-percent labor discount without double material markup',async()=>{
