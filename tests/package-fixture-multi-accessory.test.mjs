@@ -8,7 +8,7 @@ assert.ok(a>0&&b>a);
 const reconcile=new Function(code.slice(a,b)+'\nreturn reconcileProjectPackageFixtureChoices;')();
 const pkg=(tier)=>({
  source:'room-project-package',projectId:'bathrooms',packageId:tier,startingAt:1600,
- priceBasis:{materials:[{name:'Two standard bathroom accessories',unitPrice:45},{name:'Three standard bathroom accessories',unitPrice:70}]}
+ priceBasis:{materials:[{name:'Bathroom accessories',unitPrice:tier==='basic'?45:70}]}
 });
 const product=(name,price,quantity=1,id=name)=>({
  source:'bathroom-retail',department:'bathroom',name,price,qty:quantity,productId:id,variantId:'v'
