@@ -867,12 +867,11 @@ function cartCheckoutSummary(items){
 // labor, projects, and mixed carts must still go through written approval.
 function cartSecureCheckoutPanel(items){
  const visible=items.filter(x=>!x.hiddenFromCustomer);
- if(!visible.length)return '';
- const item=visible[0];
+ const item=visible[0]||{};
  const eligible=visible.length===1&&['supplier-retail','bathroom-retail'].includes(item.source)&&
     /^\d{8,30}$/.test(String(item.productId||''))&&
     /^[-\w]{8,64}$/.test(String(item.variantId||''))&&Number(item.qty)===1;
- const reason=visible.length>1?'Multiple items and project packages are not available for direct payment yet. Request a verified invoice for this cart.':
+ const reason=visible.length===0?'Your cart is empty. Add an available product to begin checkout.':visible.length>1?'Multiple items and project packages are not available for direct payment yet. Request a verified invoice for this cart.':
    ['Labor','Service'].includes(item.type)||/project-package/.test(String(item.source))?'Project and labor charges require an approved invoice before payment.':
    'This item requires a verified invoice before an online payment can be collected.';
  return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Secure online checkout">'+
@@ -1067,6 +1066,7 @@ function renderCart(){
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
  <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
 
+ ${cartSecureCheckoutPanel(c)}
  ${c.length?`<div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
  <h2>Items in Your Cart</h2><p class="calc-note">Shopping products are additional purchases unless an eligible fixture is explicitly credited to your package below. Shipping, applicable taxes and installation outside package scope are confirmed before you approve an invoice.</p><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
@@ -1081,7 +1081,7 @@ function renderCart(){
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
  <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}<a class="btn outline" href="/?open=shopping">Add Products</a></div>
- </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}${cartSecureCheckoutPanel(c)}</aside></div>
+ </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${nrProjectShoppingMarkup(c)}
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
