@@ -469,6 +469,12 @@ window.renderProjectPackageOptions=function(id,project){
       deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_time.jpg?width=900',
       custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_room_in_apartment_building.png?width=900'
     },
+    'room-additions':{
+      basic:'https://commons.wikimedia.org/wiki/Special:FilePath/Arlington_-_House_and_Extension.jpg?width=900',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/House_extension_made_of_Yorkstone.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/A_Fieldhouse_created_extension_space_containing_the_client%27s_NON_FITTED_kitchen_in_West_London.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Home_Office_for_Architect_-_Flickr_-_Jeremy_Levine_Design.png?width=900'
+    },
     'living-family-room':{
       basic:'/assets/approved-4822ff53e23f.jpg',
       standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Living_room.jpg?width=900',
