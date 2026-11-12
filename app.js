@@ -635,8 +635,10 @@ function reconcileProjectPackageFixtureChoices(cart){
  const slots=NR_PACKAGE_FIXTURE_SLOTS[pkg.packageId];
  for(const item of items){
   if(!['bathroom-retail','supplier-retail'].includes(item.source)||!item.productId||!item.variantId)continue;
-  // Do not silently credit ambiguous supplier listings or multi-unit orders.
-  if(Number(item.qty)!==1||!Number.isFinite(Number(item.price))||Number(item.price)<=0)continue;
+  // Credit at most one eligible fixture for its scoped slot. Additional
+  // quantities remain separate purchases; never credit an entire multi-pack.
+  const quantity=Number(item.qty);
+  if(!Number.isSafeInteger(quantity)||quantity<1||quantity>99||!Number.isFinite(Number(item.price))||Number(item.price)<=0)continue;
   const name=String(item.name||'');
   const dept=String(item.department||'').toLowerCase();
   if(dept!=='bathroom'&&item.source!=='bathroom-retail')continue;
@@ -651,7 +653,7 @@ function reconcileProjectPackageFixtureChoices(cart){
   item.packageFixturePackage=pkg.packageId;
   item.packageOriginalUnitPrice=Number(item.price);
   item.packageCreditProvisional=true;
-  item.price=Math.round((Number(item.price)-credit)*100)/100;
+  item.price=Math.round((Number(item.price)*quantity-credit)*100)/100/quantity;
   used.add(slot.kind);
  }
  return items.filter(line=>!(line.source==='retail-installation'&&items.some(product=>
