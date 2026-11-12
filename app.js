@@ -607,9 +607,9 @@ function reconcileBathroomFixtureAllowances(cart){
 // Package fixture selections are provisional until verified freight, tax treatment,
 // compatibility, supplier stock and the signed invoice are confirmed.
 const NR_PACKAGE_FIXTURE_SLOTS={
- basic:[{kind:'faucet',title:'Vanity Faucets',allowance:125,match:/\b(?:vanity|bathroom|lavatory)\s+faucet\b/i,exclude:/shower|tub|wall.mount|wall mount|part|repair|kit only/i},{kind:'accessories',title:'Bathroom Accessories',allowance:45,match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom (?:hardware|accessor(?:y|ies))/i,exclude:/replacement parts|refill/i}],
- standard:[{kind:'light',title:'Vanity Lights',allowance:150,match:/\bvanity light\b|\bbathroom vanity lighting\b/i,exclude:/bulb only|replacement parts|light switch|sconce pair/i},{kind:'mirror',title:'Bathroom Mirrors',allowance:100,match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b|\b(?:round |black )*wall mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i}],
- deluxe:[{kind:'light',title:'Vanity Lights',allowance:150,match:/\bvanity light\b|\bbathroom vanity lighting\b/i,exclude:/bulb only|replacement parts|light switch|sconce pair/i},{kind:'mirror',title:'Bathroom Mirrors',allowance:100,match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b|\b(?:round |black )*wall mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},{kind:'accessories',title:'Bathroom Accessories',allowance:70,match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom (?:hardware|accessor(?:y|ies))/i,exclude:/replacement parts|refill/i}]
+ basic:[{kind:'faucet',title:'Vanity Faucets',allowance:125,match:/\b(?:vanity|bathroom|lavatory)\s+faucet\b/i,exclude:/shower|tub|wall.mount|wall mount|part|repair|kit only|sensor|touchless|smart faucet/i},{kind:'accessories',title:'Bathroom Accessories',allowance:45,match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom (?:hardware|accessor(?:y|ies))/i,exclude:/replacement parts|refill/i}],
+ standard:[{kind:'light',title:'Vanity Lights',allowance:150,match:/\bvanity light\b|\bbathroom vanity lighting\b/i,exclude:/bulb only|replacement parts|light switch|sconce pair/i},{kind:'mirror',title:'Bathroom Mirrors',allowance:100,match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b|\b(?:round |black )*wall mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts|\b(?:backlit|illuminated|lighted|defogger|anti-fog|smart mirror)\b/i}],
+ deluxe:[{kind:'light',title:'Vanity Lights',allowance:150,match:/\bvanity light\b|\bbathroom vanity lighting\b/i,exclude:/bulb only|replacement parts|light switch|sconce pair/i},{kind:'mirror',title:'Bathroom Mirrors',allowance:100,match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b|\b(?:round |black )*wall mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts|\b(?:backlit|illuminated|lighted|defogger|anti-fog|smart mirror)\b/i},{kind:'accessories',title:'Bathroom Accessories',allowance:70,match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom (?:hardware|accessor(?:y|ies))/i,exclude:/replacement parts|refill/i}]
 };
 function nrPackageSlotAllowance(pkg,slot){
  const materials=pkg?.priceBasis?.materials||[];
@@ -630,7 +630,6 @@ function nrProjectShoppingMarkup(cart){
 // Estimate how many separately installed accessories a supplier bundle contains.
 // Unknown sets are priced on the final quote; do not promise free installation.
 function nrPackageFixtureUnits(kind,name){
- if(kind!=='accessories')return 1;
  const count=String(name).match(/\b(\d+)[- ]?(?:piece|pc|pcs|pack)\b/i);
  if(count)return Number(count[1]);
  if(/\b(?:set|bundle|kit)\b/i.test(name))return null;
