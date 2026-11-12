@@ -1,29 +1,72 @@
-import {square,PRODUCT_ID} from '../_lib/commerce.js';
+import {square} from '../_lib/commerce.js';
+import {catalog} from '../../store-catalog.js';
 import {onRequestGet as getQuote} from './store-quote.js';
+
+const HEADERS={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
+const fail=(message,status=503)=>Response.json({error:message,checkoutEnabled:false},{status,headers:HEADERS});
+
+// Hosted Square payment for one verified US-stock catalog product. All totals
+// come from fresh server-side supplier and Square tax lookups, never the cart.
 export async function onRequestPost({request,env}){
- // Quote-only launch. Deliberately hard-disabled regardless of Cloudflare/Square secrets.
- // Re-enable only after required seller registrations, tax rules, and checkout QA.
- return Response.json({error:'Online payments are not available yet. Please review your cart estimate or contact Nik’s Remodeling.',checkoutEnabled:false},{status:503,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
  const origin=new URL(request.url).origin;
- if(request.headers.get('Origin')!==origin)return Response.json({error:'Please start checkout from our website.'},{status:403});
+ if(request.headers.get('Origin')!==origin)return fail('Start checkout from our website.',403);
+ let body;
+ try{body=await request.json();}catch{return fail('Invalid checkout request.',400);}
+ const productId=String(body?.productId||'');
+ const variantId=String(body?.variantId||'');
+ const zip=String(body?.zip||'');
+ const requestId=String(body?.requestId||'');
+ const expectedTotal=Number(body?.expectedTotal);
+ if(!/^\d{8,30}$/.test(productId)||!/^[-\w]{8,64}$/.test(variantId)||
+    !/^\d{5}$/.test(zip)||!/^[a-zA-Z0-9-]{16,64}$/.test(requestId)||
+    !Number.isSafeInteger(expectedTotal)||expectedTotal<=0||
+    Number(body?.quantity)!==1)
+  return fail('Check the product, quantity and delivery ZIP before checkout.',400);
+ if(!catalog.some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
+ const allowed=String(env.STORE_ALLOWED_ZIPS||'').split(',').map(s=>s.trim()).filter(Boolean);
+ if(!allowed.includes(zip))return fail('Online checkout is not available for this ZIP. Request an invoice instead.');
  try{
- const body=await request.json();
- if(body.productId&&body.productId!==PRODUCT_ID)return Response.json({error:'Online payment for this item is not available yet.'},{status:503});
- if(!/^\d{5}$/.test(body.zip||'')||!Number.isSafeInteger(body.expectedTotal)||!/^[-\w]{16,80}$/.test(body.requestId||''))return Response.json({error:'Check your order details.'},{status:400});
- const response=await getQuote({request:new Request(origin+'/api/store-quote?zip='+body.zip),env});const q=await response.json();
- if(!response.ok)return Response.json(q,{status:503});
- if(!q.checkoutEnabled)return Response.json({error:'Online checkout is not available for this delivery area yet. Please call 678-231-4377.'},{status:503});
- if(q.totalCents!==body.expectedTotal)return Response.json({error:'The price changed. Please check delivery again before paying.'},{status:409});
- const {location}=await square(env,'/v2/locations/'+encodeURIComponent(env.SQUARE_LOCATION_ID));
- if(location?.status!=='ACTIVE'||location.currency!=='USD'||!location.capabilities?.includes('CREDIT_CARD_PROCESSING'))throw Error('Payments unavailable');
- const result=await square(env,'/v2/online-checkout/payment-links',{
- idempotency_key:body.requestId,
- description:'Farmington Nightstand; manual fulfillment only after payment and funds availability are verified.',
- order:{location_id:env.SQUARE_LOCATION_ID,reference_id:body.requestId,line_items:[{name:'Farmington Nightstand — Brown, delivered to '+q.zip,quantity:'1',base_price_money:{amount:q.subtotalCents,currency:'USD'},note:'CJ SKU '+q.sku+'; product '+PRODUCT_ID+'; delivery included. Manual fulfillment only.'}],taxes:[{catalog_object_id:env.STORE_TAX_ID,scope:'ORDER'}]},
- checkout_options:{ask_for_shipping_address:true,allow_tipping:false,merchant_support_email:'contact@niksremodeling.com',redirect_url:origin+'/furniture.html?payment=returned'},
- payment_note:'Manual fulfillment: verify COMPLETED payment and cleared funds before placing CJ order. Quote is for ZIP '+q.zip+'. Confirm shipping address matches before fulfillment.'
- });
- const url=result.payment_link?.url;if(!url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(url))throw Error('Payments unavailable');
- return Response.json({url},{headers:{'Cache-Control':'no-store'}});
- }catch{return Response.json({error:'Unable to start secure payment. No supplier order has been placed. Please call 678-231-4377.'},{status:503,headers:{'Cache-Control':'no-store'}});}
+  const requestUrl=new URL('/api/store-quote',origin);
+  requestUrl.searchParams.set('zip',zip);
+  requestUrl.searchParams.set('product',productId);
+  requestUrl.searchParams.set('variant',variantId);
+  const quoteResponse=await getQuote({request:new Request(requestUrl),env});
+  const q=await quoteResponse.json();
+  if(!quoteResponse.ok||!q.checkoutEnabled||!Number.isSafeInteger(q.totalCents))
+   return fail(q.error||'Price, stock, shipping or tax could not be confirmed.');
+  if(String(q.variantId)!==variantId||Number(q.stock)<1)return fail('This product option is unavailable.');
+  if(q.totalCents!==expectedTotal)return fail('Price or tax changed. Review the new total before paying.',409);
+  if(!Number.isSafeInteger(q.subtotalCents)||q.subtotalCents<=0||
+     !Number.isSafeInteger(q.deliveryCents)||q.deliveryCents<=0)
+   return fail('Delivery pricing needs confirmation.');
+  const {location}=await square(env,'/v2/locations/'+encodeURIComponent(env.SQUARE_LOCATION_ID));
+  if(location?.status!=='ACTIVE'||location.currency!=='USD'||
+      !location.capabilities?.includes('CREDIT_CARD_PROCESSING'))
+   return fail('Secure payments are not available for this merchant location.');
+  const itemName=String(q.name||'Remodeling merchandise').slice(0,200);
+  const payment=await square(env,'/v2/online-checkout/payment-links',{
+   idempotency_key:requestId,
+   description:itemName+' — verified US-stock merchandise. Fulfillment after payment and address verification.',
+   order:{
+    location_id:env.SQUARE_LOCATION_ID,
+    reference_id:requestId.slice(0,40),
+    line_items:[{
+      name:itemName+' (delivered to '+zip+')',quantity:'1',
+      base_price_money:{amount:q.subtotalCents,currency:'USD'},
+      note:'CJ item '+productId+' / variant '+variantId+' / SKU '+String(q.sku||'unknown').slice(0,70)+'. Product plus quoted delivery included.'
+    }],
+    taxes:[{catalog_object_id:env.STORE_TAX_ID,scope:'ORDER'}]
+   },
+   checkout_options:{
+    ask_for_shipping_address:true,allow_tipping:false,
+    merchant_support_email:'contact@niksremodeling.com',
+    redirect_url:origin+'/project-cart.html?payment=returned'
+   },
+   payment_note:'Verify COMPLETED payment, buyer address ZIP '+zip+', verified CJ stock, and funds before manually ordering from supplier. Refund/contact buyer if address differs.'
+  });
+  const url=payment.payment_link?.url;
+  if(!url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(url))
+   return fail('Square did not return a valid secure checkout link.');
+  return Response.json({url,totalCents:q.totalCents,zip},{headers:HEADERS});
+ }catch{return fail('Secure checkout could not be started. No order was placed.');}
 }
