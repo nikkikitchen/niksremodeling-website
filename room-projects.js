@@ -429,7 +429,7 @@ window.renderProjectPackageOptions=function(id,project){
   // When no trustworthy second photo exists, use a styled text tile instead of
   // showing a misleading or duplicated project photograph.
   const tierPhotos={
-    attic:{basic:'/assets/project-attic.jpg'},
+    attic:{basic:'/assets/project-attic.jpg',standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Attic_Organized.JPG?width=900',deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900',custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Attic_bedroom.jpg?width=900'},
     basement:{basic:'/assets/project-basement.jpg',standard:'/assets/flooring-card.jpg',deluxe:'/assets/lighting-card.jpg'},
     'bedroom-guest-room':{basic:'/assets/bed.jpg',standard:'/assets/flooring-card.jpg',deluxe:'/assets/pendant-lighting.jpg'},
     'closets-storage':{basic:'/assets/catalog-9.jpg'},
@@ -461,15 +461,14 @@ window.renderProjectPackageOptions=function(id,project){
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
     const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
-    const atticPhoto=id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='deluxe'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':null):null;
-    const candidate=p.photo||atticPhoto||(custom?'/assets/custom-projects-card.jpg':(tierPhotos[id]?.[p.id]||(index===0?project.image:null)));
+    const candidate=p.photo||(tierPhotos[id]?.[p.id])||(custom?'/assets/custom-projects-card.jpg':(index===0?project.image:null));
     const photo=candidate&&!usedPhotos.has(candidate)?candidate:null;
     if(photo)usedPhotos.add(photo);
     const photoMarkup=photo?'<img src="'+safe(photo)+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'">':'<span class="pkg-photo-placeholder" aria-hidden="true"></span>';
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
       '<div class="pkg-image-wrap"><a class="pkg-image'+(id==='accents'&&custom?' pkg-image-full':'')+(photo?'':' pkg-image-no-photo')+'" href="'+href+'">'+photoMarkup+'<strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
-      '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='deluxe'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
-      (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:New_attic_floor_at_Cattle_Chosen.jpg" target="_blank" rel="noopener">Sam Wilson / Wikimedia Commons</a>, CC BY-SA 4.0</small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
+      '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='standard'?'<small>Photo: Scott Arneman / <a href="https://commons.wikimedia.org/wiki/File:Attic_Organized.JPG" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 3.0)</a></small>':id==='attic'&&p.id==='deluxe'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
+      (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: Ben Husmann / <a href="https://commons.wikimedia.org/wiki/File:Attic_bedroom.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
        '<details class="pkg-mobile-details"'+(selected?.id===p.id?' open':'')+'><summary>Package details</summary><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></details>'+
        '<p class="pkg-pricing"><strong>'+(p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required')+'</strong>'+(p.startingAt&&p.priceStatus==='research-provisional'?'<small>Preliminary estimate · final quote after measurements</small>':'')+'</p>'+
        '<button class="btn primary pkg-add" type="button" data-package="'+p.id+'">Calculate Quote</button>')+
