@@ -863,6 +863,70 @@ function cartCheckoutSummary(items){
  <p class="calc-note"><a href="/terms.html">Estimate only — details &amp; terms</a>. No payment collected.</p>
  </section>`;
 }
+// A single verified supplier product can use hosted Square checkout. Quotes,
+// labor, projects, and mixed carts must still go through written approval.
+function cartSecureCheckoutPanel(items){
+ const visible=items.filter(x=>!x.hiddenFromCustomer);
+ if(visible.length!==1)return '';
+ const item=visible[0];
+ if(!['supplier-retail','bathroom-retail'].includes(item.source)||
+    !/^\\d{8,30}$/.test(String(item.productId||''))||
+    !/^[-\\w]{8,64}$/.test(String(item.variantId||''))||
+    Number(item.qty)!==1)return '';
+ return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Secure online checkout">'+
+  '<h3>Secure card checkout</h3><p>Enter your delivery ZIP above. We verify current U.S. stock, delivery, exact item price and configured sales tax before opening Square. No card details are entered on this website.</p>'+
+  '<button type="button" class="btn primary" id="square-check-price">Verify total for payment</button> '+
+  '<button type="button" class="btn primary" id="square-pay" hidden disabled>Continue to secure Square payment</button>'+
+  '<p id="square-check-status" role="status" aria-live="polite"></p></section>';
+}
+function initCartSecureCheckout(items){
+ const check=document.getElementById('square-check-price');
+ const pay=document.getElementById('square-pay');
+ const status=document.getElementById('square-check-status');
+ if(!check||!pay||!status)return;
+ const item=items.filter(x=>!x.hiddenFromCustomer)[0];
+ const zipInput=document.getElementById('cart-shipping-zip');
+ let quote=null;
+ const invalidate=()=>{quote=null;pay.hidden=true;pay.disabled=true;status.textContent='';};
+ zipInput?.addEventListener('input',invalidate);
+ check.addEventListener('click',async()=>{
+  const zip=String(zipInput?.value||'').trim();
+  if(!/^\\d{5}$/.test(zip)){status.textContent='Enter your five-digit delivery ZIP above first.';return;}
+  invalidate();check.disabled=true;status.textContent='Verifying the complete order with our supplier and Square…';
+  try{
+   const url='/api/store-quote?'+new URLSearchParams({zip,product:String(item.productId),variant:String(item.variantId)});
+   const response=await fetch(url,{cache:'no-store'});
+   const data=await response.json();
+   if(!response.ok||!data.checkoutEnabled||!Number.isSafeInteger(data.totalCents)||
+      String(data.variantId)!==String(item.variantId))
+    throw Error(data.error||'Online payment is not available for this order yet. You can request an invoice.');
+   quote={...data,zip};
+   const money=(data.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
+   status.textContent='Verified total (product + delivery + configured sales tax): '+money+'. Confirm your delivery ZIP before paying.';
+   pay.textContent='Pay '+money+' securely with Square';
+   pay.hidden=false;pay.disabled=false;
+  }catch(error){status.textContent=error.message||'Checkout is unavailable. No payment was taken.';}
+  finally{check.disabled=false;}
+ });
+ pay.addEventListener('click',async()=>{
+  if(!quote||quote.zip!==String(zipInput?.value||'').trim())return invalidate();
+  pay.disabled=true;check.disabled=true;status.textContent='Starting secure Square checkout…';
+  try{
+   const response=await fetch('/api/store-checkout',{
+    method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+    body:JSON.stringify({
+     productId:String(item.productId),variantId:String(item.variantId),
+     quantity:1,zip:quote.zip,expectedTotal:quote.totalCents,
+     requestId:crypto.randomUUID()
+    })
+   });
+   const result=await response.json();
+   if(!response.ok||!result.url||!/^https:\\/\\/(square\\.link|checkout\\.square\\.site)\\//.test(result.url))
+    throw Error(result.error||'Secure checkout is unavailable.');
+   location.assign(result.url);
+  }catch(error){status.textContent=error.message||'No payment taken.';pay.disabled=false;check.disabled=false;}
+ });
+}
 function cartShoppingChoices(items){
  const interested=items.filter(x=>x.source==='supplier-retail'&&(x.installationRequested||x.suppliesRequested));
  if(!interested.length)return '';
@@ -1013,7 +1077,7 @@ function renderCart(){
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
  <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}<a class="btn outline" href="/?open=shopping">Add Products</a></div>
- </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
+ </section><aside class="nr-cart-summary">${cartCheckoutSummary(c)}${cartSecureCheckoutPanel(c)}</aside></div>
  ${nrProjectShoppingMarkup(c)}
  ${cartSchedulingMarkup(c)}
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
@@ -1026,7 +1090,7 @@ function renderCart(){
   zipTop.appendChild(zipForm);
   if(zipStatus)zipTop.appendChild(zipStatus);
  }else if(zipTop){zipTop.remove();}
- updateCartCount();initCartShippingQuote(c);initCartTaxPreview();
+ updateCartCount();initCartShippingQuote(c);initCartTaxPreview();initCartSecureCheckout(c);
 }
 function removeCart(i){
  const c=getCart();if(!Number.isInteger(i)||i<0||i>=c.length)return;
