@@ -420,13 +420,24 @@ window.renderProjectPackageOptions=function(id,project){
   }
   const selected=packs.find(p=>p.id===(params.get('roomPackage')||params.get('bathPackage')||params.get('kitchenPackage')||params.get('accessibilityPackage'))&&p.id!=='custom');
   if(params.get('quote')==='1'&&selected){window.beginPackageQuote(id,project.title,selected,'room-project-package');return true;}
+  // Four distinct, project-specific Attic photographs approved for package cards.
+  // Keep the Basic local attic photo, and source the other three from Commons.
+  if(id==='attic'){
+    const atticPhotos={
+      basic:'/assets/project-attic.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Attic_Organized.JPG?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Attic_bedroom.jpg?width=900'
+    };
+    packs.forEach(p=>{p.photo=atticPhotos[p.id]||null;});
+  }
   const cards=packs.map((p,index)=>{
     const custom=p.id==='custom';
     const href=custom?base+'&roomMode=individual':listing+'&roomPackage='+p.id;
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
       '<div class="pkg-image-wrap"><a class="pkg-image'+(id==='accents'&&custom?' pkg-image-full':'')+'" href="'+href+'"><img src="'+safe(p.photo||(id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='premium'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':project.image):(custom?'/assets/custom-projects-card.jpg':project.image)))+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
-      '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='premium'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
-      (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:New_attic_floor_at_Cattle_Chosen.jpg" target="_blank" rel="noopener">Sam Wilson / Wikimedia Commons</a>, CC BY-SA 4.0</small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
+      '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='standard'?'<small>Photo: Scott Arneman / <a href="https://commons.wikimedia.org/wiki/File:Attic_Organized.JPG" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 3.0)</a></small>':id==='attic'&&p.id==='deluxe'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
+      (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: Ben Husmann / <a href="https://commons.wikimedia.org/wiki/File:Attic_bedroom.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
        '<details class="pkg-mobile-details"'+(selected?.id===p.id?' open':'')+'><summary>Package details</summary><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></details>'+
        '<p class="pkg-pricing"><strong>'+(p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required')+'</strong>'+(p.startingAt&&p.priceStatus==='research-provisional'?'<small>Preliminary estimate · final quote after measurements</small>':'')+'</p>'+
        '<button class="btn primary pkg-add" type="button" data-package="'+p.id+'">Calculate Quote</button>')+
