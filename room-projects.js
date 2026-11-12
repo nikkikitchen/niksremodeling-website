@@ -431,6 +431,16 @@ window.renderProjectPackageOptions=function(id,project){
     };
     packs.forEach(p=>{p.photo=atticPhotos[p.id]||null;});
   }
+  // Closets & Storage: distinct photos for each scope, including true custom cabinetry.
+  if(id==='closets-storage'){
+    const closetPhotos={
+      basic:'/assets/approved-8a9d216224b8.jpg',
+      standard:'https://commons.wikimedia.org/wiki/Special:FilePath/Master_Closet_Shelves.jpg?width=900',
+      deluxe:'https://commons.wikimedia.org/wiki/Special:FilePath/Walk-In_Closet.jpg?width=900',
+      custom:'https://commons.wikimedia.org/wiki/Special:FilePath/Sarah_Sherman_Samuel_-_California_Closets.png?width=900'
+    };
+    packs.forEach(p=>{p.photo=closetPhotos[p.id]||null;});
+  }
   // Separate basement photos selected for the actual basement work offered.
   // Keep the existing Basic photo; the other three depict real residential basements.
   if(id==='basement'){
@@ -448,6 +458,7 @@ window.renderProjectPackageOptions=function(id,project){
     return '<article class="pkg-choice'+(selected?.id===p.id?' selected':'')+'">'+
       '<div class="pkg-image-wrap"><a class="pkg-image'+(id==='accents'&&custom?' pkg-image-full':'')+'" href="'+href+'"><img src="'+safe(p.photo||(id==='attic'?(custom?'https://commons.wikimedia.org/wiki/Special:FilePath/New_attic_floor_at_Cattle_Chosen.jpg?width=900':p.id==='premium'?'https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900':project.image):(custom?'/assets/custom-projects-card.jpg':project.image)))+'" alt="'+safe(project.title+' '+p.name)+'" loading="'+(index===0?'eager':'lazy')+'"><strong>'+safe(p.name)+'</strong></a>'+(custom?'':'<div class="pkg-image-overlay" aria-hidden="true"><strong>'+safe(p.name)+' includes</strong><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></div>')+'</div>'+
       '<div class="pkg-content"><p class="pkg-caption">'+safe(p.intro)+'</p>'+(id==='accents'?'<p>Consultation if requested or required</p>':'')+(id==='attic'&&p.id==='standard'?'<small>Photo: Scott Arneman / <a href="https://commons.wikimedia.org/wiki/File:Attic_Organized.JPG" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 3.0)</a></small>':id==='attic'&&p.id==='deluxe'?'<small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Installing_installation_in_an_attic_(9337).jpg" target="_blank" rel="noopener">Wikimedia Commons (CC0)</a></small>':'')+
+      (id==='closets-storage'&&p.id==='standard'?'<small>Photo: amslerPIX / <a href="https://commons.wikimedia.org/wiki/File:Master_Closet_Shelves.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':id==='closets-storage'&&p.id==='deluxe'?'<small>Photo: Amy Carroll, Anne Sage & California Closets / <a href="https://commons.wikimedia.org/wiki/File:Walk-In_Closet.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 4.0)</a></small>':id==='closets-storage'&&p.id==='custom'?'<small>Photo: California Closets / <a href="https://commons.wikimedia.org/wiki/File:Sarah_Sherman_Samuel_-_California_Closets.png" target="_blank" rel="noopener">Wikimedia Commons (CC BY 4.0)</a></small>':'')+
       (id==='basement'&&p.id==='standard'?'<small>Photo: Thekohser / <a href="https://commons.wikimedia.org/wiki/File:Finished_basement_-_before_and_after.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 4.0)</a></small>':id==='basement'&&(p.id==='deluxe'||p.id==='custom')?'<small>Photo: Famartin / <a href="https://commons.wikimedia.org/wiki/Category:Basements_in_the_United_States" target="_blank" rel="noopener">Wikimedia Commons (CC BY-SA 4.0)</a></small>':'')+
       (custom?'<p>Choose only the jobs and materials you need.</p>'+(id==='attic'?'<small>Photo: Ben Husmann / <a href="https://commons.wikimedia.org/wiki/File:Attic_bedroom.jpg" target="_blank" rel="noopener">Wikimedia Commons (CC BY 2.0)</a></small>':'')+'<a class="btn outline" href="'+href+'">Choose Custom Items</a>':
        '<details class="pkg-mobile-details"'+(selected?.id===p.id?' open':'')+'><summary>Package details</summary><ul>'+p.work.map(t=>'<li>'+safe(t)+'</li>').join('')+'</ul></details>'+
