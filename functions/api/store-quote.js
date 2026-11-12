@@ -25,7 +25,6 @@ export async function onRequestGet({request,env}){
  const total=retailCents(Number(v.variantSellPrice)+shipping);
  const taxCatalog=await square(env,'/v2/catalog/list?types=TAX');
  const taxes=(taxCatalog.objects||[]).filter(o=>!o.is_deleted&&o.tax_data?.enabled).map(o=>({id:o.id,name:o.tax_data.name,percentage:o.tax_data.percentage,scope:o.tax_data.applies_to_custom_amounts,inclusion:o.tax_data.inclusion_type}));
- const allowedZips=String(env.STORE_ALLOWED_ZIPS||'').split(',').map(s=>s.trim());
  const tax=taxes.find(t=>t.id===env.STORE_TAX_ID&&t.scope&&t.inclusion==='ADDITIVE'&&Number.isFinite(Number(t.percentage))&&Number(t.percentage)>0&&Number(t.percentage)<=100);
  // Quotes remain available, but checkout cannot be enabled via environment variables.
  const allowedZips=String(env.STORE_ALLOWED_ZIPS||'').split(',').map(s=>s.trim()).filter(Boolean);
