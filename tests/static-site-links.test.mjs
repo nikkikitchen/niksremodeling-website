@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,existsSync} from 'node:fs';
+import {readFileSync,existsSync,readdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const sources=['app.js','room-projects.js','project-options.js','bathroom-shop.js','bathroom-catalog.js','shopping-flow.js','real-products.js','styles.css','index.html','project-cart.html'];
+const sources=readdirSync(root).filter(name=>/\.(?:js|css|html)$/.test(name) && !name.startsWith('.'));
 test('static local asset links resolve to actual project files',()=>{
  const missing=[];
  for(const file of sources){
