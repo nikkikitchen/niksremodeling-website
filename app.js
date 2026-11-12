@@ -867,17 +867,21 @@ function cartCheckoutSummary(items){
 // labor, projects, and mixed carts must still go through written approval.
 function cartSecureCheckoutPanel(items){
  const visible=items.filter(x=>!x.hiddenFromCustomer);
- if(visible.length!==1)return '';
+ if(!visible.length)return '';
  const item=visible[0];
- if(!['supplier-retail','bathroom-retail'].includes(item.source)||
-    !/^\d{8,30}$/.test(String(item.productId||''))||
-    !/^[-\w]{8,64}$/.test(String(item.variantId||''))||
-    Number(item.qty)!==1)return '';
+ const eligible=visible.length===1&&['supplier-retail','bathroom-retail'].includes(item.source)&&
+    /^\d{8,30}$/.test(String(item.productId||''))&&
+    /^[-\w]{8,64}$/.test(String(item.variantId||''))&&Number(item.qty)===1;
+ const reason=visible.length>1?'Multiple items and project packages are not available for direct payment yet. Request a verified invoice for this cart.':
+   ['Labor','Service'].includes(item.type)||/project-package/.test(String(item.source))?'Project and labor charges require an approved invoice before payment.':
+   'This item requires a verified invoice before an online payment can be collected.';
  return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Secure online checkout">'+
-  '<h3>Secure card checkout</h3><p>Enter your delivery ZIP above. We verify current U.S. stock, delivery, exact item price and configured sales tax before opening Square. No card details are entered on this website.</p>'+
-  '<button type="button" class="btn primary" id="square-check-price">Verify total for payment</button> '+
-  '<button type="button" class="btn primary" id="square-pay" hidden disabled>Continue to secure Square payment</button>'+
-  '<p id="square-check-status" role="status" aria-live="polite"></p></section>';
+  '<h3>Secure checkout</h3>'+
+  (eligible?'<p>Enter your delivery ZIP above, then verify the product, U.S. stock, delivery and tax before paying securely with Square.</p>':
+   '<p>'+reason+'</p>')+
+  (eligible?'<button type="button" class="btn outline" id="square-check-price">Verify total for payment</button> ':'')+
+  '<button type="button" class="btn primary" id="square-pay" disabled>Pay securely with Square</button>'+
+  '<p id="square-check-status" role="status" aria-live="polite">'+(eligible?'Verify your final price to enable payment.':'Payment is unavailable for this cart. No charge will be made.')+'</p></section>';
 }
 function initCartSecureCheckout(items){
  const check=document.getElementById('square-check-price');
@@ -887,7 +891,7 @@ function initCartSecureCheckout(items){
  const item=items.filter(x=>!x.hiddenFromCustomer)[0];
  const zipInput=document.getElementById('cart-shipping-zip');
  let quote=null;
- const invalidate=()=>{quote=null;pay.hidden=true;pay.disabled=true;status.textContent='';};
+ const invalidate=()=>{quote=null;pay.disabled=true;pay.textContent='Pay securely with Square';status.textContent='';};
  zipInput?.addEventListener('input',invalidate);
  check.addEventListener('click',async()=>{
   const zip=String(zipInput?.value||'').trim();
@@ -904,7 +908,7 @@ function initCartSecureCheckout(items){
    const money=(data.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
    status.textContent='Verified total (product + delivery + configured sales tax): '+money+'. Confirm your delivery ZIP before paying.';
    pay.textContent='Pay '+money+' securely with Square';
-   pay.hidden=false;pay.disabled=false;
+   pay.disabled=false;
   }catch(error){status.textContent=error.message||'Checkout is unavailable. No payment was taken.';}
   finally{check.disabled=false;}
  });
