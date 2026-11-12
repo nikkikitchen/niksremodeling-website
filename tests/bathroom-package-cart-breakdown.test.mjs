@@ -33,7 +33,7 @@ test('Bathroom and Kitchen package prices derive from itemized labor, materials,
 
 test('cart displays proposed package labor, materials and fees without demanding payment',()=>{
  assert.ok(room.includes('window.beginPackageQuote=function('));
- for(const term of ['Package starting total','Materials &amp; supplies (proposed deposit)','Labor (pay later, weekly draws)','Fees (included in package total)','Balance after proposed deposit (weekly draws)']){
+ for(const term of ['Package estimate (labor + materials + supplies + fees)','Materials and supplies (included)','Labor after 7% package discount (included)','Project fees (included)','Total package estimate (not yet due)']){
   assert.ok(app.includes(term),term+' missing');
  }
  assert.ok(app.includes('Request Deposit + Weekly Draws'));
