@@ -107,16 +107,31 @@ document.addEventListener('DOMContentLoaded',async()=>{
   mirror:{type:'accessories',title:'Bathroom Mirrors',match:/\bbathroom (?:wall |vanity )?mirror\b|\bvanity mirror\b|\b(?:round |black )?wall mirror\b/i,exclude:/medicine cabinet|mirror light|lighting|parts/i},
   accessories:{type:'accessories',title:'Bathroom Accessories',match:/towel (?:bar|ring)|toilet paper holder|robe hook|bathroom accessor/i,exclude:/parts|refill/i}
  };
- const slot=packageSlotRules[params.get('packageShop')]||null;
- const budget=Number(params.get('packageBudget'));
- const packageBudget=slot&&Number.isFinite(budget)&&budget>0&&budget<=10000?budget:null;
+ // Trust only the saved project package, never the URL's editable allowance.
+ const requestedSlot=packageSlotRules[params.get('packageShop')]||null;
+ const packageCart=typeof getCart==='function'?getCart():[];
+ const eligiblePackages=packageCart.filter(item=>item.projectId==='bathrooms'&&
+   ['room-project-package','bathroom-project-package'].includes(item.source)&&
+   ['basic','standard','deluxe'].includes(item.packageId));
+ const activePackage=eligiblePackages.length===1?eligiblePackages[0]:null;
+ const packageSlots={
+   basic:{faucet:125,accessories:45},
+   standard:{light:150,mirror:100},
+   deluxe:{light:150,mirror:100,accessories:70}
+ };
+ const selectedKind=params.get('packageShop');
+ const allowedKinds=activePackage?packageSlots[activePackage.packageId]:null;
+ const slot=requestedSlot&&allowedKinds&&Object.prototype.hasOwnProperty.call(allowedKinds,selectedKind)?requestedSlot:null;
+ const materialMatch={faucet:/vanity faucet/i,light:/vanity light/i,mirror:/bathroom mirror/i,accessories:/bathroom accessories/i};
+ const actualMaterial=(activePackage?.priceBasis?.materials||[]).find(item=>materialMatch[selectedKind]?.test(String(item.name||'')));
+ const packageBudget=slot?(Number(actualMaterial?.unitPrice)>0?Number(actualMaterial.unitPrice):allowedKinds[selectedKind]):null;
  const eligibleForPackage=(name,priceCents)=>{
   if(!slot)return true;
   return slot.match.test(String(name||''))&&!slot.exclude.test(String(name||''))&&
    Number.isSafeInteger(Number(priceCents))&&Number(priceCents)>0&&
    (Number(priceCents)/100)*1.08<=packageBudget;
  };
- const shopParams=slot?new URLSearchParams({packageShop:params.get('packageShop'),packageBudget:String(packageBudget||0),packageTier:params.get('packageTier')||''}):null;
+ const shopParams=slot?new URLSearchParams({packageShop:selectedKind}):null;
  const type=slot?slot.type:bathroomNames[params.get('type')]?params.get('type'):'all';
  const product=params.get('product');
  const toiletModel=type==='toilets'&&toiletChoices.some(([id])=>id!=='parts'&&id===params.get('model'))?params.get('model'):null;
@@ -149,7 +164,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
    '<a class="photo-category-tile" href="/bathroom.html"><img src="'+bathroomCategoryPhotos.all+'" alt="" loading="lazy"><span><strong>All Bathroom</strong></span></a>'+
    bathroomTypes.map(([key,label])=>'<a class="photo-category-tile" href="/bathroom.html?type='+key+'"><img src="'+bathroomCategoryPhotos[key]+'" alt="" loading="lazy"><span><strong>'+bathEsc(label)+'</strong></span></a>').join('')+
    '</nav>';
- const packageNotice=slot?'<section class="panel" style="padding:16px;margin:12px 0"><strong>'+bathEsc(slot.title)+' — package allowance '+bathMoney(Math.round((packageBudget||0)*100))+'</strong><p>Showing products whose listed price plus an 8% provisional tax reserve fits the allowance. Shipping is not known until your delivery ZIP is checked. These are candidates, not guaranteed included items; any freight or taxes that exceed the remaining allowance become an upgrade in your final quote.</p><a href="/project-cart.html">Back to your project cart</a></section>':'';
+ const packageNotice=slot?'<section class="panel" style="padding:16px;margin:12px 0"><strong>'+bathEsc(slot.title)+' — package allowance '+bathMoney(Math.round((packageBudget||0)*100))+'</strong><p>Showing candidates whose item price plus an 8% conservative planning reserve fits the allowance. Shipping is not known until your delivery ZIP is checked. These are candidates, not guaranteed included items; any freight or taxes that exceed the remaining allowance become an upgrade in your final quote.</p><a href="/project-cart.html">Back to your project cart</a></section>':'';
  const base='<main class="wrap section"><nav aria-label="Breadcrumb">'+
    (fromProject?'<a href="'+projectReturn+'">Bathroom Project</a> → '+bathEsc(selectedCategory):'<a href="/">Home</a> → <a href="/bathroom.html">Bathroom</a>')+'</nav>'+
    '<h1>'+(type==='all'?'Bathroom Fixtures & Supplies':bathEsc(selectedCategory))+'</h1>'+
@@ -178,9 +193,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
    if(resp.status===503)resp=await getDetail();
    if(!resp.ok)throw Error('Product cannot be verified currently.');
    const detail=await resp.json();
-   const variants=bathVerified(detail);
-   if(!variants)throw Error('This product has no verified U.S. warehouse stock or current price.');
+   const warehouseVariants=bathVerified(detail);
+   if(!warehouseVariants)throw Error('This product has no verified U.S. warehouse stock or current price.');
    if(type!=='all'&&!bathroomMatch(detail.name,type))throw Error('Product does not belong to this bathroom category.');
+   const variants=slot?warehouseVariants.filter(v=>eligibleForPackage(detail.name,v.priceCents)):warehouseVariants;
+   if(!variants.length)throw Error('No selected product options currently fit this package allowance. Browse ordinary Shopping for upgrades.');
    const image=/^https:\/\//.test(detail.image||'')?detail.image:'';
    const faucetEstimate=type==='faucets'&&/faucet/i.test(detail.name)&&!/wall.mount|shower|tub|cartridge|parts|repair/i.test(detail.name);
    const laborHint=faucetEstimate?'Estimated installation labor: $225 per faucet (existing connections).':'Installation estimate depends on the fixture and existing connections.';
@@ -214,6 +231,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
        const inStock=bathVerified(fresh);
        const freshVariant=inStock?.find(v=>String(v.id)===String(variant?.id));
        if(!freshVariant)throw Error('Out of stock');
+       if(slot&&!eligibleForPackage(fresh.name||detail.name,freshVariant.priceCents))throw Error('Selected variant exceeds the package browsing limit');
        variant=freshVariant;
      }catch{feedback.textContent='Supplier stock is not confirmed. Nothing was added to your cart.';button.disabled=false;return;}
      button.disabled=false;
