@@ -40,14 +40,17 @@ test('mixed carts and empty carts never create a payable button',()=>{
  }
 });
 
-test('Review Cart renders checkout above cart detail in source, regardless of cart size',()=>{
- const renderStart=app.indexOf('function renderCart(){');
- const renderEnd=app.indexOf('\nfunction removeCart(',renderStart);
- assert.ok(renderStart>=0&&renderEnd>renderStart);
- const source=app.slice(renderStart,renderEnd);
- const header=source.indexOf('Your Cart');
- const panel=source.indexOf('cartSecureCheckoutPanel(c)');
- const conditional=source.indexOf('${c.length?');
- assert.ok(header>=0&&header<panel&&panel<conditional,
-  'Payment controls belong immediately below cart header, not hidden by cart-size branch');
+test('Review Cart shows items, delivery, order summary and scheduling before the payment button',()=>{
+ const start=app.indexOf('function renderCart(){');
+ const end=app.indexOf('\nfunction removeCart(',start);
+ assert.ok(start>=0&&end>start);
+ const source=app.slice(start,end);
+ const item=source.indexOf('Items in Your Cart');
+ const delivery=source.indexOf('nr-cart-zip-top');
+ const summary=source.indexOf('cartCheckoutSummary(c)');
+ const schedule=source.indexOf('cartSchedulingMarkup(c)');
+ const pay=source.indexOf('cartSecureCheckoutPanel(c)');
+ assert.ok(item>=0&&item<delivery&&delivery<summary&&summary<schedule&&schedule<pay,
+  'Checkout must appear after items, delivery, the summary, and payment choices');
+ assert.ok(source.includes("+'</div>"),'Empty cart should retain checkout section');
 });
