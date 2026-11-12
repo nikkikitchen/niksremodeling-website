@@ -336,10 +336,10 @@ window.renderProjectPackageOptions=function(id,project){
   // Retain Accent Walls legacy URL IDs (deluxe/premium) while showing the
   // common customer-facing Basic / Standard / Deluxe / Custom tiers.
   let packs=id==='accents'?[
-    {id:'basic',name:'Basic',photo:'https://images.pexels.com/photos/28104067/pexels-photo-28104067.jpeg?auto=compress&cs=tinysrgb&w=1000',intro:'One painted accent wall.',work:['Prepare and prime one sound accent wall','Paint one solid accent color in two coats','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
-    {id:'deluxe',name:'Standard',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Two-tone painted wall with chair rail.',work:['Install and finish chair rail','Prepare and paint the accent wall in two colors','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
-    {id:'premium',name:'Deluxe',photo:'/assets/accent-walls-card.jpg',intro:'Stone, tile or wood statement wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495,priceStatus:'research-provisional'},
-    {id:'custom',name:'Custom',photo:'https://images.pexels.com/photos/34598539/pexels-photo-34598539.jpeg?auto=compress&cs=tinysrgb&w=1000',intro:'Design a custom geometric or specialty feature wall.',work:[]}
+    {id:'basic',name:'Basic',photo:'https://images.pexels.com/photos/28104067/pexels-photo-28104067.jpeg?auto=compress&cs=tinysrgb&w=1000',intro:'Chair rail or picture-frame trim with paint.',work:['Choose a chair rail or simple picture-frame molding on one wall','Install and finish trim, paint the wall','Protect adjoining surfaces and clean up'],priceStatus:'research-provisional'},
+    {id:'deluxe',name:'Standard',photo:'/assets/approved-4822ff53e23f.jpg',intro:'Chair rail, faux finish below and paint above.',work:['Install and finish chair rail','Choose a faux stone, brick or wood-style lower-wall finish','Paint the upper wall and clean up'],priceStatus:'quote-required'},
+    {id:'premium',name:'Deluxe',photo:'/assets/accent-walls-card.jpg',intro:'Full stacked-stone or premium feature wall.',work:['Select a stacked stone, tile, wood slat or specialty panel finish','Install and finish the selected accent wall'],startingAt:1495,priceStatus:'research-provisional'},
+    {id:'custom',name:'Custom',photo:'https://images.unsplash.com/photo-1734470793522-8a990afdcf72?auto=format&fit=crop&w=1200&q=85',intro:'Custom designs, trim patterns and specialty layouts.',work:[]}
   ]:[
     {id:'basic',name:'Basic',intro:'Practical improvements without a major rebuild.',work:scopes?.[0]||[]},
     {id:'standard',name:'Standard',intro:'A coordinated upgrade with additional finishing work.',work:[...(scopes?.[0]||[]),...(scopes?.[1]||[]).slice(0,1)]},
@@ -357,23 +357,12 @@ window.renderProjectPackageOptions=function(id,project){
       {name:'Paint Tray Liners (10-pack)',quantity:1,unitPrice:12.83}
     ];
     const accentBasic={
-      scenario:'One interior wall in paint-ready condition, up to 12 ft wide and 8 ft high. Includes one solid color in two coats, basic preparation and cleanup. Primer, drywall repairs, chair rail, two-tone or specialty finishes require a separate quote.',
-      work:['Prepare up to 96 sq. ft. of one paint-ready wall','Apply two coats of one accent paint color','Protect adjoining surfaces and clean up'],
-      priceStatus:'research-provisional',
-      labor:[{name:'Two-coat single-color accent wall painting and edge finishing',quantity:1,unitPrice:175}],
-      materials:[
-        {name:'1-Gallon Interior Flat Latex Paint',quantity:1,unitPrice:48.60}
-      ],
-      consumables:[{name:'Painters Tape (1.88-in x 60 yds)',quantity:1,unitPrice:11.48}],
-      laborDiscountPercent:7,projectFeePercent:10
-    };
-    const accentStandard={
-      scenario:'One existing interior accent wall in paint-ready condition, up to 12 ft wide and 8 ft high, with up to 12 linear ft of primed chair rail installed, filled and painted, two wall colors, bonding primer as needed and ordinary cleanup. Existing baseboards remain. No structural, electrical or specialty finishes.',
-      work:['Install, fill, caulk and paint up to 12 linear ft of chair rail','Prepare and paint up to 96 sq. ft. of wall in two colors','Protect adjoining surfaces and clean up'],
+      scenario:'One existing interior accent wall up to 12 ft wide and 8 ft high, with up to 12 linear ft of chair rail installed, filled and painted, two wall colors and ordinary cleanup. Simple picture-frame molding is an alternative subject to matching the baseline trim quantity; elaborate layouts require a custom quote.',
+      work:['Install and finish up to 12 linear ft of chair rail or comparable simple picture-frame trim','Paint the accent wall in two complementary colors','Protect adjoining surfaces and clean up'],
       priceStatus:'research-provisional',
       labor:[
         {name:'Two-color accent wall painting and edge finishing',quantity:1,unitPrice:175},
-        {name:'Install, fill and paint chair rail',quantity:2,unitPrice:75}
+        {name:'Install, fill and paint decorative trim',quantity:2,unitPrice:75}
       ],
       materials:[
         {name:'1-Gallon Interior Flat Latex Paint — first color',quantity:1,unitPrice:48.60},
@@ -385,13 +374,22 @@ window.renderProjectPackageOptions=function(id,project){
       consumables:commonConsumables,
       laborDiscountPercent:7,projectFeePercent:10
     };
-    for(const [tier,spec] of [['basic',accentBasic],['deluxe',accentStandard]]){
-      const choice=packs.find(p=>p.id===tier);
-      if(choice){
-        choice.work=spec.work.slice();
-        Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
-        choice.priceStatus=spec.priceStatus;
-      }
+    const basic=packs.find(p=>p.id==='basic');
+    if(basic){
+      basic.work=accentBasic.work.slice();
+      Object.assign(basic,window.NIK_CALCULATE_PACKAGE_BASELINE(accentBasic));
+      basic.priceStatus=accentBasic.priceStatus;
+    }
+    const standard=packs.find(p=>p.id==='deluxe');
+    if(standard){
+      // Faux finishes vary by selected technique and materials; do not sell
+      // the prior painted chair-rail scope as if it covers a faux finish.
+      standard.startingAt=null;
+      standard.depositEstimate=null;
+      standard.laborEstimate=null;
+      standard.overheadAllowance=null;
+      standard.priceBasis=null;
+      standard.priceStatus='quote-required';
     }
   }
   // Bathroom and Kitchen formerly used fixed allowances, not costed scopes.
