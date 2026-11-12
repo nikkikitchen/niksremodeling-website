@@ -18,9 +18,10 @@ def ids():
     for name in ("retail-catalog.js", "store-catalog.js"):
         text = (ROOT / name).read_text(encoding="utf-8")
         found.update(re.findall(r'"id"\s*:\s*"(\d{12,22})"', text))
-    bathroom = (ROOT / "bathroom-shop.js").read_text(encoding="utf-8")
-    block = bathroom.split("const bathroomSaved=[", 1)[1].split("\n ];", 1)[0]
-    found.update(re.findall(r"id:'(\d{12,22})'", block))
+    # The saved bathroom products live in a separate ES module. Do not parse
+    # removed inline arrays; collect the product identifiers directly.
+    bathroom = (ROOT / "bathroom-catalog.js").read_text(encoding="utf-8")
+    found.update(re.findall(r"id:\s*[\'\"](\d{12,22})[\'\"]", bathroom))
     return sorted(found)
 
 def check(pid):
