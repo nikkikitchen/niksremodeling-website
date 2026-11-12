@@ -52,3 +52,14 @@ test('Extra units in a bundled light set must not silently receive included inst
  assert.equal(charge(out),80);
  assert.equal(out[0].packageAllowanceCredit,undefined);
 });
+
+test('Basic Bathroom recognizes common centerset and sink faucet descriptions but not shower faucets',()=>{
+ const basic={source:'room-project-package',projectId:'bathrooms',packageId:'basic',startingAt:875,
+  priceBasis:{materials:[{name:'Vanity faucet',unitPrice:125}]}};
+ const good=reconcile([basic,product('4 inch centerset faucet',60)]).slice(1)[0];
+ assert.equal(good.price,0);
+ assert.equal(good.packageAllowanceCredit,60);
+ const shower=reconcile([basic,product('Bathroom shower faucet',60)]).slice(1)[0];
+ assert.equal(shower.price,60);
+ assert.equal(shower.packageAllowanceCredit,undefined);
+});
