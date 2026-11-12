@@ -870,8 +870,8 @@ function cartSecureCheckoutPanel(items){
  if(visible.length!==1)return '';
  const item=visible[0];
  if(!['supplier-retail','bathroom-retail'].includes(item.source)||
-    !/^\\d{8,30}$/.test(String(item.productId||''))||
-    !/^[-\\w]{8,64}$/.test(String(item.variantId||''))||
+    !/^\d{8,30}$/.test(String(item.productId||''))||
+    !/^[-\w]{8,64}$/.test(String(item.variantId||''))||
     Number(item.qty)!==1)return '';
  return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Secure online checkout">'+
   '<h3>Secure card checkout</h3><p>Enter your delivery ZIP above. We verify current U.S. stock, delivery, exact item price and configured sales tax before opening Square. No card details are entered on this website.</p>'+
@@ -891,7 +891,7 @@ function initCartSecureCheckout(items){
  zipInput?.addEventListener('input',invalidate);
  check.addEventListener('click',async()=>{
   const zip=String(zipInput?.value||'').trim();
-  if(!/^\\d{5}$/.test(zip)){status.textContent='Enter your five-digit delivery ZIP above first.';return;}
+  if(!/^\d{5}$/.test(zip)){status.textContent='Enter your five-digit delivery ZIP above first.';return;}
   invalidate();check.disabled=true;status.textContent='Verifying the complete order with our supplier and Square…';
   try{
    const url='/api/store-quote?'+new URLSearchParams({zip,product:String(item.productId),variant:String(item.variantId)});
@@ -921,7 +921,7 @@ function initCartSecureCheckout(items){
     })
    });
    const result=await response.json();
-   if(!response.ok||!result.url||!/^https:\\/\\/(square\\.link|checkout\\.square\\.site)\\//.test(result.url))
+   if(!response.ok||!result.url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(result.url))
     throw Error(result.error||'Secure checkout is unavailable.');
    location.assign(result.url);
   }catch(error){status.textContent=error.message||'No payment taken.';pay.disabled=false;check.disabled=false;}
