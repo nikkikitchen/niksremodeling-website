@@ -42,13 +42,13 @@
     'access-exterior':work('Exterior Accessibility','custom',['Entry Ramp Planning','Exterior Handrails','Accessible Walkway Planning','Entry Landing Assessment','Exterior Threshold Transition']),
     // Accessibility is organized by actual access improvements, not unrelated
     // general trade catalogs like Flooring, Lighting or Doors & Windows.
-    'access-bath':work('Accessible Bath & Shower','custom',['Shower Grab Bars','Low-Threshold Shower Assessment','Walk-In Shower Accessibility','Shower Seat','Handheld Shower Access','Tub-to-Shower Conversion Assessment']),
+    'access-bath':work('Accessible Bath & Shower','custom',['Curbless Shower Installation','Shower Grab Bars','Low-Threshold Shower Assessment','Walk-In Shower Accessibility','Shower Seat','Handheld Shower Access','Tub-to-Shower Conversion Assessment']),
     'access-grab-bars':work('Grab Bars & Support Rails','custom',['Shower Grab Bars','Toilet Grab Bars','Reinforced Grab Bar Mounting','Support Rails']),
     'access-indoor-rails':work('Indoor Handrails & Stair Access','custom',['Hallway Handrails','Stair Handrails','Continuous Handrails','Stair Access Assessment']),
     'access-doorways':work('Accessible Doorways & Hardware','custom',['Doorway Widening Assessment','Accessible Lever Handles','Door Swing & Clearance Improvements','Pocket / Sliding Door Assessment']),
     'access-thresholds':work('Interior Thresholds & Transitions','custom',['Low-Profile Threshold','Wheelchair-Friendly Floor Transition','Raised Threshold Removal','Smooth Room-to-Room Access']),
     'access-controls':work('Easy-Reach Controls','custom',['Easy-Reach Switch Assessment','Accessible Door Controls','Motion-Activated Lighting Controls','Accessible Thermostat Placement']),
-    'access-ramps':work('Entry Ramps & Landings','custom',['Entry Ramp Assessment','Wheelchair Ramp Planning','Ramp Handrails','Ramp Landing','Ramp Surface & Traction']),
+    'access-ramps':work('Entry Ramps & Landings','custom',['Existing Ramp Repair','Straight Ramp up to 12 ft','Turning Ramp with Landing','Ramp Handrails','Ramp Landing','Ramp Surface & Traction']),
     'access-outdoor-rails':work('Outdoor Handrails & Steps','custom',['Entry Handrails','Porch Handrails','Outdoor Step Handrails','Safer Entry-Step Assessment']),
     'access-walkways':work('Accessible Walkways','custom',['Accessible Walkway Planning','Even Walking Surface','Slip-Resistant Walkway','Pathway Clearance']),
     'access-entry':work('Exterior Door Access','custom',['Accessible Entry Threshold','Landing & Doorway Clearance','Low-Profile Weatherproof Threshold','Accessible Entry Assessment']),
@@ -436,28 +436,29 @@
       {"id":"custom","name":"Custom","intro":"Choose only the work and materials you need.","work":["Choose individual jobs and materials","Request a project quote"],"photo":"/assets/kitchen.jpg"}
     ],
     accessibility:[
-      {id:'basic',name:'Basic Safety',intro:'Repair an existing ramp and add one grab bar.',work:[
-        'Repair minor damage on one existing ramp, up to two labor hours',
-        'Replace up to one damaged ramp board and tighten loose fasteners',
+      {id:'basic',name:'Basic Ramp Repair',intro:'Repair an existing ramp and install one grab bar.',work:[
+        'Repair one existing ramp, up to four labor hours',
+        'Replace up to four damaged ramp deck boards and secure loose fasteners',
+        'Make minor repairs to an existing handrail',
         'Install one 18-inch grab bar with secure mounting',
-        'Includes standard repair fasteners, grab-bar mounting hardware and sealant'
+        'Includes replacement boards, standard fasteners, mounting hardware and sealant'
       ]},
-      {id:'standard',name:'Standard Safety',intro:'Build or replace a simple straight access ramp.',work:[
-        'Build one new straight ramp or rebuild an existing straight ramp',
-        'Install safe supports, decking, handrails and edge protection',
-        'Include standard fasteners, lumber and installation supplies',
-        'Confirm ramp dimensions and access needs during the site visit'
-      ]},
-      {id:'premium',name:'Premium Accessibility',intro:'A straight access ramp up to 12 feet plus three grab bars.',work:[
+      {id:'standard',name:'Standard Ramp',intro:'Build one straight access ramp up to 12 feet.',work:[
         'Build one straight access ramp up to 12 feet long',
-        'Include ramp supports, decking, handrails and edge protection',
-        'Install up to three 18-inch grab bars with secure mounting',
-        'Include standard fasteners, sealant, materials and cleanup'
+        'Include ramp decking, supports, handrails and edge protection',
+        'Include standard fasteners, materials and cleanup',
+        'Confirm the entry height and safe transitions on site'
       ]},
-      {id:'custom',name:'Custom',intro:'Custom ramps, access improvements and accessible bathrooms.',work:[
-        'Build longer ramps, landings, turning ramps or access platforms',
-        'Install custom handrails, door and threshold improvements',
-        'Plan curbless showers and other bathroom accessibility upgrades'
+      {id:'premium',name:'Premium Turning Ramp',intro:'Build a ramp with a turn and a landing where the direction changes.',work:[
+        'Build a ramp with one turn and the turning landing it requires',
+        'Include ramp decking, supports, handrails and edge protection',
+        'Complete safe entry and exit transitions',
+        'Measure the available space and design the layout on site'
+      ]},
+      {id:'custom',name:'Custom — Choose Your Work',intro:'Choose individual accessibility improvements for a custom quote.',work:[
+        'Choose ramp repairs, ramps, landings, handrails or grab bars',
+        'Choose curbless showers, doorway or threshold improvements',
+        'Select only the work you want; pricing is based on your selections'
       ]}
     ].map((p,i)=>{
       p.photo=[
@@ -467,27 +468,25 @@
         '/assets/accessibility-curbless-shower.webp'
       ][i];
       const basicRepair={
-        scenario:'Minor repairs to one existing ramp, up to two labor hours, including one replacement treated deck board, fastener adjustments and installation of one grab bar into sound structural backing. Larger repairs are separately measured and quoted.',
+        scenario:'Repair one existing ramp for up to four labor hours, replacing up to four damaged treated deck boards, securing loose fasteners and making minor handrail repairs. Install one 18-inch grab bar into verified sound structural backing. Site conditions and safe access are checked before quoting.',
         labor:[
-          {name:'Existing ramp repair, up to two labor hours',quantity:2,unitPrice:75},
+          {name:'Existing ramp repairs, up to four labor hours',quantity:4,unitPrice:75},
           {name:'Install one grab bar into sound structural backing',quantity:1,unitPrice:250}
         ],
         materials:[
           {name:'One 18-inch grab bar; provisional marked-up reference',quantity:1,unitPrice:31.52},
-          {name:'One treated 5/4x6x12 deck board',quantity:1,unitPrice:22.28},
+          {name:'Treated 5/4x6x12 deck boards',quantity:4,unitPrice:22.28},
           {name:'Exterior-rated wood fasteners',quantity:1,unitPrice:48.60}
         ],
         consumables:[{name:'Silicone tub-and-tile sealant 10.1 oz',quantity:1,unitPrice:10.12}],
         laborDiscountPercent:7,projectFeePercent:10
       };
       if(p.id==='basic')Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(basicRepair));
-      if(p.id==='standard'){
-        // Ramp rebuilds require confirmed rise, length, structure and landings.
-        // Do not reuse the old minor-maintenance starting price.
+      // Ramp geometry and structural requirements must be established on site.
+      if(p.id==='standard'||p.id==='premium'){
         p.startingAt=null;
         p.priceStatus='quote-required';
       }
-      if(p.id==='premium')p.startingAt=3915; // Existing provisional starting estimate; confirm ramp suitability on site.
       return p;
     })
   };
