@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /project-cart.html
+Sitemap: https://niksremodeling.com/sitemap.xml
