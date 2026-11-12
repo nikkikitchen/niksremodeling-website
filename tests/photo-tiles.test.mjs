@@ -39,11 +39,17 @@ test('photo navigation changes do not alter approved labor amounts',()=>{
   assert.equal(packages.find(x=>x.id===id)?.labor,labor,id);
  }
 });
-test('retail checkout stays disabled even with payment settings present',()=>{
- const status=readFileSync(new URL('../functions/api/store-quote.js',import.meta.url),'utf8');
- assert.ok(status.includes('const checkoutEnabled=false;'));
+test('retail checkout verifies supplier, Square, tax, ZIP and final total before payment',()=>{
+ const quote=readFileSync(new URL('../functions/api/store-quote.js',import.meta.url),'utf8');
  const checkout=readFileSync(new URL('../functions/api/store-checkout.js',import.meta.url),'utf8');
- assert.ok(checkout.includes('checkoutEnabled:false'));
+ const cart=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ for(const required of ['usCjWarehouseUnits','selectConfirmedFreight','STORE_TAX_ID','STORE_ALLOWED_ZIPS','SQUARE_LOCATION_ID'])
+  assert.ok(quote.includes(required),'Quote must verify '+required);
+ for(const required of ['allowed.includes(zip)','q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','idempotency_key','ask_for_shipping_address:true'])
+  assert.ok(checkout.includes(required),'Checkout missing '+required);
+ assert.ok(cart.includes('initCartSecureCheckout(c)'));
+ assert.ok(cart.includes('Verify total for payment'));
+ assert.ok(!quote.includes('const checkoutEnabled=false;'));
 });
 
 test('appliance dryers show a laundry image, not kitchen images',()=>{
