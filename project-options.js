@@ -462,9 +462,9 @@
     ].map((p,i)=>{
       p.photo=[
         'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
-        '/assets/idea-accessibility.jpg',
         '/assets/accessibility-premium-wooden-ramp.webp',
-        '/assets/custom-projects-card.jpg'
+        '/assets/idea-accessibility.jpg',
+        'https://commons.wikimedia.org/wiki/Special:FilePath/Sandford-House-wheelchair-ramp.JPG?width=900'
       ][i];
       const oneBar={
         scenario:'One 18-inch stainless grab bar in verified solid backing, up to one hour adjusting accessible existing threshold or ramp fasteners without replacing components or altering a load-bearing assembly. No repairs to failed supports, no new thresholds, ramp boards or structural work. Condition and accessibility requirements reviewed before acceptance.',
