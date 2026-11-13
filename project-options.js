@@ -587,14 +587,17 @@
     // Scope is a quote request, not a fixed price or promise of code-compliant
     // installation without an on-site assessment.
     if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')==='legacy'){
+      // Old bookmarks should never expose a second, outdated package gallery.
+      location.replace('/project.html?project=accessibility');
+      return;
       const packages=[
-        {id:'basic',name:'Basic Safety',intro:'Two grab bars plus up to one hour of minor existing-ramp maintenance.',work:[
+        {id:'basic',name:'Basic',intro:'Two grab bars plus up to one hour of minor existing-ramp maintenance.',work:[
           'Install two 18-inch grab bars into verified sound structural backing',
           'Up to one hour of minor nonstructural repairs to an existing ramp, such as tightening fasteners or replacing one accessible deck board',
           'Includes standard fasteners and up to one 12-foot treated deck board where needed',
           'Structural repairs, new ramps, major railing work and threshold changes require a separate quote'
         ]},
-        {id:'premium',name:'Premium Accessibility',intro:'Three grab bars and one straight access ramp up to 12 feet.',work:[
+        {id:'premium',name:'Premium',intro:'Three grab bars and one straight access ramp up to 12 feet.',work:[
           'Install up to three 18-inch grab bars into verified sound structural backing',
           'Build one straight-run ramp, up to 12 feet of sloped run, where the entry rise and available space allow',
           'Include required handrails, edge protection, and ramp supports; existing safe level entry and exit surfaces are required',
