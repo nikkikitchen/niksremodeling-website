@@ -15,4 +15,16 @@ Rule: 35% markup **once** on researched raw retail prices. Existing `room-projec
 
 Further research required: towel bars, toilet-paper holders, kitchen Deluxe cabinets/countertops and complete installations, accessibility structural ramps. Each needs specification, quantities and compliance checks before a usable bounded figure.
 
+## Additional sourced allowances for owner review
+
+| Component | Public comparable cost | Once-marked-up example | What it covers | Evidence |
+| --- | ---: | ---: | --- | --- |
+| Chrome towel bar, 24 in (Glacier Bay Constructor 20118-0201) | $17.98 | $24.27 | One towel bar; matching backing and fitting still to confirm | https://www.homedepot.com/p/204804735 |
+| Chrome toilet-paper holder (Glacier Bay Constructor 20118-2001) | $14.98 | $20.22 | One holder; not a full accessory set | https://www.homedepot.com/p/204804715 |
+| **Basic matching two-piece accessory set (one of each)** | **$32.96** | **$44.49** | Two accessories only, not labor/consumables or delivery | Sources above |
+| Hampton Bay Shaker assembled 24-in base cabinet KB24-SSW | $239.00 | $322.65 | One cabinet box, not an entire kitchen or installation | https://www.homedepot.com/b/Kitchen-Kitchen-Cabinets/White/Shaker/Base/N-5yc1vZas87Z1z0vm5fZ1z118ifZ1z1zr8b |
+| Hampton Bay 8-ft straight laminate countertop (white granite 011349010809476) | $179.00 | $241.65 | **One straight 8-ft piece**, not sink cutouts, joints, returns, edge/cut waste, installation or delivery | https://www.homedepot.com/b/Kitchen-Countertops-Laminate-Countertops/Hampton-Bay/8-ft/Prefab/N-5yc1vZc3bgZp4Z1z1c3pgZ1z1ph9m |
+
+The current Bathroom Basic two-accessory allowance is already provisional; compare these figures against it before changing an advertised package price. For Kitchen Deluxe, cabinet/countertop examples are **unit inputs only**. A valid project price requires an actual layout (number of base/wall cabinets, linear feet, sink/appliance openings, hardware, demo and installation hours). Do not infer a whole-kitchen price by multiplying arbitrary unit counts.
+
 **Owner review:** approve/replace the allowances and exact models, or retain conservative allowance until purchase. No tax or freight included in these raw references. Customer checkout stays disabled.
