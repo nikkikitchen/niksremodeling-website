@@ -1,5 +1,6 @@
 import {square} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
+import {retailCatalog} from '../../retail-catalog.js';
 import {onRequestGet as getQuote} from './store-quote.js';
 
 const HEADERS={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
@@ -25,7 +26,7 @@ export async function onRequestPost({request,env}){
     !Number.isSafeInteger(expectedTotal)||expectedTotal<=0||
     Number(body?.quantity)!==1)
   return fail('Check the product, quantity and delivery ZIP before checkout.',400);
- if(!catalog.some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
+ if(![...catalog,...retailCatalog].some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
  // Retail shipping is decided by the verified supplier freight quote, not a labor-service ZIP whitelist.
  try{
   const requestUrl=new URL('/api/store-quote',origin);
