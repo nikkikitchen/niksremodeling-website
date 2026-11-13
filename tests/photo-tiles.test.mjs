@@ -48,7 +48,7 @@ test('retail checkout verifies supplier, Square, tax, ZIP and final total before
  for(const required of ['q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','idempotency_key','ask_for_shipping_address:true','destination-sales-tax'])
   assert.ok(checkout.includes(required),'Checkout missing '+required);
  assert.ok(cart.includes('initCartSecureCheckout(c)'));
- assert.ok(cart.includes('Verify total for payment'));
+ assert.ok(cart.includes('Check final total'));
  assert.ok(!quote.includes('STORE_ALLOWED_ZIPS'),'Product checkout should not use a labor-service ZIP whitelist');
  assert.ok(!checkout.includes('STORE_ALLOWED_ZIPS'),'Payment checkout should not use a labor-service ZIP whitelist');
  assert.ok(!quote.includes('const checkoutEnabled=false;'));
