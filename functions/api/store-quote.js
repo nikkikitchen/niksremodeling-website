@@ -2,13 +2,14 @@ import {quoteDetailedFreight} from '../_lib/detailed-freight.mjs';
 import {selectConfirmedFreight, UNCONFIRMED_SHIPPING_MESSAGE} from '../_lib/verified-freight.mjs';
 import {cj,PRODUCT_ID,retailCents,square,usCjWarehouseUnits} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
+import {retailCatalog} from '../../retail-catalog.js';
 import {destinationSalesTax} from '../_lib/destination-tax.js';
 export async function onRequestGet({request,env}){
  const params=new URL(request.url).searchParams;
  const id=params.get('product')||PRODUCT_ID;
  if(!/^[\w-]{8,64}$/.test(id))return Response.json({error:'Invalid product.'},{status:400});
  if(["2003348098417340418","2003347794848272385"].includes(id))return Response.json({error:'Product excluded: no verified U.S. warehouse stock.'},{status:404,headers:{'Cache-Control':'no-store'}});
- const catalogItem=catalog.find(p=>String(p.id)===id);
+ const catalogItem=[...catalog,...retailCatalog].find(p=>String(p.id)===id);
  if(!catalogItem)return Response.json({error:'This product is not yet enabled for online checkout.'},{status:404,headers:{'Cache-Control':'no-store'}});
  const zip=params.get('zip');if(!/^\d{5}$/.test(zip||''))return Response.json({error:'Enter a five-digit delivery ZIP code.'},{status:400});
  try{
