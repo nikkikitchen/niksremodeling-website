@@ -187,7 +187,7 @@ test('Accent Wall Basic advertises the single-color starting price and never tak
   assert.equal(item.price,null);
   assert.equal(item.quoteRequired,true);
   w.renderCart();
-  assert.equal(d.getElementById('cart-due-now').textContent,`${Number(item.depositEstimate).toFixed(2)} + tax pending`, 'Show the proposed materials deposit even while payment remains disabled');
+  assert.equal(d.getElementById('cart-due-now').textContent,`$${Number(item.depositEstimate).toFixed(2)} + tax pending`, 'Show the proposed materials deposit even while payment remains disabled');
   assert.equal(d.getElementById('cart-pay-button').disabled,true);
  }finally{dom.window.close()}
 });
