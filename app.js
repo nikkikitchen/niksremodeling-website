@@ -1054,7 +1054,7 @@ function initCartTaxPreview(){
  };
  const lookup=async zip=>{
   const mine=++lookupId;
-  if(!/^\\d{5}$/.test(zip)){rate=null;verifiedZip='';calculate();return;}
+  if(!/^\d{5}$/.test(zip)){rate=null;verifiedZip='';calculate();return;}
   if(verifiedZip===zip&&rate!==null)return;
   rate=null;verifiedZip='';calculate();
   try{
@@ -1089,7 +1089,7 @@ function initCartTaxPreview(){
   shippingCents=cents;
   calculate();
  });
- if(/^\\d{5}$/.test(zipInput.value||''))lookup(zipInput.value.trim());
+ if(/^\d{5}$/.test(zipInput.value||''))lookup(zipInput.value.trim());
 }
 
 function packageQuoteLink(item){
