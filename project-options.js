@@ -436,54 +436,61 @@
       {"id":"custom","name":"Custom","intro":"Choose only the work and materials you need.","work":["Choose individual jobs and materials","Request a project quote"],"photo":"/assets/kitchen.jpg"}
     ],
     accessibility:[
-      {id:'basic',name:'Basic Ramp Repair',intro:'Repair an existing ramp and install one grab bar.',work:[
-        'Repair one existing ramp, up to four labor hours',
-        'Replace up to four damaged ramp deck boards and secure loose fasteners',
-        'Make minor repairs to an existing handrail',
-        'Install one 18-inch grab bar with secure mounting',
-        'Includes replacement boards, standard fasteners, mounting hardware and sealant'
+      {id:'basic',name:'Basic Safety',intro:'One grab bar and minor existing ramp maintenance.',work:[
+        'Install one 18-inch grab bar into sound structural backing',
+        'Up to one hour of minor nonstructural existing ramp repair',
+        'Include a replacement board if needed, fasteners, supplies and cleanup'
       ]},
-      {id:'standard',name:'Standard Ramp',intro:'Build one straight access ramp up to 12 feet.',work:[
-        'Build one straight access ramp up to 12 feet long',
-        'Include ramp decking, supports, handrails and edge protection',
-        'Include standard fasteners, materials and cleanup',
-        'Confirm the entry height and safe transitions on site'
+      {id:'standard',name:'Standard Safety',intro:'Two grab bars and minor existing ramp repairs.',work:[
+        'Install up to two 18-inch grab bars with secure structural mounting',
+        'Up to two hours of minor repairs to an existing sound ramp',
+        'Include up to two replacement deck boards, fasteners, supplies and cleanup'
       ]},
-      {id:'premium',name:'Premium Turning Ramp',intro:'Build a ramp with a turn and a landing where the direction changes.',work:[
-        'Build a ramp with one turn and the turning landing it requires',
-        'Include ramp decking, supports, handrails and edge protection',
-        'Complete safe entry and exit transitions',
-        'Measure the available space and design the layout on site'
+      {id:'premium',name:'Premium Accessibility',intro:'Build one straight access ramp up to 12 feet.',work:[
+        'Build one simple straight access ramp up to 12 feet of sloped run',
+        'Include proper supports, decking, handrails, edge protection and safe transitions',
+        'No intermediate or turning landings; longer ramps and landings are Custom',
+        'Confirm safe slope, entry conditions and structural details before final price'
       ]},
-      {id:'custom',name:'Custom — Choose Your Work',intro:'Choose individual accessibility improvements for a custom quote.',work:[
-        'Choose ramp repairs, ramps, landings, handrails or grab bars',
-        'Choose curbless showers, doorway or threshold improvements',
-        'Select only the work you want; pricing is based on your selections'
+      {id:'custom',name:'Custom',intro:'Ramps with turns or landings, multi-bar bathrooms and other custom accessibility work.',work:[
+        'Longer ramps, turning sections, switchbacks and landings',
+        'Multiple grab bars, doorway or threshold improvements and accessible bathrooms',
+        'Choose only the required jobs; finalize structural details and pricing on site'
       ]}
     ].map((p,i)=>{
       p.photo=[
-        'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
-        '/assets/accessibility-premium-wooden-ramp.webp',
+        'https://commons.wikimedia.org/wiki/Special:FilePath/Grab_bar.jpg?width=900',
         '/assets/idea-accessibility.jpg',
+        '/assets/accessibility-premium-wooden-ramp.webp',
         '/assets/accessibility-curbless-shower.webp'
       ][i];
-      const basicRepair={
-        scenario:'Repair one existing ramp for up to four labor hours, replacing up to four damaged treated deck boards, securing loose fasteners and making minor handrail repairs. Install one 18-inch grab bar into verified sound structural backing. Site conditions and safe access are checked before quoting.',
-        labor:[
-          {name:'Existing ramp repairs, up to four labor hours',quantity:4,unitPrice:75},
-          {name:'Install one grab bar into sound structural backing',quantity:1,unitPrice:250}
-        ],
-        materials:[
-          {name:'One 18-inch grab bar; provisional marked-up reference',quantity:1,unitPrice:31.52},
-          {name:'Treated 5/4x6x12 deck boards',quantity:4,unitPrice:22.28},
-          {name:'Exterior-rated wood fasteners',quantity:1,unitPrice:48.60}
-        ],
-        consumables:[{name:'Silicone tub-and-tile sealant 10.1 oz',quantity:1,unitPrice:10.12}],
-        laborDiscountPercent:7,projectFeePercent:10
-      };
-      if(p.id==='basic')Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(basicRepair));
-      // Ramp geometry and structural requirements must be established on site.
-      if(p.id==='standard'||p.id==='premium'){
+      const common={laborDiscountPercent:7,projectFeePercent:10};
+      if(p.id==='basic'||p.id==='standard'){
+        const isStandard=p.id==='standard';
+        const scope={
+          scenario:isStandard
+            ? 'Two 18-inch grab bars installed into suitable confirmed backing; up to two hours minor nonstructural repairs to an existing sound ramp, and up to two deck board replacements. No new ramp, landings, structural rebuild or unsafe transitions.'
+            : 'One 18-inch grab bar installed into suitable confirmed backing; up to one hour minor nonstructural repairs to an existing sound ramp and one deck board if needed. No new ramp or structural rebuild.',
+          work:p.work.slice(),
+          priceStatus:'research-provisional',
+          labor:[
+            {name:'Grab bar installation into sound structural backing',quantity:isStandard?2:1,unitPrice:250},
+            {name:'Minor ramp repairs (labor hours)',quantity:isStandard?2:1,unitPrice:75}
+          ],
+          materials:[
+            {name:'18-inch grab bar, marked-up reference',quantity:isStandard?2:1,unitPrice:31.52},
+            {name:'Treated 5/4x6x12 deck board, marked-up reference',quantity:isStandard?2:1,unitPrice:22.28},
+            {name:'Exterior-rated fasteners, marked-up reference',quantity:1,unitPrice:48.60}
+          ],
+          consumables:[{name:'Silicone tub-and-tile sealant, 10.1 oz',quantity:1,unitPrice:10.12}],
+          ...common
+        };
+        Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(scope));
+        p.priceStatus=scope.priceStatus;
+      }
+      if(p.id==='premium'){
+        // New structural ramps must not be advertised at a price that omits
+        // supports, landings/transition work or site-specific safety needs.
         p.startingAt=null;
         p.priceStatus='quote-required';
       }
