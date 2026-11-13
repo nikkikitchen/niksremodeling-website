@@ -46,7 +46,7 @@ test('Review Cart shows items, delivery, order summary and scheduling before the
  const end=app.indexOf('\nfunction removeCart(',start);
  assert.ok(start>=0&&end>start);
  const source=app.slice(start,end);
- const item=source.indexOf('Items in Your Cart');
+ const item=source.indexOf('<h2>Items</h2>');
  const delivery=source.indexOf('nr-cart-zip-top');
  const summary=source.indexOf('cartCheckoutSummary(c)');
  const schedule=source.indexOf('cartSchedulingMarkup(c)');
