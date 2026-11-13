@@ -382,14 +382,27 @@ window.renderProjectPackageOptions=function(id,project){
     }
     const standard=packs.find(p=>p.id==='deluxe');
     if(standard){
-      // Faux finishes vary by selected technique and materials; do not sell
-      // the prior painted chair-rail scope as if it covers a faux finish.
-      standard.startingAt=null;
-      standard.depositEstimate=null;
-      standard.laborEstimate=null;
-      standard.overheadAllowance=null;
-      standard.priceBasis=null;
-      standard.priceStatus='quote-required';
+      // Cheapest complete Standard scope: simple two-color sponge-applied
+      // faux-stone effect below the chair rail, paint above. More involved
+      // faux brick, woodgrain, stenciling, or repairs are priced separately.
+      const accentStandard={
+        scenario:'One sound interior accent wall up to 12 ft wide and 8 ft high; up to 12 linear ft of chair rail, simple two-color sponge-applied faux-stone paint effect on the lower section and conventional painted upper section. Includes preparation, primer, finish paint, supplies and cleanup. Detailed brickwork, woodgrain, substrate repair and larger walls require a higher quote.',
+        work:['Install, fill and paint up to 12 linear ft of chair rail','Apply a simple two-color sponge-painted faux-stone effect below the rail','Paint above the rail, protect adjoining surfaces and clean up'],
+        priceStatus:'research-provisional',
+        labor:[
+          ...accentBasic.labor,
+          {name:'Simple faux-stone sponge finish preparation and application (3 hours at $75/hr)',quantity:3,unitPrice:75}
+        ],
+        materials:accentBasic.materials.map(line=>({...line})),
+        consumables:[
+          ...commonConsumables,
+          {name:'Faux-finish sponge and applicator allowance (provisional marked-up)',quantity:1,unitPrice:15}
+        ],
+        laborDiscountPercent:7,projectFeePercent:10
+      };
+      standard.work=accentStandard.work.slice();
+      Object.assign(standard,window.NIK_CALCULATE_PACKAGE_BASELINE(accentStandard));
+      standard.priceStatus=accentStandard.priceStatus;
     }
   }
   // Bathroom and Kitchen formerly used fixed allowances, not costed scopes.
