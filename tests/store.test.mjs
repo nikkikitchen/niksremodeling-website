@@ -57,14 +57,29 @@ test('checkout fails closed on stale price or Square total mismatch',async()=>{
  }finally{globalThis.fetch=previous;wrongTotal=false;}
 });
 
-test('no out-of-stock item or unauthorized ZIP can proceed to payment',async()=>{
+test('out-of-stock products never proceed to payment, regardless of destination ZIP',async()=>{
  const previous=globalThis.fetch;calls=[];stock=0;globalThis.fetch=mock;
  try{
-  const unavailable=await checkout({request:req(order()),env});
-  assert.equal(unavailable.status,503);
-  assert.equal(calls.some(c=>c.url.includes('/payment-links')),false);
-  const blocked=await checkout({request:req({...order(),zip:'99999'}),env});
-  assert.equal(blocked.status,503);
+  for(const zip of ['30117','99999']){
+   const unavailable=await checkout({request:req({...order(),zip}),env});
+   assert.equal(unavailable.status,503);
+  }
   assert.equal(calls.some(c=>c.url.includes('/payment-links')),false);
  }finally{globalThis.fetch=previous;stock=10;}
+});
+
+test('verified destinations outside the labor area are eligible for retail checkout',async()=>{
+ const previous=globalThis.fetch;calls=[];stock=10;wrongTotal=false;
+ globalThis.fetch=async(url,options)=>{
+  if(String(url).includes('zip-tax.com'))return Response.json({
+   metadata:{response:{code:100}},taxSummaries:[{taxType:'SALES_TAX',rate:0.07}],
+   addressDetail:{normalizedAddress:'123 Market St, Atlanta, GA 30303'},shipping:{taxable:'Y'}
+  });
+  return mock(url,options);
+ };
+ try{
+  const res=await quote({request:new Request('https://niksremodeling.com/api/store-quote?zip=30303&address=123%20Market%20St&city=Atlanta&state=GA&product='+PID+'&variant='+VID),env});
+  assert.equal(res.status,200);
+  assert.equal((await res.json()).checkoutEnabled,true);
+ }finally{globalThis.fetch=previous;}
 });
