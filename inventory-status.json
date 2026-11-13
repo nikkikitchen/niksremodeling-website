@@ -3,87 +3,93 @@
     "1864564628698058752": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 300,
       "zeroDays": 0
     },
     "1872458408031350785": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 31580,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 31237,
       "zeroDays": 0
     },
     "1892472957228335106": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 7788,
       "zeroDays": 0
     },
     "1908816726840504322": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 848,
       "zeroDays": 0
     },
     "1909112753254494210": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 590,
       "zeroDays": 0
     },
     "1909114817890877441": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 86,
       "zeroDays": 0
     },
     "1947604343984668673": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "1947620280964136961": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "1947993324614938626": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "1948331715420319745": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "1952765853670014977": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 294,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 292,
       "zeroDays": 0
     },
     "1952786002980601858": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 465,
       "zeroDays": 0
@@ -91,15 +97,15 @@
     "1953118592263114754": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 3686,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 3666,
       "zeroDays": 0
     },
     "1953134790539333633": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 752,
       "zeroDays": 0
@@ -107,33 +113,37 @@
     "1956577654308847618": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 1228,
       "zeroDays": 0
     },
     "1961347672668680194": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 12423,
       "zeroDays": 0
     },
     "1963146233541074945": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "1985992962627067905": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 2903,
       "zeroDays": 0
     },
     "1988920624246984705": {
       "archived": false,
-      "checkState": "out_of_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 0,
       "zeroDays": 1
@@ -141,37 +151,39 @@
     "1991192111077122050": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 461,
       "zeroDays": 0
     },
     "1992915023801270274": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 281,
       "zeroDays": 0
     },
     "1992915068682805249": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 179,
       "zeroDays": 0
     },
     "1992928918367924226": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 33,
       "zeroDays": 0
     },
     "1992929083926167554": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 25,
       "zeroDays": 0
@@ -179,233 +191,251 @@
     "1992983344353558529": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 21,
       "zeroDays": 0
     },
     "1993021857753120769": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
-      "zeroDays": 0
+      "checkState": "out_of_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 0,
+      "zeroDays": 1
     },
     "1993022697276620801": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 22,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 17,
       "zeroDays": 0
     },
     "1993033437579866113": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "1997962863887962114": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 1380,
       "zeroDays": 0
     },
     "1998932945511763970": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "1998933155226963969": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "1998933236104486914": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "1998933487875973122": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 1380,
       "zeroDays": 0
     },
     "1998933646168330241": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "1998934121762377729": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "1998934422786334722": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2001203482880552961": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 1481,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 1460,
       "zeroDays": 0
     },
     "2001217556465512450": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 426,
       "zeroDays": 0
     },
     "2001485317433434113": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 485,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 476,
       "zeroDays": 0
     },
     "2001489134443012097": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 60,
       "zeroDays": 0
     },
     "2001491011423412225": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 72,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 64,
       "zeroDays": 0
     },
     "2001492466284863490": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 32,
       "zeroDays": 0
     },
     "2001500731482750977": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 54,
       "zeroDays": 0
     },
     "2001503833896173570": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 137,
       "zeroDays": 0
     },
     "2001504264391147521": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 597,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 596,
       "zeroDays": 0
     },
     "2001504349855391745": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 426,
       "zeroDays": 0
     },
     "2001510513150238722": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 117,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 115,
       "zeroDays": 0
     },
     "2001510938970615809": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 71,
       "zeroDays": 0
     },
     "2001511583781941249": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 156,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 155,
       "zeroDays": 0
     },
     "2001516430088445954": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 338,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 334,
       "zeroDays": 0
     },
     "2001529158386499586": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 328,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 321,
       "zeroDays": 0
     },
     "2001529529031913473": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 188,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 183,
       "zeroDays": 0
     },
     "2001908774883225601": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 89,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 87,
       "zeroDays": 0
     },
     "2001908887999410178": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 217,
       "zeroDays": 0
     },
     "2001910611523706882": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 154,
       "zeroDays": 0
     },
     "2001914348123385858": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 42,
       "zeroDays": 0
@@ -413,83 +443,89 @@
     "2001924466316451842": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2003343334919000066": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 849,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 843,
       "zeroDays": 0
     },
     "2003344133462077442": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 1092,
       "zeroDays": 0
     },
     "2003346457261682690": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "2003352382854811649": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 615,
       "zeroDays": 0
     },
     "2004469127873077249": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2005621308835393538": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 728,
       "zeroDays": 0
     },
     "2005626551095943169": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 656,
       "zeroDays": 0
     },
     "2009089016871485442": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 1567,
       "zeroDays": 0
     },
     "2009847031488671746": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 129,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 125,
       "zeroDays": 0
     },
     "2009851343057022978": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2013543664478601218": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 3287,
       "zeroDays": 0
@@ -497,61 +533,67 @@
     "2016353623737540610": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 19,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 13,
       "zeroDays": 0
     },
     "2016353805650345985": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 13,
       "zeroDays": 0
     },
     "2018196604472451073": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2018212592918781954": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2030206788611174402": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 104,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 99,
       "zeroDays": 0
     },
     "2031612090609999873": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
-      "zeroDays": 0
+      "checkState": "out_of_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 0,
+      "zeroDays": 1
     },
     "2034257963771129857": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 1550,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 1528,
       "zeroDays": 0
     },
     "2034258550370521090": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 694,
       "zeroDays": 0
     },
     "2034840272154693634": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 229,
       "zeroDays": 0
@@ -559,19 +601,21 @@
     "2036380481344372737": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2036380831049629697": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 337,
       "zeroDays": 0
     },
     "2039543055325982722": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 41,
       "zeroDays": 0
@@ -579,43 +623,45 @@
     "2039543177465085953": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2039544347242917889": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 79,
       "zeroDays": 0
     },
     "2042119302410190850": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 62,
       "zeroDays": 0
     },
     "2045063087912226818": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 74,
       "zeroDays": 0
     },
     "2045344721718841346": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 64,
       "zeroDays": 0
     },
     "2045351556676947969": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 46,
       "zeroDays": 0
@@ -623,101 +669,111 @@
     "2046514992616464385": {
       "archived": false,
       "checkState": "out_of_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 0,
-      "zeroDays": 1
+      "zeroDays": 2
     },
     "2048673899356721154": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 5963,
       "zeroDays": 0
     },
     "2056251884990234625": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 4888,
       "zeroDays": 0
     },
     "2056258889654075394": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 6215,
       "zeroDays": 0
     },
     "2056266457894522881": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 5197,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 5146,
       "zeroDays": 0
     },
     "2056628643315499010": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 1060,
       "zeroDays": 0
     },
     "2062079592039481346": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 133,
       "zeroDays": 0
     },
     "2077626909271822338": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 841,
       "zeroDays": 0
     },
     "2084905431941939202": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 736,
       "zeroDays": 0
     },
     "2085270212241428481": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 579,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 578,
       "zeroDays": 0
     },
     "2086729295527268354": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 2271,
       "zeroDays": 0
     },
     "2087070332347478018": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
-      "lastConfirmedStock": 99,
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 98,
       "zeroDays": 0
     },
     "2096631923969130498": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2096636345457606657": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 460,
       "zeroDays": 0
@@ -725,29 +781,29 @@
     "2096650668951240706": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2096651468360417281": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2096656741040947202": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2096662179543285761": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 460,
       "zeroDays": 0
@@ -755,89 +811,95 @@
     "2096916661072584706": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2096917313077141506": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2096917349794078722": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2096972386499059713": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2097008731078549505": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 460,
       "zeroDays": 0
     },
     "2097024547006210049": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 920,
       "zeroDays": 0
     },
     "2097148223601008642": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 920,
       "zeroDays": 0
     },
     "2097149723576393729": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 920,
       "zeroDays": 0
     },
     "2097153597406208002": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "2100020215538368513": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "2100060197753835521": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 230,
       "zeroDays": 0
     },
     "2100416588045733890": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 460,
       "zeroDays": 0
@@ -845,13 +907,13 @@
     "2100541805733785601": {
       "archived": false,
       "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "lastCheck": "2026-11-13",
       "zeroDays": 0
     },
     "2102729022634164226": {
       "archived": false,
-      "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
+      "checkState": "unknown",
+      "lastCheck": "2026-11-13",
       "lastConfirmedAt": "2026-11-12",
       "lastConfirmedStock": 7130,
       "zeroDays": 0
@@ -859,25 +921,27 @@
     "2102729802804068354": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 2530,
       "zeroDays": 0
     },
     "2102736546674475010": {
       "archived": false,
       "checkState": "in_stock",
-      "lastCheck": "2026-11-12",
-      "lastConfirmedAt": "2026-11-12",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
       "lastConfirmedStock": 2760,
       "zeroDays": 0
     },
     "2110990556732407810": {
       "archived": false,
-      "checkState": "unknown",
-      "lastCheck": "2026-11-12",
+      "checkState": "in_stock",
+      "lastCheck": "2026-11-13",
+      "lastConfirmedAt": "2026-11-13",
+      "lastConfirmedStock": 3789,
       "zeroDays": 0
     }
   },
-  "updatedAt": "2026-11-12"
+  "updatedAt": "2026-11-13"
 }
