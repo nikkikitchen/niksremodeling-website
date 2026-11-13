@@ -52,5 +52,5 @@ test('Review Cart shows items, delivery, order summary and scheduling before the
  const pay=source.indexOf('cartSecureCheckoutPanel(c)');
  assert.ok(item>=0&&item<delivery&&delivery<summary&&summary<schedule&&schedule<pay,
   'Checkout must appear after items, delivery, the summary, and payment choices');
- assert.ok(source.includes("+'</div>"),'Empty cart should retain checkout section');
+ assert.ok(source.includes("'+cartSecureCheckoutPanel(c)"),'Empty cart should retain checkout section');
 });
