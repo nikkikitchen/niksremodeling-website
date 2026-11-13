@@ -1,0 +1,1862 @@
+[
+  {
+    "id": "accents",
+    "title": "Accent Walls Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/accent-basic-approved.jpg",
+        "price": "Starting at $585Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Install and finish up to 12 linear ft of chair rail or comparable simple picture-frame trim",
+          "Paint the accent wall in two complementary colors",
+          "Protect adjoining surfaces and clean up"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/accent-standard-approved.jpg",
+        "price": "Starting at $835Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Install, fill and paint up to 12 linear ft of chair rail",
+          "Apply a simple two-color sponge-painted faux-stone effect below the rail",
+          "Paint above the rail, protect adjoining surfaces and clean up"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/accent-walls-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Select a stacked stone, tile, wood slat or specialty panel finish",
+          "Install and finish the selected accent wall"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/accent-custom-approved.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "bathrooms",
+    "title": "Bathroom Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "https://images.pexels.com/photos/35505451/pexels-photo-35505451.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "price": "Starting at $875Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 96 sq. ft. of one sound bathroom wall, two coats",
+          "Replace one vanity faucet using existing sound connections; remove old faucet",
+          "Install one towel bar and one toilet-paper holder",
+          "Includes required paint, standard fixture allowances, consumables and finishing"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://images.pexels.com/photos/34574595/pexels-photo-34574595.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "price": "Starting at $1,325Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 208 sq. ft. of bathroom walls, two coats",
+          "Paint up to 26 ft existing baseboards, one side of door and up to 16 ft casing",
+          "Replace one standard vanity light and one mirror on sound existing mountings",
+          "Includes fixture allowances, necessary supplies and removal of replaced items"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/bathroom-deluxe-black-white.jpg",
+        "price": "Starting at $1,990Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Two coats on up to 208 sq. ft. walls and one white coat on 40 sq. ft. ceiling",
+          "Paint existing baseboards (26 ft), casing (16 ft), crown (26 ft) and one door face",
+          "Replace existing vanity light, mirror and up to three standard bathroom accessories",
+          "Up to two hours ordinary accessible caulking; removal of replaced items included"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/tile-shower.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "kitchen-pantry",
+    "title": "Kitchen Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "https://images.pexels.com/photos/35505446/pexels-photo-35505446.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "price": "Starting at $1,285Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Two coats on up to 320 sq. ft. accessible kitchen walls",
+          "Replace up to 10 cabinet knobs or pulls and one light at existing compatible connections",
+          "Recaulk accessible sink/counter edges and minor trim touch-ups (up to 1 hour each)",
+          "Includes standard material allowances, consumables, and removed fixture haul-off"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://images.pexels.com/photos/35289464/pexels-photo-35289464.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "price": "Starting at $3,880Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Everything in Kitchen Basic, including up to 320 sq. ft. wall painting",
+          "Prep, prime and paint exteriors of up to 8 standard cabinet boxes, 12 doors and 6 drawer fronts",
+          "Replace up to 15 cabinet pulls total; install up to 25 sq. ft. standard tile backsplash",
+          "Replace kitchen faucet on existing compatible connections; standard removal and supplies included"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://images.pexels.com/photos/36777912/pexels-photo-36777912.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "price": "Project quote required",
+        "scope": [
+          "Choose individual jobs and materials",
+          "Request a project quote"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/kitchen.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "accessibility",
+    "title": "Accessibility Updates Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Grab_bar.jpg?width=900",
+        "price": "Starting at $460Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Install one 18-inch grab bar into sound structural backing",
+          "Up to one hour of minor nonstructural existing ramp repair",
+          "Include a replacement board if needed, fasteners, supplies and cleanup"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/accessibility-lever-hardware.jpg",
+        "price": "Starting at $855Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Install up to two 18-inch grab bars with secure structural mounting",
+          "Up to two hours of minor repairs to an existing sound ramp",
+          "Include up to two replacement deck boards, fasteners, supplies and cleanup"
+        ]
+      },
+      {
+        "name": "Premium",
+        "photo": "/assets/accessibility-premium-wooden-ramp.webp",
+        "price": "Project quote required",
+        "scope": [
+          "Build one simple straight access ramp up to 12 feet of sloped run",
+          "Include proper supports, decking, handrails, edge protection and safe transitions",
+          "No intermediate or turning landings; longer ramps and landings are Custom",
+          "Confirm safe slope, entry conditions and structural details before final price"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/accessibility-curbless-shower.webp",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "attic",
+    "title": "Attic Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/project-attic.jpg",
+        "price": "Starting at $1,735",
+        "scope": [
+          "Install up to 120 sq. ft. attic storage decking on structurally suitable existing raised framing",
+          "Install one compatible utility light at an existing safe connection",
+          "Include required plywood, standard fasteners, protective consumables and ordinary job cleanup; no framing reinforcement or new circuits"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Attic_Organized.JPG?width=900",
+        "price": "Starting at $2,735Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Install up to 192 sq. ft. of plywood storage decking over confirmed sound, properly raised attic framing",
+          "Replace one compatible existing attic light fixture",
+          "Include standard fasteners and remove our construction debris"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Install up to 120 sq. ft. (10 × 12 ft.) of storage decking over existing structurally suitable raised framing; new support framing and reinforcement are quoted separately",
+          "Install or replace one attic light using an existing suitable electrical connection (no new wiring)",
+          "Clean up and remove our construction debris",
+          "Expand the attic storage flooring to 192 sq. ft. (12 × 16 ft.) over suitable existing framing",
+          "Optional insulation addition where needed, without compression or blocked ventilation",
+          "Ventilation improvements and selected finished surfaces where feasible"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Attic_bedroom.jpg?width=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "basement",
+    "title": "Basement Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/project-basement.jpg",
+        "price": "Starting at $1,610Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 120 sq. ft. of sound existing concrete floor",
+          "Refresh up to 352 sq. ft. of existing walls and up to 44 ft. of trim",
+          "Replace one compatible light fixture at an existing safe connection"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Finished_basement_-_before_and_after.jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Paint or seal existing concrete floor",
+          "Refresh existing walls and trim",
+          "Update existing lighting",
+          "Frame and finish selected walls"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/2022-05-23_20_09_58_Panoramic_view_across_the_main_living_space_in_the_partially_finished_basement_of_a_house_along_Aquetong_Lane_in_the_Mountainview_section_of_Ewing_Township,_Mercer_County,_New_Jersey.jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Paint or seal existing concrete floor",
+          "Refresh existing walls and trim",
+          "Update existing lighting",
+          "Frame and finish selected walls",
+          "Install selected floor covering",
+          "Improve ceiling and storage areas"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/2022-05-23_20_11_27_Panoramic_view_of_a_basement_bedroom_inside_a_house_along_Aquetong_Lane_in_the_Mountainview_section_of_Ewing_Township,_Mercer_County,_New_Jersey.jpg?width=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "bedroom-guest-room",
+    "title": "Bedroom Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/bedroom-basic-commons.jpg",
+        "price": "Starting at $1,335Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 352 sq. ft. of walls in two coats and one white coat on a 120 sq. ft. ceiling",
+          "Touch up up to 44 linear ft. of existing painted trim",
+          "Replace one compatible existing-connection ceiling light"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/bed.jpg",
+        "price": "Starting at $2,605Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Everything in Bedroom Basic",
+          "Install up to 120 sq. ft. of click-lock LVP over suitable existing subfloor",
+          "Install up to 44 linear ft. of matching quarter-round trim"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Cozy_bedroom_with_a_large_bed_and_simple_decor_in_a_modern_home.jpg?width=900",
+        "price": "Starting at $3,200Preliminary estimate · final quote after measurements",
+        "scope": [
+          "All Bedroom Standard painting, trim, compatible light, click-lock LVP and quarter-round",
+          "Add one two-color feature wall with up to 12 ft of installed chair rail",
+          "Install one 72-in closet storage shelf on verified suitable framing"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Balanced_Modern_Bedroom_Design_with_Neutral_Tones_and_Layered_Lighting.jpg?width=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "closets-storage",
+    "title": "Closets & Storage Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/approved-8a9d216224b8.jpg",
+        "price": "Starting at $685Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Install one 6-ft wire shelf and rod system in suitable existing wall backing",
+          "Fit up to two supporting brackets and one additional 48-in rod as needed",
+          "Touch up minor existing closet paint and trim"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Master_Closet_Shelves.jpg?width=900",
+        "price": "Starting at $1,160Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Everything in Closets & Storage Basic",
+          "Add one 72-in laminated storage shelf and three brackets",
+          "Retrofit one existing compatible recessed light and finish paint touch-ups"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Walk-In_Closet.jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Shelving and rods",
+          "Paint and trim touch-ups",
+          "Replace selected hardware",
+          "Custom organizers and cabinets",
+          "Upgraded flooring and lighting",
+          "Matching wall and ceiling finish"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://images.pexels.com/photos/11701120/pexels-photo-11701120.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "dining-room",
+    "title": "Dining Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/approved-a051ee7e1935.jpg",
+        "price": "Starting at $1,335Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 352 sq. ft. of dining room walls and one white ceiling coat",
+          "Touch up up to 44 linear ft. of existing painted trim",
+          "Replace one compatible dining light on existing safe wiring"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Orange_Dining_Room.jpg?width=900",
+        "price": "Starting at $1,635Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Everything in Dining Room Basic",
+          "Install, finish and paint up to 12 linear ft. chair rail on one existing sound wall",
+          "Add a second accent paint color to one wall"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dining_Rm_panorama.jpg?width=900",
+        "price": "Starting at $2,905Preliminary estimate · final quote after measurements",
+        "scope": [
+          "All Dining Room Standard painting, trim, chair rail, two-tone accent and existing light",
+          "Install up to 120 sq. ft. click-lock LVP on suitable existing subfloor",
+          "Finish up to 44 linear ft. with matching quarter-round"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dining_room_interior.jpg?width=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "garage",
+    "title": "Garage Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-mechanic-shop.jpg",
+        "price": "Starting at $1,005Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Prepare and paint up to 120 sq. ft. of sound existing concrete floor",
+          "Mount one 72-in storage shelf in suitable existing framing",
+          "Replace one compatible 4-ft shop light at existing safe connection"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench.jpg?width=900",
+        "price": "Starting at $1,920Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Everything in Garage Basic",
+          "Build one basic freestanding 4-ft workbench from plywood and framing lumber",
+          "Install one additional 72-in wall storage shelf on suitable existing framing"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Tools_and_parts_are_scattered_on_a_workbench_in_a_garage.jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Install shelving and wall storage",
+          "Seal or paint sound concrete floor",
+          "Update existing lights",
+          "Cabinets and workbench",
+          "Floor coating and preparation",
+          "Ventilation and utility planning"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench_-_(1).jpg?width=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "laundry-utility",
+    "title": "Laundry & Utility Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/approved-b9cdb9084877.jpg",
+        "price": "Starting at $1,405Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 288 sq. ft. of existing laundry walls (two coats)",
+          "Install one 72-in storage shelf and up to four customer-supplied hooks",
+          "Connect one compatible existing electric washer and dryer to approved existing connections; customer supplies suitable hoses and cords"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_room_on_main_level.jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Paint laundry walls and trim",
+          "Install shelves and hooks",
+          "Connect compatible existing appliances",
+          "New cabinets and folding surface"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_time.jpg?width=900",
+        "price": "Project quote required",
+        "scope": [
+          "Paint laundry walls and trim",
+          "Install shelves and hooks",
+          "Connect compatible existing appliances",
+          "New cabinets and folding surface",
+          "Upgrade floor and ventilation",
+          "Coordinate selected appliances"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_room_in_apartment_building.png?width=900",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "living-family-room",
+    "title": "Living & Family Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/approved-4822ff53e23f.jpg",
+        "price": "Starting at $1,635Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 448 sq. ft. of walls (two coats) and 192 sq. ft. ceiling (one white coat)",
+          "Refresh existing painted trim up to 56 linear ft.",
+          "Replace one compatible light at an existing safe electrical connection"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Living_room.jpg?width=900",
+        "price": "Starting at $1,920Preliminary estimate · final quote after measurements",
+        "scope": [
+          "All Living & Family Room Basic wall, ceiling, trim and light refresh",
+          "Add one two-color feature wall with up to 12 linear ft. installed chair rail",
+          "Finish paint and caulk on the selected accent wall"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/02-24-2021-R-124.jpg?width=900",
+        "price": "Starting at $3,890Preliminary estimate · final quote after measurements",
+        "scope": [
+          "All Living & Family Room Standard paint, feature wall and existing lighting",
+          "Install up to 192 sq. ft. click-lock LVP on suitable existing subfloor",
+          "Install up to 56 linear ft of matching quarter-round trim"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/fireplace-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "adult-room",
+    "title": "Adult Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Starting at $1,465Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 320 sq. ft. of sound existing walls in two coats and touch up existing trim",
+          "Install one 72-in storage/display shelf on suitable wall framing",
+          "Retrofit one compatible existing recessed light; no new wiring"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh paint and surfaces",
+          "Update existing lighting",
+          "Add suitable storage",
+          "Feature wall and flooring"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh paint and surfaces",
+          "Update existing lighting",
+          "Add suitable storage",
+          "Feature wall and flooring",
+          "Fitted display or cabinetry",
+          "Coordinated finish lighting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "kids-room",
+    "title": "Kids' Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/kids-room.jpg",
+        "price": "Starting at $1,540Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 352 sq. ft. of sound bedroom walls with washable paint",
+          "Touch up up to 44 ft of existing trim and safely anchor one 72-in toy/storage shelf",
+          "Retrofit one compatible existing ceiling light; no new wiring"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/kids-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Washable paint and trim",
+          "Toy storage and shelving",
+          "Suitable existing lighting",
+          "Durable floor finish"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/kids-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Washable paint and trim",
+          "Toy storage and shelving",
+          "Suitable existing lighting",
+          "Durable floor finish",
+          "Themed feature wall",
+          "Organized play and study zones"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "home-theater",
+    "title": "Home Theater Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/cinema.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Plan screen and seating placement",
+          "Media mounting and cable management",
+          "Update existing lighting"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/cinema.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Plan screen and seating placement",
+          "Media mounting and cable management",
+          "Update existing lighting",
+          "Acoustic finishes"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/cinema.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Plan screen and seating placement",
+          "Media mounting and cable management",
+          "Update existing lighting",
+          "Acoustic finishes",
+          "Media cabinetry and theater seating",
+          "Coordinated lighting and snack features"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "entry-mudroom",
+    "title": "Mudroom Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Starting at $1,255Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Build one 4-ft basic bench and install one 72-in storage shelf and customer-supplied wall hooks",
+          "Refresh minor existing trim and door threshold finishes",
+          "Replace one compatible existing-entry lockset on an existing sound door"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Hooks, bench and shelving",
+          "Refresh trim and thresholds",
+          "Update door hardware",
+          "Built-in cubbies and cabinets"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Hooks, bench and shelving",
+          "Refresh trim and thresholds",
+          "Update door hardware",
+          "Built-in cubbies and cabinets",
+          "Durable flooring",
+          "Improved lighting and finishing"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "home-office",
+    "title": "Home Office Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/office.jpg",
+        "price": "Starting at $1,540Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 320 sq. ft. existing walls and refresh up to 40 ft existing trim",
+          "Install one 72-in wall shelf with up to three heavy-duty brackets",
+          "Organize existing visible cables with customer-supplied clips and retrofit one suitable existing light"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/office.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Paint and trim refresh",
+          "Shelves and cable organization",
+          "Improve task lighting",
+          "Built-in desk and cabinets"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/office.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Paint and trim refresh",
+          "Shelves and cable organization",
+          "Improve task lighting",
+          "Built-in desk and cabinets",
+          "Selected flooring and feature wall",
+          "Coordinated lighting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "music-creative-studio",
+    "title": "Music & Creative Studio Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/theater.jpg",
+        "price": "Starting at $1,690Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 320 sq. ft. of existing sound studio walls",
+          "Coat up to 100 sq. ft. of existing dry, sound concrete floor",
+          "Install one 72-in instrument/supply shelf and replace one compatible existing utility light"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/theater.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh walls and flooring",
+          "Instrument or supply storage",
+          "Task lighting",
+          "Acoustic surface treatments"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/theater.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh walls and flooring",
+          "Instrument or supply storage",
+          "Task lighting",
+          "Acoustic surface treatments",
+          "Creative workstations and cabinets",
+          "Finishing and lighting upgrade"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "fitness-wellness",
+    "title": "Fitness & Wellness Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-fitness-wellness.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Gym flooring",
+          "Secure mirror and rack mounting",
+          "Paint and lighting refresh"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-fitness-wellness.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Gym flooring",
+          "Secure mirror and rack mounting",
+          "Paint and lighting refresh",
+          "Custom equipment storage"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-fitness-wellness.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Gym flooring",
+          "Secure mirror and rack mounting",
+          "Paint and lighting refresh",
+          "Custom equipment storage",
+          "Ventilation planning",
+          "Upgraded flooring and finish work"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "games-hobbies",
+    "title": "Game & Hobby Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-games-hobbies.jpg",
+        "price": "Starting at $1,885Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Paint up to 320 sq. ft. of sound existing hobby-room walls",
+          "Build one simple freestanding 4-ft plywood worktable and install one 72-in storage shelf",
+          "Replace one compatible 4-ft light at existing safe electrical connection"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-games-hobbies.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh surfaces and lights",
+          "Hobby shelving",
+          "Assemble selected work tables",
+          "Custom workbench or game area"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-games-hobbies.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh surfaces and lights",
+          "Hobby shelving",
+          "Assemble selected work tables",
+          "Custom workbench or game area",
+          "Built-in display and storage",
+          "New flooring or wall finishes"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "pet-room",
+    "title": "Pet Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-pet-room.jpg",
+        "price": "Starting at $1,345Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Prepare and apply two coats of washable semi-gloss paint to up to 320 sq. ft. of existing walls",
+          "Refresh up to 40 linear ft of existing trim",
+          "Install one 72-in feeding and leash storage shelf in structurally suitable backing"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-pet-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Easy-clean finishes",
+          "Feeding and leash storage",
+          "Washable wall paint",
+          "Fitted kennel and shelves"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-pet-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Easy-clean finishes",
+          "Feeding and leash storage",
+          "Washable wall paint",
+          "Fitted kennel and shelves",
+          "Pet-wash planning subject to connections",
+          "Durable flooring and splash guards"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "snack-beverage",
+    "title": "Snack & Beverage Center Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-snack-beverage.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Counter storage and shelves",
+          "Basic prep surface",
+          "Existing counter lighting"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-snack-beverage.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Counter storage and shelves",
+          "Basic prep surface",
+          "Existing counter lighting",
+          "Beverage cabinets and countertop"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-snack-beverage.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Counter storage and shelves",
+          "Basic prep surface",
+          "Existing counter lighting",
+          "Beverage cabinets and countertop",
+          "Water/sink assessment",
+          "Coordinated task lighting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "vault-safe-room",
+    "title": "Vault / Safe Room Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-vault-safe-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Assess safe storage needs",
+          "Storage cabinetry",
+          "Review mounting and door conditions"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-vault-safe-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Assess safe storage needs",
+          "Storage cabinetry",
+          "Review mounting and door conditions",
+          "Reinforced-room assessment"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-vault-safe-room.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Assess safe storage needs",
+          "Storage cabinetry",
+          "Review mounting and door conditions",
+          "Reinforced-room assessment",
+          "Door and ventilation plan",
+          "Site-specific structural quote"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "murals",
+    "title": "Custom Painting & Murals Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/murals-card.jpg",
+        "price": "Starting at $850Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Prepare and prime one sound 12 × 8 ft wall",
+          "Paint one simple two-color geometric accent treatment",
+          "Finish clean edges and remove normal masking and painting debris"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/murals-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare a selected wall",
+          "Simple decorative paint treatment",
+          "Custom mural design and planning"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/murals-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare a selected wall",
+          "Simple decorative paint treatment",
+          "Custom mural design and planning",
+          "Complex decorative finish",
+          "Protective coating as appropriate"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "wallpaper",
+    "title": "Wallpaper Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/wallpaper-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare suitable accent wall",
+          "Standard wallpaper installation"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/wallpaper-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare suitable accent wall",
+          "Standard wallpaper installation",
+          "Larger matching-pattern coverage"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/wallpaper-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare suitable accent wall",
+          "Standard wallpaper installation",
+          "Larger matching-pattern coverage",
+          "Specialty wallcovering details",
+          "Additional wall preparation"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "arches",
+    "title": "Custom Carpentry Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/arches-columns.jpg",
+        "price": "Starting at $870Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Refresh one existing nonstructural decorative arch opening",
+          "Install up to 16 linear ft of primed decorative MDF trim on suitable existing backing",
+          "Prime, paint and clean up the selected trim and adjacent touch-up area"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/arches-columns.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh decorative arch trim",
+          "Nonstructural molding installation",
+          "Custom decorative arch finish"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/arches-columns.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh decorative arch trim",
+          "Nonstructural molding installation",
+          "Custom decorative arch finish",
+          "Columns or additional trim",
+          "Finish painting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "fireplaces",
+    "title": "Fireplaces Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/fireplace-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh compatible mantel and trim",
+          "Decorative paint on safe surfaces"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/fireplace-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh compatible mantel and trim",
+          "Decorative paint on safe surfaces",
+          "Surround and mantel upgrade"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/fireplace-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Refresh compatible mantel and trim",
+          "Decorative paint on safe surfaces",
+          "Surround and mantel upgrade",
+          "Tile or stone-look details",
+          "Safety and appliance assessment"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "stairs",
+    "title": "Stairs & Railings Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/stairs-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Stair trim touch-ups",
+          "Suitable handrail work",
+          "Finish selected treads"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/stairs-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Stair trim touch-ups",
+          "Suitable handrail work",
+          "Finish selected treads",
+          "Selected new treads or risers"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/stairs-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Stair trim touch-ups",
+          "Suitable handrail work",
+          "Finish selected treads",
+          "Selected new treads or risers",
+          "Matching railing improvements",
+          "Stain and finish details"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "decks-railings",
+    "title": "Decks & Railings Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/entryways-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Inspect existing deck",
+          "Selected board and railing repairs",
+          "Basic finishing"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/entryways-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Inspect existing deck",
+          "Selected board and railing repairs",
+          "Basic finishing",
+          "Larger surface upgrade"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/entryways-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Inspect existing deck",
+          "Selected board and railing repairs",
+          "Basic finishing",
+          "Larger surface upgrade",
+          "Stairs and railing upgrades",
+          "Structural site assessment"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "exterior-improvements",
+    "title": "Exterior Improvements Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Caulk and repair exterior trim",
+          "Small prepared paint areas"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Caulk and repair exterior trim",
+          "Small prepared paint areas",
+          "Expanded trim and siding details"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Caulk and repair exterior trim",
+          "Small prepared paint areas",
+          "Expanded trim and siding details",
+          "Selected exterior doors or windows",
+          "Weatherproof finishes"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "backyard-retreat",
+    "title": "Backyard Retreat Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-backyard-retreat.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Seating zone and privacy screen",
+          "Selected outdoor features"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-backyard-retreat.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Seating zone and privacy screen",
+          "Selected outdoor features",
+          "Pergola or gazebo details"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-backyard-retreat.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Seating zone and privacy screen",
+          "Selected outdoor features",
+          "Pergola or gazebo details",
+          "Path and accent lights",
+          "Expanded privacy and shade"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "outdoor-kitchen",
+    "title": "Outdoor Kitchen Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Basic grill and prep station",
+          "Weather-rated storage and surface"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Basic grill and prep station",
+          "Weather-rated storage and surface",
+          "Outdoor cabinets and countertop"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Basic grill and prep station",
+          "Weather-rated storage and surface",
+          "Outdoor cabinets and countertop",
+          "Water and power assessment",
+          "Complete cooking layout"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "mechanic-shop",
+    "title": "Mechanic Shop Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-mechanic-shop.jpg",
+        "price": "Starting at $1,340Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Build one simple freestanding 4-ft plywood workbench for light-duty shop use",
+          "Install one 72-in parts shelf and one 48-in hose storage rod in verified backing",
+          "Replace one compatible 4-ft shop light on existing safe wiring"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-mechanic-shop.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Workbench and tool storage",
+          "Existing shop lighting",
+          "Parts and hose organization",
+          "Durable flooring plan"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-mechanic-shop.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Workbench and tool storage",
+          "Existing shop lighting",
+          "Parts and hose organization",
+          "Durable flooring plan",
+          "Fitted cabinetry",
+          "Ventilation and utility assessment"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "car-wash",
+    "title": "Car Wash & Detailing Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-car-wash.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Hose and wash station storage",
+          "Detailing area layout"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-car-wash.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Hose and wash station storage",
+          "Detailing area layout",
+          "Wash-bay surface plan"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-car-wash.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Hose and wash station storage",
+          "Detailing area layout",
+          "Wash-bay surface plan",
+          "Drainage and supply assessment",
+          "Equipment and lighting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "recycling-scrap",
+    "title": "Recycling & Scrap Area Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-recycling-scrap.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Sorting bins and scrap racks",
+          "Basic covered storage"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-recycling-scrap.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Sorting bins and scrap racks",
+          "Basic covered storage",
+          "Defined sorting shelter"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-recycling-scrap.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Sorting bins and scrap racks",
+          "Basic covered storage",
+          "Defined sorting shelter",
+          "Stable pad and access area",
+          "Expanded racks and storage"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "pools",
+    "title": "Pools & Poolside Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-pools.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Poolside storage",
+          "Safety and access review"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-pools.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Poolside storage",
+          "Safety and access review",
+          "Deck and step planning"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-pools.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Poolside storage",
+          "Safety and access review",
+          "Deck and step planning",
+          "Railing and walkway upgrades",
+          "Pool installer coordination"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "bus-stop",
+    "title": "Bus Stop / Waiting Area Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-bus-stop.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Covered bench and weather protection",
+          "Safe waiting position"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-bus-stop.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Covered bench and weather protection",
+          "Safe waiting position",
+          "Expanded shelter and walkway"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-bus-stop.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Covered bench and weather protection",
+          "Safe waiting position",
+          "Expanded shelter and walkway",
+          "Accessible approach review",
+          "Exterior lighting planning"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "mailboxes",
+    "title": "Mailboxes & Package Stations Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-mailboxes.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Install mailbox and post",
+          "Add address numbers"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-mailboxes.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Install mailbox and post",
+          "Add address numbers",
+          "Secure parcel box or multiple boxes"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-mailboxes.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Install mailbox and post",
+          "Add address numbers",
+          "Secure parcel box or multiple boxes",
+          "Masonry base planning",
+          "Improved delivery station"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "outdoor-sound",
+    "title": "Outdoor Sound & Entertainment Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-outdoor-sound.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Mount weather-rated media fixtures",
+          "Cable routing assessment"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-outdoor-sound.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Mount weather-rated media fixtures",
+          "Cable routing assessment",
+          "Outdoor audio/video setup"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-outdoor-sound.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Mount weather-rated media fixtures",
+          "Cable routing assessment",
+          "Outdoor audio/video setup",
+          "Power and lighting coordination",
+          "Protected controls"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "garden-greenhouse",
+    "title": "Garden & Greenhouse Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Raised beds and potting bench",
+          "Garden tool storage"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Raised beds and potting bench",
+          "Garden tool storage",
+          "Greenhouse kit assembly"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Raised beds and potting bench",
+          "Garden tool storage",
+          "Greenhouse kit assembly",
+          "Paths and water planning",
+          "Expanded sheltered storage"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "playground",
+    "title": "Playground & Play Area Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/idea-playground.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Playset assembly",
+          "Safety clearance assessment"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/idea-playground.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Playset assembly",
+          "Safety clearance assessment",
+          "Play surface and borders"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/idea-playground.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Playset assembly",
+          "Safety clearance assessment",
+          "Play surface and borders",
+          "Shade and seating",
+          "Play-area storage"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "patios-concrete",
+    "title": "Outdoor Projects Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Starting at $585Preliminary estimate · final quote after measurements",
+        "scope": [
+          "Clean and paint up to 120 sq. ft. of sound existing concrete patio",
+          "Allow up to one hour for a minor cosmetic surface touch-up",
+          "Routine masking and job cleanup; structural cracks and slab repair quoted separately"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare and coat sound existing concrete",
+          "Selected surface repairs",
+          "Concrete and outdoor finish upgrades"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Prepare and coat sound existing concrete",
+          "Selected surface repairs",
+          "Concrete and outdoor finish upgrades",
+          "Transitions and edging",
+          "Coordinated path lighting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  },
+  {
+    "id": "porches-entryways",
+    "title": "Outdoor Projects Projects",
+    "packages": [
+      {
+        "name": "Basic",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Porch trim and step finish",
+          "Railing touch-ups"
+        ]
+      },
+      {
+        "name": "Standard",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Porch trim and step finish",
+          "Railing touch-ups",
+          "Stairs and railing upgrades"
+        ]
+      },
+      {
+        "name": "Deluxe",
+        "photo": "/assets/concrete-card.jpg",
+        "price": "Project quote required",
+        "scope": [
+          "Porch trim and step finish",
+          "Railing touch-ups",
+          "Stairs and railing upgrades",
+          "Posts and entry surfaces",
+          "Outdoor lighting"
+        ]
+      },
+      {
+        "name": "Custom",
+        "photo": "/assets/custom-projects-card.jpg",
+        "scope": []
+      }
+    ]
+  }
+]
