@@ -33,7 +33,7 @@ test('Bathroom and Kitchen package prices derive from itemized labor, materials,
 
 test('cart displays proposed package labor, materials and fees without demanding payment',()=>{
  assert.ok(room.includes('window.beginPackageQuote=function('));
- for(const term of ['Project package estimate','Materials &amp; supplies','Labor after 7% package discount (included)','Project fees','Package fees and details']){
+ for(const term of ['Project package estimate','Materials &amp; supplies','Labor after package discount (included)','Project fees','Package fees and details']){
   assert.ok(app.includes(term),term+' missing');
  }
  for(const retired of ['Request Deposit + Weekly Draws','Request Pay-in-Full Invoice','Request one full-payment invoice for entire approved cart'])assert.ok(!app.includes(retired));
