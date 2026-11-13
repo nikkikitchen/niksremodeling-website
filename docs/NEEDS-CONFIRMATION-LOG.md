@@ -68,3 +68,9 @@ A row is not finished until the result is verified and the resolution/date is re
 - Package-only carts no longer show the confusing zero-dollar “Other priced items” summary line.
 - New automated tests verify Garage Standard breakdown, all payment buttons disabled, package-only ZIP tax preview at a 7% mocked rate (material taxable basis $407.95 → illustrative tax $28.56), and desktop/tablet/phone presentation. The 7% example is a TEST rate, NOT a claim of the customer's real tax rate.
 - Remaining *owner-facing* questions should be limited to truly needed product/scope and payment-policy approvals; current supplier/account validations remain engineering checks where access permits.
+
+## Square integration diagnosis — November 13 follow-up
+- Live `/api/integration-status` showed Square credentials **present**, but `locationPresent:false`. Live `/api/checkout-readiness?zip=30117` showed Square not ready, ZipTax ready, CJ configured, and checkout paused. This is evidence of a missing *production runtime location setting*, **not** evidence the user must recreate a Square account or API token.
+- Updated the read-only checkout diagnostic to report distinct safe states: **credentials missing**, **location ID missing**, **location not verified**, or **ready**, without leaking any secret, token, merchant/location identifier, or raw error.
+- Added tests for all four scenarios and for retaining `checkoutPaused:true` even if Square reports a valid card-processing location.
+- **Later account check (only if still necessary):** review the EXISTING production Cloudflare Pages environment setting and Square merchant location, do not set up a new Square application. No payment may be enabled automatically.
