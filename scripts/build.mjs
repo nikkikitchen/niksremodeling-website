@@ -95,6 +95,17 @@ const tileSection=homeSource.split('<div class="tile-grid project-grid">')[1]?.s
 const tileIds=[...tileSection.matchAll(/href="\/project\.html\?project=([a-z0-9-]+)"/g)].map(m=>m[1]);
 if(JSON.stringify(tileIds)!==JSON.stringify(mainIds))
   throw Error('Homepage Projects picture tiles do not match the Projects dropdown.');
+
+// Every top-level Projects photo must be distinct and link to its matching
+// category. An accidental reused tile image now fails before deployment.
+const projectTileMarkup=homeSource.split('<div class="tile-grid project-grid">')[1]?.split('</div>')[0]||'';
+const projectTilePhotos=[...projectTileMarkup.matchAll(/<a class="tile" href="\/project\.html\?project=([a-z0-9-]+)"><img[^>]*src="([^"]+)"/g)]
+ .map(match=>({id:match[1],src:match[2].split('?')[0]}));
+if(projectTilePhotos.length!==mainIds.length||
+   JSON.stringify(projectTilePhotos.map(p=>p.id))!==JSON.stringify(mainIds)||
+   new Set(projectTilePhotos.map(p=>p.src)).size!==projectTilePhotos.length)
+ throw Error('Projects homepage photos must have one unique picture and correct link per dropdown entry.');
+
 for(const id of ['projects-menu','mobile-projects-menu']){
  const menu=homeSource.match(new RegExp('id="'+id+'" class="nav-dropdown">([\\s\\S]*?)<\\/div>'))?.[1]||'';
  const menuIds=[...menu.matchAll(/href="\/project\.html\?project=([a-z0-9-]+)"/g)].map(m=>m[1]);
