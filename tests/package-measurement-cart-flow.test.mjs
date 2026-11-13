@@ -187,7 +187,8 @@ test('Accent Wall Basic advertises the single-color starting price and never tak
   assert.equal(item.price,null);
   assert.equal(item.quoteRequired,true);
   w.renderCart();
-  assert.equal(d.getElementById('cart-due-now').textContent,'$0.00 + tax pending');
+  assert.equal(d.getElementById('cart-due-now').textContent,`${Number(item.depositEstimate).toFixed(2)} + tax pending`, 'Show the proposed materials deposit even while payment remains disabled');
+  assert.equal(d.getElementById('cart-pay-button').disabled,true);
  }finally{dom.window.close()}
 });
 
@@ -227,8 +228,9 @@ test('Combined project total includes quoted package minimum plus separate produ
     assert.match(d.body.textContent,/Project total/);
     assert.equal(combined.textContent,'$450.00+ + tax pending',
       'Include $350 package starting price plus $100 product and $8 estimated product tax');
-    assert.equal(d.getElementById('cart-due-now').textContent,'$100.00 + tax pending',
-      'The unconfirmed $350 package must never enter the amount due now');
+    assert.equal(d.getElementById('cart-due-now').textContent,'$247.13 + tax pending',
+      'Show the $147.13 proposed materials deposit plus $100 merchandise without charging full unconfirmed labor');
+    assert.equal(d.getElementById('cart-pay-button').disabled,true);
     assert.equal(d.getElementById('cart-tax-amount').textContent,'Needs confirmation',
       'Do not assess interim retail tax on unconfirmed package labor');
   }finally{dom.window.close();}
