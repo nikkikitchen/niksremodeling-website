@@ -758,32 +758,6 @@ function cartPriceMarkup(x){
  const scope=x.packageAllowanceCredit?'Included '+x.packageFixtureKind+' fixture · $'+x.packageAllowanceCredit.toFixed(2)+' package allowance credit · delivery may be extra':x.fixtureAllowanceReplaced?'Labor + supplies · selected toilet priced separately':costs?(costs.fixture>0?'Materials + labor · supplies included':'Labor · supplies included'):['Labor','Service'].includes(x.type)?'Labor only':/material|suppl/i.test(x.type||'')?'Materials only':'Item only';
  return (x.packageAllowanceCredit&&Math.abs(Number(x.price)*(Number(x.qty)||1))<0.005?'Included — $0 extra':known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
 }
-function cartSchedulingMarkup(c){
- const hasProjectPackages=c.some(item=>['bathroom-project-package','kitchen-project-package','accessibility-project-package','room-project-package'].includes(item.source));
- return `<section class="panel nr-cart-next-step" id="cart-scheduling" aria-labelledby="cart-scheduling-heading">
- <h3 id="cart-scheduling-heading">Next Step</h3>
- ${hasProjectPackages?'<p class="calc-note"><strong>Payment choices:</strong> Pay the entire approved project invoice at once, or use a materials deposit with weekly progress draws. The starting estimate and shipping are confirmed before an invoice is issued; nothing is charged on this page.</p>':'<p class="calc-note">Request a verified invoice for the full order. No payment is collected on this page.</p>'}
- <label class="nr-cart-terms"><input type="checkbox" id="cart-terms-agree" onchange="updateCartRequestButtons()"> <span>I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
- <div class="btns">
- <button class="btn primary" type="button" data-cart-request="free" disabled onclick="submitCartRequest('free')">Request Estimate</button>
- <button class="btn outline" type="button" data-cart-request="supplies" disabled onclick="submitCartRequest('supplies')">Ask About Scheduling</button>
- ${hasProjectPackages?'<button class="btn outline" type="button" data-cart-request="deposit" disabled onclick="submitCartRequest(\'deposit\')">Request Deposit + Weekly Draws</button>':''}
- <button class="btn outline" type="button" data-cart-request="full" disabled onclick="submitCartRequest('full')">Request Pay-in-Full Invoice</button>
- </div>
- </section>`;
-}
-function updateCartRequestButtons(){
- const agreed=!!document.getElementById('cart-terms-agree')?.checked;
- document.querySelectorAll('[data-cart-request]').forEach(b=>b.disabled=!agreed);
-}
-function submitCartRequest(choice){
- if(!document.getElementById('cart-terms-agree')?.checked)return;
- const c=reconcileProjectPackageFixtureChoices(reconcileBathroomFixtureAllowances(getCart()));
- const heading=choice==='full'?'Request one full-payment invoice for entire approved cart':choice==='deposit'?'Request proposed project deposit invoice and weekly draw schedule':choice==='supplies'?'Supplies purchase and installation scheduling request':'Free estimate confirmation request';
- const packagePaymentSchedule=choice==='full'?'\\n\\nI prefer one payment for the full approved project and selected merchandise. Please provide a single final invoice after verifying scope, package allowances, product availability, shipping, tax, and the written agreement. I understand this request does not make a payment.':choice==='deposit'?'\\n\\nI prefer the project materials-and-supplies deposit plus weekly progress draws, after the written proposal is approved. Please send that payment schedule.':'';
- const message=heading+'\\n\\n'+cartRequestMessage(c)+packagePaymentSchedule+'\\n\\nI agree to the Terms & Conditions and request confirmation before any payment or installation scheduling.';
- location.href='mailto:'+SITE.email+'?subject='+encodeURIComponent(heading)+'&body='+encodeURIComponent(message);
-}
 function cartCheckoutSummary(items){
  const paidItems=items.filter(x=>!x.hiddenFromCustomer&&!['Labor','Service'].includes(x.type)&&!x.internalCosts&&!customEstimate(x)&&!requiresInPersonQuote(x));
  const amount=paidItems.reduce((sum,x)=>{const n=Number(x.price);return sum+(Number.isFinite(n)&&n>=0?n*(Number(x.qty)||1):0)},0);
@@ -867,8 +841,16 @@ function cartCheckoutSummary(items){
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax and delivery are estimates.</p>
- <p class="calc-note">Final total confirmed before payment. <a href="/terms.html">Terms</a></p>
+ <div class="nr-cart-pay-controls" style="margin-top:14px;padding-top:14px;border-top:1px solid #dfe5ea">
+ <label class="nr-cart-terms" style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="cart-terms-agree" onchange="updateCartPayButton()"> <span>I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
+ <button class="btn primary" id="cart-pay-button" type="button" disabled style="margin-top:12px;padding:10px 22px">Pay</button>
+ <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
+ </div>
  </section>`;
+function updateCartPayButton(){
+ const button=document.getElementById('cart-pay-button');
+ if(button)button.disabled=true; // Never enable until the verified server checkout for the full cart is live.
+}
 }
 // A single verified supplier product can use hosted Square checkout. Quotes,
 // labor, projects, and mixed carts must still go through written approval.
@@ -1116,10 +1098,9 @@ function renderCart(){
  <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}</div>
  </section><div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${nrProjectShoppingMarkup(c)}
- ${cartSchedulingMarkup(c)}
- ${cartSecureCheckoutPanel(c)}
+
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
- '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Add what you need directly—no extra picture gallery.</p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0"><a class="btn primary" href="/?open=shopping">Add Products</a><a class="btn outline" href="/installation.html">Add Installation &amp; Labor</a><a class="btn outline" href="/#projects">Start a Project</a></div></div>'+cartSecureCheckoutPanel(c)}
+ '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Add what you need directly—no extra picture gallery.</p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0"><a class="btn primary" href="/?open=shopping">Add Products</a><a class="btn outline" href="/installation.html">Add Installation &amp; Labor</a><a class="btn outline" href="/#projects">Start a Project</a></div></div>'}
  </div></section></main>`+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
