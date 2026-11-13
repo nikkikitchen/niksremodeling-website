@@ -89,3 +89,12 @@ Owner review list stays open until actual dollar values are researched, calculat
 4. When technically ready, approve the written materials-deposit and performance milestone schedule, and separately authorize any future payment enablement.
 
 Items requiring a supplier/account portal or actual address/processor transaction cannot be independently completed from source access. Do not activate online purchases as a workaround.
+
+## Verified engineering acceptance — GitHub commit `2fbfe63`
+- **PASS:** GitHub Actions "Verify website build" on the source commit, including JavaScript validation, asset integrity, and static output.
+- **PASS:** GitHub Actions "Verify Nik's Remodeling site build" run `43461269618`, including Node unit/integration tests, the calculator audit, Cloudflare Pages Functions compilation, and Playwright browser checks on desktop, tablet, and phone.
+- Browser tests were updated for the owner's ZIP-first estimate policy. Full street address is deferred to approved final checkout.
+- **NOT YET VERIFIED IN PRODUCTION:** A read-only live `release.json` fetch after these changes still returned the older deployed commit `0e5646b`. GitHub Cloudflare Pages check for newer source remained in progress at last check; the first D1 configuration commit `08d21b1` previously had a Cloudflare Pages build failure (details require authenticated Cloudflare logs). Do **not** infer Cloudflare deployment from GitHub CI success.
+- **Checkout remains held:** live readiness response reported `checkoutPaused:true`, `checkoutReadyForVerification:false`, processor `needs setup`, tax configured and supplier configured. These observations do not authorize payment.
+
+**Implementation review result:** Current tested source fixes the identified regressions and improves package deposit transparency, but supplier-delivered prices, taxability, unpriced scope tiers, Cloudflare live publishing and checkout activation remain unresolved. No customer payment accepted or initiated by this audit.
