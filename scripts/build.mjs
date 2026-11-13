@@ -113,6 +113,21 @@ for(const id of ['projects-menu','mobile-projects-menu']){
    throw Error(id+' fallback navigation differs from the shared Projects list.');
 }
 const projectSource=readFileSync(new URL('../project-options.js',import.meta.url),'utf8');
+
+// The Accessibility gallery uses the same plain tier names as other Projects.
+// A retired ramp-specific gallery or menu label must not be published again.
+const accessibilityStart=projectSource.indexOf('    accessibility:[',projectSource.indexOf('window.NIK_ROOM_PACKAGE_OVERRIDES='));
+const accessibilityEnd=projectSource.indexOf('  };',accessibilityStart);
+const accessibilityGallery=projectSource.slice(accessibilityStart,accessibilityEnd);
+for(const title of ["name:'Basic'","name:'Standard'","name:'Premium'","name:'Custom'"]){
+ if(!accessibilityGallery.includes(title))throw Error('Accessibility package title missing: '+title);
+}
+for(const oldTitle of ["name:'Basic Ramp Repair'","name:'Standard Ramp'","name:'Premium Turning Ramp'","name:'Basic Safety'","name:'Premium Accessibility'"]){
+ if(projectSource.includes(oldTitle))throw Error('Obsolete Accessibility package title reintroduced: '+oldTitle);
+}
+if(!projectSource.includes("location.replace('/project.html?project=accessibility')"))
+ throw Error('Legacy Accessibility route must redirect to the canonical packages.');
+
 // Guard the one-layout-for-all-projects customer experience.
 if(!roomSource.includes("['accents','Accent Walls']") ||
    !roomSource.includes('pkg-mobile-details') ||
