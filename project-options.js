@@ -436,17 +436,17 @@
       {"id":"custom","name":"Custom","intro":"Choose only the work and materials you need.","work":["Choose individual jobs and materials","Request a project quote"],"photo":"/assets/kitchen.jpg"}
     ],
     accessibility:[
-      {id:'basic',name:'Basic Safety',intro:'One grab bar and minor existing ramp maintenance.',work:[
+      {id:'basic',name:'Basic',intro:'One grab bar and minor existing ramp maintenance.',work:[
         'Install one 18-inch grab bar into sound structural backing',
         'Up to one hour of minor nonstructural existing ramp repair',
         'Include a replacement board if needed, fasteners, supplies and cleanup'
       ]},
-      {id:'standard',name:'Standard Safety',intro:'Two grab bars and minor existing ramp repairs.',work:[
+      {id:'standard',name:'Standard',intro:'Two grab bars and minor existing ramp repairs.',work:[
         'Install up to two 18-inch grab bars with secure structural mounting',
         'Up to two hours of minor repairs to an existing sound ramp',
         'Include up to two replacement deck boards, fasteners, supplies and cleanup'
       ]},
-      {id:'premium',name:'Premium Accessibility',intro:'Build one straight access ramp up to 12 feet.',work:[
+      {id:'premium',name:'Premium',intro:'Build one straight access ramp up to 12 feet.',work:[
         'Build one simple straight access ramp up to 12 feet of sloped run',
         'Include proper supports, decking, handrails, edge protection and safe transitions',
         'No intermediate or turning landings; longer ramps and landings are Custom',
