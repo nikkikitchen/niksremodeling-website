@@ -45,14 +45,15 @@ test('main project packages, nested hubs, mobile details and custom workflows re
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),id+' horizontal overflow').toBe(true);
  }
 });
-test('Terms never enables Pay; address is compact and unknown tax stays pending',async({page})=>{
+test('Terms never enables Pay; ZIP-first preview and unknown tax stay pending',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Test fixture',type:'Product',source:'supplier-retail',qty:1,price:100,productId:'1963146233541074945',variantId:'1963146233666904066'}])));
  await page.goto('/project-cart.html');
  await expect(page.locator('.cart-checkout-summary')).toHaveCount(1);
  await expect(page.locator('#cart-pay-button')).toBeDisabled();
  await page.locator('#cart-terms-agree').check();await expect(page.locator('#cart-pay-button')).toBeDisabled();
- await expect(page.locator('#square-ship-address')).toBeVisible();
+ await expect(page.locator('#cart-shipping-zip')).toBeVisible();
+ await expect(page.locator('#square-ship-address')).toHaveCount(0);
  await expect(page.locator('#cart-tax-amount')).toHaveText('Needs confirmation');
  await expect(page.locator('#cart-estimated-total')).toContainText('tax pending');
  const label=await page.locator('.nr-cart-balance-row > span').boundingBox();
