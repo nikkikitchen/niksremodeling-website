@@ -19,9 +19,16 @@ export async function onRequestGet({request,env}){
  const inv=await cj(env,'/product/stock/queryByVid?vid='+encodeURIComponent(v.vid));
  const stock=usCjWarehouseUnits(inv);
  if(stock<1)throw new Error('No confirmed U.S. warehouse stock for this option');
- const rates=await cj(env,'/logistic/freightCalculate',{startCountryCode:'US',endCountryCode:'US',zip,products:[{vid:v.vid,quantity:1}]});
- const confirmed=selectConfirmedFreight(rates)
-   || await quoteDetailedFreight(env,[{product:p,variant:v,quantity:1}],zip);
+ // A temporary failure in CJ's basic freight endpoint must not bypass the
+ // independently verified detailed quote fallback. Neither path may invent freight.
+ let confirmed=null;
+ try {
+  const rates=await cj(env,'/logistic/freightCalculate',{startCountryCode:'US',endCountryCode:'US',zip,products:[{vid:v.vid,quantity:1}]});
+  confirmed=selectConfirmedFreight(rates);
+ } catch {
+  // Try CJ's detailed freight endpoint before reporting delivery unavailable.
+ }
+ if(!confirmed)confirmed=await quoteDetailedFreight(env,[{product:p,variant:v,quantity:1}],zip);
  if(!confirmed)throw new Error(UNCONFIRMED_SHIPPING_MESSAGE);
  const {rate,freight:shipping}=confirmed;
  const total=retailCents(Number(v.variantSellPrice)+shipping);
