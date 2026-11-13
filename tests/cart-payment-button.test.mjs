@@ -17,6 +17,7 @@ test('verified single merchandise item displays a card payment button and price 
  }]);
  assert.match(d.body.textContent,/Secure checkout/);
  assert.ok(d.getElementById('square-check-price'),'Price verification button must be present');
+ assert.equal(d.querySelectorAll('#square-ship-address').length,0,'Address fields belong in the single delivery form');
  assert.equal(d.getElementById('square-pay')?.textContent,'Pay securely with Square');
  assert.equal(d.getElementById('square-pay')?.disabled,true,'No payment before price verification');
 });
@@ -53,4 +54,15 @@ test('Review Cart shows items, delivery, order summary and scheduling before the
  assert.ok(item>=0&&item<delivery&&delivery<summary&&summary<schedule&&schedule<pay,
   'Checkout must appear after items, delivery, the summary, and payment choices');
  assert.ok(source.includes("'+cartSecureCheckoutPanel(c)"),'Empty cart should retain checkout section');
+});
+
+test('checkout renders one compact address form and a small Square pay control',()=>{
+ const start=app.indexOf('function renderCart(){');
+ const end=app.indexOf('\nfunction removeCart(',start);
+ const source=app.slice(start,end);
+ assert.ok(source.includes('zipForm.insertAdjacentHTML'),'Address inputs are placed next to the ZIP in the delivery section');
+ for(const id of ['square-ship-address','square-ship-city','square-ship-state'])
+  assert.ok(source.includes(id),'Missing delivery address input '+id);
+ assert.equal((app.match(/id="square-ship-address"/g)||[]).length,1,
+  'Address field must appear in only one cart location');
 });
