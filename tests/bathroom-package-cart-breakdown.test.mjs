@@ -36,9 +36,9 @@ test('cart displays proposed package labor, materials and fees without demanding
  for(const term of ['Project package estimate','Materials &amp; supplies','Labor (7% package discount applied)','Project fees','What is included']){
   assert.ok(app.includes(term),term+' missing');
  }
- assert.ok(app.includes('Request Deposit + Weekly Draws'));
- assert.ok(app.includes('Request Pay-in-Full Invoice'));
- assert.ok(app.includes('Request one full-payment invoice for entire approved cart'));
+ for(const retired of ['Request Deposit + Weekly Draws','Request Pay-in-Full Invoice','Request one full-payment invoice for entire approved cart'])assert.ok(!app.includes(retired));
+ assert.ok(app.includes('id="cart-terms-agree"'));
+ assert.match(app,/id="cart-pay-button"[^>]*disabled/);
  assert.ok(app.includes('These amounts are included in the package estimate, not added again.'));
  assert.ok(app.includes('No separate installation charge for included work.'));
  assert.ok(!app.includes('Overhead and contingency'),'Do not restore confusing fee label.');

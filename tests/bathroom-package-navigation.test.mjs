@@ -34,7 +34,8 @@ for(const {id,tiers,prices} of [
    assert.ok(prices.every(price=>doc.querySelector('main').textContent.includes(price)));
    if(id==='accessibility'){
      assert.match(cards[0].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$[\d,]+/);
-     assert.match(cards[1].querySelector('.pkg-pricing')?.textContent||'',/Project quote required/);
+     assert.match(cards[1].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$855/);
+     assert.match(cards[1].textContent,/Preliminary estimate/);
      assert.match(cards[2].querySelector('.pkg-pricing')?.textContent||'',/Project quote required/);
      assert.match(cards[3].textContent,/Choose only the jobs and materials you need/);
    }

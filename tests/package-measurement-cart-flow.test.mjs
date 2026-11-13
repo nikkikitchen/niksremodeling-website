@@ -187,7 +187,7 @@ test('Accent Wall Basic advertises the single-color starting price and never tak
   assert.equal(item.price,null);
   assert.equal(item.quoteRequired,true);
   w.renderCart();
-  assert.equal(d.getElementById('cart-due-now').textContent,'$0.00');
+  assert.equal(d.getElementById('cart-due-now').textContent,'$0.00 + tax pending');
  }finally{dom.window.close()}
 });
 
@@ -212,7 +212,7 @@ test('Larger accent walls keep their measured size and require a confirmed quote
  }finally{dom.window.close()}
 });
 
-test('Combined project total includes quoted package minimum plus separate product and 8% estimated tax',async()=>{
+test('Combined project total includes quoted package minimum plus separate product with unknown tax pending',async()=>{
   const cart=[
     {name:'Accent Wall — Basic',source:'room-project-package',projectId:'accents',packageId:'basic',
       type:'Service',qty:1,price:null,startingAt:350,depositEstimate:147.13,
@@ -225,16 +225,16 @@ test('Combined project total includes quoted package minimum plus separate produ
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
     assert.match(d.body.textContent,/Project total/);
-    assert.equal(combined.textContent,'$458.00+',
+    assert.equal(combined.textContent,'$450.00+ + tax pending',
       'Include $350 package starting price plus $100 product and $8 estimated product tax');
-    assert.equal(d.getElementById('cart-due-now').textContent,'$108.00',
+    assert.equal(d.getElementById('cart-due-now').textContent,'$100.00 + tax pending',
       'The unconfirmed $350 package must never enter the amount due now');
-    assert.equal(d.getElementById('cart-tax-amount').textContent,'$8.00',
+    assert.equal(d.getElementById('cart-tax-amount').textContent,'Needs confirmation',
       'Do not assess interim retail tax on unconfirmed package labor');
   }finally{dom.window.close();}
 });
 
-test('Deluxe Bathroom cart credits included vanity light and mirror, keeps replacement vanity separate, and offers full payment',async()=>{
+test('Deluxe Bathroom cart credits included vanity light and mirror, keeps replacement vanity separate, and keeps payment locked',async()=>{
  const fixtureLines=[
   {name:'Standard vanity light (provisional allowance; confirm supplier price)',quantity:1,unitPrice:150},
   {name:'Standard bathroom mirror (provisional allowance; confirm supplier price)',quantity:1,unitPrice:100}
@@ -256,9 +256,11 @@ test('Deluxe Bathroom cart credits included vanity light and mirror, keeps repla
   assert.match(text,/vanity unit/i);
   assert.match(text,/\$56\.03/,'New vanity cabinet is not part of cosmetic Deluxe');
   assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$56\.03/);
-  assert.match(d.getElementById('cart-combined-project-total').textContent,/\$2,620\.51/);
-  assert.ok(d.querySelector('button[data-cart-request="full"]'),'Customer can request a single full-payment invoice');
-  assert.ok(d.querySelector('button[data-cart-request="deposit"]'),'Deposit and weekly draws remain optional');
+  assert.match(d.getElementById('cart-combined-project-total').textContent,/\$2,616\.03/);
+  assert.equal(d.querySelector('button[data-cart-request]'),null,'No competing invoice buttons');
+  assert.equal(d.querySelectorAll('.cart-checkout-summary').length,1);
+  assert.equal(d.getElementById('cart-pay-button').disabled,true);
+  assert.ok(d.getElementById('cart-terms-agree'));
   assert.equal(d.querySelectorAll('.nr-cart-line').length,4,'Included fixture installation must not be added again');
   const saved=JSON.parse(w.localStorage.getItem('nr-cart'));
   assert.equal(saved[1].price,43.10,'Fixture credit is a display calculation and must not corrupt cart storage');

@@ -96,30 +96,22 @@ test('tap and keyboard open submenus, close siblings, and return focus without n
  }finally{dom.window.close();}
 });
 
-test('desktop hover stays open across the department-to-submenu boundary and closes only after leaving Shopping',async()=>{
- const dom=await open(true);
- try{
-  const w=dom.window,branch=w.document.querySelector('#shopping-menu .shopping-branch'),button=branch.querySelector('button');
-  branch.dispatchEvent(new w.MouseEvent('mouseenter'));assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(branch.querySelector('nav').hidden,false);
-  branch.dispatchEvent(new w.MouseEvent('mouseleave'));assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(branch.querySelector('nav').hidden,false);
-  const wrapper=branch.closest('.nav-menu');
-  wrapper.dispatchEvent(new w.MouseEvent('mouseleave'));
-  assert.equal(button.getAttribute('aria-expanded'),'true');
-  await new Promise(r=>setTimeout(r,380));
-  assert.equal(button.getAttribute('aria-expanded'),'false');assert.equal(branch.querySelector('nav').hidden,true);
- }finally{dom.window.close();}
-});
-
-test('returning to Shopping before the hover grace period keeps the submenu open without a click',async()=>{
+test('desktop pointer movement never opens a department or its submenu',async()=>{
  const dom=await open(true);
  try{
   const w=dom.window,menu=w.document.getElementById('shopping-menu'),wrapper=menu.parentElement;
   const branch=menu.querySelector('.shopping-branch'),button=branch.querySelector('button');
-  menu.dispatchEvent(new w.MouseEvent('mouseenter'));branch.dispatchEvent(new w.MouseEvent('mouseenter'));
-  wrapper.dispatchEvent(new w.MouseEvent('mouseleave'));menu.dispatchEvent(new w.MouseEvent('mouseenter'));
-  await new Promise(r=>setTimeout(r,380));
-  assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(wrapper.classList.contains('open'),true);
-  assert.equal(w.location.href,'https://niksremodeling.com/appliances.html');
+  wrapper.dispatchEvent(new w.MouseEvent('mouseenter'));
+  menu.dispatchEvent(new w.MouseEvent('mouseenter'));
+  branch.dispatchEvent(new w.MouseEvent('mouseenter'));
+  assert.equal(wrapper.classList.contains('open'),false);
+  assert.equal(button.getAttribute('aria-expanded'),'false');
+  assert.equal(branch.querySelector('nav').hidden,true);
+  button.click();assert.equal(button.getAttribute('aria-expanded'),'true');
+  branch.dispatchEvent(new w.MouseEvent('mouseleave'));
+  wrapper.dispatchEvent(new w.MouseEvent('mouseleave'));
+  assert.equal(button.getAttribute('aria-expanded'),'true');
+  button.click();assert.equal(button.getAttribute('aria-expanded'),'false');
  }finally{dom.window.close();}
 });
 
@@ -135,12 +127,12 @@ test('long desktop menus scroll and lower flyouts stay inside the viewport',asyn
   menu.getBoundingClientRect=()=>({top:160,left:800,right:1040});
   branch.getBoundingClientRect=()=>({top:530});
   Object.defineProperty(submenu,'scrollHeight',{value:900});
-  branch.dispatchEvent(new w.MouseEvent('mouseenter'));
+  branch.querySelector('button').click();
   assert.equal(menu.style.getPropertyValue('--shopping-menu-height'),'424px');
   assert.equal(submenu.style.getPropertyValue('--shopping-submenu-top'),'12px');
   const last=[...menu.querySelectorAll(':scope > .shopping-branch')].at(-1);
   last.getBoundingClientRect=()=>({top:570});
-  last.dispatchEvent(new w.MouseEvent('mouseenter'));
+  last.querySelector('button').click();
   assert.ok(Number.parseInt(last.querySelector('nav').style.getPropertyValue('--shopping-submenu-top'),10)>=12 && Number.parseInt(last.querySelector('nav').style.getPropertyValue('--shopping-submenu-top'),10)<=516);
   assert.equal(last.querySelector('nav').style.getPropertyValue('--shopping-submenu-height'),'568px');
   assert.equal(submenu.style.getPropertyValue('--shopping-submenu-left'),'520px');

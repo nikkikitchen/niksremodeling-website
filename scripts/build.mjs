@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync, copyFileSync, cpSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, copyFileSync, cpSync, existsSync, rmSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -168,6 +168,7 @@ for(const marker of ['q.totalCents!==expectedTotal','payment_link','SQUARE_LOCAT
 if(!quoteHandler.includes('checkoutEnabled'))throw Error('Square quote readiness missing.');
 console.log('Checkout release gate passed: cart button and secured payment handlers present.');
 
+rmSync(output, { recursive: true, force: true });
 mkdirSync(output, { recursive: true });
 // Validate approved internal supply reference data without publishing it.
 const supplyReference=JSON.parse(readFileSync(new URL('../data/approved-supply-prices.json',import.meta.url),'utf8'));
@@ -181,7 +182,10 @@ for (const file of files) {
   const target = new URL(file, output);
   copyFileSync(source, target);
   if (file.endsWith('.html')) {
-    const html = readFileSync(target, 'utf8').replace(/\/(store\.js|store\.css|bathroom-shop\.js|app\.js|styles\.css|project-calculator-options\.js|calculator-simple-flow\.js|project-options\.js|calculator-steps\.js|shopping-flow\.js|shop-installed\.js|real-products\.js|room-projects\.js)\?v=[^"']+/g, (_, asset) => '/' + asset + '?v=' + commit.slice(0, 12));
+    const html = readFileSync(target, 'utf8').replace(/((?:src|href)=["'])\/([a-z0-9-]+\.(?:js|css))(?:\?[^"']*)?(?=["'])/g, (match, prefix, asset) => {
+      if(!files.includes(asset))throw Error('Unpublished browser asset: '+file+' → '+asset);
+      return prefix+'/'+asset+'?v='+commit.slice(0,12);
+    });
     writeFileSync(target, html);
   }
   hashes[file] = createHash('sha256').update(readFileSync(target)).digest('hex');

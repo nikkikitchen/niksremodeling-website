@@ -20,10 +20,18 @@ jobs:
         run: npm ci
       - name: Validate JavaScript, catalog and package integrity
         run: npm run build
+      - name: Validate exact published assets and cache versions
+        run: npm run verify:dist
+      - name: Compile Cloudflare Pages Functions
+        run: npm run build:functions
       - name: Run site tests
         run: npm test
       - name: Run calculator audit
         run: npm run test:calculator
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Test built site on desktop, tablet and phone
+        run: npm run test:browser
       - name: Check live Cloudflare checkout release (read-only, non-blocking)
         run: node scripts/check-live-checkout.mjs
         continue-on-error: true

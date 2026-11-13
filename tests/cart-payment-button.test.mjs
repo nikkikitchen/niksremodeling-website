@@ -34,19 +34,18 @@ test('empty and mixed carts never create a payable button',()=>{
  }
 });
 
-test('Review Cart shows items, delivery, order summary and scheduling before the payment button',()=>{
+test('Review Cart uses one summary with terms and a disabled Pay button',()=>{
  const start=app.indexOf('function renderCart(){');
  const end=app.indexOf('\nfunction removeCart(',start);
- assert.ok(start>=0&&end>start);
  const source=app.slice(start,end);
- const item=source.indexOf('<h2>Items</h2>');
- const delivery=source.indexOf('nr-cart-zip-top');
- const summary=source.indexOf('cartCheckoutSummary(c)');
- const schedule=source.indexOf('cartSchedulingMarkup(c)');
- const pay=source.indexOf('cartSecureCheckoutPanel(c)');
- assert.ok(item>=0&&item<delivery&&delivery<summary&&summary<schedule&&schedule<pay,
-  'Checkout must appear after items, delivery, the summary, and payment choices');
- assert.ok(source.includes("'+cartSecureCheckoutPanel(c)"),'Empty cart should retain checkout section');
+ assert.equal((source.match(/cartCheckoutSummary\(c\)/g)||[]).length,1);
+ assert.ok(source.indexOf('<h2>Items</h2>')<source.indexOf('cartCheckoutSummary(c)'));
+ assert.ok(!source.includes('cartSchedulingMarkup(c)'));
+ assert.ok(!source.includes('cartSecureCheckoutPanel(c)'));
+ const summary=app.slice(app.indexOf('function cartCheckoutSummary(items){'),app.indexOf('function cartSecureCheckoutPanel(items){'));
+ assert.match(summary,/id="cart-terms-agree"/);
+ assert.match(summary,/id="cart-pay-button"[^>]*disabled/);
+ assert.ok(summary.indexOf('id="cart-terms-agree"')<summary.indexOf('id="cart-pay-button"'));
 });
 
 test('cart keeps one compact delivery address form while online payment is paused',()=>{

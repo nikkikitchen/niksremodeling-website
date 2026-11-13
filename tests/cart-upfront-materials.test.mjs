@@ -26,16 +26,16 @@ test('Due now includes materials inside a labor package but excludes the labor i
  const html=render(make(900));
  assert.match(html,/Products &amp; materials<\/span><strong>\$500\.00/);
  assert.match(html,/Labor<\/span><strong>\$600\.00/);
- assert.match(html,/id="cart-tax-amount">\$40\.00/);
- assert.match(html,/id="cart-estimated-total"[^>]*>\$1,140\.00/);
- assert.match(html,/id="cart-due-now">\$540\.00/);
+ assert.match(html,/id="cart-tax-amount">Needs confirmation/);
+ assert.match(html,/id="cart-estimated-total"[^>]*>\$1,100\.00 \+ tax pending/);
+ assert.match(html,/id="cart-due-now">\$500\.00 \+ tax pending/);
 });
 
 test('Replacing a packaged fixture does not charge its allowance twice',()=>{
  const html=render(make(800,100));
  assert.match(html,/Products &amp; materials<\/span><strong>\$400\.00/);
  assert.match(html,/Labor<\/span><strong>\$600\.00/);
- assert.match(html,/id="cart-tax-amount">\$32\.00/);
- assert.match(html,/id="cart-estimated-total"[^>]*>\$1,032\.00/);
- assert.match(html,/id="cart-due-now">\$432\.00/);
+ assert.match(html,/id="cart-tax-amount">Needs confirmation/);
+ assert.match(html,/id="cart-estimated-total"[^>]*>\$1,000\.00 \+ tax pending/);
+ assert.match(html,/id="cart-due-now">\$400\.00 \+ tax pending/);
 });

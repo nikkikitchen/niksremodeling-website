@@ -37,3 +37,21 @@ test('Square checkout requires a fresh verified destination tax and supplier quo
   assert.equal((await result.json()).checkoutEnabled,false);
  }finally{globalThis.fetch=previous;}
 });
+
+test('valid direct orders cannot bypass the hard hold with credentials or enable flags',async()=>{
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{calls++;throw Error('Purchase hold must run before supplier or processor access');};
+ try{
+  for(const extras of [{},{checkoutEnabled:true,checkoutReadyForVerification:true,totalCents:1},{shippingCents:0,taxCents:0,paymentMode:'full'}]){
+   const request=new Request('https://niksremodeling.com/api/store-checkout',{
+    method:'POST',headers:{Origin:'https://niksremodeling.com','Content-Type':'application/json'},
+    body:JSON.stringify({productId:'1963146233541074945',variantId:'1963146233666904066',quantity:1,zip:'30117',address:'Test address',city:'Carrollton',state:'GA',expectedTotal:100,requestId:'mock-request-12345678',...extras})
+   });
+   const response=await onRequestPost({request,env:{CHECKOUT_ENABLED:'true',SQUARE_ACCESS_TOKEN:'mock',SQUARE_LOCATION_ID:'mock',CJ_ACCESS_TOKEN:'mock',ZIPTAX_API_KEY:'mock'}});
+   assert.equal(response.status,503);const body=await response.json();
+   assert.equal(body.checkoutEnabled,false);assert.equal(body.url,undefined);
+   assert.equal(response.headers.get('Cache-Control'),'no-store');
+  }
+  assert.equal(calls,0);
+ }finally{globalThis.fetch=original;}
+});

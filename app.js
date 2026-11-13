@@ -832,12 +832,12 @@ function cartCheckoutSummary(items){
  ${estimatedLabor.hasServices&&additionalServices.some(x=>['Labor','Service'].includes(x.type))?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
 
- <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
+ <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
  ${unconfirmedPackages.length?'<div class="nr-cart-quote-note" role="group" aria-label="Project payment options"><strong>Payment options after approval</strong><p>Pay in full, or start with a materials deposit of '+money(packageDepositEstimates)+' and pay labor in weekly draws.</p></div>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
- <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Other priced items':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money((Math.round(combinedEstimatedTotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
- <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span>Estimated due now</span><strong id="cart-due-now">${money((Math.round(payableSubtotal*100)+Math.round(retailGoodsCents*0.08))/100)}</strong></div>
- <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>Project total${unconfirmedPackages.length?' (estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money((combinedStartingBaseCents+Math.round(retailGoodsCents*0.08))/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''}</strong></div>
+ <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Other priced items':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
+ <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span>Estimated due now</span><strong id="cart-due-now">${money(payableSubtotal)} + tax pending</strong></div>
+ <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>Project total${unconfirmedPackages.length?' (estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money(combinedStartingBaseCents/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''} + tax pending</strong></div>
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax and delivery are estimates.</p>
@@ -847,13 +847,12 @@ function cartCheckoutSummary(items){
  <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
  </div>
  </section>`;
+}
 function updateCartPayButton(){
  const button=document.getElementById('cart-pay-button');
  if(button)button.disabled=true; // Never enable until the verified server checkout for the full cart is live.
 }
-}
-// A single verified supplier product can use hosted Square checkout. Quotes,
-// labor, projects, and mixed carts must still go through written approval.
+// Online purchases remain locked for every cart, including single retail products.
 function cartSecureCheckoutPanel(items){
  const visible=items.filter(x=>!x.hiddenFromCustomer);
  return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Online purchase status">'+
@@ -863,6 +862,9 @@ function cartSecureCheckoutPanel(items){
   '</section>';
 }
 function initCartSecureCheckout(items){
+ // Defense in depth: legacy markup or a stale quote must never enable payment.
+ document.querySelectorAll('#square-pay, #square-check-price').forEach(button=>{button.disabled=true;});
+ return;
  const check=document.getElementById('square-check-price');
  const pay=document.getElementById('square-pay');
  const status=document.getElementById('square-check-status');
@@ -979,7 +981,7 @@ function initCartShippingQuote(items){
   }catch(error){
    if(mine!==requestId)return;
    shipping.textContent='Shipping needs confirmation';
-   // Preserve the 8% merchandise estimate while leaving unverified shipping pending.
+   // Clear stale freight and tax previews when shipping cannot be verified.
    form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
    status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
   }finally{if(mine===requestId&&button)button.disabled=false;}
@@ -1007,21 +1009,22 @@ function initCartTaxPreview(){
   // ZIP tax is a conservative preview, never a collectible final tax.
   // The exact delivery address, item taxability and Square order total
   // are checked again before opening any payment link.
-  const estimatedRate=rate??0.08;
+  const estimatedRate=rate??0;
+  const pending=rate===null?' + tax pending':'';
   const taxCents=Math.round((retailCents+(shippingCents??0))*estimatedRate);
-  tax.textContent=money(taxCents);
-  if(rateLabel)rateLabel.textContent=rate===null?' · provisional 8%':' · ZIP estimate '+(rate*100).toFixed(2)+'%';
+  tax.textContent=rate===null?'Needs confirmation':money(taxCents);
+  if(rateLabel)rateLabel.textContent=rate===null?' · unverified':' · ZIP estimate '+(rate*100).toFixed(2)+'%';
   info.textContent=rate===null
-    ?'Temporary 8% estimate only. Final tax is confirmed using the delivery address before payment.'
+    ?'Tax needs confirmation. The delivery address and type of work determine the applicable tax before payment.'
     :'ZIP-based tax estimate only. The delivery address determines the final tax before payment.';
-  total.textContent=money(baseCents+(shippingCents??0)+taxCents);
+  total.textContent=money(baseCents+(shippingCents??0)+taxCents)+pending;
   if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0)
-   dueNow.textContent=money(payableCents+(shippingCents??0)+taxCents);
+   dueNow.textContent=money(payableCents+(shippingCents??0)+taxCents)+pending;
   const combinedBase=Number(combined?.dataset.baseCents);
   if(combined&&Number.isSafeInteger(combinedBase)&&combinedBase>=0)
    combined.textContent=money(combinedBase+(shippingCents??0)+taxCents)+
     (combined.dataset.hasStarting==='true'?'+':'')+
-    (combined.dataset.hasUnpriced==='true'?' + quote required':'');
+    (combined.dataset.hasUnpriced==='true'?' + quote required':'')+pending;
  };
  const lookup=async zip=>{
   const mine=++lookupId;
@@ -1104,14 +1107,14 @@ function renderCart(){
  </div></section></main>`+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
- const canPayRetail=!!document.getElementById('square-check-price');
+ const needsDeliveryAddress=c.some(item=>!item.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(item.source));
  if(zipTop&&zipForm){
   const zipStatus=document.getElementById('cart-shipping-status');
-  if(canPayRetail){
+  if(needsDeliveryAddress){
    zipTop.insertAdjacentHTML('afterbegin','<h3>Delivery address</h3>');
   }
   zipTop.appendChild(zipForm);
-  if(canPayRetail){
+  if(needsDeliveryAddress){
    zipForm.insertAdjacentHTML('beforeend','<div class="nr-checkout-address"><label for="square-ship-address">Street address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street address" maxlength="150"></label><label for="square-ship-city">City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label for="square-ship-state">State<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div>');
   }
   if(zipStatus)zipTop.appendChild(zipStatus);
@@ -1180,7 +1183,36 @@ function renderMaterialDetail(){
 function initNavMenus(){
  const cabinetMenu=document.querySelector('.nav-main[href="/cabinets.html"]')?.closest('.nav-menu')?.querySelector('.nav-dropdown');
  if(cabinetMenu&&!cabinetMenu.dataset.workOptions){cabinetMenu.dataset.workOptions='1';const heading=document.createElement('span');heading.className='nav-group-label';heading.textContent='Cabinet Work';cabinetMenu.append(heading);CABINET_WORK_OPTIONS.forEach(option=>{const link=document.createElement('a');link.textContent=option.label;link.href='/calculators.html?material=refinish&cabinetOptions='+option.key;cabinetMenu.append(link)});}
-document.querySelectorAll('.nav-toggle').forEach(button=>button.addEventListener('click',()=>{const menu=button.closest('.nav-menu'),open=!menu.classList.contains('open');document.querySelectorAll('.nav-menu.open').forEach(other=>{other.classList.remove('open');other.querySelector('.nav-toggle').setAttribute('aria-expanded','false')});menu.classList.toggle('open',open);button.setAttribute('aria-expanded',String(open));if(open&&matchMedia('(max-width:820px)').matches){const dropdown=menu.querySelector('.nav-dropdown'),nav=menu.closest('nav.nav');if(dropdown&&nav){const navBottom=Math.max(0,Math.ceil(nav.getBoundingClientRect().bottom));dropdown.style.setProperty('--mobile-menu-top',navBottom+'px');dropdown.style.setProperty('--mobile-menu-max-height',Math.max(90,window.innerHeight-navBottom-8)+'px');}}}));document.addEventListener('click',event=>{if(event.target.closest('.nav-menu'))return;document.querySelectorAll('.nav-menu.open').forEach(menu=>{menu.classList.remove('open');menu.querySelector('.nav-toggle').setAttribute('aria-expanded','false')})});document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.nav-menu.open').forEach(menu=>{menu.classList.remove('open');menu.querySelector('.nav-toggle').setAttribute('aria-expanded','false')})})}
+ const closeMenus=()=>document.querySelectorAll('.nav-menu.open').forEach(menu=>{
+  menu.classList.remove('open');
+  menu.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');
+ });
+ document.querySelectorAll('.nav-toggle').forEach(button=>{
+  if(button.dataset.navBound)return;
+  button.dataset.navBound='true';
+  button.addEventListener('click',()=>{
+   const menu=button.closest('.nav-menu'),open=!menu.classList.contains('open');
+   closeMenus();
+   menu.classList.toggle('open',open);button.setAttribute('aria-expanded',String(open));
+   if(open&&matchMedia('(max-width:820px)').matches){
+    const dropdown=menu.querySelector('.nav-dropdown'),nav=menu.closest('nav.nav');
+    if(dropdown&&nav){
+     const navBottom=Math.max(0,Math.ceil(nav.getBoundingClientRect().bottom));
+     dropdown.style.setProperty('--mobile-menu-top',navBottom+'px');
+     dropdown.style.setProperty('--mobile-menu-max-height',Math.max(90,window.innerHeight-navBottom-8)+'px');
+    }
+   }
+  });
+ });
+ if(!document.documentElement.dataset.navDismissBound){
+  document.documentElement.dataset.navDismissBound='true';
+  document.addEventListener('click',event=>{if(!event.target.closest('.nav-menu'))closeMenus();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'){
+   const toggle=document.querySelector('.nav-menu.open .nav-toggle');
+   closeMenus();toggle?.focus();
+  }});
+ }
+}
 // Cart shortcut opens the actual Shopping navigation on the homepage.
 document.addEventListener('DOMContentLoaded',()=>{
  if(location.pathname!=='/'&&location.pathname!=='/index.html')return;

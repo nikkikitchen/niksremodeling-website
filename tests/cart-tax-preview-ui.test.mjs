@@ -13,7 +13,7 @@ const products=[{source:'supplier-retail',productId:'1992983344353558529',
 function mount(fetch){
  const dom=new JSDOM(`<form id="cart-shipping-form"><input id="cart-shipping-zip" required pattern="[0-9]{5}" maxlength="5"><button type="submit">Check Shipping & Taxes</button></form>
  <p id="cart-shipping-status"></p><strong id="cart-shipping-amount">Enter ZIP</strong>
- <strong id="cart-tax-amount">Temporary 8% estimate</strong><small id="cart-tax-rate-label"></small><p id="cart-tax-status"></p>
+ <strong id="cart-tax-amount">Needs confirmation</strong><small id="cart-tax-rate-label"></small><p id="cart-tax-status"></p>
  <strong id="cart-due-now">$0.00</strong><strong id="cart-estimated-total" data-base-cents="10000" data-payable-cents="6000" data-retail-cents="6000" data-pending="false">$100.00 + shipping and tax pending</strong>`,
  {url:'https://niksremodeling.com/'});
  const {document,localStorage}=dom.window;
@@ -30,18 +30,18 @@ const submit=ui=>{
  ui.zip.value='36269';
  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true,bubbles:true}));
 };
-test('temporarily estimates merchandise at 8% even before shipping quote',()=>{
+test('unknown tax stays pending before any verified location lookup',()=>{
  const ui=mount(async()=>{throw Error('No shipping request expected');});
  try{
-  assert.equal(ui.tax.textContent,'$4.80');
-  assert.equal(ui.rateLabel.textContent,' · provisional 8%');
-  assert.equal(ui.total.textContent,'$104.80');
-  assert.equal(ui.due.textContent,'$64.80','upfront amount includes merchandise and tax, not $40 labor');
-  assert.match(ui.info.textContent,/Final tax is confirmed using the delivery address before payment/);
-  assert.match(ui.info.textContent,/Temporary 8% estimate only/);
+  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.rateLabel.textContent,' · unverified');
+  assert.equal(ui.total.textContent,'$100.00 + tax pending');
+  assert.equal(ui.due.textContent,'$60.00 + tax pending','upfront amount includes merchandise and tax, not $40 labor');
+  assert.match(ui.info.textContent,/delivery address and type of work determine the applicable tax/);
+  assert.match(ui.info.textContent,/Tax needs confirmation/);
  }finally{ui.dom.window.close();}
 });
-test('one ZIP adds verified freight, then estimates 8% of merchandise plus shipping',async()=>{
+test('verified freight does not invent a tax rate when tax lookup is unavailable',async()=>{
  let shippingCalls=0,otherCalls=0;
  const ui=mount(async(url,opts)=>{
   if(url!=='/api/cart-shipping'){otherCalls++;throw Error('Unexpected tax or payment API request');}
@@ -55,14 +55,14 @@ test('one ZIP adds verified freight, then estimates 8% of merchandise plus shipp
   assert.equal(shippingCalls,1);
   assert.equal(otherCalls,0,'direct shipping submission does not initiate a duplicate tax lookup');
   assert.equal(ui.shipping.textContent,'$81.00');
-  assert.equal(ui.tax.textContent,'$11.28');
-  assert.equal(ui.total.textContent,'$192.28');
-  assert.equal(ui.due.textContent,'$152.28','upfront amount includes merchandise, freight and tax, not labor');
-  assert.equal(ui.rateLabel.textContent,' · provisional 8%');
+  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.total.textContent,'$181.00 + tax pending');
+  assert.equal(ui.due.textContent,'$141.00 + tax pending','upfront amount includes merchandise, freight and tax, not labor');
+  assert.equal(ui.rateLabel.textContent,' · unverified');
   ui.zip.value='3011';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
-  assert.equal(ui.tax.textContent,'$4.80');
-  assert.equal(ui.total.textContent,'$104.80');
+  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.total.textContent,'$100.00 + tax pending');
  }finally{ui.dom.window.close();}
 });
 test('unknown supplier freight never becomes zero or a fake final price',async()=>{
@@ -71,9 +71,9 @@ test('unknown supplier freight never becomes zero or a fake final price',async()
   submit(ui);
   await flush();await flush();
   assert.equal(ui.shipping.textContent,'Shipping needs confirmation');
-  assert.equal(ui.tax.textContent,'$4.80');
-  assert.equal(ui.total.textContent,'$104.80');
-  assert.match(ui.info.textContent,/Temporary 8% estimate only/);
+  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.total.textContent,'$100.00 + tax pending');
+  assert.match(ui.info.textContent,/Tax needs confirmation/);
  }finally{ui.dom.window.close();}
 });
 

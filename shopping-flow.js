@@ -97,44 +97,13 @@
     const wrapper=menu.parentElement;
     if(wrapper.dataset.shoppingHoverBound)return;
     wrapper.dataset.shoppingHoverBound='true';
-    let closeTimer;
     const fit=()=>{fitShoppingMenu(menu);menu.querySelectorAll('.shopping-branch').forEach(branch=>{if(!branch.querySelector('.shopping-submenu').hidden)positionShoppingSubmenu(branch);});};
-    wrapper.addEventListener('mouseenter',fit);
     wrapper.addEventListener('click',()=>setTimeout(fit,0));
     menu.addEventListener('scroll',fit);
     window.addEventListener('resize',fit);
     window.addEventListener('scroll',fit);
+    // Pointer movement never changes the selected navigation category.
 
-    // Opening from the top navigation label must not require a click.
-    wrapper.addEventListener('mouseenter',()=>{
-      if(!hoverMenus())return;
-      clearTimeout(closeTimer);
-      document.querySelectorAll('.nav-menu.open').forEach(other=>{
-        if(other===wrapper)return;
-        other.classList.remove('open');
-        other.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','false');
-        other.querySelectorAll(':scope > .nav-dropdown > .shopping-branch').forEach(branch=>openShoppingBranch(branch,false));
-      });
-      wrapper.classList.add('open');
-      wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','true');
-    });
-    menu.addEventListener('mouseenter',()=>{
-      // Keep the submenu open when the mouse returns before the close delay.
-      if(!hoverMenus())return;
-      clearTimeout(closeTimer);
-      wrapper.classList.add('open');
-      wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','true');
-    });
-    wrapper.addEventListener('mouseleave',()=>{
-      if(!hoverMenus())return;
-      clearTimeout(closeTimer);
-      closeTimer=setTimeout(()=>{
-        if(wrapper.matches(':hover'))return;
-        for(const branch of menu.querySelectorAll(':scope > .shopping-branch'))openShoppingBranch(branch,false);
-        wrapper.classList.remove('open');
-        wrapper.querySelector(':scope > .nav-toggle')?.setAttribute('aria-expanded','false');
-      },350);
-    });
   }
   function openShoppingBranch(branch,open){
     const menu=branch.parentElement;
@@ -150,8 +119,7 @@
   }
   function bindCategoryBranch(branch){
     const button=branch.querySelector('.shopping-category-toggle'),submenu=branch.querySelector('.shopping-submenu');
-button.addEventListener('click',event=>openShoppingBranch(branch,hoverMenus()&&event.detail>0?true:submenu.hidden));
-        branch.addEventListener('mouseenter',()=>{if(hoverMenus())openShoppingBranch(branch,true);});
+button.addEventListener('click',()=>openShoppingBranch(branch,submenu.hidden));
         branch.addEventListener('keydown',event=>{
           if(['Escape','ArrowLeft'].includes(event.key)&&!submenu.hidden){event.preventDefault();event.stopPropagation();openShoppingBranch(branch,false);button.focus();}
           else if(event.target===button&&['ArrowRight','ArrowDown'].includes(event.key)){event.preventDefault();openShoppingBranch(branch,true);submenu.querySelector('a')?.focus();}
