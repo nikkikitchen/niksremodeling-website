@@ -6,7 +6,7 @@
       {
         "name": "Basic",
         "photo": "/assets/accent-basic-approved.jpg",
-        "price": "Starting at $585Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $585Preliminary estimate · final quote after measurements",
         "scope": [
           "Install and finish up to 12 linear ft of chair rail or comparable simple picture-frame trim",
           "Paint the accent wall in two complementary colors",
@@ -16,7 +16,7 @@
       {
         "name": "Standard",
         "photo": "/assets/accent-standard-approved.jpg",
-        "price": "Starting at $835Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $835Preliminary estimate · final quote after measurements",
         "scope": [
           "Install, fill and paint up to 12 linear ft of chair rail",
           "Apply a simple two-color sponge-painted faux-stone effect below the rail",
@@ -35,6 +35,7 @@
       {
         "name": "Custom",
         "photo": "/assets/accent-custom-approved.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -46,7 +47,7 @@
       {
         "name": "Basic",
         "photo": "https://images.pexels.com/photos/35505451/pexels-photo-35505451.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $875Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $875Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 96 sq. ft. of one sound bathroom wall, two coats",
           "Replace one vanity faucet using existing sound connections; remove old faucet",
@@ -57,7 +58,7 @@
       {
         "name": "Standard",
         "photo": "https://images.pexels.com/photos/34574595/pexels-photo-34574595.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $1,325Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,325Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 208 sq. ft. of bathroom walls, two coats",
           "Paint up to 26 ft existing baseboards, one side of door and up to 16 ft casing",
@@ -68,7 +69,7 @@
       {
         "name": "Deluxe",
         "photo": "/assets/bathroom-deluxe-black-white.jpg",
-        "price": "Starting at $1,990Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,990Preliminary estimate · final quote after measurements",
         "scope": [
           "Two coats on up to 208 sq. ft. walls and one white coat on 40 sq. ft. ceiling",
           "Paint existing baseboards (26 ft), casing (16 ft), crown (26 ft) and one door face",
@@ -79,6 +80,7 @@
       {
         "name": "Custom",
         "photo": "/assets/tile-shower.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -90,7 +92,7 @@
       {
         "name": "Basic",
         "photo": "https://images.pexels.com/photos/35505446/pexels-photo-35505446.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $1,285Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,285Preliminary estimate · final quote after measurements",
         "scope": [
           "Two coats on up to 320 sq. ft. accessible kitchen walls",
           "Replace up to 10 cabinet knobs or pulls and one light at existing compatible connections",
@@ -101,7 +103,7 @@
       {
         "name": "Standard",
         "photo": "https://images.pexels.com/photos/35289464/pexels-photo-35289464.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $3,880Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $3,880Preliminary estimate · final quote after measurements",
         "scope": [
           "Everything in Kitchen Basic, including up to 320 sq. ft. wall painting",
           "Prep, prime and paint exteriors of up to 8 standard cabinet boxes, 12 doors and 6 drawer fronts",
@@ -121,6 +123,7 @@
       {
         "name": "Custom",
         "photo": "/assets/kitchen.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -132,7 +135,7 @@
       {
         "name": "Basic",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Grab_bar.jpg?width=900",
-        "price": "Starting at $460Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $460Preliminary estimate · final quote after measurements",
         "scope": [
           "Install one 18-inch grab bar into sound structural backing",
           "Up to one hour of minor nonstructural existing ramp repair",
@@ -142,7 +145,7 @@
       {
         "name": "Standard",
         "photo": "/assets/idea-accessibility.jpg",
-        "price": "Starting at $855Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $855Preliminary estimate · final quote after measurements",
         "scope": [
           "Install up to two 18-inch grab bars with secure structural mounting",
           "Up to two hours of minor repairs to an existing sound ramp",
@@ -163,6 +166,7 @@
       {
         "name": "Custom",
         "photo": "/assets/accessibility-curbless-shower.webp",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -184,7 +188,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Attic_Organized.JPG?width=900",
-        "price": "Starting at $2,735Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $2,735Preliminary estimate · final quote after measurements",
         "scope": [
           "Install up to 192 sq. ft. of plywood storage decking over confirmed sound, properly raised attic framing",
           "Replace one compatible existing attic light fixture",
@@ -196,10 +200,10 @@
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900",
         "price": "Project quote required",
         "scope": [
-          "Install up to 120 sq. ft. (10 \u00d7 12 ft.) of storage decking over existing structurally suitable raised framing; new support framing and reinforcement are quoted separately",
+          "Install up to 120 sq. ft. (10 × 12 ft.) of storage decking over existing structurally suitable raised framing; new support framing and reinforcement are quoted separately",
           "Install or replace one attic light using an existing suitable electrical connection (no new wiring)",
           "Clean up and remove our construction debris",
-          "Expand the attic storage flooring to 192 sq. ft. (12 \u00d7 16 ft.) over suitable existing framing",
+          "Expand the attic storage flooring to 192 sq. ft. (12 × 16 ft.) over suitable existing framing",
           "Optional insulation addition where needed, without compression or blocked ventilation",
           "Ventilation improvements and selected finished surfaces where feasible"
         ]
@@ -207,6 +211,7 @@
       {
         "name": "Custom",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Attic_bedroom.jpg?width=900",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -218,7 +223,7 @@
       {
         "name": "Basic",
         "photo": "/assets/project-basement.jpg",
-        "price": "Starting at $1,610Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,610Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 120 sq. ft. of sound existing concrete floor",
           "Refresh up to 352 sq. ft. of existing walls and up to 44 ft. of trim",
@@ -252,6 +257,7 @@
       {
         "name": "Custom",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/2022-05-23_20_11_27_Panoramic_view_of_a_basement_bedroom_inside_a_house_along_Aquetong_Lane_in_the_Mountainview_section_of_Ewing_Township,_Mercer_County,_New_Jersey.jpg?width=900",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -263,7 +269,7 @@
       {
         "name": "Basic",
         "photo": "/assets/bedroom-basic-commons.jpg",
-        "price": "Starting at $1,335Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,335Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 352 sq. ft. of walls in two coats and one white coat on a 120 sq. ft. ceiling",
           "Touch up up to 44 linear ft. of existing painted trim",
@@ -273,7 +279,7 @@
       {
         "name": "Standard",
         "photo": "/assets/bed.jpg",
-        "price": "Starting at $2,605Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $2,605Preliminary estimate · final quote after measurements",
         "scope": [
           "Everything in Bedroom Basic",
           "Install up to 120 sq. ft. of click-lock LVP over suitable existing subfloor",
@@ -283,7 +289,7 @@
       {
         "name": "Deluxe",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Cozy_bedroom_with_a_large_bed_and_simple_decor_in_a_modern_home.jpg?width=900",
-        "price": "Starting at $3,200Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $3,200Preliminary estimate · final quote after measurements",
         "scope": [
           "All Bedroom Standard painting, trim, compatible light, click-lock LVP and quarter-round",
           "Add one two-color feature wall with up to 12 ft of installed chair rail",
@@ -293,6 +299,7 @@
       {
         "name": "Custom",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Balanced_Modern_Bedroom_Design_with_Neutral_Tones_and_Layered_Lighting.jpg?width=900",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -304,7 +311,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-8a9d216224b8.jpg",
-        "price": "Starting at $685Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $685Preliminary estimate · final quote after measurements",
         "scope": [
           "Install one 6-ft wire shelf and rod system in suitable existing wall backing",
           "Fit up to two supporting brackets and one additional 48-in rod as needed",
@@ -314,7 +321,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Master_Closet_Shelves.jpg?width=900",
-        "price": "Starting at $1,160Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,160Preliminary estimate · final quote after measurements",
         "scope": [
           "Everything in Closets & Storage Basic",
           "Add one 72-in laminated storage shelf and three brackets",
@@ -337,6 +344,7 @@
       {
         "name": "Custom",
         "photo": "https://images.pexels.com/photos/11701120/pexels-photo-11701120.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -348,7 +356,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-a051ee7e1935.jpg",
-        "price": "Starting at $1,335Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,335Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 352 sq. ft. of dining room walls and one white ceiling coat",
           "Touch up up to 44 linear ft. of existing painted trim",
@@ -358,7 +366,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Orange_Dining_Room.jpg?width=900",
-        "price": "Starting at $1,635Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,635Preliminary estimate · final quote after measurements",
         "scope": [
           "Everything in Dining Room Basic",
           "Install, finish and paint up to 12 linear ft. chair rail on one existing sound wall",
@@ -368,7 +376,7 @@
       {
         "name": "Deluxe",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dining_Rm_panorama.jpg?width=900",
-        "price": "Starting at $2,905Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $2,905Preliminary estimate · final quote after measurements",
         "scope": [
           "All Dining Room Standard painting, trim, chair rail, two-tone accent and existing light",
           "Install up to 120 sq. ft. click-lock LVP on suitable existing subfloor",
@@ -378,6 +386,7 @@
       {
         "name": "Custom",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dining_room_interior.jpg?width=900",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -389,7 +398,7 @@
       {
         "name": "Basic",
         "photo": "/assets/idea-mechanic-shop.jpg",
-        "price": "Starting at $1,005Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,005Preliminary estimate · final quote after measurements",
         "scope": [
           "Prepare and paint up to 120 sq. ft. of sound existing concrete floor",
           "Mount one 72-in storage shelf in suitable existing framing",
@@ -399,7 +408,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench.jpg?width=900",
-        "price": "Starting at $1,920Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,920Preliminary estimate · final quote after measurements",
         "scope": [
           "Everything in Garage Basic",
           "Build one basic freestanding 4-ft workbench from plywood and framing lumber",
@@ -421,7 +430,8 @@
       },
       {
         "name": "Custom",
-        "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench_-_(1).jpg?width=900",
+        "photo": "/assets/package-garage-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -433,7 +443,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-b9cdb9084877.jpg",
-        "price": "Starting at $1,405Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,405Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 288 sq. ft. of existing laundry walls (two coats)",
           "Install one 72-in storage shelf and up to four customer-supplied hooks",
@@ -467,6 +477,7 @@
       {
         "name": "Custom",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Laundry_room_in_apartment_building.png?width=900",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -478,7 +489,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-4822ff53e23f.jpg",
-        "price": "Starting at $1,635Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,635Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 448 sq. ft. of walls (two coats) and 192 sq. ft. ceiling (one white coat)",
           "Refresh existing painted trim up to 56 linear ft.",
@@ -488,7 +499,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Living_room.jpg?width=900",
-        "price": "Starting at $1,920Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $1,920Preliminary estimate · final quote after measurements",
         "scope": [
           "All Living & Family Room Basic wall, ceiling, trim and light refresh",
           "Add one two-color feature wall with up to 12 linear ft. installed chair rail",
@@ -498,7 +509,7 @@
       {
         "name": "Deluxe",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/02-24-2021-R-124.jpg?width=900",
-        "price": "Starting at $3,890Preliminary estimate \u00b7 final quote after measurements",
+        "price": "Starting at $3,890Preliminary estimate · final quote after measurements",
         "scope": [
           "All Living & Family Room Standard paint, feature wall and existing lighting",
           "Install up to 192 sq. ft. click-lock LVP on suitable existing subfloor",
@@ -508,6 +519,7 @@
       {
         "name": "Custom",
         "photo": "/assets/fireplace-card.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -518,8 +530,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/approved-493d744bf5f7.jpg",
-        "price": "Starting at $1,465Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-adult-room-basic.jpg",
+        "price": "Starting at $1,465Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. of sound existing walls in two coats and touch up existing trim",
           "Install one 72-in storage/display shelf on suitable wall framing",
@@ -528,7 +540,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "photo": "/assets/package-adult-room-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh paint and surfaces",
@@ -539,7 +551,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "photo": "/assets/package-adult-room-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh paint and surfaces",
@@ -552,7 +564,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-adult-room-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -563,8 +576,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/kids-room.jpg",
-        "price": "Starting at $1,540Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-kids-room-basic.jpg",
+        "price": "Starting at $1,540Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 352 sq. ft. of sound bedroom walls with washable paint",
           "Touch up up to 44 ft of existing trim and safely anchor one 72-in toy/storage shelf",
@@ -573,7 +586,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/kids-room.jpg",
+        "photo": "/assets/package-kids-room-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Washable paint and trim",
@@ -584,7 +597,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/kids-room.jpg",
+        "photo": "/assets/package-kids-room-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Washable paint and trim",
@@ -597,7 +610,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/kids-room.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -608,7 +622,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/cinema.jpg",
+        "photo": "/assets/package-home-theater-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Plan screen and seating placement",
@@ -618,7 +632,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/cinema.jpg",
+        "photo": "/assets/package-home-theater-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Plan screen and seating placement",
@@ -629,7 +643,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/cinema.jpg",
+        "photo": "/assets/package-home-theater-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Plan screen and seating placement",
@@ -642,7 +656,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-home-theater-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -653,8 +668,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/approved-493d744bf5f7.jpg",
-        "price": "Starting at $1,255Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-entry-mudroom-basic.jpg",
+        "price": "Starting at $1,255Preliminary estimate · final quote after measurements",
         "scope": [
           "Build one 4-ft basic bench and install one 72-in storage shelf and customer-supplied wall hooks",
           "Refresh minor existing trim and door threshold finishes",
@@ -663,7 +678,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "photo": "/assets/package-entry-mudroom-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Hooks, bench and shelving",
@@ -674,7 +689,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "photo": "/assets/package-entry-mudroom-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Hooks, bench and shelving",
@@ -687,7 +702,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-entry-mudroom-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -698,8 +714,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/office.jpg",
-        "price": "Starting at $1,540Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-home-office-basic.jpg",
+        "price": "Starting at $1,540Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. existing walls and refresh up to 40 ft existing trim",
           "Install one 72-in wall shelf with up to three heavy-duty brackets",
@@ -708,7 +724,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/office.jpg",
+        "photo": "/assets/package-home-office-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Paint and trim refresh",
@@ -719,7 +735,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/office.jpg",
+        "photo": "/assets/package-home-office-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Paint and trim refresh",
@@ -732,7 +748,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-home-office-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -743,8 +760,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/theater.jpg",
-        "price": "Starting at $1,690Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-music-creative-studio-basic.jpg",
+        "price": "Starting at $1,690Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. of existing sound studio walls",
           "Coat up to 100 sq. ft. of existing dry, sound concrete floor",
@@ -753,7 +770,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/theater.jpg",
+        "photo": "/assets/package-music-creative-studio-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh walls and flooring",
@@ -764,7 +781,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/theater.jpg",
+        "photo": "/assets/package-music-creative-studio-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh walls and flooring",
@@ -777,7 +794,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-music-creative-studio-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -788,7 +806,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-fitness-wellness.jpg",
+        "photo": "/assets/package-fitness-wellness-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Gym flooring",
@@ -798,7 +816,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-fitness-wellness.jpg",
+        "photo": "/assets/package-fitness-wellness-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Gym flooring",
@@ -822,7 +840,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-fitness-wellness-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -833,8 +852,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-games-hobbies.jpg",
-        "price": "Starting at $1,885Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-games-hobbies-basic.jpg",
+        "price": "Starting at $1,885Preliminary estimate · final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. of sound existing hobby-room walls",
           "Build one simple freestanding 4-ft plywood worktable and install one 72-in storage shelf",
@@ -843,7 +862,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-games-hobbies.jpg",
+        "photo": "/assets/package-games-hobbies-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh surfaces and lights",
@@ -854,7 +873,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-games-hobbies.jpg",
+        "photo": "/assets/package-games-hobbies-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh surfaces and lights",
@@ -867,7 +886,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-games-hobbies.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -878,8 +898,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-pet-room.jpg",
-        "price": "Starting at $1,345Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-pet-room-basic.jpg",
+        "price": "Starting at $1,345Preliminary estimate · final quote after measurements",
         "scope": [
           "Prepare and apply two coats of washable semi-gloss paint to up to 320 sq. ft. of existing walls",
           "Refresh up to 40 linear ft of existing trim",
@@ -888,7 +908,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-pet-room.jpg",
+        "photo": "/assets/package-pet-room-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Easy-clean finishes",
@@ -912,7 +932,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-pet-room-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -933,7 +954,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-snack-beverage.jpg",
+        "photo": "/assets/package-snack-beverage-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Counter storage and shelves",
@@ -944,7 +965,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-snack-beverage.jpg",
+        "photo": "/assets/package-snack-beverage-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Counter storage and shelves",
@@ -957,7 +978,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/kitchen.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -968,7 +990,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-vault-safe-room.jpg",
+        "photo": "/assets/package-vault-safe-room-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Assess safe storage needs",
@@ -978,7 +1000,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-vault-safe-room.jpg",
+        "photo": "/assets/package-vault-safe-room-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Assess safe storage needs",
@@ -1002,7 +1024,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-vault-safe-room-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1013,17 +1036,17 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/murals-card.jpg",
-        "price": "Starting at $850Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-murals-basic.jpg",
+        "price": "Starting at $850Preliminary estimate · final quote after measurements",
         "scope": [
-          "Prepare and prime one sound 12 \u00d7 8 ft wall",
+          "Prepare and prime one sound 12 × 8 ft wall",
           "Paint one simple two-color geometric accent treatment",
           "Finish clean edges and remove normal masking and painting debris"
         ]
       },
       {
         "name": "Standard",
-        "photo": "/assets/murals-card.jpg",
+        "photo": "/assets/package-murals-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare a selected wall",
@@ -1033,7 +1056,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/murals-card.jpg",
+        "photo": "/assets/package-murals-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare a selected wall",
@@ -1045,7 +1068,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/murals-card.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1056,7 +1080,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/wallpaper-card.jpg",
+        "photo": "/assets/package-wallpaper-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare suitable accent wall",
@@ -1065,7 +1089,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/wallpaper-card.jpg",
+        "photo": "/assets/package-wallpaper-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare suitable accent wall",
@@ -1075,7 +1099,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/wallpaper-card.jpg",
+        "photo": "/assets/package-wallpaper-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare suitable accent wall",
@@ -1087,7 +1111,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/wallpaper-card.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1098,8 +1123,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/arches-columns.jpg",
-        "price": "Starting at $870Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/project-arch-real.jpg",
+        "price": "Starting at $870Preliminary estimate · final quote after measurements",
         "scope": [
           "Refresh one existing nonstructural decorative arch opening",
           "Install up to 16 linear ft of primed decorative MDF trim on suitable existing backing",
@@ -1108,7 +1133,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/arches-columns.jpg",
+        "photo": "/assets/package-arches-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh decorative arch trim",
@@ -1130,7 +1155,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/approved-493d744bf5f7.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1150,7 +1176,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/fireplace-card.jpg",
+        "photo": "/assets/package-fireplaces-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh compatible mantel and trim",
@@ -1160,7 +1186,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/fireplace-card.jpg",
+        "photo": "/assets/package-fireplaces-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Refresh compatible mantel and trim",
@@ -1172,7 +1198,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-fireplaces-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1193,7 +1220,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/stairs-card.jpg",
+        "photo": "/assets/package-stairs-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Stair trim touch-ups",
@@ -1204,7 +1231,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/stairs-card.jpg",
+        "photo": "/assets/package-stairs-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Stair trim touch-ups",
@@ -1217,7 +1244,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-stairs-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1228,7 +1256,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/entryways-card.jpg",
+        "photo": "/assets/package-decks-railings-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Inspect existing deck",
@@ -1238,7 +1266,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/entryways-card.jpg",
+        "photo": "/assets/package-decks-railings-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Inspect existing deck",
@@ -1249,7 +1277,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/entryways-card.jpg",
+        "photo": "/assets/package-decks-railings-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Inspect existing deck",
@@ -1262,7 +1290,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-decks-railings-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1273,7 +1302,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-exterior-improvements-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Caulk and repair exterior trim",
@@ -1282,7 +1311,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-exterior-improvements-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Caulk and repair exterior trim",
@@ -1292,7 +1321,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-exterior-improvements-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Caulk and repair exterior trim",
@@ -1304,7 +1333,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-exterior-improvements-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1315,7 +1345,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-backyard-retreat.jpg",
+        "photo": "/assets/package-backyard-retreat-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Seating zone and privacy screen",
@@ -1324,7 +1354,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-backyard-retreat.jpg",
+        "photo": "/assets/package-backyard-retreat-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Seating zone and privacy screen",
@@ -1334,7 +1364,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-backyard-retreat.jpg",
+        "photo": "/assets/package-backyard-retreat-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Seating zone and privacy screen",
@@ -1346,7 +1376,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-backyard-retreat-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1357,7 +1388,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "photo": "/assets/package-outdoor-kitchen-basic.png",
         "price": "Project quote required",
         "scope": [
           "Basic grill and prep station",
@@ -1366,7 +1397,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "photo": "/assets/package-outdoor-kitchen-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Basic grill and prep station",
@@ -1376,7 +1407,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "photo": "/assets/package-outdoor-kitchen-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Basic grill and prep station",
@@ -1388,7 +1419,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-outdoor-kitchen.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1399,8 +1431,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-mechanic-shop.jpg",
-        "price": "Starting at $1,340Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-mechanic-shop-basic.jpg",
+        "price": "Starting at $1,340Preliminary estimate · final quote after measurements",
         "scope": [
           "Build one simple freestanding 4-ft plywood workbench for light-duty shop use",
           "Install one 72-in parts shelf and one 48-in hose storage rod in verified backing",
@@ -1409,7 +1441,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-mechanic-shop.jpg",
+        "photo": "/assets/package-mechanic-shop-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Workbench and tool storage",
@@ -1420,7 +1452,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-mechanic-shop.jpg",
+        "photo": "/assets/package-mechanic-shop-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Workbench and tool storage",
@@ -1433,7 +1465,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-mechanic-shop.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1444,7 +1477,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-car-wash.jpg",
+        "photo": "/assets/package-car-wash-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Hose and wash station storage",
@@ -1453,7 +1486,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-car-wash.jpg",
+        "photo": "/assets/package-car-wash-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Hose and wash station storage",
@@ -1463,7 +1496,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-car-wash.jpg",
+        "photo": "/assets/package-car-wash-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Hose and wash station storage",
@@ -1475,7 +1508,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-car-wash.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1486,7 +1520,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-recycling-scrap.jpg",
+        "photo": "/assets/package-recycling-scrap-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Sorting bins and scrap racks",
@@ -1495,7 +1529,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-recycling-scrap.jpg",
+        "photo": "/assets/package-recycling-scrap-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Sorting bins and scrap racks",
@@ -1517,7 +1551,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-recycling-scrap-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1528,7 +1563,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-pools.jpg",
+        "photo": "/assets/package-pools-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Poolside storage",
@@ -1537,7 +1572,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-pools.jpg",
+        "photo": "/assets/package-pools-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Poolside storage",
@@ -1547,7 +1582,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-pools.jpg",
+        "photo": "/assets/package-pools-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Poolside storage",
@@ -1559,7 +1594,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-pools.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1570,7 +1606,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-bus-stop.jpg",
+        "photo": "/assets/package-bus-stop-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Covered bench and weather protection",
@@ -1579,7 +1615,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-bus-stop.jpg",
+        "photo": "/assets/package-bus-stop-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Covered bench and weather protection",
@@ -1589,7 +1625,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-bus-stop.jpg",
+        "photo": "/assets/package-bus-stop-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Covered bench and weather protection",
@@ -1601,7 +1637,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-bus-stop.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1612,7 +1649,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-mailboxes.jpg",
+        "photo": "/assets/package-mailboxes-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Install mailbox and post",
@@ -1621,7 +1658,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-mailboxes.jpg",
+        "photo": "/assets/package-mailboxes-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Install mailbox and post",
@@ -1631,7 +1668,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-mailboxes.jpg",
+        "photo": "/assets/package-mailboxes-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Install mailbox and post",
@@ -1643,7 +1680,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-mailboxes.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1654,7 +1692,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-outdoor-sound.jpg",
+        "photo": "/assets/package-outdoor-sound-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Mount weather-rated media fixtures",
@@ -1663,7 +1701,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-outdoor-sound.jpg",
+        "photo": "/assets/package-outdoor-sound-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Mount weather-rated media fixtures",
@@ -1685,7 +1723,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-outdoor-sound-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1696,7 +1735,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "photo": "/assets/package-garden-greenhouse-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Raised beds and potting bench",
@@ -1705,7 +1744,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "photo": "/assets/package-garden-greenhouse-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Raised beds and potting bench",
@@ -1715,7 +1754,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "photo": "/assets/package-garden-greenhouse-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Raised beds and potting bench",
@@ -1727,7 +1766,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-garden-greenhouse.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1738,7 +1778,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/idea-playground.jpg",
+        "photo": "/assets/package-playground-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Playset assembly",
@@ -1747,7 +1787,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/idea-playground.jpg",
+        "photo": "/assets/package-playground-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Playset assembly",
@@ -1757,7 +1797,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/idea-playground.jpg",
+        "photo": "/assets/package-playground-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Playset assembly",
@@ -1769,7 +1809,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/idea-playground.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1780,8 +1821,8 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/concrete-card.jpg",
-        "price": "Starting at $585Preliminary estimate \u00b7 final quote after measurements",
+        "photo": "/assets/package-patios-concrete-basic.jpg",
+        "price": "Starting at $585Preliminary estimate · final quote after measurements",
         "scope": [
           "Clean and paint up to 120 sq. ft. of sound existing concrete patio",
           "Allow up to one hour for a minor cosmetic surface touch-up",
@@ -1790,7 +1831,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-patios-concrete-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare and coat sound existing concrete",
@@ -1800,7 +1841,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-patios-concrete-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Prepare and coat sound existing concrete",
@@ -1812,7 +1853,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-patios-concrete-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]
@@ -1823,7 +1865,7 @@
     "packages": [
       {
         "name": "Basic",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-porches-entryways-basic.jpg",
         "price": "Project quote required",
         "scope": [
           "Porch trim and step finish",
@@ -1832,7 +1874,7 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-porches-entryways-standard.jpg",
         "price": "Project quote required",
         "scope": [
           "Porch trim and step finish",
@@ -1842,7 +1884,7 @@
       },
       {
         "name": "Deluxe",
-        "photo": "/assets/concrete-card.jpg",
+        "photo": "/assets/package-porches-entryways-deluxe.jpg",
         "price": "Project quote required",
         "scope": [
           "Porch trim and step finish",
@@ -1854,7 +1896,8 @@
       },
       {
         "name": "Custom",
-        "photo": "/assets/custom-projects-card.jpg",
+        "photo": "/assets/package-porches-entryways-custom.jpg",
+        "price": "Individually quoted",
         "scope": []
       }
     ]

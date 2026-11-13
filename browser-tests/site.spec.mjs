@@ -62,3 +62,28 @@ test('Terms never enables Pay; address is compact and unknown tax stays pending'
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  expect(errors).toEqual([]);
 });
+test('every project tier keeps distinct photos, visible pricing, usable details and matching links',async({page})=>{
+ test.setTimeout(120000);
+ await page.goto('/project.html?project=attic');
+ const categories=await page.evaluate(()=>[...new Set([...Object.keys(window.PROJECT_PACKAGE_CHOICES),'accents','bathrooms','kitchen-pantry','accessibility'])]);
+ expect(categories).toHaveLength(43);
+ for(const id of categories){
+  await page.goto('/project.html?project='+id);
+  const cards=page.locator('.pkg-choice');await expect(cards).toHaveCount(4);
+  const photos=await cards.locator('img').evaluateAll(images=>images.map(i=>i.getAttribute('src')));
+  expect(new Set(photos).size,id+' distinct photographs').toBe(4);
+  for(const card of await cards.all()){
+   await expect(card.locator('.pkg-pricing')).toBeVisible();
+   for(const href of await card.locator('a[href^="/project.html"]').evaluateAll(a=>a.map(x=>x.href))){
+    expect(new URL(href).searchParams.get('project')).toBe(id);
+   }
+  }
+  const details=cards.first().locator('details');await expect(details.locator('summary')).toBeVisible();
+  await details.locator('summary').click();await expect(details).toHaveAttribute('open','');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),id+' overflow').toBe(true);
+  // The newly selected local photos must actually decode in the browser.
+  for(const img of await cards.locator('img[src^="/assets/package-"]').all()){
+   await img.scrollIntoViewIfNeeded();await expect.poll(()=>img.evaluate(i=>i.complete&&i.naturalWidth>0)).toBe(true);
+  }
+ }
+});

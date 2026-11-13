@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {JSDOM} from 'jsdom';
 
 const root=new URL('../',import.meta.url);
@@ -31,6 +32,16 @@ test('Every scoped project has four usable picture packages and an active measur
    const labels=cards.map(c=>c.querySelector('.pkg-image strong')?.textContent);
    assert.ok(labels.every(Boolean),id+' needs visible tier names');
    assert.equal(new Set(labels).size,4,id+' must not repeat tier names');
+   assert.deepEqual(labels,['Basic','Standard','Deluxe','Custom'],id+' must use consistent tier titles');
+   const photos=cards.map(c=>c.querySelector('img').getAttribute('src'));
+   assert.equal(new Set(photos).size,4,id+' must use four distinct photographs');
+   for(const card of cards){
+    for(const link of card.querySelectorAll('a[href^="/project.html"]')){
+     const target=new URL(link.href);
+     assert.equal(target.searchParams.get('project'),id,id+' has a misrouted project link');
+    }
+   }
+   assert.match(cards.at(-1).querySelector('.pkg-pricing').textContent,/Individually quoted/);
    assert.ok(cards.every(c=>c.querySelector('img')?.getAttribute('src')),id+' needs pictures');
    assert.ok(cards.slice(0,3).every(c=>/Starting at|Project quote required/.test(c.querySelector('.pkg-pricing')?.textContent||'')),id+' needs honest pricing');
    assert.ok(cards.at(-1).querySelector('a[href*="roomMode=individual"]'),id+' must offer Custom');
@@ -67,4 +78,28 @@ test('Audited attic Basic applies seven-percent labor discount without double ma
   assert.equal(dom.window.NIK_CALCULATE_PACKAGE_BASELINE(spec).startingAt,1735);
   assert.match(dom.window.document.querySelector('.pkg-pricing')?.textContent||'',/Starting at \$1,735/);
  }finally{dom.window.close();}
+});
+
+test('Replacement photographs have distinct local bytes and commercial-use source licenses',()=>{
+ const records=JSON.parse(readFileSync(new URL('docs/project-package-photo-licenses-2026-11-13.json',root),'utf8'));
+ assert.equal(Object.keys(records).length,32); // 31 remaining groups plus Garage Custom.
+ let licensed=0;
+ for(const [id,tiers] of Object.entries(records)){
+  const hashes=[];
+  assert.equal(Object.keys(tiers).length,id==='garage'?1:4);
+  for(const [tier,photo] of Object.entries(tiers)){
+   assert.match(photo.src,/^\/assets\/[a-z0-9-]+\.(jpg|png|webp)$/);
+   const hash=createHash('sha256').update(readFileSync(new URL(photo.src.slice(1),root))).digest('hex');
+   assert.equal(hash,photo.sha256,id+'/'+tier+' source bytes changed');hashes.push(hash);
+   if(photo.creator){
+    licensed++;
+    assert.match(photo.license,/^(CC BY(?:-SA)? [234]\.0|CC0|Public domain)$/);
+    assert.match(photo.source,/^https:\/\/(www\.flickr\.com|commons\.wikimedia\.org)\//);
+    assert.match(photo.licenseUrl,/^https:\/\/creativecommons\.org\//);
+    assert.match(photo.presentation,/CSS crops/);
+   }else assert.ok(photo.provenance);
+  }
+  assert.equal(new Set(hashes).size,hashes.length,id+' repeated photo bytes');
+ }
+ assert.equal(licensed,101);
 });
