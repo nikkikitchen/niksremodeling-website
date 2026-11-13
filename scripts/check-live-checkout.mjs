@@ -32,7 +32,21 @@ for(const base of urls){
    config={checkoutReadyForVerification:json.checkoutReadyForVerification===true,checks:json.checks};
   }catch{}
  }
+
+ async function taxPreview(){
+  try{
+   const response=await fetch(base+'/api/cart-tax',{
+    method:'POST',headers:{'Content-Type':'application/json','Origin':base},
+    body:JSON.stringify({zip:'30117',merchandiseCents:10000,shippingCents:0}),
+    signal:AbortSignal.timeout(timeout)
+   });
+   const data=await response.json();
+   return {http:response.status,providerRateVerified:response.ok&&data.mode==='zip-upper-estimate'&&typeof data.ratePercent==='number',reason:response.ok?null:String(data.error||'Tax preview unavailable').slice(0,140)};
+  }catch(error){return {http:0,providerRateVerified:false,reason:String(error?.message||error).slice(0,140)};}
+ }
+ const liveTax=await taxPreview();
  console.log(JSON.stringify({
+  taxPreview:liveTax,
   host:new URL(base).host,
   releaseHttp:release.status,
   publishedCommit:releaseCommit||'unavailable',
