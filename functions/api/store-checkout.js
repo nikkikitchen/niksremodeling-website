@@ -26,8 +26,7 @@ export async function onRequestPost({request,env}){
     Number(body?.quantity)!==1)
   return fail('Check the product, quantity and delivery ZIP before checkout.',400);
  if(!catalog.some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
- const allowed=String(env.STORE_ALLOWED_ZIPS||'').split(',').map(s=>s.trim()).filter(Boolean);
- if(!allowed.includes(zip))return fail('Online checkout is not available for this ZIP. Request an invoice instead.');
+ // Retail shipping is decided by the verified supplier freight quote, not a labor-service ZIP whitelist.
  try{
   const requestUrl=new URL('/api/store-quote',origin);
   requestUrl.searchParams.set('zip',zip);
