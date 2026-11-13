@@ -95,7 +95,7 @@ body[data-page="materials"] .category-tabs a:hover,body[data-page="materials"] .
 .nav-dropdown a{display:block;padding:9px 12px;white-space:normal;border-radius:6px;font-size:13px}
 .nav-dropdown a:hover,.nav-dropdown a:focus-visible{background:#e8f1fa;color:var(--blue2)}
 .nav-menu.open .nav-dropdown{display:block}
-@media(hover:hover){.nav-menu:hover .nav-dropdown{display:block}}
+/* Dropdowns open only when their navigation button is clicked. */
 @media(max-width:900px){.nav .wrap{overflow-x:auto;overflow-y:visible;flex-wrap:nowrap}.nav-menu .nav-dropdown{position:fixed;top:auto;left:12px;right:12px;min-width:0;max-height:60vh}}
 
 .nav .wrap{flex-wrap:wrap;gap:8px 16px}
