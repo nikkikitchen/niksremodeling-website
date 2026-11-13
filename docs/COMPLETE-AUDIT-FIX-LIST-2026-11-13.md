@@ -68,3 +68,24 @@ Checks: $1,325.25 + $407.95 + $186.80 = $1,920.00. Materials and labor are not t
 5. Verify external shipping/tax data and owner review of payment/draw language, then consider controlled sandbox tests. **Do not enable payments automatically.**
 
 Owner review list stays open until actual dollar values are researched, calculated and verified. A source-code audit is not a live transaction verification.
+
+## Remediation progress — November 13, 2026
+
+**Code fixes completed on GitHub `main` (not a release sign-off):**
+- Six source/test regressions originally failed, involving package labels, deposit visibility and package/retail math. Updated tests to assert the approved behavior: a **proposed materials deposit must be shown without making payment possible**, and the unconfirmed package labor is not a collectible charge.
+- Simplified cart to **ZIP first** for preliminary shipping and destination tax, while deferring the complete street address until final transaction verification.
+- Displayed the package material/supply deposit basis, net labor, fees and **estimated balance after deposit**, explicitly payable by progress of approved completed work. Removed fixed “weekly draws” language in both cart and terms.
+- Added a clear “deposit itemization pending” warning if a package has missing deposit components instead of presenting an unexplained zero as complete.
+- Added cent-exact Garage Standard arithmetic and cart/deposit protection tests.
+- Researched the bathroom faucet, light, mirror, accessories, kitchen light, basic kitchen cabinet and laminate counter components; see `docs/FIXTURE-PRICE-RESEARCH-2026-11-13.md`. **No unverified package price was silently lowered or released as guaranteed.**
+- `Verify website build` GitHub Actions succeeded on intermediate commits after the initial six failures; confirm the final commit and full browser/calculator workflow again before public acceptance.
+
+**Still engineering-owned (do not ask owner to troubleshoot):** complete package/card/quote math, cost remaining repeatable tiers, tax+shipping allocation, CJ landed-allowance tests, mobile browser checks, deployment verification, menu/image/wording cleanup, and safe payment flow acceptance.
+
+### Small owner decision list — only after engineering checks
+1. Confirm exact fixture/material/cabinet/countertop specifications and whether the researched conservative allowances are acceptable; do not need to research prices manually.
+2. Approve what scope qualifies for a standard bounded package versus custom/structural site quote (especially ramps and Kitchen Deluxe).
+3. Confirm destination sales-tax and shipping-inclusion business policy with appropriate professional/accountant where necessary; do not assert delivery included without costed evidence.
+4. When technically ready, approve the written materials-deposit and performance milestone schedule, and separately authorize any future payment enablement.
+
+Items requiring a supplier/account portal or actual address/processor transaction cannot be independently completed from source access. Do not activate online purchases as a workaround.
