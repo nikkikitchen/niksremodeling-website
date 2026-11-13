@@ -874,20 +874,11 @@ function cartCheckoutSummary(items){
 // labor, projects, and mixed carts must still go through written approval.
 function cartSecureCheckoutPanel(items){
  const visible=items.filter(x=>!x.hiddenFromCustomer);
- const item=visible[0]||{};
- const eligible=visible.length===1&&['supplier-retail','bathroom-retail'].includes(item.source)&&
-    /^\d{8,30}$/.test(String(item.productId||''))&&
-    /^[-\w]{8,64}$/.test(String(item.variantId||''))&&Number(item.qty)===1;
- const reason=visible.length===0?'Your cart is empty. Add an available product to begin checkout.':visible.length>1?'Multiple items and project packages are not available for direct payment yet. Request a verified invoice for this cart.':
-   ['Labor','Service'].includes(item.type)||/project-package/.test(String(item.source))?'Project and labor charges require an approved invoice before payment.':
-   'This item requires a verified invoice before an online payment can be collected.';
- return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Secure online checkout">'+
-  '<h3>Secure checkout</h3>'+
-  (eligible?'':
-   '<p>'+reason+'</p>')+
-  (eligible?'<button type="button" class="btn outline" id="square-check-price">Check final total</button> ':'<a class="btn outline" href="#cart-scheduling">Request approved invoice to pay in full</a> ')+
-  '<button type="button" class="btn primary" id="square-pay" disabled>Pay securely with Square</button>'+
-  '<p id="square-check-status" role="status" aria-live="polite">'+(eligible?'Enter your delivery address above to check the final total.':'An approved invoice is needed before payment.')+'</p></section>';
+ return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Online purchase status">'+
+  '<h3>Online purchases temporarily paused</h3>'+
+  '<p>We are checking that sales tax and delivery charges are accurate before accepting payments. No online payment can be made right now.</p>'+
+  (visible.length?'<a class="btn outline" href="#cart-scheduling">Request a quote</a>':'')+
+  '</section>';
 }
 function initCartSecureCheckout(items){
  const check=document.getElementById('square-check-price');

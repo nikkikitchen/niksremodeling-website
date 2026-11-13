@@ -23,7 +23,7 @@ const mock=async(url,opts={})=>{
 const req=body=>new Request('https://niksremodeling.com/api/store-checkout',{method:'POST',headers:{Origin:'https://niksremodeling.com','Content-Type':'application/json'},body:JSON.stringify(body)});
 const order=(total=8627)=>({productId:PID,variantId:VID,quantity:1,zip:'30117',address:'123 Main St',city:'Carrollton',state:'GA',expectedTotal:total,requestId:'unique-test-request-1234'});
 
-test('catalog product gets verified Square link with consistent tax, stock, freight and location',async()=>{
+test('a verified retail quote cannot create a payment link while purchases are paused',async()=>{
  const previous=globalThis.fetch;stock=10;wrongTotal=false;calls=[];globalThis.fetch=mock;
  try{
   const request=new Request('https://niksremodeling.com/api/store-quote?zip=30117&address=123%20Main%20St&city=Carrollton&state=GA&product='+PID+'&variant='+VID);
@@ -32,28 +32,28 @@ test('catalog product gets verified Square link with consistent tax, stock, frei
   const q=await response.json();
   assert.equal(q.subtotalCents,8063);
   assert.equal(q.totalCents,8627);
-  assert.equal(q.checkoutEnabled,true);
+  assert.equal(q.deliveryCents>0,true);
+  assert.equal(q.taxCents>0,true);
+  assert.equal(q.checkoutEnabled,false);
+  assert.equal(q.checkoutPaused,true);
   const payment=await checkout({request:req(order(q.totalCents)),env});
-  assert.equal(payment.status,200);
-  assert.equal((await payment.json()).url,'https://square.link/u/test');
-  assert.ok(calls.some(c=>c.url.includes('/payment-links')));
-  const paymentRequest=JSON.parse(calls.find(c=>c.url.includes('/payment-links')).body);
-  assert.equal(paymentRequest.order.taxes[0].percentage,'7');
-  assert.equal(paymentRequest.order.taxes[0].scope,'LINE_ITEM');
-  assert.equal(paymentRequest.order.line_items[0].applied_taxes[0].tax_uid,'destination-sales-tax');
+  assert.equal(payment.status,503);
+  assert.equal((await payment.json()).checkoutEnabled,false);
+  assert.equal(calls.some(c=>c.url.includes('/payment-links')),false);
  }finally{globalThis.fetch=previous;stock=10;}
 });
 
-test('checkout fails closed on stale price or Square total mismatch',async()=>{
+test('server-side purchase hold rejects both valid and stale payment totals without contacting Square',async()=>{
  const previous=globalThis.fetch;stock=10;wrongTotal=false;calls=[];globalThis.fetch=mock;
  try{
-  const stale=await checkout({request:req(order(100)),env});
-  assert.equal(stale.status,409);
-  assert.equal(calls.some(c=>c.url.includes('/payment-links')),false);
-  wrongTotal=true;
-  const mismatch=await checkout({request:req(order()),env});
-  assert.equal(mismatch.status,503);
-  assert.equal((await mismatch.json()).checkoutEnabled,false);
+  for(const total of [100,8627]){
+   const blocked=await checkout({request:req(order(total)),env});
+   assert.equal(blocked.status,503);
+   const body=await blocked.json();
+   assert.equal(body.checkoutEnabled,false);
+   assert.match(body.error,/temporarily paused/i);
+  }
+  assert.equal(calls.length,0,'Paused checkout must never contact suppliers, tax providers or Square');
  }finally{globalThis.fetch=previous;wrongTotal=false;}
 });
 
@@ -80,6 +80,6 @@ test('verified destinations outside the labor area are eligible for retail check
  try{
   const res=await quote({request:new Request('https://niksremodeling.com/api/store-quote?zip=30303&address=123%20Market%20St&city=Atlanta&state=GA&product='+PID+'&variant='+VID),env});
   assert.equal(res.status,200);
-  assert.equal((await res.json()).checkoutEnabled,true);
+  assert.equal((await res.json()).checkoutEnabled,false);
  }finally{globalThis.fetch=previous;}
 });

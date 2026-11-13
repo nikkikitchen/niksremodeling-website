@@ -27,6 +27,10 @@ export async function onRequestPost({request,env}){
     Number(body?.quantity)!==1)
   return fail('Check the product, quantity and delivery ZIP before checkout.',400);
  if(![...catalog,...retailCatalog].some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
+ // HARD PURCHASE HOLD: never create a Square payment link until verified tax,
+ // delivery pricing and end-to-end payment tests have been approved.
+ // This deliberately cannot be bypassed by an environment flag or browser state.
+ return fail('Online purchases are temporarily paused while we verify shipping and sales tax. No payment was taken.');
  // Retail shipping is decided by the verified supplier freight quote, not a labor-service ZIP whitelist.
  try{
   const requestUrl=new URL('/api/store-quote',origin);

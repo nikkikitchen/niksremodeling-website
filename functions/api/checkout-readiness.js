@@ -24,7 +24,8 @@ export async function onRequestGet({request,env={}}) {
   salesTax:taxActive?'ready':'needs setup',
   supplier:freightConfigured?'configured':'needs setup',
   destination:!hasZip?'enter ZIP':'eligible for shipping quote'};
- return Response.json({checkoutReadyForVerification:ready,checks,
-  note:ready?'US retail checkout configuration appears ready. Actual destination address, stock, supplier freight, tax and final Square order total must still pass before payment.':'Online purchases stay blocked until each check passes. No money has been taken.'},
+ return Response.json({checkoutReadyForVerification:false,checkoutPaused:true,configurationReadyForTesting:ready,
+  checks:{...checks,onlinePurchases:'paused'},
+  note:'Online purchases are temporarily paused. The shopping cart and shipping/tax previews are estimates only. No payment links can be created until we complete and approve end-to-end testing.'},
   {headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 }
