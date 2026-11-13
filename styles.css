@@ -539,3 +539,30 @@ nav.nav .mobile-top-nav{display:none!important}
 .nr-cart-page [aria-label="Secure online checkout"]{display:flex;flex-direction:column;gap:12px;margin-top:20px!important}
 .nr-cart-page [aria-label="Secure online checkout"] .btn{width:100%;text-align:center;box-sizing:border-box}
 @media(min-width:720px){.nr-cart-page [aria-label="Secure online checkout"]{max-width:none}}
+
+/* Compact cart checkout: one delivery form and a normal-sized payment button. */
+.nr-cart-page{max-width:760px}
+.nr-cart-page .nr-cart-layout{gap:12px}
+.nr-cart-page .nr-cart-products{padding:18px!important}
+.nr-cart-page .nr-cart-products h2{margin-bottom:10px}
+.nr-cart-page .nr-cart-zip-top{padding:16px 18px}
+.nr-cart-page .nr-cart-zip-top h3{margin:0 0 12px;font-size:1.08rem}
+.nr-cart-page #cart-shipping-form{max-width:none;display:grid!important;grid-template-columns:1fr;gap:10px}
+.nr-cart-page #cart-shipping-form>label{margin:0;max-width:170px}
+.nr-cart-page #cart-shipping-form input{min-height:40px;width:100%;box-sizing:border-box;margin:4px 0 0;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px}
+.nr-cart-page .nr-checkout-address{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.2fr) minmax(76px,.65fr);gap:10px;align-items:end}
+.nr-cart-page .nr-checkout-address label{display:block;font-size:.87rem;font-weight:600;margin:0}
+.nr-cart-page .nr-cart-summary .cart-checkout-summary{padding:18px!important}
+.nr-cart-page .nr-cart-summary .cart-item{padding:7px 0}
+.nr-cart-page .nr-cart-details{border-top:1px solid #e2e8f0;margin:5px 0;padding:8px 0}
+.nr-cart-page .nr-cart-details summary{font-weight:600;cursor:pointer;color:#42536d}
+.nr-cart-page .nr-cart-details p{font-size:.82rem;color:#64748b}
+.nr-cart-page [aria-label="Secure online checkout"]{align-items:flex-start;gap:10px;padding:16px 18px!important}
+.nr-cart-page [aria-label="Secure online checkout"] h3{font-size:1.08rem;margin:0}
+.nr-cart-page [aria-label="Secure online checkout"] .btn{width:auto;max-width:100%;min-width:0;padding:10px 18px;text-align:center;box-sizing:border-box}
+.nr-cart-page #square-check-status{font-size:.88rem;color:#526174;margin:0}
+@media(max-width:540px){
+ .nr-cart-page .nr-checkout-address{grid-template-columns:minmax(0,1fr) minmax(70px,.35fr)}
+ .nr-cart-page .nr-checkout-address label:first-child{grid-column:1/-1}
+ .nr-cart-page [aria-label="Secure online checkout"] .btn{align-self:flex-start}
+}
