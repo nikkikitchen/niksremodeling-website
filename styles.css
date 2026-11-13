@@ -566,3 +566,11 @@ nav.nav .mobile-top-nav{display:none!important}
  .nr-cart-page .nr-checkout-address label:first-child{grid-column:1/-1}
  .nr-cart-page [aria-label="Secure online checkout"] .btn{align-self:flex-start}
 }
+
+/* Keep long, explicitly provisional totals readable at phone widths. */
+.nr-cart-summary .nr-cart-balance-row,
+.nr-cart-summary .cart-combined-project-row{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.nr-cart-summary #cart-estimated-total,
+.nr-cart-summary #cart-combined-project-total{white-space:normal;overflow-wrap:anywhere;line-height:1.35;text-align:left}
+#cart-pay-button:disabled{background:#64748b;color:#fff;opacity:.65;cursor:not-allowed;box-shadow:none}
+.assurance>.wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;padding-top:16px;padding-bottom:16px}

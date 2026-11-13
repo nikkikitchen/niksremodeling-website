@@ -55,6 +55,9 @@ test('Terms never enables Pay; address is compact and unknown tax stays pending'
  await expect(page.locator('#square-ship-address')).toBeVisible();
  await expect(page.locator('#cart-tax-amount')).toHaveText('Needs confirmation');
  await expect(page.locator('#cart-estimated-total')).toContainText('tax pending');
+ const label=await page.locator('.nr-cart-balance-row > span').boundingBox();
+ const value=await page.locator('#cart-estimated-total').boundingBox();
+ expect(value.y).toBeGreaterThanOrEqual(label.y+label.height);
  await expect(page.locator('#square-pay')).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  expect(errors).toEqual([]);

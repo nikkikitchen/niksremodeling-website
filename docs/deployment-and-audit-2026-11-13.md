@@ -68,3 +68,7 @@ Engineering work still needed: remaining package component reconciliation (espec
 Not ready for unrestricted promotion as a fully priced remodeling store. Quote planning works on tested paths; estimates are provisional and require human scope/cost review. Automated firm quoting is not commercially verified. Checkout remains hard-locked on the server and disabled in the customer interface; enabling it requires separate owner authorization after the outstanding work and sandbox acceptance.
 
 Implementation commit: `16780702be0ca5796ccb4b15c724d8e3a1f24590`. Production readiness endpoint reports purchases paused; processor ready and tax/supplier configured. Its configuration flags do not establish complete shipping/address/tax/fulfillment readiness.
+
+## Deployment verification after the repair
+
+Cloudflare’s GitHub check reported successful deployment of `fb0beb4b1792092ab0eca91e42d1f49afb9cfeed`. A fresh request to `https://niksremodeling.com/release.json` identified that exact commit; the served versioned app.js matched its manifest SHA-256. The final follow-up stacks long cart totals to avoid crowding on phones, visibly styles disabled Pay, spaces footer assurance labels, and aligns the Node engine declaration with jsdom’s actual supported versions. All nine browser tests pass with the added total-label geometry assertion. The final handoff identifies the latest verified deployed commit.
