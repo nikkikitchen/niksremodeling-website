@@ -857,7 +857,7 @@ function cartCheckoutSummary(items){
  ${estimatedLabor.hasServices&&additionalServices.some(x=>['Labor','Service'].includes(x.type))?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
 
- <div class="cart-item"><span>Tax (est. 8%)<small id="cart-tax-rate-label" style="display:none"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
+ <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">${money(Math.round(retailGoodsCents*0.08)/100)}</strong></div>
  ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Project fees cover planning, coordination and a reserve for unexpected conditions. They are already included in the starting price, not charged twice.</p>':''}
   ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">The package starting amount is provisional, not a payment restriction. Request a full-payment invoice or a deposit plan once the scope and exact total are approved.</p>':''}
  ${unconfirmedPackages.length?'<div class="nr-cart-quote-note" role="group" aria-label="Project payment options"><strong>Choose how to pay after the final quote</strong><p><strong>Pay in full:</strong> Request one invoice for the entire agreed project, selected merchandise, confirmed freight and applicable tax.</p><p><strong>Deposit + weekly draws:</strong> Proposed materials-and-supplies deposit of <strong>'+money(packageDepositEstimates)+'</strong>, followed by weekly progress draws based on completed work and written milestones.</p><p><strong>Payment status:</strong> You may request either invoice below. No online payment is taken here yet.</p></div>':''}
@@ -868,7 +868,7 @@ function cartCheckoutSummary(items){
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits shown are provisional until product compatibility, delivered cost, tax treatment and final invoice are verified.</p>':''}
  ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Combined project starting estimate includes the approved package minimums and estimated tax on separately priced merchandise. Tax on unconfirmed package materials and any pending delivery remains subject to the written quote. No package deposit is due online.</p>':''}
  </div>
- <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite" style="display:none">Tax and delivery are estimates.</p>
+ <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax and delivery are estimates.</p>
  <p class="calc-note"><a href="/terms.html">Estimate only — details &amp; terms</a>. No payment collected.</p>
  </section>`;
 }
@@ -1018,6 +1018,7 @@ function initCartShippingQuote(items){
 
 function initCartTaxPreview(){
  const form=document.getElementById('cart-shipping-form');
+ const zipInput=document.getElementById('cart-shipping-zip');
  const tax=document.getElementById('cart-tax-amount');
  const info=document.getElementById('cart-tax-status');
  const rateLabel=document.getElementById('cart-tax-rate-label');
@@ -1029,17 +1030,19 @@ function initCartTaxPreview(){
  if(!Number.isSafeInteger(retailCents)||retailCents<0)return;
  const baseCents=Number(total.dataset.baseCents);
  const payableCents=Number(total.dataset.payableCents);
-
  const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
- const disclaimer='Tax estimated at 8%. Final amount confirmed before payment.';
- let shippingCents=null;
+ let shippingCents=null,rate=null,verifiedZip='',lookupId=0;
  const calculate=()=>{
-  // Planning estimate only, not a verified or collectible sales-tax amount.
-  // Include retail merchandise plus estimated shipping, never installation labor.
-  const taxCents=Math.round((retailCents+(shippingCents??0))*0.08);
+  // ZIP tax is a conservative preview, never a collectible final tax.
+  // The exact delivery address, item taxability and Square order total
+  // are checked again before opening any payment link.
+  const estimatedRate=rate??0.08;
+  const taxCents=Math.round((retailCents+(shippingCents??0))*estimatedRate);
   tax.textContent=money(taxCents);
-  if(rateLabel)rateLabel.textContent='Based on temporary 8% estimate';
-  info.textContent=disclaimer;
+  if(rateLabel)rateLabel.textContent=rate===null?' · provisional 8%':' · ZIP estimate '+(rate*100).toFixed(2)+'%';
+  info.textContent=rate===null
+    ?'Temporary 8% estimate only. Final tax is confirmed using the delivery address before payment.'
+    :'ZIP-based tax estimate only. The delivery address determines the final tax before payment.';
   total.textContent=money(baseCents+(shippingCents??0)+taxCents);
   if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0)
    dueNow.textContent=money(payableCents+(shippingCents??0)+taxCents);
@@ -1049,8 +1052,33 @@ function initCartTaxPreview(){
     (combined.dataset.hasStarting==='true'?'+':'')+
     (combined.dataset.hasUnpriced==='true'?' + quote required':'');
  };
+ const lookup=async zip=>{
+  const mine=++lookupId;
+  if(!/^\\d{5}$/.test(zip)){rate=null;verifiedZip='';calculate();return;}
+  if(verifiedZip===zip&&rate!==null)return;
+  rate=null;verifiedZip='';calculate();
+  try{
+   const response=await fetch('/api/cart-tax',{
+    method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+    body:JSON.stringify({zip,merchandiseCents:retailCents,shippingCents:0})
+   });
+   const data=await response.json();
+   if(mine!==lookupId||zip!==String(zipInput?.value||'').trim())return;
+   if(!response.ok||data.mode!=='zip-upper-estimate'||typeof data.ratePercent!=='number'||
+      !Number.isFinite(data.ratePercent)||data.ratePercent<0||data.ratePercent>25)
+    throw Error('Tax rate not verified');
+   rate=data.ratePercent/100;
+   verifiedZip=zip;
+  }catch{
+   if(mine!==lookupId)return;
+   rate=null;
+   verifiedZip='';
+  }
+  calculate();
+ };
  calculate();
- if(!form)return;
+ if(!form||!zipInput)return;
+ zipInput.addEventListener('input',()=>lookup(String(zipInput.value||'').trim()));
  form.addEventListener('nr:shipping-cleared',()=>{
   shippingCents=null;
   calculate();
@@ -1061,6 +1089,7 @@ function initCartTaxPreview(){
   shippingCents=cents;
   calculate();
  });
+ if(/^\\d{5}$/.test(zipInput.value||''))lookup(zipInput.value.trim());
 }
 
 function packageQuoteLink(item){
