@@ -43,3 +43,23 @@ test('Customer cart and terms do not promise weekly draws or enable payment',()=
  assert.match(terms,/progress draws tied to completed work/i);
  assert.match(app,/if\(button\)button\.disabled=true; \/\/ Never enable/);
 });
+
+
+test('Package summary shows proposed deposit and deferred balance, including missing-cost warning',()=>{
+ const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const start=app.indexOf('function cartCheckoutSummary(items){');
+ const end=app.indexOf('\nfunction cartShoppingChoices(',start);
+ const fn=new Function('items','serviceEstimateSummary','customEstimate','requiresInPersonQuote',app.slice(start,end)+'\nreturn cartCheckoutSummary(items);');
+ const svc=()=>({hasServices:false,total:0,pending:false});
+ const pkg=deposit=>({name:'Garage Standard',source:'room-project-package',type:'Service',price:null,qty:1,startingAt:1920,depositEstimate:deposit,laborEstimate:1325.25,overheadAllowance:186.8,quoteRequired:true});
+ const priced=fn([pkg(407.95)],svc,()=>false,()=>false);
+ assert.match(priced,/Materials &amp; supplies deposit \(included\)/);
+ assert.match(priced,/\$407\.95/);
+ assert.match(priced,/Estimated balance after deposit \(paid as work is completed\)/);
+ assert.match(priced,/\$1,512\.05/);
+ assert.match(priced,/id="cart-pay-button"[^>]*disabled/);
+ const pending=fn([pkg(null)],svc,()=>false,()=>false);
+ assert.match(pending,/deposit itemization pending/);
+ assert.match(pending,/To be itemized/);
+ assert.match(pending,/id="cart-pay-button"[^>]*disabled/);
+});
