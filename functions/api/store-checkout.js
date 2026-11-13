@@ -15,6 +15,9 @@ export async function onRequestPost({request,env}){
  const productId=String(body?.productId||'');
  const variantId=String(body?.variantId||'');
  const zip=String(body?.zip||'');
+ const address=String(body?.address||'').trim();
+ const city=String(body?.city||'').trim();
+ const state=String(body?.state||'').trim().toUpperCase();
  const requestId=String(body?.requestId||'');
  const expectedTotal=Number(body?.expectedTotal);
  if(!/^\d{8,30}$/.test(productId)||!/^[-\w]{8,64}$/.test(variantId)||
@@ -30,6 +33,9 @@ export async function onRequestPost({request,env}){
   requestUrl.searchParams.set('zip',zip);
   requestUrl.searchParams.set('product',productId);
   requestUrl.searchParams.set('variant',variantId);
+  requestUrl.searchParams.set('address',address);
+  requestUrl.searchParams.set('city',city);
+  requestUrl.searchParams.set('state',state);
   const quoteResponse=await getQuote({request:new Request(requestUrl),env});
   const q=await quoteResponse.json();
   if(!quoteResponse.ok||!q.checkoutEnabled||!Number.isSafeInteger(q.totalCents))
@@ -44,18 +50,28 @@ export async function onRequestPost({request,env}){
       !location.capabilities?.includes('CREDIT_CARD_PROCESSING'))
    return fail('Secure payments are not available for this merchant location.');
   const itemName=String(q.name||'Remodeling merchandise').slice(0,200);
+  if(!/^(?:\d{1,2})(?:\.\d{1,4})?$/.test(String(q.taxRatePercent))||typeof q.shippingTaxable!=='boolean')
+   return fail('Destination sales-tax calculation needs confirmation.');
+  const taxUid='destination-sales-tax';
+  const lineItems=q.shippingTaxable?[{
+   name:itemName+' (delivered to '+zip+')',quantity:'1',base_price_money:{amount:q.subtotalCents,currency:'USD'},
+   note:'CJ item '+productId+' / variant '+variantId+' / SKU '+String(q.sku||'unknown').slice(0,70)+'. Product plus quoted delivery included.',
+   applied_taxes:[{tax_uid:taxUid}]
+  }]:[{
+   name:itemName,quantity:'1',base_price_money:{amount:q.productCents,currency:'USD'},
+   note:'CJ item '+productId+' / variant '+variantId+' / SKU '+String(q.sku||'unknown').slice(0,70),
+   applied_taxes:[{tax_uid:taxUid}]
+  },{
+   name:'Verified delivery to '+zip,quantity:'1',base_price_money:{amount:q.deliveryCents,currency:'USD'}
+  }];
   const payment=await square(env,'/v2/online-checkout/payment-links',{
    idempotency_key:requestId,
    description:itemName+' — verified US-stock merchandise. Fulfillment after payment and address verification.',
    order:{
     location_id:env.SQUARE_LOCATION_ID,
     reference_id:requestId.slice(0,40),
-    line_items:[{
-      name:itemName+' (delivered to '+zip+')',quantity:'1',
-      base_price_money:{amount:q.subtotalCents,currency:'USD'},
-      note:'CJ item '+productId+' / variant '+variantId+' / SKU '+String(q.sku||'unknown').slice(0,70)+'. Product plus quoted delivery included.'
-    }],
-    taxes:[{catalog_object_id:env.STORE_TAX_ID,scope:'ORDER'}]
+    line_items:lineItems,
+    taxes:[{uid:taxUid,name:'Destination sales tax',percentage:String(q.taxRatePercent),scope:'LINE_ITEM'}]
    },
    checkout_options:{
     ask_for_shipping_address:true,allow_tipping:false,
