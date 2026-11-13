@@ -45,8 +45,38 @@ for(const base of urls){
   }catch(error){return {http:0,providerRateVerified:false,reason:String(error?.message||error).slice(0,140)};}
  }
  const liveTax=await taxPreview();
+ // A read-only quote for a published product at the public Carrollton City Hall
+ // address. Never create a Square payment link or an order in monitoring.
+ let checkoutQuote=null;
+ if(new URL(base).host==='niksremodeling.com'){
+  const params=new URLSearchParams({
+   product:'1963146233541074945',
+   variant:'1963146233666904066',
+   zip:'30117',address:'315 Bradley Street',city:'Carrollton',state:'GA'
+  });
+  const result=await read(base+'/api/store-quote?'+params);
+  try{
+   const body=JSON.parse(result.text||'{}');
+   checkoutQuote={
+    http:result.status,
+    ready:result.ok&&body.checkoutEnabled===true&&
+     Number.isSafeInteger(body.totalCents)&&body.totalCents>0&&
+     Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>0&&
+     Number.isSafeInteger(body.taxCents)&&body.taxCents>=0&&Number(body.stock)>0,
+    stockConfirmed:Number(body.stock)>0,
+    shippingConfirmed:Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>0,
+    taxConfirmed:Number.isSafeInteger(body.taxCents)&&body.taxCents>=0,
+    totalConfirmed:Number.isSafeInteger(body.totalCents)&&body.totalCents>0,
+    reason:result.ok?null:String(body.error||result.error||'Quote unavailable').slice(0,160)
+   };
+  }catch(error){
+   checkoutQuote={http:result.status,ready:false,reason:String(error?.message||error).slice(0,160)};
+  }
+ }
+
  console.log(JSON.stringify({
   taxPreview:liveTax,
+  checkoutQuote,
   host:new URL(base).host,
   releaseHttp:release.status,
   publishedCommit:releaseCommit||'unavailable',
