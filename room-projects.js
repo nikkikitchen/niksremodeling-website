@@ -266,7 +266,7 @@ window.NIK_AUDITED_PACKAGE_PRICES={
       ],
       materials:[
         {name:'4 × 8 ft 3/4-in ACX plywood (owner-approved marked-up price)',quantity:4,unitPrice:70.20},
-        {name:'Basic utility light allowance (about $30 purchase + 35% markup)',quantity:1,unitPrice:40.49},
+        {name:'Basic utility light allowance',quantity:1,unitPrice:40.49},
         {name:'Exterior-rated wood screws, 5-lb box (owner price)',quantity:1,unitPrice:48.60}
       ],
       consumables:[{name:'Miscellaneous protective consumables and cleanup allowance',quantity:1,unitPrice:10}],

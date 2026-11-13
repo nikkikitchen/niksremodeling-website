@@ -16,6 +16,8 @@ const furnitureCategoryPhotos={
 };
 
 document.addEventListener('DOMContentLoaded',async()=>{
+ if(!new URLSearchParams(location.search).has('product'))try{const central=await import('/catalog-client.js?v='+encodeURIComponent(furnitureAssetVersion));if(await central.managedDepartment('furniture'))return;}catch{}
+
  const {catalog,categories,inCategory,relatedCategories,isKidsFurniture}=await import('/store-catalog.js?v='+encodeURIComponent(furnitureAssetVersion));
  const {cardHtml,priceCards}=await import('/store-cards.js?v='+encodeURIComponent(furnitureAssetVersion));
  const params=new URLSearchParams(location.search),requestedCategory=params.get('category'),productId=params.get('product');

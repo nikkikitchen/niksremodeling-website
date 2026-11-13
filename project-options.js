@@ -563,7 +563,7 @@
           {name:'Minor nonstructural existing-ramp maintenance, up to one hour',quantity:1,unitPrice:75}
         ],
         materials:[
-          {name:'Moen 18-inch stainless grab bars, reference price $23.35 + 35%',quantity:2,unitPrice:31.52},
+          {name:'Moen 18-inch stainless grab bar allowance',quantity:2,unitPrice:31.52},
           {name:'Pressure-Treated 5/4x6x12 Decking Board',quantity:1,unitPrice:22.28},
           {name:'Deck Screws (#8 x 2-1/2-in, 5-lb box)',quantity:1,unitPrice:48.60}
         ],
@@ -577,7 +577,7 @@
           {name:'Additional on-site access and handrail review, one hour',quantity:1,unitPrice:75}
         ],
         materials:[
-          {name:'Moen 18-inch stainless grab bars, reference price $23.35 + 35%',quantity:3,unitPrice:31.52}
+          {name:'Moen 18-inch stainless grab bar allowance',quantity:3,unitPrice:31.52}
         ],
         consumables:[{name:'Silicone tub-and-tile sealant, 10.1 oz',quantity:1,unitPrice:10.12}],
         laborDiscountPercent:8,projectFeePercent:10

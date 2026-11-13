@@ -1436,3 +1436,6 @@ function repriceRemovalGroups(cart){
  const counts={};for(const item of cart)if(item.removalGroup)counts[item.removalGroup]=(counts[item.removalGroup]||0)+Number(item.removalCount||item.qty||1);
  return cart.map(item=>item.removalGroup==='doors'?{...item,price:doorRemovalRate(counts.doors)*(item.removalCount||1)}:item.removalGroup==='cabinets'?{...item,price:cabinetRemovalRate(counts.cabinets)*(item.removalCount||1)}:item);
 }
+
+// The shared managed catalog supplies new product placements without a site deployment.
+document.addEventListener('DOMContentLoaded',()=>{import('/catalog-client.js?v='+encodeURIComponent(retailAssetVersion)).catch(()=>{});});

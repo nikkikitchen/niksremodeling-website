@@ -265,6 +265,8 @@ async function detailView(target,id,department){
  }
 }
 export async function mountCatalog(target,{department,material,type,installKeyword}={}){
+ if(!new URLSearchParams(location.search).has('product'))try{const central=await import('/catalog-client.js?v='+encodeURIComponent(assetVersion));if(await central.mountManagedCatalog(target,['shopping:'+department+(type?'/'+String(type).toLowerCase().replace(/[^a-z0-9]+/g,'-'):''),...(material?['work:'+material]:[])]))return;}catch{}
+
  if(!document.querySelector('link[href^="/store.css"]')){
   const css=document.createElement('link');css.rel='stylesheet';css.href='/store.css?v='+encodeURIComponent(assetVersion);document.head.append(css);
  }

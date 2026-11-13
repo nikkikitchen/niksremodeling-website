@@ -1,3 +1,4 @@
+import {managedLegacyCandidates} from '../_lib/managed-legacy.js';
 // U.S. warehouse candidates. Each product still needs a variant stock check.
 const CJ_BASE = 'https://developers.cjdropshipping.com/api2.0/v1';
 let tokenCache = { accessToken: '', validUntil: 0 };
@@ -25,6 +26,7 @@ async function accessToken(env) {
 }
 
 export async function onRequestGet({ request, env = {} }) {
+  const managed=await managedLegacyCandidates(request,env,'all');if(managed)return managed;
   const url = new URL(request.url);
   const keyword = String(url.searchParams.get('keyword') || '').trim();
   const page = Math.max(1, Math.min(50, Number.parseInt(url.searchParams.get('page') || '1', 10) || 1));

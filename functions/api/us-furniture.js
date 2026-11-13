@@ -1,3 +1,4 @@
+import {managedLegacyCandidates} from '../_lib/managed-legacy.js';
 import {cj,retailCents} from '../_lib/commerce.js';
 
 const keywords={
@@ -13,7 +14,8 @@ const keywords={
  'lighting':'table lamp',
  'entryway':'entryway bench'
 };
-export async function onRequestGet({request,env}){
+export async function onRequestGet({request,env={}}){
+ const managed=await managedLegacyCandidates(request,env,'furniture');if(managed)return managed;
  const params=new URL(request.url).searchParams;
  const category=params.get('category')||'bedroom',search=params.get('search');
  const bathKeywords={

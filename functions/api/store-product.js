@@ -1,7 +1,9 @@
+import {managedLegacyProduct} from '../_lib/managed-legacy.js';
 import {cj,PRODUCT_ID,retailCents,usVariantStock} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
 
-export async function onRequestGet({request,env}){
+export async function onRequestGet({request,env={}}){
+ const managed=await managedLegacyProduct(request,env);if(managed)return managed;
  const id=request?new URL(request.url).searchParams.get('product')||PRODUCT_ID:PRODUCT_ID;
  if(!/^[\w-]{8,64}$/.test(id||''))return Response.json({error:'Invalid product.'},{status:400});
  if(["2003348098417340418","2003347794848272385"].includes(id))return Response.json({error:'Product excluded: no verified U.S. warehouse stock.'},{status:404,headers:{'Cache-Control':'no-store'}});

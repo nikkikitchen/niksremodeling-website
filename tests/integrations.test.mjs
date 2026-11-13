@@ -1,10 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 
 async function loadPagesFunction(name) {
-  const source = readFileSync(new URL(`../functions/api/${name}.js`, import.meta.url), 'utf8');
-  return import('data:text/javascript,' + encodeURIComponent(source));
+ return import(new URL(`../functions/api/${name}.js`,import.meta.url));
 }
 
 const { onRequestGet: status } = await loadPagesFunction('integration-status');

@@ -77,6 +77,7 @@
       (entries.length?'<div class="product-search-results">'+entries.map(([name,group,description,url])=>
         '<a class="product-search-result" href="'+esc(url)+'"><img class="product-search-photo" src="'+esc(resultPhoto(name,group))+'" alt="" loading="lazy"><span class="product-search-group">'+esc(group)+'</span>'+
         '<strong>'+esc(name)+'</strong><span>'+esc(description)+'</span><span class="product-search-arrow">View options →</span></a>').join('')+'</div>':'');
+    import('/catalog-client.js').then(module=>module.mountSearch(root,q)).catch(()=>{});
   }
   document.addEventListener('DOMContentLoaded',()=>{
     const params=new URLSearchParams(location.search);

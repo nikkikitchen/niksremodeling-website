@@ -118,7 +118,7 @@
     section.style.cssText='margin:24px 0;padding:20px';
     const title=document.createElement('h2');title.textContent=full?'Material Price Reference':'Material Price References';
     const intro=document.createElement('p');intro.className='calc-note';
-    intro.textContent='Prices include the 35% materials markup where applicable. Newly researched prices are provisional, not owner-approved or confirmed U.S. warehouse stock. Labor, delivery and tax are extra. Existing approved prices take priority.';
+    intro.textContent='Reference selling prices are shown. Newly researched prices are provisional, not owner-approved or confirmed U.S. warehouse stock. Labor, delivery and tax are extra. Existing approved prices take priority.';
     section.append(title,intro);
     const wrap=document.createElement('div');wrap.style.cssText='overflow-x:auto';
     const table=document.createElement('table');table.style.cssText='width:100%;border-collapse:collapse;text-align:left';

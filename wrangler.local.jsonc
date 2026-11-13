@@ -1,0 +1,7 @@
+{
+ "$schema":"node_modules/wrangler/config-schema.json",
+ "name":"niksremodeling-local-business",
+ "pages_build_output_dir":"./dist",
+ "compatibility_date":"2026-11-01",
+ "d1_databases":[{"binding":"BUSINESS_DB","database_name":"niks-business-local","database_id":"BUSINESS_DB","migrations_dir":"migrations"}]
+}

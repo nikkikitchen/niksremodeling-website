@@ -100,6 +100,8 @@ const bathVerified=detail=>{
  return detail?.inStockUS===true&&detail?.warehouseCountry==='US'&&variants.length?variants:null;
 };
 document.addEventListener('DOMContentLoaded',async()=>{
+ try{const central=await import('/catalog-client.js?v='+encodeURIComponent(new URL(document.currentScript?.src||location.href).searchParams.get('v')||'catalog'));if(await central.managedDepartment('bathroom'))return;}catch{}
+
  const params=new URLSearchParams(location.search);
  const packageSlotRules={
   faucet:{type:'faucets',title:'Vanity Faucets',match:/\b(?:vanity|bathroom|lavatory)\s+faucet\b/i,exclude:/shower|tub|wall.mount|wall mount|parts|repair/i},

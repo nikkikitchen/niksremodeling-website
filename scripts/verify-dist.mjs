@@ -8,6 +8,7 @@ let references=0;
 for(const [file,hash] of Object.entries(release.files)){
  const path=new URL(file,dist), content=readFileSync(path,'utf8');
  if(createHash('sha256').update(content).digest('hex')!==hash)throw Error('Release hash mismatch: '+file);
+ if(/\.(?:js|json|html)$/.test(file)&&/"(?:supplier_cost_cents|retailBaseline|retailSources)"\s*:/.test(content))throw Error('Private cost reference in public artifact: '+file);
  if(file.endsWith('.js'))execFileSync(process.execPath,['--check',path.pathname]);
  if(file.endsWith('.html')){
   const dom=new JSDOM(content);
