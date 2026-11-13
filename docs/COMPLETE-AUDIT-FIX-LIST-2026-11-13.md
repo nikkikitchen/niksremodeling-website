@@ -105,3 +105,9 @@ Items requiring a supplier/account portal or actual address/processor transactio
 - Read-only fetch of `https://niksremodeling.com/release.json` reported the same commit. **Latest audited cart and wording version deployed successfully.** This closes the earlier *site publish* blocker; it does **not** prove the D1 database tables/binding work or any checkout transaction is safe.
 - Same live site's `/api/checkout-readiness?zip=30117` reported `checkoutPaused:true`, `checkoutReadyForVerification:false`, `salesTax:ready`, `supplier:configured`, `paymentProcessor:needs setup`.
 - Keep remaining owner questions on exact fixture scopes, missing bounded tier pricing, package freight/tax treatment, D1 migrations and Square setup. No purchase has been attempted.
+
+## Further audit repair — mixed project + supplier freight
+- Audited a cart containing both a project package and independently priced CJ shopping items. CJ freight only verifies the separate supplier SKU lines; it does **not** automatically include package lumber/paint/supplies.
+- Updated `app.js` to keep `remainingShippingPending` true for all project packages and to label a mixed-cart shipping quote as **retail-only, package delivery pending**. An estimated supplier freight total must not imply that every package delivery cost is covered.
+- Added a regression case to `tests/garage-deposit-reconciliation.test.mjs` for Garage Standard ($1,920, $407.95 materials deposit) combined with a $100 retail item. The test checks a $507.95 subtotal awaiting taxes, $2,020 combined starting total, package-delivery warning, pending state, and payment lock.
+- **Still outstanding:** obtain actual package-material freight basis or explicitly cost/approve an included-delivery allowance per package. ZIP-only estimates for separately purchasable CJ products cannot substitute for that step. Keep online checkout paused.
