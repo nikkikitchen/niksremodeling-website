@@ -120,3 +120,37 @@ test('a genuinely unstocked item is still blocked rather than assigned invented 
   assert.equal(body.deliveryCents,undefined);
  }finally{global.fetch=original;}
 });
+
+test('repeated same CJ product merges quantities and quotes all units rather than missing a line',async()=>{
+ const original=global.fetch;
+ const supplier=mockCJ();
+ let seenFreightQty=0;
+ global.fetch=async(url,opts)=>{
+  if(String(url).includes('/logistic/freightCalculate')&&!String(url).includes('Tip')){
+   const body=JSON.parse(opts.body);
+   assert.equal(body.products.length,1);
+   seenFreightQty=body.products[0].quantity;
+  }
+  return supplier(url,opts);
+ };
+ try{
+  const repeated=[{...items[0],quantity:2},{...items[0],quantity:3}];
+  const response=await onRequestPost(context(repeated));
+  assert.equal(response.status,200);
+  const out=await response.json();
+  assert.equal(out.productLines,1);
+  assert.equal(out.units,5);
+  assert.equal(seenFreightQty,5);
+  assert.equal(out.estimateOnly,true);
+ }finally{global.fetch=original;}
+});
+
+test('duplicate item quantities over 99 fail before any supplier or tax calls',async()=>{
+ const original=global.fetch;
+ global.fetch=async()=>{throw Error('Supplier should not be called');};
+ try{
+  const response=await onRequestPost(context([{...items[0],quantity:60},{...items[0],quantity:40}]));
+  assert.equal(response.status,400);
+  assert.match((await response.json()).error,/Maximum quantity/);
+ }finally{global.fetch=original;}
+});
