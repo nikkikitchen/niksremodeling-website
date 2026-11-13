@@ -27,9 +27,8 @@ export async function onRequestGet({request,env}){
  const tax=await destinationSalesTax(env,{
   zip,address:params.get('address'),city:params.get('city'),state:params.get('state')
  });
- const allowedZips=String(env.STORE_ALLOWED_ZIPS||'').split(',').map(s=>s.trim()).filter(Boolean);
  const locationId=String(env.SQUARE_LOCATION_ID||'');
- const checkoutEnabled=!!(locationId&&allowedZips.includes(zip)&&(env.SQUARE_ACCESS_TOKEN||env.TOKEN));
+ const checkoutEnabled=!!(locationId&&(env.SQUARE_ACCESS_TOKEN||env.TOKEN));
  const taxableCents=retailCents(v.variantSellPrice)+(tax.shippingTaxable?total-retailCents(v.variantSellPrice):0);
  const taxCents=Math.round(taxableCents*tax.rate);
  return Response.json({productId:item.id,variantId:v.vid,name:item.name,variant:v.variantKey,sku:v.variantSku,zip,stock,productCents:retailCents(v.variantSellPrice),deliveryCents:total-retailCents(v.variantSellPrice),subtotalCents:total,shippingMethod:rate.logisticName,transitDays:rate.logisticAging,taxConfigured:true,taxRatePercent:tax.ratePercent,shippingTaxable:tax.shippingTaxable,taxCents,totalCents:total+taxCents,checkoutEnabled},{headers:{'Cache-Control':'no-store'}});
