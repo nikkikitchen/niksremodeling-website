@@ -11,7 +11,7 @@ Shipping: estimate by ZIP and item weights/combined supplier quotes where suppor
 ### Missing or unverified amounts to cost out first
 | Price input | Estimate required | Current verification gap |
 | --- | --- | --- |
-| Garage Standard $1,920 | Materials and supplies subtotal; labor after discount; fees; materials deposit; estimated tax and delivery | Confirm actual itemized basis and price shown in cart |
+| Garage Standard $1,920 | **Reconciled:** $388.37 materials + $19.58 supplies = $407.95 base deposit; $1,325.25 discounted labor + $186.80 fees = $1,920 total | Only actual tax, package delivery and final scope remain open |
 | Bathroom package fixtures | Vanity faucet, vanity light, mirror, towel bar, paper holder, other fixture allowances | Current purchase costs and 35% markup |
 | Kitchen packages | Standard light fixture and Kitchen Deluxe cabinets, countertops, installation labor, supplies | Supplier costs and quantities |
 | Remaining packages | All priced scope components and starting prices for each package | Item-level labor/material/supplies audit |
@@ -28,9 +28,9 @@ Shipping: estimate by ZIP and item weights/combined supplier quotes where suppor
 
 | ID | Area | Needs confirmation / acceptance test | Status |
 | --- | --- | --- | --- |
-| NC-001 | Cloudflare deployment | Confirm the latest GitHub commits, including D1 binding and cart ZIP/deposit changes, deploy successfully; Cloudflare dashboard returned an unknown error during review. | Pending |
+| NC-001 | Cloudflare deployment | Source version of updated cart was deployed and release manifest verified; future changes still require deployment checks. This does not prove D1 schema works. | Source deploy verified |
 | NC-002 | D1 database | Confirm BUSINESS_DB binding points to `niks-business`; apply/verify required database migrations and test owner catalog queries. Configuration is committed; tables were not yet verified. | Pending |
-| NC-003 | Garage Standard | Reproduce the $1,920 package quote, verify itemized materials, supplies, discounted labor and fees add up; verify displayed materials deposit and total. | Pending |
+| NC-003 | Garage Standard | $1,920 verified: $407.95 materials/supplies deposit basis + $1,325.25 discounted labor + $186.80 fees; desktop/tablet/phone cart tests passed. Shipping and tax remain NC-006/NC-008. | Arithmetic and display verified |
 | NC-004 | All packages | Verify per-package starting prices, depositEstimate, laborEstimate, fees, measurement adjustments and the 7% discount reconcile across project cards, measurements, and cart without double counting. | Pending |
 | NC-005 | Materials and supplies | Verify current costs/markups (35% target), correct units/quantities, supplies inclusion, package allowances and in-stock U.S. CJ inventory; do not substitute missing amounts. | Pending |
 | NC-006 | Package delivery | Verify whether the materials/supplies portion of each package includes delivery; show an actual verified amount or “needs confirmation” instead of implying free shipping. ZIP-based quotes currently apply to separately priced supplier products. | Pending |
@@ -61,3 +61,10 @@ Verified against `data/package-bundle-baselines.json`: only the following tiers 
 
 ## Sign-off
 A row is not finished until the result is verified and the resolution/date is recorded. Do not enable live checkout based solely on a successful source commit.
+
+## Additional completed work (2026-11-13)
+- The latest code-test/build workflow and full GitHub calculator/browser suite both passed on commit `3499ae8e` (run `43469780762`).
+- Mixed package+retail carts now flag package freight separately from CJ freight. A verified CJ retail freight amount must not imply package lumber/paint delivery is paid.
+- Package-only carts no longer show the confusing zero-dollar “Other priced items” summary line.
+- New automated tests verify Garage Standard breakdown, all payment buttons disabled, package-only ZIP tax preview at a 7% mocked rate (material taxable basis $407.95 → illustrative tax $28.56), and desktop/tablet/phone presentation. The 7% example is a TEST rate, NOT a claim of the customer's real tax rate.
+- Remaining *owner-facing* questions should be limited to truly needed product/scope and payment-policy approvals; current supplier/account validations remain engineering checks where access permits.
