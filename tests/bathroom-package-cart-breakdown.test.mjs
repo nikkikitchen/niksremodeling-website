@@ -42,6 +42,6 @@ test('cart displays proposed package labor, materials and fees without demanding
  assert.ok(app.includes('These amounts are included in the package estimate, not added again.'));
  assert.ok(app.includes('No separate installation charge for included work.'));
  assert.ok(!app.includes('Overhead and contingency'),'Do not restore confusing fee label.');
- assert.ok(app.includes('An approved invoice is needed before payment.'));
+ assert.ok(app.includes('Online purchases temporarily paused'));
  assert.ok(terms.includes('weekly progress draws'));
 });

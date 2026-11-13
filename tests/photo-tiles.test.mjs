@@ -48,10 +48,12 @@ test('retail checkout verifies supplier, Square, tax, ZIP and final total before
  for(const required of ['q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','idempotency_key','ask_for_shipping_address:true','destination-sales-tax'])
   assert.ok(checkout.includes(required),'Checkout missing '+required);
  assert.ok(cart.includes('initCartSecureCheckout(c)'));
- assert.ok(cart.includes('Check final total'));
+ assert.ok(cart.includes('Online purchases temporarily paused'));
+ assert.ok(!cart.slice(cart.indexOf('function cartSecureCheckoutPanel(items){'),cart.indexOf('function initCartSecureCheckout(items){')).includes('square-pay'), 'Checkout panel must not render a pay button');
  assert.ok(!quote.includes('STORE_ALLOWED_ZIPS'),'Product checkout should not use a labor-service ZIP whitelist');
  assert.ok(!checkout.includes('STORE_ALLOWED_ZIPS'),'Payment checkout should not use a labor-service ZIP whitelist');
- assert.ok(!quote.includes('const checkoutEnabled=false;'));
+ assert.ok(quote.includes('const checkoutEnabled=false;'));
+ assert.ok(checkout.includes('HARD PURCHASE HOLD'), 'Server must block payment-link creation while testing');
 });
 
 test('appliance dryers show a laundry image, not kitchen images',()=>{
