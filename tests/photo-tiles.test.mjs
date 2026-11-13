@@ -43,12 +43,14 @@ test('retail checkout verifies supplier, Square, tax, ZIP and final total before
  const quote=readFileSync(new URL('../functions/api/store-quote.js',import.meta.url),'utf8');
  const checkout=readFileSync(new URL('../functions/api/store-checkout.js',import.meta.url),'utf8');
  const cart=readFileSync(new URL('../app.js',import.meta.url),'utf8');
- for(const required of ['usCjWarehouseUnits','selectConfirmedFreight','STORE_TAX_ID','STORE_ALLOWED_ZIPS','SQUARE_LOCATION_ID'])
+ for(const required of ['usCjWarehouseUnits','selectConfirmedFreight','destinationSalesTax','SQUARE_LOCATION_ID'])
   assert.ok(quote.includes(required),'Quote must verify '+required);
- for(const required of ['allowed.includes(zip)','q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','idempotency_key','ask_for_shipping_address:true'])
+ for(const required of ['q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','idempotency_key','ask_for_shipping_address:true','destination-sales-tax'])
   assert.ok(checkout.includes(required),'Checkout missing '+required);
  assert.ok(cart.includes('initCartSecureCheckout(c)'));
  assert.ok(cart.includes('Verify total for payment'));
+ assert.ok(!quote.includes('STORE_ALLOWED_ZIPS'),'Product checkout should not use a labor-service ZIP whitelist');
+ assert.ok(!checkout.includes('STORE_ALLOWED_ZIPS'),'Payment checkout should not use a labor-service ZIP whitelist');
  assert.ok(!quote.includes('const checkoutEnabled=false;'));
 });
 
