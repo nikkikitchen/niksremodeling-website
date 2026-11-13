@@ -107,3 +107,39 @@ test('five-digit delivery ZIP loads the location tax preview and includes verifi
   assert.match(ui.info.textContent,/delivery address determines the final tax/);
  }finally{ui.dom.window.close();}
 });
+
+
+test('package-only ZIP retrieves a material tax preview without inventing supplier freight',async()=>{
+ const dom=new JSDOM(`<form id="cart-shipping-form"><input id="cart-shipping-zip" required pattern="[0-9]{5}" maxlength="5"></form>
+ <p id="cart-shipping-status"></p><strong id="cart-shipping-amount">Package delivery pending</strong>
+ <strong id="cart-tax-amount">Needs confirmation</strong><small id="cart-tax-rate-label"></small>
+ <p id="cart-tax-status"></p>
+ <strong id="cart-due-now" data-package-deposit-cents="40795" data-missing-package-deposit="false"></strong>
+ <strong id="cart-estimated-total" data-base-cents="0" data-payable-cents="0" data-retail-cents="40795"></strong>
+ <strong id="cart-combined-project-total" data-base-cents="192000" data-has-starting="true" data-has-unpriced="false"></strong>`,
+ {url:'https://niksremodeling.com/'});
+ const {document,localStorage}=dom.window;
+ let calls=0;
+ const fetch=async(url,opts)=>{
+  calls++;
+  assert.equal(url,'/api/cart-tax','Package-only cart must never call CJ retail shipping');
+  const request=JSON.parse(opts.body);
+  assert.equal(request.merchandiseCents,40795);
+  assert.equal(request.zip,'30117');
+  return Response.json({mode:'zip-upper-estimate',ratePercent:7});
+ };
+ const items=[{source:'room-project-package',type:'Service',startingAt:1920,depositEstimate:407.95}];
+ new Function('document','localStorage','fetch','items',
+  code+'\ninitCartShippingQuote(items);initCartTaxPreview();')(document,localStorage,fetch,items);
+ try{
+  const zip=document.getElementById('cart-shipping-zip');
+  zip.value='30117';
+  zip.dispatchEvent(new dom.window.Event('input',{bubbles:true}));
+  await flush();await flush();
+  assert.equal(calls,1);
+  assert.equal(document.getElementById('cart-tax-amount').textContent,'$28.56');
+  assert.equal(document.getElementById('cart-due-now').textContent,'$436.51');
+  assert.match(document.getElementById('cart-shipping-amount').textContent,/Confirm whether included/);
+  assert.match(document.getElementById('cart-combined-project-total').textContent,/\$1,948\.56/);
+ }finally{dom.window.close();}
+});
