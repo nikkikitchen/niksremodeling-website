@@ -224,7 +224,7 @@ test('Combined project total includes quoted package minimum plus separate produ
     const d=dom.window.document;
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
-    assert.match(d.body.textContent,/Combined Project Total/);
+    assert.match(d.body.textContent,/Project total/);
     assert.equal(combined.textContent,'$458.00+',
       'Include $350 package starting price plus $100 product and $8 estimated product tax');
     assert.equal(d.getElementById('cart-due-now').textContent,'$108.00',
