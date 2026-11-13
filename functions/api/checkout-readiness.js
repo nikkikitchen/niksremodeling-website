@@ -5,7 +5,9 @@ import {square} from '../_lib/commerce.js';
 export async function onRequestGet({request,env={}}) {
  const zip=new URL(request.url).searchParams.get('zip')||'';
  const hasZip=/^\d{5}$/.test(zip);
- const paymentConfigured=!!(env.SQUARE_ACCESS_TOKEN||env.TOKEN)&&!!env.SQUARE_LOCATION_ID;
+ const paymentTokenPresent=!!(env.SQUARE_ACCESS_TOKEN||env.TOKEN);
+ const paymentLocationPresent=!!env.SQUARE_LOCATION_ID;
+ const paymentConfigured=paymentTokenPresent&&paymentLocationPresent;
  const taxConfigured=!!env.ZIPTAX_API_KEY;
  const freightConfigured=!!(env.CJ_API_KEY||env.CJ_ACCESS_TOKEN);
  const destinationConfigured=hasZip;
@@ -20,7 +22,7 @@ export async function onRequestGet({request,env={}}) {
  // Destination tax is calculated per verified address, then Square validates the exact order total.
  taxActive=taxConfigured;
  const ready=paymentActive&&taxActive&&freightConfigured&&destinationConfigured;
- const checks={paymentProcessor:paymentActive?'ready':'needs setup',
+ const checks={paymentProcessor:paymentActive?'ready':!paymentTokenPresent?'credentials missing':!paymentLocationPresent?'location ID missing':'location not verified',
   salesTax:taxActive?'ready':'needs setup',
   supplier:freightConfigured?'configured':'needs setup',
   destination:!hasZip?'enter ZIP':'eligible for shipping quote'};
