@@ -88,3 +88,19 @@ test('every project tier keeps distinct photos, visible pricing, usable details 
   }
  }
 });
+
+test('Garage Standard deposit, completed-work balance and checkout lock remain clear on every screen',async({page})=>{
+ const garage={name:'Garage — Standard',source:'room-project-package',projectId:'garage',packageId:'standard',
+  type:'Service',qty:1,price:null,startingAt:1920,depositEstimate:407.95,
+  laborEstimate:1325.25,overheadAllowance:186.80,quoteRequired:true};
+ await page.addInitScript(item=>localStorage.setItem('nr-cart',JSON.stringify([item])),garage);
+ await page.goto('/project-cart.html');
+ await expect(page.locator('#cart-shipping-zip')).toBeVisible();
+ await expect(page.locator('#cart-shipping-amount')).toContainText('Confirm');
+ await expect(page.locator('#cart-due-now')).toContainText('$407.95');
+ await expect(page.locator('#cart-combined-project-total')).toContainText('$1,920.00');
+ await expect(page.locator('.cart-checkout-summary')).toContainText('$1,512.05');
+ await expect(page.locator('#cart-tax-amount')).toContainText('Needs confirmation');
+ await expect(page.locator('#cart-pay-button')).toBeDisabled();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+});
