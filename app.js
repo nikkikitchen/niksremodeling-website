@@ -815,28 +815,26 @@ function cartCheckoutSummary(items){
  // Provisional taxable merchandise includes separately priced retail goods and
  // identifiable material/supply portions of labor packages, but excludes labor.
  // Actual tax treatment is verified before invoicing.
- const retailGoodsCents=Math.round(payableSubtotal*100);
+ const retailGoodsCents=Math.round((payableSubtotal+packageDepositEstimates)*100);
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const isRetailOnly=items.filter(x=>!x.hiddenFromCustomer).every(x=>['supplier-retail','bathroom-retail'].includes(x.source));
- const shippingChecker=supplierShippingItems.length?
-   '<form id="cart-shipping-form" class="cart-delivery-check"><label for="cart-shipping-zip">Delivery ZIP<input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="ZIP code" required></label></form><p id="cart-shipping-status" class="nr-cart-inline-status" role="status" aria-live="polite"></p>':
-   remainingShippingPending?'<p class="calc-note">Delivery is confirmed separately for items without a supplier freight quote.</p>':'';
+ const shippingChecker='<form id="cart-shipping-form" class="cart-delivery-check"><label for="cart-shipping-zip">Project ZIP code<input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="5-digit ZIP" required></label></form><p id="cart-shipping-status" class="nr-cart-inline-status" role="status" aria-live="polite"></p>';
  return `<section class="panel cart-checkout-summary" aria-label="Order summary" style="margin:18px 0;padding:20px">
  <h3>Order Summary</h3>
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div><details class="nr-cart-details"><summary>Estimated components</summary><div class="cart-item"><span>Painting labor</span><strong>'+money(pendingRoomPaintLabor)+'</strong></div><div class="cart-item"><span>Paint materials</span><strong>'+money(pendingRoomPaintMaterials)+'</strong></div><div class="cart-item"><span>Floor labor</span><strong>'+money(pendingBasementFloorLabor)+'</strong></div><div class="cart-item"><span>Lighting labor</span><strong>'+money(pendingBasementLightLabor)+'</strong></div><p>These components are included in the eventual quote, not extra charges.</p></details>':''}
- ${unconfirmedPackages.length?'<div class="cart-item"><span><strong>Project package estimate</strong></span><strong>'+money(packageStartingTotal)+'+</strong></div><details class="nr-cart-details"><summary>What is included</summary><div class="cart-item"><span>Materials &amp; supplies</span><strong>'+money(packageDepositEstimates)+'</strong></div><div class="cart-item"><span>Labor (7% package discount applied)</span><strong>'+money(packageLaborEstimates)+'</strong></div><div class="cart-item"><span>Project fees</span><strong>'+money(packageOverheadEstimates)+'</strong></div>'+(packageUnallocated>0.01?'<div class="cart-item"><span>Measured work awaiting itemization</span><strong>'+money(packageUnallocated)+'</strong></div>':'')+'<p>These amounts are included in the package estimate, not added again.</p></details>':''}
+ ${unconfirmedPackages.length?'<div class="cart-item"><span><strong>Project package estimate</strong></span><strong>'+money(packageStartingTotal)+'+</strong></div><div class="cart-item"><span>Materials &amp; supplies deposit (included)</span><strong>'+money(packageDepositEstimates)+'</strong></div><div class="cart-item"><span>Labor after 7% package discount (included)</span><strong>'+money(packageLaborEstimates)+'</strong></div><details class="nr-cart-details"><summary>Package fees and details</summary><div class="cart-item"><span>Project fees</span><strong>'+money(packageOverheadEstimates)+'</strong></div>'+(packageUnallocated>0.01?'<div class="cart-item"><span>Measured work awaiting itemization</span><strong>'+money(packageUnallocated)+'</strong></div>':'')+'<p>All package amounts are included in the estimate, not extra charges.</p></details>':''}
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
  ${estimatedLabor.hasServices&&additionalServices.some(x=>['Labor','Service'].includes(x.type))?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
- <div class="cart-item"><span>Delivery</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending ZIP':remainingShippingPending?'To be confirmed':money(0)}</strong></div>
+ <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Enter ZIP for estimate':remainingShippingPending?'Needs confirmation':unconfirmedPackages.length?'Package delivery: confirm included':'Not applicable'}</strong></div>
 
  <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
- ${unconfirmedPackages.length?'<div class="nr-cart-quote-note" role="group" aria-label="Project payment options"><strong>Payment options after approval</strong><p>Pay in full, or start with a materials deposit of '+money(packageDepositEstimates)+' and pay labor in weekly draws.</p></div>':''}
+ ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Payment after final approval: materials deposit first and labor in weekly draws, or pay the full project. No payment is accepted online yet.</p>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
  <div class="cart-item nr-cart-balance-row"><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Other priced items':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
- <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span>Estimated due now</span><strong id="cart-due-now">${money(payableSubtotal)} + tax pending</strong></div>
+ <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span><strong>Materials deposit / due at approval</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}">${money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
  <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>Project total${unconfirmedPackages.length?' (estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money(combinedStartingBaseCents/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''} + tax pending</strong></div>
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
@@ -939,6 +937,13 @@ function initCartShippingQuote(items){
  const button=form.querySelector('button[type="submit"]');
  const lines=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId)
   .map(x=>({productId:String(x.productId),variantId:String(x.variantId),quantity:Number(x.qty)||1,name:String(x.name||'').slice(0,120)}));
+ if(!lines.length){
+  const shipping=document.getElementById('cart-shipping-amount');
+  input.addEventListener('input',()=>{if(/^\d{5}$/.test(input.value))try{localStorage.setItem('nr-delivery-zip',input.value)}catch{}});
+  try{const zip=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(zip||''))input.value=zip}catch{}
+  if(shipping&&items.some(x=>['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source)))shipping.textContent='Confirm whether included before approval';
+  return;
+ }
  const initialTotal=total.textContent;
  let requestId=0;
  try{const saved=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(saved||''))input.value=saved;}catch{}
@@ -1018,8 +1023,10 @@ function initCartTaxPreview(){
     ?'Tax needs confirmation. The delivery address and type of work determine the applicable tax before payment.'
     :'ZIP-based tax estimate only. The delivery address determines the final tax before payment.';
   total.textContent=money(baseCents+(shippingCents??0)+taxCents)+pending;
-  if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0)
-   dueNow.textContent=money(payableCents+(shippingCents??0)+taxCents)+pending;
+  if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0){
+   const depositCents=Number(dueNow.dataset.packageDepositCents)||0;
+   dueNow.textContent=money(payableCents+depositCents+(shippingCents??0)+taxCents)+pending;
+  }
   const combinedBase=Number(combined?.dataset.baseCents);
   if(combined&&Number.isSafeInteger(combinedBase)&&combinedBase>=0)
    combined.textContent=money(combinedBase+(shippingCents??0)+taxCents)+
@@ -1107,12 +1114,10 @@ function renderCart(){
  </div></section></main>`+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
- const needsDeliveryAddress=c.some(item=>!item.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(item.source));
+ const needsDeliveryAddress=false; // Collect the full address only at final checkout, not for ZIP estimates.
  if(zipTop&&zipForm){
   const zipStatus=document.getElementById('cart-shipping-status');
-  if(needsDeliveryAddress){
-   zipTop.insertAdjacentHTML('afterbegin','<h3>Delivery address</h3>');
-  }
+  zipTop.insertAdjacentHTML('afterbegin','<h3>Check shipping &amp; taxes</h3>');
   zipTop.appendChild(zipForm);
   if(needsDeliveryAddress){
    zipForm.insertAdjacentHTML('beforeend','<div class="nr-checkout-address"><label for="square-ship-address">Street address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street address" maxlength="150"></label><label for="square-ship-city">City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label for="square-ship-state">State<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div>');
