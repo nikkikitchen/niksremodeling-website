@@ -98,3 +98,10 @@ Items requiring a supplier/account portal or actual address/processor transactio
 - **Checkout remains held:** live readiness response reported `checkoutPaused:true`, `checkoutReadyForVerification:false`, processor `needs setup`, tax configured and supplier configured. These observations do not authorize payment.
 
 **Implementation review result:** Current tested source fixes the identified regressions and improves package deposit transparency, but supplier-delivered prices, taxability, unpriced scope tiers, Cloudflare live publishing and checkout activation remain unresolved. No customer payment accepted or initiated by this audit.
+
+## Production deployment confirmation — follow-up
+
+- GitHub Cloudflare Pages check for commit `79e4b3f045b8a9db343c5db6ac777319410cadf7`: **success**.
+- Read-only fetch of `https://niksremodeling.com/release.json` reported the same commit. **Latest audited cart and wording version deployed successfully.** This closes the earlier *site publish* blocker; it does **not** prove the D1 database tables/binding work or any checkout transaction is safe.
+- Same live site's `/api/checkout-readiness?zip=30117` reported `checkoutPaused:true`, `checkoutReadyForVerification:false`, `salesTax:ready`, `supplier:configured`, `paymentProcessor:needs setup`.
+- Keep remaining owner questions on exact fixture scopes, missing bounded tier pricing, package freight/tax treatment, D1 migrations and Square setup. No purchase has been attempted.
