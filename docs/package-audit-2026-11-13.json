@@ -6,7 +6,7 @@
       {
         "name": "Basic",
         "photo": "/assets/accent-basic-approved.jpg",
-        "price": "Starting at $585Preliminary estimate · final quote after measurements",
+        "price": "Starting at $585Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Install and finish up to 12 linear ft of chair rail or comparable simple picture-frame trim",
           "Paint the accent wall in two complementary colors",
@@ -16,7 +16,7 @@
       {
         "name": "Standard",
         "photo": "/assets/accent-standard-approved.jpg",
-        "price": "Starting at $835Preliminary estimate · final quote after measurements",
+        "price": "Starting at $835Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Install, fill and paint up to 12 linear ft of chair rail",
           "Apply a simple two-color sponge-painted faux-stone effect below the rail",
@@ -46,7 +46,7 @@
       {
         "name": "Basic",
         "photo": "https://images.pexels.com/photos/35505451/pexels-photo-35505451.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $875Preliminary estimate · final quote after measurements",
+        "price": "Starting at $875Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 96 sq. ft. of one sound bathroom wall, two coats",
           "Replace one vanity faucet using existing sound connections; remove old faucet",
@@ -57,7 +57,7 @@
       {
         "name": "Standard",
         "photo": "https://images.pexels.com/photos/34574595/pexels-photo-34574595.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $1,325Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,325Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 208 sq. ft. of bathroom walls, two coats",
           "Paint up to 26 ft existing baseboards, one side of door and up to 16 ft casing",
@@ -68,7 +68,7 @@
       {
         "name": "Deluxe",
         "photo": "/assets/bathroom-deluxe-black-white.jpg",
-        "price": "Starting at $1,990Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,990Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Two coats on up to 208 sq. ft. walls and one white coat on 40 sq. ft. ceiling",
           "Paint existing baseboards (26 ft), casing (16 ft), crown (26 ft) and one door face",
@@ -90,7 +90,7 @@
       {
         "name": "Basic",
         "photo": "https://images.pexels.com/photos/35505446/pexels-photo-35505446.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $1,285Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,285Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Two coats on up to 320 sq. ft. accessible kitchen walls",
           "Replace up to 10 cabinet knobs or pulls and one light at existing compatible connections",
@@ -101,7 +101,7 @@
       {
         "name": "Standard",
         "photo": "https://images.pexels.com/photos/35289464/pexels-photo-35289464.jpeg?auto=compress&cs=tinysrgb&w=900",
-        "price": "Starting at $3,880Preliminary estimate · final quote after measurements",
+        "price": "Starting at $3,880Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Everything in Kitchen Basic, including up to 320 sq. ft. wall painting",
           "Prep, prime and paint exteriors of up to 8 standard cabinet boxes, 12 doors and 6 drawer fronts",
@@ -132,7 +132,7 @@
       {
         "name": "Basic",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Grab_bar.jpg?width=900",
-        "price": "Starting at $460Preliminary estimate · final quote after measurements",
+        "price": "Starting at $460Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Install one 18-inch grab bar into sound structural backing",
           "Up to one hour of minor nonstructural existing ramp repair",
@@ -141,8 +141,8 @@
       },
       {
         "name": "Standard",
-        "photo": "/assets/accessibility-lever-hardware.jpg",
-        "price": "Starting at $855Preliminary estimate · final quote after measurements",
+        "photo": "/assets/idea-accessibility.jpg",
+        "price": "Starting at $855Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Install up to two 18-inch grab bars with secure structural mounting",
           "Up to two hours of minor repairs to an existing sound ramp",
@@ -184,7 +184,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Attic_Organized.JPG?width=900",
-        "price": "Starting at $2,735Preliminary estimate · final quote after measurements",
+        "price": "Starting at $2,735Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Install up to 192 sq. ft. of plywood storage decking over confirmed sound, properly raised attic framing",
           "Replace one compatible existing attic light fixture",
@@ -196,10 +196,10 @@
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Installing_installation_in_an_attic_(9337).jpg?width=900",
         "price": "Project quote required",
         "scope": [
-          "Install up to 120 sq. ft. (10 × 12 ft.) of storage decking over existing structurally suitable raised framing; new support framing and reinforcement are quoted separately",
+          "Install up to 120 sq. ft. (10 \u00d7 12 ft.) of storage decking over existing structurally suitable raised framing; new support framing and reinforcement are quoted separately",
           "Install or replace one attic light using an existing suitable electrical connection (no new wiring)",
           "Clean up and remove our construction debris",
-          "Expand the attic storage flooring to 192 sq. ft. (12 × 16 ft.) over suitable existing framing",
+          "Expand the attic storage flooring to 192 sq. ft. (12 \u00d7 16 ft.) over suitable existing framing",
           "Optional insulation addition where needed, without compression or blocked ventilation",
           "Ventilation improvements and selected finished surfaces where feasible"
         ]
@@ -218,7 +218,7 @@
       {
         "name": "Basic",
         "photo": "/assets/project-basement.jpg",
-        "price": "Starting at $1,610Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,610Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 120 sq. ft. of sound existing concrete floor",
           "Refresh up to 352 sq. ft. of existing walls and up to 44 ft. of trim",
@@ -263,7 +263,7 @@
       {
         "name": "Basic",
         "photo": "/assets/bedroom-basic-commons.jpg",
-        "price": "Starting at $1,335Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,335Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 352 sq. ft. of walls in two coats and one white coat on a 120 sq. ft. ceiling",
           "Touch up up to 44 linear ft. of existing painted trim",
@@ -273,7 +273,7 @@
       {
         "name": "Standard",
         "photo": "/assets/bed.jpg",
-        "price": "Starting at $2,605Preliminary estimate · final quote after measurements",
+        "price": "Starting at $2,605Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Everything in Bedroom Basic",
           "Install up to 120 sq. ft. of click-lock LVP over suitable existing subfloor",
@@ -283,7 +283,7 @@
       {
         "name": "Deluxe",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Cozy_bedroom_with_a_large_bed_and_simple_decor_in_a_modern_home.jpg?width=900",
-        "price": "Starting at $3,200Preliminary estimate · final quote after measurements",
+        "price": "Starting at $3,200Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "All Bedroom Standard painting, trim, compatible light, click-lock LVP and quarter-round",
           "Add one two-color feature wall with up to 12 ft of installed chair rail",
@@ -304,7 +304,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-8a9d216224b8.jpg",
-        "price": "Starting at $685Preliminary estimate · final quote after measurements",
+        "price": "Starting at $685Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Install one 6-ft wire shelf and rod system in suitable existing wall backing",
           "Fit up to two supporting brackets and one additional 48-in rod as needed",
@@ -314,7 +314,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Master_Closet_Shelves.jpg?width=900",
-        "price": "Starting at $1,160Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,160Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Everything in Closets & Storage Basic",
           "Add one 72-in laminated storage shelf and three brackets",
@@ -348,7 +348,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-a051ee7e1935.jpg",
-        "price": "Starting at $1,335Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,335Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 352 sq. ft. of dining room walls and one white ceiling coat",
           "Touch up up to 44 linear ft. of existing painted trim",
@@ -358,7 +358,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Orange_Dining_Room.jpg?width=900",
-        "price": "Starting at $1,635Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,635Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Everything in Dining Room Basic",
           "Install, finish and paint up to 12 linear ft. chair rail on one existing sound wall",
@@ -368,7 +368,7 @@
       {
         "name": "Deluxe",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Dining_Rm_panorama.jpg?width=900",
-        "price": "Starting at $2,905Preliminary estimate · final quote after measurements",
+        "price": "Starting at $2,905Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "All Dining Room Standard painting, trim, chair rail, two-tone accent and existing light",
           "Install up to 120 sq. ft. click-lock LVP on suitable existing subfloor",
@@ -389,7 +389,7 @@
       {
         "name": "Basic",
         "photo": "/assets/idea-mechanic-shop.jpg",
-        "price": "Starting at $1,005Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,005Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Prepare and paint up to 120 sq. ft. of sound existing concrete floor",
           "Mount one 72-in storage shelf in suitable existing framing",
@@ -399,7 +399,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Garage_Workbench.jpg?width=900",
-        "price": "Starting at $1,920Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,920Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Everything in Garage Basic",
           "Build one basic freestanding 4-ft workbench from plywood and framing lumber",
@@ -433,7 +433,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-b9cdb9084877.jpg",
-        "price": "Starting at $1,405Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,405Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 288 sq. ft. of existing laundry walls (two coats)",
           "Install one 72-in storage shelf and up to four customer-supplied hooks",
@@ -478,7 +478,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-4822ff53e23f.jpg",
-        "price": "Starting at $1,635Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,635Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 448 sq. ft. of walls (two coats) and 192 sq. ft. ceiling (one white coat)",
           "Refresh existing painted trim up to 56 linear ft.",
@@ -488,7 +488,7 @@
       {
         "name": "Standard",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/Living_room.jpg?width=900",
-        "price": "Starting at $1,920Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,920Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "All Living & Family Room Basic wall, ceiling, trim and light refresh",
           "Add one two-color feature wall with up to 12 linear ft. installed chair rail",
@@ -498,7 +498,7 @@
       {
         "name": "Deluxe",
         "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/02-24-2021-R-124.jpg?width=900",
-        "price": "Starting at $3,890Preliminary estimate · final quote after measurements",
+        "price": "Starting at $3,890Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "All Living & Family Room Standard paint, feature wall and existing lighting",
           "Install up to 192 sq. ft. click-lock LVP on suitable existing subfloor",
@@ -519,7 +519,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-493d744bf5f7.jpg",
-        "price": "Starting at $1,465Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,465Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. of sound existing walls in two coats and touch up existing trim",
           "Install one 72-in storage/display shelf on suitable wall framing",
@@ -564,7 +564,7 @@
       {
         "name": "Basic",
         "photo": "/assets/kids-room.jpg",
-        "price": "Starting at $1,540Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,540Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 352 sq. ft. of sound bedroom walls with washable paint",
           "Touch up up to 44 ft of existing trim and safely anchor one 72-in toy/storage shelf",
@@ -654,7 +654,7 @@
       {
         "name": "Basic",
         "photo": "/assets/approved-493d744bf5f7.jpg",
-        "price": "Starting at $1,255Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,255Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Build one 4-ft basic bench and install one 72-in storage shelf and customer-supplied wall hooks",
           "Refresh minor existing trim and door threshold finishes",
@@ -699,7 +699,7 @@
       {
         "name": "Basic",
         "photo": "/assets/office.jpg",
-        "price": "Starting at $1,540Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,540Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. existing walls and refresh up to 40 ft existing trim",
           "Install one 72-in wall shelf with up to three heavy-duty brackets",
@@ -744,7 +744,7 @@
       {
         "name": "Basic",
         "photo": "/assets/theater.jpg",
-        "price": "Starting at $1,690Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,690Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. of existing sound studio walls",
           "Coat up to 100 sq. ft. of existing dry, sound concrete floor",
@@ -834,7 +834,7 @@
       {
         "name": "Basic",
         "photo": "/assets/idea-games-hobbies.jpg",
-        "price": "Starting at $1,885Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,885Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Paint up to 320 sq. ft. of sound existing hobby-room walls",
           "Build one simple freestanding 4-ft plywood worktable and install one 72-in storage shelf",
@@ -879,7 +879,7 @@
       {
         "name": "Basic",
         "photo": "/assets/idea-pet-room.jpg",
-        "price": "Starting at $1,345Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,345Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Prepare and apply two coats of washable semi-gloss paint to up to 320 sq. ft. of existing walls",
           "Refresh up to 40 linear ft of existing trim",
@@ -1014,9 +1014,9 @@
       {
         "name": "Basic",
         "photo": "/assets/murals-card.jpg",
-        "price": "Starting at $850Preliminary estimate · final quote after measurements",
+        "price": "Starting at $850Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
-          "Prepare and prime one sound 12 × 8 ft wall",
+          "Prepare and prime one sound 12 \u00d7 8 ft wall",
           "Paint one simple two-color geometric accent treatment",
           "Finish clean edges and remove normal masking and painting debris"
         ]
@@ -1099,7 +1099,7 @@
       {
         "name": "Basic",
         "photo": "/assets/arches-columns.jpg",
-        "price": "Starting at $870Preliminary estimate · final quote after measurements",
+        "price": "Starting at $870Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Refresh one existing nonstructural decorative arch opening",
           "Install up to 16 linear ft of primed decorative MDF trim on suitable existing backing",
@@ -1400,7 +1400,7 @@
       {
         "name": "Basic",
         "photo": "/assets/idea-mechanic-shop.jpg",
-        "price": "Starting at $1,340Preliminary estimate · final quote after measurements",
+        "price": "Starting at $1,340Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Build one simple freestanding 4-ft plywood workbench for light-duty shop use",
           "Install one 72-in parts shelf and one 48-in hose storage rod in verified backing",
@@ -1781,7 +1781,7 @@
       {
         "name": "Basic",
         "photo": "/assets/concrete-card.jpg",
-        "price": "Starting at $585Preliminary estimate · final quote after measurements",
+        "price": "Starting at $585Preliminary estimate \u00b7 final quote after measurements",
         "scope": [
           "Clean and paint up to 120 sq. ft. of sound existing concrete patio",
           "Allow up to one hour for a minor cosmetic surface touch-up",

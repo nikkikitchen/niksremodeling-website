@@ -42,8 +42,8 @@ See `package-audit-2026-11-13.json` for all 43 rendered category inventories, pr
 ## Photos
 
 - Replaced Bedroom Basic because its different filename displayed the same photograph as Standard. The replacement is a distinct licensed residential bedroom photo.
-- Replaced Accessibility Standard's ramp image with lever hardware matching its safety/hardware scope. Premium retains the straight-ramp image; Custom retains the accessible bathroom.
-- Added source/creator/license records and visible credits for both local replacements and ten resolved remote Commons sources.
+- Preserved Accessibility Standard’s approved existing-ramp image because its costed scope includes ramp maintenance and grab bars. Premium retains the straight-ramp image; Custom retains the accessible bathroom.
+- Added source/creator/license records and visible credits for the local replacement and ten resolved remote Commons sources.
 - Attic and Basement groups each have distinct relevant images; the existing approved images were preserved.
 - NOT COMPLETE: 31 nested package groups repeat their category cover for Basic/Standard/Deluxe; the Garage Standard/Custom images also show the same scene. Generic Custom images, remaining source licenses, and image-to-scope progression need further visual curation. A filename-only uniqueness check cannot establish photo uniqueness or relevance. Metadata lookup was rate-limited after ten remote credits; existing credit links were preserved.
 
