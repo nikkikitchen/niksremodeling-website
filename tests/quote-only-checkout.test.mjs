@@ -20,18 +20,19 @@ test('Square checkout blocks malformed orders before contacting any processor or
  }finally{globalThis.fetch=previous;}
 });
 
-test('Square checkout rejects any destination absent from configured allowed ZIPs',async()=>{
+test('Square checkout requires a fresh verified destination tax and supplier quote',async()=>{
  const request=new Request('https://niksremodeling.com/api/store-checkout',{
   method:'POST',headers:{Origin:'https://niksremodeling.com','Content-Type':'application/json'},
   body:JSON.stringify({
    productId:'1963146233541074945',variantId:'1963146233666904066',
-   quantity:1,zip:'99999',expectedTotal:8627,requestId:'valid-test-request-123456'
+   quantity:1,zip:'99999',address:'123 Example St',city:'Example',state:'GA',
+   expectedTotal:8627,requestId:'valid-test-request-123456'
   })
  });
  const previous=globalThis.fetch;
- globalThis.fetch=async()=>{throw Error('Unapproved destination must not contact APIs');};
+ globalThis.fetch=async()=>{throw Error('No supplier verification available');};
  try{
-  const result=await onRequestPost({request,env:{STORE_ALLOWED_ZIPS:'30117'}});
+  const result=await onRequestPost({request,env:{CJ_ACCESS_TOKEN:'mock',ZIPTAX_API_KEY:'mock',SQUARE_ACCESS_TOKEN:'mock',SQUARE_LOCATION_ID:'location'}});
   assert.equal(result.status,503);
   assert.equal((await result.json()).checkoutEnabled,false);
  }finally{globalThis.fetch=previous;}
