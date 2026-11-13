@@ -103,30 +103,43 @@ export async function onRequestPost({request, env}) {
         unavailable.map(x=>x.name+' ('+x.reason+')').join('; ')+'.', unavailable},
         {status:503,headers});
 
-    // CJ quotes each product independently more reliably than mixed shipments.
-    // For multiple lines, verify freight for EVERY line and total it. This
-    // avoids a rejected mixed-product quote holding up an otherwise valid cart.
-    // Never use a partial rate or invent free shipping.
-    let quoteMode = details.length > 1 ? 'separate-lines' : 'single-line';
-    let shippingMethod = null;
-    let freight = 0;
-    const methods = new Set();
-    const unquoted = [];
-    for (const detail of details) {
-      const result = await freightQuote(env, zip,
-        [{vid:detail.variant.vid, quantity:detail.quantity}], [detail], cjRequest);
-      if (!result || !(Number(result.freight) > 0)) {
-        unquoted.push({name:detail.displayName,reason:'CJ has not provided a verified freight rate'});
-        continue;
+    // First ask CJ for a real combined shipment quote covering ALL cart lines
+    // at their merged quantities. If CJ rejects mixed products or returns an
+    // ambiguous/zero rate, verify EACH individual line instead. Never invent
+    // free shipping or quietly leave one product out.
+    let combined = null;
+    if (details.length > 1) {
+      try {
+        combined = selectConfirmedFreight(await cjRequest(env, '/logistic/freightCalculate', {
+          startCountryCode:'US', endCountryCode:'US', zip,
+          products:details.map(d=>({vid:d.variant.vid, quantity:d.quantity}))
+        }));
+      } catch {
+        // Some CJ warehouses cannot provide a combined freight method.
       }
-      freight += result.freight;
-      if (result.rate?.logisticName) methods.add(result.rate.logisticName);
     }
-    if (unquoted.length)
-      return Response.json({error:'CJ could not confirm shipping to '+zip+' for: '+
-        unquoted.map(x=>x.name).join('; ')+'. No partial shipping total was added.',
-        unavailable:unquoted}, {status:503,headers});
-    shippingMethod = methods.size === 1 ? [...methods][0] : null;
+    let quoteMode = combined ? 'combined' : details.length > 1 ? 'separate-lines' : 'single-line';
+    let shippingMethod = combined?.rate?.logisticName || null;
+    let freight = combined?.freight ?? 0;
+    if (!combined) {
+      const methods = new Set();
+      const unquoted = [];
+      for (const detail of details) {
+        const result = await freightQuote(env, zip,
+          [{vid:detail.variant.vid, quantity:detail.quantity}], [detail], cjRequest);
+        if (!result || !(Number(result.freight) > 0)) {
+          unquoted.push({name:detail.displayName,reason:'CJ has not provided a verified freight rate'});
+          continue;
+        }
+        freight += result.freight;
+        if (result.rate?.logisticName) methods.add(result.rate.logisticName);
+      }
+      if (unquoted.length)
+        return Response.json({error:'CJ could not confirm shipping to '+zip+' for: '+
+          unquoted.map(x=>x.name).join('; ')+'. No partial shipping total was added.',
+          unavailable:unquoted}, {status:503,headers});
+      shippingMethod = methods.size === 1 ? [...methods][0] : null;
+    }
     if (!Number.isFinite(freight) || freight <= 0)
       throw Error(UNCONFIRMED_SHIPPING_MESSAGE);
 
