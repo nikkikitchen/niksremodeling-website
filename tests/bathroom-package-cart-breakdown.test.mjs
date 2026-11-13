@@ -33,15 +33,15 @@ test('Bathroom and Kitchen package prices derive from itemized labor, materials,
 
 test('cart displays proposed package labor, materials and fees without demanding payment',()=>{
  assert.ok(room.includes('window.beginPackageQuote=function('));
- for(const term of ['Package estimate (labor + materials + supplies + fees)','Materials and supplies (included)','Labor after 7% package discount (included)','Project fees (included)','Total package estimate (not yet due)']){
+ for(const term of ['Project package estimate','Materials &amp; supplies','Labor (7% package discount applied)','Project fees','What is included']){
   assert.ok(app.includes(term),term+' missing');
  }
  assert.ok(app.includes('Request Deposit + Weekly Draws'));
  assert.ok(app.includes('Request Pay-in-Full Invoice'));
  assert.ok(app.includes('Request one full-payment invoice for entire approved cart'));
- assert.ok(app.includes('They are already included in the starting price, not charged twice.'));
+ assert.ok(app.includes('These amounts are included in the package estimate, not added again.'));
  assert.ok(app.includes('No separate installation charge for included work.'));
  assert.ok(!app.includes('Overhead and contingency'),'Do not restore confusing fee label.');
- assert.ok(app.includes('No online payment is taken here yet.'));
+ assert.ok(app.includes('An approved invoice is needed before payment.'));
  assert.ok(terms.includes('weekly progress draws'));
 });
