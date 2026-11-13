@@ -1,6 +1,22 @@
 # Nik's Remodeling — Needs Confirmation Log
 
-Last updated: 2026-11-13. Owner review queue for site/cart/pricing audit.
+Last updated: 2026-11-13. Owner review queue for **missing or unverified price inputs first**, plus separate release tests.
+
+## What belongs in this log (owner clarification)
+
+**Primary purpose: missing or unverified NUMBERS**, not generic UI labels. For every item, record an actual cost or best available provisional estimate whenever reasonably possible, how it was calculated, and source/verification still needed. Use approved labor rates, supplier/material costs, 35% material markup and 7% package discount consistently. Do not write “Needs confirmation” in place of a calculable number.
+
+Shipping: estimate by ZIP and item weights/combined supplier quotes where supported. Tax: calculate a clearly labeled ZIP-based estimate from the known taxable materials and supplies; final address-based tax may differ. Do not state shipping/tax are included in a package unless its price calculation really contains those costs. If a number cannot be responsibly calculated, clearly explain what input is missing and keep checkout blocked.
+
+### Missing or unverified amounts to cost out first
+| Price input | Estimate required | Current verification gap |
+| --- | --- | --- |
+| Garage Standard $1,920 | Materials and supplies subtotal; labor after discount; fees; materials deposit; estimated tax and delivery | Confirm actual itemized basis and price shown in cart |
+| Bathroom package fixtures | Vanity faucet, vanity light, mirror, towel bar, paper holder, other fixture allowances | Current purchase costs and 35% markup |
+| Kitchen packages | Standard light fixture and Kitchen Deluxe cabinets, countertops, installation labor, supplies | Supplier costs and quantities |
+| Remaining packages | All priced scope components and starting prices for each package | Item-level labor/material/supplies audit |
+| CJ supplier goods | Positive U.S. stock, item landed cost, combined ZIP shipping | Live fulfillment quote |
+| Tax | ZIP preview rate and taxable material/supply base | Full-address verification before payment |
 
 ## Rules
 - Keep online purchases paused until shipping, destination tax, payment flow, supplier fulfillment and end-to-end verification are complete.
