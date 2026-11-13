@@ -885,11 +885,11 @@ function cartSecureCheckoutPanel(items){
    'This item requires a verified invoice before an online payment can be collected.';
  return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Secure online checkout">'+
   '<h3>Secure checkout</h3>'+
-  (eligible?'<p>Your ZIP starts the estimate. Enter the full delivery address to confirm the exact tax before paying.</p>':
+  (eligible?'':
    '<p>'+reason+'</p>')+
-  (eligible?'<div class="nr-checkout-address"><label>Street address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street and house number" maxlength="150"></label><label>City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label>State (two letters)<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div><button type="button" class="btn outline" id="square-check-price">Verify total for payment</button> ':'<a class="btn outline" href="#cart-scheduling">Request approved invoice to pay in full</a> ')+
+  (eligible?'<button type="button" class="btn outline" id="square-check-price">Check final total</button> ':'<a class="btn outline" href="#cart-scheduling">Request approved invoice to pay in full</a> ')+
   '<button type="button" class="btn primary" id="square-pay" disabled>Pay securely with Square</button>'+
-  '<p id="square-check-status" role="status" aria-live="polite">'+(eligible?'Verify your final price to enable payment.':'The estimate cannot be charged automatically. A verified invoice is required before a card payment.')+'</p></section>';
+  '<p id="square-check-status" role="status" aria-live="polite">'+(eligible?'Enter your delivery address above to check the final total.':'An approved invoice is needed before payment.')+'</p></section>';
 }
 function initCartSecureCheckout(items){
  const check=document.getElementById('square-check-price');
@@ -1109,10 +1109,10 @@ function renderCart(){
   const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
- <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'} · Review your items and total.</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'}</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
 
  ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
- <h2>Items in Your Cart</h2><p class="calc-note">Shopping products are additional purchases unless an eligible fixture is explicitly credited to your package below. Shipping, applicable taxes and installation outside package scope are confirmed before you approve an invoice.</p><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
+ <h2>Items</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
  <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
@@ -1124,7 +1124,7 @@ function renderCart(){
  <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
  <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
  </article>`).join('')}</div>
- <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}<a class="btn outline" href="/?open=shopping">Add Products</a></div>
+ <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}</div>
  </section><div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
  ${nrProjectShoppingMarkup(c)}
  ${cartSchedulingMarkup(c)}
@@ -1134,9 +1134,16 @@ function renderCart(){
  </div></section></main>`+footer();
  const zipTop=document.getElementById('nr-cart-zip-top');
  const zipForm=document.getElementById('cart-shipping-form');
+ const canPayRetail=!!document.getElementById('square-check-price');
  if(zipTop&&zipForm){
   const zipStatus=document.getElementById('cart-shipping-status');
+  if(canPayRetail){
+   zipTop.insertAdjacentHTML('afterbegin','<h3>Delivery address</h3>');
+  }
   zipTop.appendChild(zipForm);
+  if(canPayRetail){
+   zipForm.insertAdjacentHTML('beforeend','<div class="nr-checkout-address"><label for="square-ship-address">Street address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street address" maxlength="150"></label><label for="square-ship-city">City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label for="square-ship-state">State<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div>');
+  }
   if(zipStatus)zipTop.appendChild(zipStatus);
  }else if(zipTop){zipTop.remove();}
  updateCartCount();initCartShippingQuote(c);initCartTaxPreview();initCartSecureCheckout(c);
