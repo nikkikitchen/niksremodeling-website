@@ -47,5 +47,17 @@ Shipping: estimate by ZIP and item weights/combined supplier quotes where suppor
 - Cart change committed to `app.js` to show package deposit and ZIP-first summary; still requires tests and review, NC-013.
 - Customer online payments remain disabled in cart code pending full verification.
 
+## Audit findings — package baseline coverage (2026-11-13)
+
+Verified against `data/package-bundle-baselines.json`: only the following tiers currently have itemized reference baseline entries for the listed projects. Other displayed project tiers may use a different calculation path, but their itemized price basis has **not** been verified in this check. **Do not assume they are wrong or zero cost**; reconcile the actual project-card and cart math before approving.
+
+- Garage: Basic and Standard have baseline entries; Deluxe and Custom need a separate reviewed price basis (Custom may remain quote-only).
+- Basement, Laundry & Utility, Home Office, Kids' Room, Entry/Mudroom, Wallpaper, Patios/Concrete, Adult Room, Arches, Murals, Pet Room, Games & Hobbies, Mechanic Shop, and Music/Creative Studio: only Basic is present in this baseline file.
+- Closets & Storage: Basic and Standard present; higher tiers, if sold, need independent review.
+- Attic: only Standard present in this baseline file.
+- Bedroom, Dining Room, and Living/Family Room: Basic, Standard and Deluxe present.
+
+**Calculation risk found:** `app.js` package price/deposit and ZIP tax display still need a regression test for a **mixed cart with a package and retail merchandise**. The ZIP-based tax basis includes the package material estimate once; the deposited amount is displayed separately. This is not an end-to-end proof that all package supplies, delivery and fees are correctly allocated. Keep payment locked.
+
 ## Sign-off
 A row is not finished until the result is verified and the resolution/date is recorded. Do not enable live checkout based solely on a successful source commit.
