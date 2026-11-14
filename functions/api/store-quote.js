@@ -12,15 +12,18 @@ export async function onRequestGet({request,env}){
  const catalogItem=[...catalog,...retailCatalog].find(p=>String(p.id)===id);
  if(!catalogItem)return Response.json({error:'This product is not yet enabled for online checkout.'},{status:404,headers:{'Cache-Control':'no-store'}});
  const zip=params.get('zip');if(!/^\d{5}$/.test(zip||''))return Response.json({error:'Enter a five-digit delivery ZIP code.'},{status:400});
+ let stage='product lookup';
  try{
  const p=await cj(env,'/product/query?pid='+encodeURIComponent(id)+'&countryCode=US');
  const item=catalogItem||{id,name:p.productNameEn||p.productName||'Furniture item'};
  const v=(p.variants||[]).find(v=>v.vid===(params.get('variant')||item.variantId));if(!v)throw new Error('This option is unavailable');
+ stage='US inventory';
  const inv=await cj(env,'/product/stock/queryByVid?vid='+encodeURIComponent(v.vid));
  const stock=usCjWarehouseUnits(inv);
  if(stock<1)throw new Error('No confirmed U.S. warehouse stock for this option');
  // A temporary failure in CJ's basic freight endpoint must not bypass the
  // independently verified detailed quote fallback. Neither path may invent freight.
+ stage='CJ shipping';
  let confirmed=null;
  try {
   const rates=await cj(env,'/logistic/freightCalculate',{startCountryCode:'US',endCountryCode:'US',zip,products:[{vid:v.vid,quantity:1}]});
@@ -32,6 +35,7 @@ export async function onRequestGet({request,env}){
  if(!confirmed)throw new Error(UNCONFIRMED_SHIPPING_MESSAGE);
  const {rate,freight:shipping}=confirmed;
  const total=retailCents(Number(v.variantSellPrice)+shipping);
+ stage='destination tax';
  const tax=await destinationSalesTax(env,{
   zip,address:params.get('address'),city:params.get('city'),state:params.get('state')
  });
@@ -41,5 +45,5 @@ export async function onRequestGet({request,env}){
  const taxableCents=retailCents(v.variantSellPrice)+(tax.shippingTaxable?total-retailCents(v.variantSellPrice):0);
  const taxCents=Math.round(taxableCents*tax.rate);
  return Response.json({productId:item.id,variantId:v.vid,name:item.name,variant:v.variantKey,sku:v.variantSku,zip,stock,productCents:retailCents(v.variantSellPrice),deliveryCents:total-retailCents(v.variantSellPrice),subtotalCents:total,shippingMethod:rate.logisticName,transitDays:rate.logisticAging,taxConfigured:true,taxRatePercent:tax.ratePercent,shippingTaxable:tax.shippingTaxable,taxCents,totalCents:total+taxCents,checkoutEnabled,checkoutPaused:true},{headers:{'Cache-Control':'no-store'}});
- }catch(e){return Response.json({error:e.message.startsWith('Square ')?'Payment settings need attention.':e.message==='Supplier unavailable'?'Delivery quote temporarily unavailable.':e.message},{status:503,headers:{'Cache-Control':'no-store'}});}
+ }catch(e){return Response.json({stage,error:e.message.startsWith('Square ')?'Payment settings need attention.':e.message==='Supplier unavailable'?'Delivery quote temporarily unavailable.':e.message},{status:503,headers:{'Cache-Control':'no-store'}});}
 }
