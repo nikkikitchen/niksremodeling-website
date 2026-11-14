@@ -41,9 +41,9 @@ export async function cj(env, path, body) {
    const safeCode=/^\d{1,10}$/.test(String(data?.code??''))?String(data.code):'none';
    diagnostic='HTTP '+r.status+' CJ code '+safeCode;
    retryable=r.status===429||r.status>=500||['1600200','402','406','429'].includes(String(data?.code??''));
-   if(!retryable)throw new Error('Supplier unavailable');
+   if(!retryable)throw new Error('Supplier unavailable ('+diagnostic+')');
   } catch(error) {
-   if(error?.message==='Supplier unavailable')throw error;
+   if(String(error?.message||'').startsWith('Supplier unavailable ('))throw error;
    // A network timeout can also be transient; never keep retrying endlessly.
    retryable=true;
    if(diagnostic==='unknown')diagnostic='network or invalid response';
