@@ -158,7 +158,7 @@ const checkoutApp=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 const checkoutPage=readFileSync(new URL('../project-cart.html',import.meta.url),'utf8');
 const paymentHandler=readFileSync(new URL('../functions/api/store-checkout.js',import.meta.url),'utf8');
 const quoteHandler=readFileSync(new URL('../functions/api/store-quote.js',import.meta.url),'utf8');
-for(const marker of ['function cartSecureCheckoutPanel(items)','Pay securely with Square','initCartSecureCheckout(c)']){
+for(const marker of ['function cartSecureCheckoutPanel(items)','Opening secure Square checkout','initCartSecureCheckout(c)']){
  if(!checkoutApp.includes(marker))throw Error('Checkout interface missing: '+marker);
 }
 if(!checkoutPage.includes('src="/app.js?'))throw Error('Cart page does not load the checkout application.');
