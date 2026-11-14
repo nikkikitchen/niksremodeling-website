@@ -55,3 +55,28 @@ test('valid direct orders cannot bypass the hard hold with credentials or enable
   assert.equal(calls,0);
  }finally{globalThis.fetch=original;}
 });
+
+test('CJ retries a temporary rate limit once and succeeds without changing the quote',async()=>{
+ const {cj}=await import('../functions/_lib/commerce.js');
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{
+  calls++;
+  return calls===1?new Response(JSON.stringify({result:false,code:'1600200'}),{status:429}):
+   new Response(JSON.stringify({result:true,data:[{logisticName:'Verified CJ Delivery',logisticPrice:12.5}]}),{status:200});
+ };
+ try{
+  const result=await cj({CJ_ACCESS_TOKEN:'mock'},'/logistic/freightCalculate',{zip:'30117'});
+  assert.equal(calls,2);
+  assert.equal(result[0].logisticPrice,12.5);
+ }finally{globalThis.fetch=original;}
+});
+
+test('CJ does not retry a permanent authentication error',async()=>{
+ const {cj}=await import('../functions/_lib/commerce.js');
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({result:false,code:'401'}),{status:401});};
+ try{
+  await assert.rejects(cj({CJ_ACCESS_TOKEN:'mock'},'/product/query?pid=example'),/Supplier unavailable/);
+  assert.equal(calls,1);
+ }finally{globalThis.fetch=original;}
+});
