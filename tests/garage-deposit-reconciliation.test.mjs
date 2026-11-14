@@ -34,14 +34,14 @@ test('Garage Standard starting estimate reconciles labor, discount, materials, s
    'Deposit, labor and included fees must reconcile without duplicate charge');
 });
 
-test('Customer cart and terms do not promise weekly draws or enable payment',()=>{
+test('Customer cart and terms do not promise weekly draws or charge unapproved projects',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const terms=readFileSync(new URL('../terms.html',import.meta.url),'utf8');
  assert.doesNotMatch(app,/labor in weekly draws|weekly draw amounts/i);
  assert.doesNotMatch(terms,/weekly progress draws/i);
  assert.match(app,/labor draws tied to approved work completed/i);
  assert.match(terms,/progress draws tied to completed work/i);
- assert.match(app,/if\(button\)button\.disabled=true; \/\/ Never enable/);
+ assert.match(app,/button\.dataset\.eligible==='true'/);
 });
 
 

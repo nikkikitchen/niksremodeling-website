@@ -40,10 +40,12 @@ export async function onRequestGet({request,env}){
   zip,address:params.get('address'),city:params.get('city'),state:params.get('state')
  });
  const locationId=String(env.SQUARE_LOCATION_ID||'');
- // Price/shipping/tax quotes may be tested, but they never authorize payment.
- const checkoutEnabled=false;
+ // Only a complete, freshly verified address, warehouse stock, freight and tax
+ // may produce an enabled checkout quote. No ZIP-only cart preview can pay.
+ const checkoutEnabled=!!locationId&&stock>0&&Number.isFinite(shipping)&&shipping>=0&&
+  Number.isFinite(tax.rate)&&tax.rate>=0;
  const taxableCents=retailCents(v.variantSellPrice)+(tax.shippingTaxable?total-retailCents(v.variantSellPrice):0);
  const taxCents=Math.round(taxableCents*tax.rate);
- return Response.json({productId:item.id,variantId:v.vid,name:item.name,variant:v.variantKey,sku:v.variantSku,zip,stock,productCents:retailCents(v.variantSellPrice),deliveryCents:total-retailCents(v.variantSellPrice),subtotalCents:total,shippingMethod:rate.logisticName,transitDays:rate.logisticAging,taxConfigured:true,taxRatePercent:tax.ratePercent,shippingTaxable:tax.shippingTaxable,taxCents,totalCents:total+taxCents,checkoutEnabled,checkoutPaused:true},{headers:{'Cache-Control':'no-store'}});
+ return Response.json({productId:item.id,variantId:v.vid,name:item.name,variant:v.variantKey,sku:v.variantSku,zip,stock,productCents:retailCents(v.variantSellPrice),deliveryCents:total-retailCents(v.variantSellPrice),subtotalCents:total,shippingMethod:rate.logisticName,transitDays:rate.logisticAging,taxConfigured:true,taxRatePercent:tax.ratePercent,shippingTaxable:tax.shippingTaxable,taxCents,totalCents:total+taxCents,checkoutEnabled,checkoutPaused:!checkoutEnabled},{headers:{'Cache-Control':'no-store'}});
  }catch(e){return Response.json({stage,error:e.message.startsWith('Square ')?'Payment settings need attention.':e.message==='Supplier unavailable'?'Delivery quote temporarily unavailable.':e.message},{status:503,headers:{'Cache-Control':'no-store'}});}
 }
