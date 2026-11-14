@@ -832,7 +832,7 @@ function cartCheckoutSummary(items){
  <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Enter ZIP for retail items; package delivery pending':remainingShippingPending?'Package delivery to be verified':'Not applicable'}</strong></div>
 
  <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
- ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Payment after final approval: a materials deposit after quote approval, then labor draws tied to approved work completed, or pay the full approved project. No payment is accepted online yet.</p>':''}
+ ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Payment after final approval: a materials deposit after quote approval, then labor draws tied to approved work completed, or pay the full approved project. Pay only using the private approved-quote link supplied after review.</p>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
  <div class="cart-item nr-cart-balance-row" ${unconfirmedPackages.length&&combinedEstimatedTotal===0?'style="display:none"':''}><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Other priced items':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
  <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span><strong>Materials deposit / due at approval</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
@@ -842,18 +842,20 @@ function cartCheckoutSummary(items){
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax and delivery are estimates.</p>
  <div class="nr-cart-pay-controls" style="margin-top:14px;padding-top:14px;border-top:1px solid #dfe5ea">
  <label class="nr-cart-terms" style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="cart-terms-agree" onchange="updateCartPayButton()"> <span>I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
+ <label>Receipt email <input type="email" id="cart-receipt-email" autocomplete="email" maxlength="254"></label>
  <button class="btn primary" id="cart-pay-button" type="button" disabled style="margin-top:12px;padding:10px 22px">Pay</button>
  <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
  </div>
  </section>`;
 }
 function cartSchedulingRequestMarkup(items){
- const packages=items.filter(x=>['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source));
+ const packages=items.filter(x=>!x.hiddenFromCustomer&&(['Labor','Service'].includes(x.type)||['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source)));
  if(!packages.length)return '';
  return '<section class="panel" id="cart-scheduling" style="margin:16px 0;padding:20px">'+
   '<h3>Request Scheduling</h3><p>Ask for a start date. We will confirm the final quote, availability, and any deposit before collecting payment.</p>'+
   '<form id="nr-scheduling-form"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">'+
   '<label>Your name<input name="name" required maxlength="90" autocomplete="name" placeholder="Full name"></label>'+
+  '<label>Email<input name="email" type="email" required maxlength="254" autocomplete="email"></label>'+
   '<label>Phone<input name="phone" required type="tel" maxlength="25" autocomplete="tel" placeholder="Phone number"></label>'+
   '<label>Preferred start date<input name="date" type="date" required></label>'+
   '<label>Project ZIP<input name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required></label>'+
@@ -866,7 +868,7 @@ function initCartSchedulingRequest(items){
  if(!form)return;
  const date=form.elements.namedItem('date');
  if(date)date.min=new Date().toISOString().slice(0,10);
- form.addEventListener('submit',e=>{
+ form.addEventListener('submit',async e=>{
   e.preventDefault();
   if(!form.reportValidity())return;
   const name=String(form.elements.namedItem('name').value||'').trim();
@@ -877,12 +879,21 @@ function initCartSchedulingRequest(items){
    x.name+'; starting estimate '+(Number(x.startingAt)>0?'$'+Number(x.startingAt).toFixed(2):'quote required')+
    (x.measurements?.accentOnly?'; wall '+x.measurements.length+' × '+x.measurements.height+' ft.':'')
   ).join('\n');
-  const body='Scheduling request for Nik’s Remodeling\n\nName: '+name+'\nPhone: '+phone+
-    '\nPreferred date: '+preferred+'\nZIP: '+zip+'\n\nProject:\n'+projects+
-    '\n\nPlease confirm scope, final price, start date, and deposit before payment.';
   const status=document.getElementById('nr-scheduling-status');
-  if(status)status.textContent='Your email app is opening. Send the drafted message to submit the request.';
-  location.href='mailto:'+SITE.email+'?subject='+encodeURIComponent('Scheduling request — Nik’s Remodeling')+'&body='+encodeURIComponent(body);
+  const button=form.querySelector('button');if(button.disabled)return;
+  const email=String(form.elements.namedItem('email').value||'').trim();
+  const payload={name,phone,email,date:preferred,zip,details:projects};
+  const signature=JSON.stringify(payload);
+  if(form.dataset.payload!==signature){form.dataset.requestId=crypto.randomUUID();form.dataset.payload=signature;}
+  button.disabled=true;status.textContent='Submitting your scheduling request…';
+  try{
+   const response=await fetch('/api/scheduling',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({...payload,requestId:form.dataset.requestId})});
+   const result=await response.json();if(!response.ok)throw Error(result.error||'Request could not be submitted.');
+   status.textContent=result.message+' Reference: '+result.reference;
+   button.textContent='Request received';
+  }catch(error){status.textContent=error.message+' No date has been confirmed.';button.disabled=false;}
+
  });
 }
 function updateCartPayButton(){
@@ -899,6 +910,12 @@ function cartSecureCheckoutPanel(items){
   '<p>We are checking that sales tax and delivery charges are accurate before accepting payments. No online payment can be made right now.</p>'+
   (visible.length?'<a class="btn outline" href="#cart-scheduling">Request a quote</a>':'')+
   '</section>';
+}
+function cartCheckoutRequestId(payload){
+ const key='nr-checkout-attempt',fingerprint=JSON.stringify(payload);
+ let saved;try{saved=JSON.parse(sessionStorage.getItem(key)||'null');}catch{}
+ if(!saved||saved.fingerprint!==fingerprint){saved={fingerprint,id:crypto.randomUUID()};sessionStorage.setItem(key,JSON.stringify(saved));}
+ return saved.id;
 }
 function initCartSecureCheckout(items){
  const button=document.getElementById('cart-pay-button');
@@ -922,6 +939,8 @@ function initCartSecureCheckout(items){
  status.textContent='Enter your delivery address, agree to the terms, then pay securely with Square.';
  button.addEventListener('click',async()=>{
   if(button.disabled||button.dataset.busy==='true')return;
+  const email=String(document.getElementById('cart-receipt-email')?.value||'').trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent='Enter your receipt email before paying.';return;}
   const zip=String(zipInput?.value||'').trim();
   const address=String(addressInput?.value||'').trim();
   const city=String(cityInput?.value||'').trim();
@@ -946,16 +965,17 @@ function initCartSecureCheckout(items){
     city!==String(cityInput?.value||'').trim()||
     state!==String(stateInput?.value||'').trim().toUpperCase())
     throw Error('Address or terms changed. Please try again.');
+   if(!window.confirm('Delivery to '+address+', '+city+', '+state+' '+zip+'. Confirm the verified merchandise, delivery and tax total of '+(quote.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'})+' before opening Square checkout.'))return;
    const money=(quote.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
    status.textContent='Verified total '+money+'. Opening secure Square checkout…';
    const payResponse=await fetch('/api/store-checkout',{
     method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
     body:JSON.stringify({productId:String(item.productId),variantId:String(item.variantId),
      quantity:1,zip,address,city,state,expectedTotal:quote.totalCents,
-     requestId:crypto.randomUUID()})
+     email,termsAccepted:true,requestId:cartCheckoutRequestId({productId:item.productId,variantId:item.variantId,quantity:1,zip,address,city,state,email,total:quote.totalCents})})
    });
    const payment=await payResponse.json();
-   if(!payResponse.ok||!payment.url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(payment.url))
+   if(!payResponse.ok||!payment.url||!/^https:\/\/((?:sandbox\.)?square\.link|(?:sandbox\.)?checkout\.square\.site)\//.test(payment.url))
     throw Error(payment.error||'Secure checkout is unavailable. No payment was taken.');
    location.assign(payment.url);
   }catch(error){

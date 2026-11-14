@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = new URL('../dist/', import.meta.url);
-const files = ['project-package-photos.js','catalog.html','catalog-client.js','material-price-reference.json', 'material-price-reference.html', 'material-prices.js', 'inventory-status.json', 'real-products.js', 'retail-catalog.js', 'bathroom-catalog.js', 'store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'product-search.html', 'product-search.js', 'shopping.html', 'other.html', 'shop-installed.html', 'shop-installed.js', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
+const files = ['payment.html','payment.js','project-package-photos.js','catalog.html','catalog-client.js','material-price-reference.json', 'material-price-reference.html', 'material-prices.js', 'inventory-status.json', 'real-products.js', 'retail-catalog.js', 'bathroom-catalog.js', 'store-cards.js', 'store-catalog.js', 'store.js', 'store.css', 'bathroom-shop.js', 'index.html', 'product-search.html', 'product-search.js', 'shopping.html', 'other.html', 'shop-installed.html', 'shop-installed.js', 'room-projects.js', 'shopping-flow.js', 'calculator-steps.js', 'project.html', 'materials.html', 'supplies.html', 'tools.html', 'products.html',
   'furniture.html', 'bathroom.html', 'appliances.html', 'cabinets.html', 'installation.html', 'terms.html', 'labor-price-review.html', 'labor-price-chart.html', 'room-labor.html',
   'calculators.html', 'project-cart.html', 'material-flooring.html', 'material-tile-stone.html', 'material-drywall.html', 'material-lumber.html', 'material-trim-molding.html', 'material-paint-finishes.html', 'material-insulation.html', 'material-roofing.html', 'material-siding-exterior.html', 'material-doors-windows.html', 'material-concrete-masonry.html', 'styles.css', 'app.js', 'project-calculator-options.js', 'calculator-simple-flow.js', 'project-options.js',
   '_headers', '.nojekyll'];
@@ -162,10 +162,12 @@ for(const marker of ['function cartSecureCheckoutPanel(items)','Opening secure S
  if(!checkoutApp.includes(marker))throw Error('Checkout interface missing: '+marker);
 }
 if(!checkoutPage.includes('src="/app.js?'))throw Error('Cart page does not load the checkout application.');
-for(const marker of ['q.totalCents!==expectedTotal','payment_link','SQUARE_LOCATION_ID']){
+for(const marker of ['q.totalCents!==expectedTotal','createCheckout','requireTransactions','SQUARE_LOCATION_ID']){
  if(!paymentHandler.includes(marker))throw Error('Square payment handler missing: '+marker);
 }
 if(!quoteHandler.includes('checkoutEnabled'))throw Error('Square quote readiness missing.');
+const transactionHandler=readFileSync(new URL('../functions/_lib/transactions.js',import.meta.url),'utf8');
+for(const marker of ['payment_link','fingerprint','actual?.total_money?.amount!==quote.totalCents',"payment.status!=='COMPLETED'"]){if(!transactionHandler.includes(marker))throw Error('Transaction verification missing: '+marker);}
 console.log('Checkout release gate passed: cart button and secured payment handlers present.');
 
 rmSync(output, { recursive: true, force: true });

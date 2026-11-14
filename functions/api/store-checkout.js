@@ -1,3 +1,4 @@
+import {body as readBody,createCheckout,requireTransactions,safeError} from '../_lib/transactions.js';
 import {square} from '../_lib/commerce.js';
 import {catalog} from '../../store-catalog.js';
 import {retailCatalog} from '../../retail-catalog.js';
@@ -12,7 +13,7 @@ export async function onRequestPost({request,env}){
  const origin=new URL(request.url).origin;
  if(request.headers.get('Origin')!==origin)return fail('Start checkout from our website.',403);
  let body;
- try{body=await request.json();}catch{return fail('Invalid checkout request.',400);}
+ try{body=await readBody(request);}catch{return fail('Invalid checkout request.',400);}
  const productId=String(body?.productId||'');
  const variantId=String(body?.variantId||'');
  const zip=String(body?.zip||'');
@@ -22,10 +23,11 @@ export async function onRequestPost({request,env}){
  const requestId=String(body?.requestId||'');
  const expectedTotal=Number(body?.expectedTotal);
  if(!/^\d{8,30}$/.test(productId)||!/^[-\w]{8,64}$/.test(variantId)||
-    !/^\d{5}$/.test(zip)||!/^[a-zA-Z0-9-]{16,64}$/.test(requestId)||
+    !/^\d{5}$/.test(zip)||!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(requestId)||
     !Number.isSafeInteger(expectedTotal)||expectedTotal<=0||
     Number(body?.quantity)!==1)
   return fail('Check the product, quantity and delivery ZIP before checkout.',400);
+ if(body.termsAccepted!==true||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(body.email||'')))return fail('Agree to the terms and enter your email.',400);
  if(![...catalog,...retailCatalog].some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
  // A purchase is allowed only after fresh supplier inventory, shipping and exact
  // destination tax are confirmed. All other carts remain quote-only.
@@ -47,6 +49,7 @@ export async function onRequestPost({request,env}){
   if(!Number.isSafeInteger(q.subtotalCents)||q.subtotalCents<=0||
      !Number.isSafeInteger(q.deliveryCents)||q.deliveryCents<0)
    return fail('Delivery pricing needs confirmation.');
+  requireTransactions(env);
   const {location}=await square(env,'/v2/locations/'+encodeURIComponent(env.SQUARE_LOCATION_ID));
   if(location?.status!=='ACTIVE'||location.currency!=='USD'||
       !location.capabilities?.includes('CREDIT_CARD_PROCESSING'))
@@ -66,32 +69,11 @@ export async function onRequestPost({request,env}){
   },{
    name:'Verified delivery to '+zip,quantity:'1',base_price_money:{amount:q.deliveryCents,currency:'USD'}
   }];
-  const payment=await square(env,'/v2/online-checkout/payment-links',{
-   idempotency_key:requestId,
-   description:itemName+' — verified US-stock merchandise. Fulfillment after payment and address verification.',
-   order:{
-    location_id:env.SQUARE_LOCATION_ID,
-    reference_id:requestId.slice(0,40),
-    line_items:lineItems,
-    taxes:[{uid:taxUid,name:'Destination sales tax',percentage:String(q.taxRatePercent),scope:'LINE_ITEM'}]
-   },
-   checkout_options:{
-    ask_for_shipping_address:true,allow_tipping:false,
-    merchant_support_email:'contact@niksremodeling.com',
-    redirect_url:origin+'/project-cart.html?payment=returned'
-   },
-   payment_note:'Verify COMPLETED payment, buyer address ZIP '+zip+', verified CJ stock, and funds before manually ordering from supplier. Refund/contact buyer if address differs.'
+  const result=await createCheckout({env,id:requestId,kind:'retail',quote:q,
+   customer:{email:String(body.email).trim(),address,city,state,zip},origin,
+   order:{line_items:lineItems,taxes:[{uid:taxUid,name:'Destination sales tax',percentage:String(q.taxRatePercent),scope:'LINE_ITEM'}]},
+   options:{ask_for_shipping_address:false,merchant_support_email:'contact@niksremodeling.com'}
   });
-  // Never send a buyer to a payment link whose actual Square order total
-  // differs from the freshly verified amount (rounding/tax settings included).
-  const actualOrder=payment.related_resources?.orders?.find(order=>order.id===payment.payment_link?.order_id)
-    || payment.related_resources?.orders?.[0];
-  if(!Number.isSafeInteger(actualOrder?.total_money?.amount)||
-     actualOrder.total_money.amount!==q.totalCents)
-   return fail('Square tax or order total does not match the verified quote. Checkout was stopped.');
-  const url=payment.payment_link?.url;
-  if(!url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(url))
-   return fail('Square did not return a valid secure checkout link.');
-  return Response.json({url,totalCents:q.totalCents,zip},{headers:HEADERS});
- }catch{return fail('Secure checkout could not be started. No order was placed.');}
+  return Response.json({...result,zip},{headers:HEADERS});
+ }catch(error){return safeError(error);}
 }

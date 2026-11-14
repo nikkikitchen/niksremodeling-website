@@ -37,7 +37,7 @@ export async function onRequestGet({request,env}){
  if(!confirmed)throw new Error(UNCONFIRMED_SHIPPING_MESSAGE);
  const {rate,freight:shipping}=confirmed;
  const productCents=retailCents(Number(v.variantSellPrice));
- const deliveryCents=retailCents(shipping);
+ const deliveryCents=Math.ceil(shipping*135); // verified free shipping remains zero
  const total=productCents+deliveryCents;
  stage='destination tax';
  const tax=await destinationSalesTax(env,{

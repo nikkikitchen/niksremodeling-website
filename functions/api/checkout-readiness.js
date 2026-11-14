@@ -21,13 +21,16 @@ export async function onRequestGet({request,env={}}) {
  }
  // Destination tax is calculated per verified address, then Square validates the exact order total.
  taxActive=taxConfigured;
- const ready=paymentActive&&taxActive&&freightConfigured&&destinationConfigured;
+ let recordingReady=false;
+ if(env.BUSINESS_DB&&env.SQUARE_WEBHOOK_SIGNATURE_KEY&&env.SQUARE_WEBHOOK_URL){try{await env.BUSINESS_DB.prepare('SELECT id FROM checkout_orders LIMIT 1').all();recordingReady=true;}catch{}}
+ const ready=recordingReady&&paymentActive&&taxActive&&freightConfigured&&destinationConfigured;
  const checks={paymentProcessor:paymentActive?'ready':!paymentTokenPresent?'credentials missing':!paymentLocationPresent?'location ID missing':'location not verified',
-  salesTax:taxActive?'ready':'needs setup',
+  salesTax:taxActive?'configured; address verification required':'needs setup',
+  orderRecording:recordingReady?'configured':'needs database migration and payment notifications',
   supplier:freightConfigured?'configured':'needs setup',
   destination:!hasZip?'enter ZIP':'eligible for shipping quote'};
  return Response.json({checkoutReadyForVerification:ready,checkoutPaused:false,configurationReadyForTesting:ready,
-  checks:{...checks,onlinePurchases:ready?'verified retail only':'verification required'},
-  note:'Online payment is available only for a single retail item after US stock, delivered shipping, exact destination-address tax and Square total are reverified. Projects and unverified orders remain quote-only.'},
+  checks:{...checks,onlinePurchases:'verification required'},
+  note:'Configuration checks do not verify any transaction. Sandbox acceptance is still required. Online payment is available only for a single retail item after US stock, delivered shipping, exact destination-address tax and Square total are reverified. Projects and unverified orders remain quote-only.'},
   {headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 }

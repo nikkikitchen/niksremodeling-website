@@ -1,3 +1,6 @@
+import {onRequest as projectAdmin} from '../functions/api/project-admin/[[path]].js';
+import {transactionEnv} from './helpers/transaction-db.mjs';
+import {transactionJs} from '../functions/_lib/transaction-owner-ui.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {authenticateOwner} from '../functions/_lib/owner-auth.js';
@@ -19,8 +22,8 @@ function request(path,token,body,origin='https://niksremodeling.com'){
  return new Request('https://niksremodeling.com'+path,{method:body?'POST':'GET',headers:{...(token?{'Cf-Access-Jwt-Assertion':token}:{}),...(body?{'Content-Type':'application/json',Origin:origin}:{})},body:body?JSON.stringify(body):undefined});
 }
 test('every private route rejects anonymous access and does not trust an email header',async()=>{
- for(const path of ['/api/owner/products','/api/owner/projects','/api/owner/dashboard/test','/owner','/owner/app.js','/owner/style.css']){
-  const fn=path.startsWith('/api/')?ownerApi:ownerPage;
+ for(const path of ['/api/owner/products','/api/owner/projects','/api/owner/dashboard/test','/owner','/owner/app.js','/owner/style.css','/owner/transactions.js','/api/project-admin/quotes','/api/project-admin/orders','/api/project-admin/scheduling']){
+  const fn=path.startsWith('/api/project-admin/')?projectAdmin:path.startsWith('/api/')?ownerApi:ownerPage;
   const response=await fn({request:new Request('https://niksremodeling.com'+path,{headers:{'Cf-Access-Authenticated-User-Email':'owner@example.test'}}),env:{OWNER_EMAILS:'owner@example.test',BUSINESS_DB:{}}});
   assert.equal(response.status,401);assert.match(response.headers.get('Cache-Control'),/no-store/);
   assert.ok(!(await response.text()).includes('supplier_cost'));
@@ -73,4 +76,18 @@ test('private CJ refresh records exact SKU cost and physical US stock without or
   units=0;response=await ownerApi({request:request('/api/owner/refresh-stock',token,{id:'sku-test'}),env});assert.equal(response.status,200);row=db.sqlite.prepare('SELECT * FROM business_products WHERE id=?').get('sku-test');assert.equal(row.stock_quantity,0);
   assert.ok(calls.every(url=>!url.includes('/order')&&!url.includes('/payment')));
  }finally{db.close();global.fetch=old;}
+});
+
+test('only authenticated owner approves immutable itemized quotes and reviews scheduling',async()=>{
+ const i=await identity(),env={...transactionEnv(),...i.env},old=global.fetch;global.fetch=async()=>Response.json({keys:[i.jwk]});
+ try{
+  new Script(transactionJs);
+  const token=await i.token({});
+  const body={customerName:'Buyer',customerEmail:'buyer@example.test',projectName:'Approved accent wall',scope:'12 x 8 foot wall',scopeApproved:true,taxReviewed:true,items:[{name:'Labor',category:'labor',amountCents:10000}],totalCents:10000,depositCents:5000,allowFull:true,expiresAt:new Date(Date.now()+86400000).toISOString()};
+  assert.equal((await projectAdmin({env,request:request('/api/project-admin/quotes',token,body,'https://attacker.test')})).status,403);
+  const response=await projectAdmin({env,request:request('/api/project-admin/quotes',token,body)});assert.equal(response.status,201);assert.match((await response.json()).url,/payment.html#quote=/);
+  const quotes=await (await projectAdmin({env,request:request('/api/project-admin/quotes',token)})).json();assert.equal(quotes.quotes.length,1);assert.equal(quotes.quotes[0].approved_by,'owner@example.test');
+  assert.equal((await projectAdmin({env,request:request('/api/project-admin/quotes',token,{...body,totalCents:1})})).status,400);
+  const page=await ownerPage({env,request:request('/owner/transactions.js',token)});assert.equal(page.status,200);assert.match(page.headers.get('Cache-Control'),/private/);
+ }finally{global.fetch=old;}
 });

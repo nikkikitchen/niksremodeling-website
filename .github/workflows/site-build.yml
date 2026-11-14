@@ -28,8 +28,8 @@ jobs:
         run: npm test
       - name: Run calculator audit
         run: npm run test:calculator
-      - name: Install browser
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and Firefox
+        run: npx playwright install --with-deps chromium firefox
       - name: Test built site on desktop, tablet and phone
         run: npm run test:browser
       - name: Check live Cloudflare checkout release (read-only, non-blocking)
