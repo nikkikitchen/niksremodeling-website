@@ -26,15 +26,27 @@ export async function accessToken(env) {
 
 export async function cj(env, path, body) {
  const token=await accessToken(env); if(!token)throw new Error('Supplier not configured');
- const r=await fetch(CJ_BASE+path,{method:body?'POST':'GET',headers:{'CJ-Access-Token':token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})});
- const data=await r.json();
- if(!r.ok||(!data.result&&!data.success)||!data.data) {
-   // CJ throttling is temporary and must not be mistaken for an unavailable product.
-   if(r.status===429||['1600200','402','406','429'].includes(String(data?.code??'')))
-     throw new Error('Supplier rate limited');
-   throw new Error('Supplier unavailable');
+ // CJ has previously rate-limited bursts of product requests. One short,
+ // bounded retry handles transient throttling/5xx without making every quote
+ // wait or inventing a shipping rate. Never retry authorization/invalid input.
+ const options={method:body?'POST':'GET',headers:{'CJ-Access-Token':token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})};
+ for(let attempt=0;attempt<2;attempt++){
+  let retryable=false;
+  try {
+   const r=await fetch(CJ_BASE+path,options);
+   const data=await r.json();
+   if(r.ok&&(data.result||data.success)&&data.data)return data.data;
+   retryable=r.status===429||r.status>=500||['1600200','402','406','429'].includes(String(data?.code??''));
+   if(!retryable)throw new Error('Supplier unavailable');
+  } catch(error) {
+   if(error?.message==='Supplier unavailable')throw error;
+   // A network timeout can also be transient; never keep retrying endlessly.
+   retryable=true;
+  }
+  if(attempt===1)throw new Error('Supplier temporarily unavailable or rate limited');
+  if(retryable)await new Promise(resolve=>setTimeout(resolve,450));
  }
- return data.data;
+ throw new Error('Supplier unavailable');
 }
 export const PRODUCT_ID='1963146233541074945';
 export function retailCents(cost){if(!Number.isFinite(Number(cost))||Number(cost)<=0)throw new Error('Price unavailable');return Math.ceil(Number(cost)*135);}
