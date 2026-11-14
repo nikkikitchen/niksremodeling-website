@@ -839,6 +839,7 @@ function cartCheckoutSummary(items){
  <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>Project total${unconfirmedPackages.length?' (estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money(combinedStartingBaseCents/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''} + tax pending</strong></div>
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
+ <p id="cart-verified-breakdown" class="calc-note" role="status" hidden></p>
  <p id="cart-tax-status" class="calc-note" role="status" aria-live="polite">Tax and delivery are estimates.</p>
  <div class="nr-cart-pay-controls" style="margin-top:14px;padding-top:14px;border-top:1px solid #dfe5ea">
  <label class="nr-cart-terms" style="display:flex;align-items:center;gap:9px"><input type="checkbox" id="cart-terms-agree" onchange="updateCartPayButton()"> <span>I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
@@ -956,7 +957,9 @@ function initCartSecureCheckout(items){
    }),{cache:'no-store'});
    const quote=await response.json();
    if(!response.ok||!quote.checkoutEnabled||!Number.isSafeInteger(quote.totalCents)||
-    String(quote.variantId)!==String(item.variantId)||Number(quote.stock)<1)
+    String(quote.variantId)!==String(item.variantId)||Number(quote.stock)<1||
+    ![quote.productCents,quote.deliveryCents,quote.taxCents].every(n=>Number.isSafeInteger(n)&&n>=0)||
+    quote.productCents+quote.deliveryCents+quote.taxCents!==quote.totalCents)
     throw Error(quote.error||'The supplier could not verify this order. Please request a quote.');
    // Prevent using an old or changed address or an unaccepted cart.
    if(!document.getElementById('cart-terms-agree')?.checked||
@@ -965,7 +968,10 @@ function initCartSecureCheckout(items){
     city!==String(cityInput?.value||'').trim()||
     state!==String(stateInput?.value||'').trim().toUpperCase())
     throw Error('Address or terms changed. Please try again.');
-   if(!window.confirm('Delivery to '+address+', '+city+', '+state+' '+zip+'. Confirm the verified merchandise, delivery and tax total of '+(quote.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'})+' before opening Square checkout.'))return;
+   const formatCents=n=>(n/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
+   const verified='Final verified quote: merchandise '+formatCents(quote.productCents)+' + delivery '+formatCents(quote.deliveryCents)+' + destination sales tax '+formatCents(quote.taxCents)+' = '+formatCents(quote.totalCents)+'. Delivery to '+address+', '+city+', '+state+' '+zip+'.';
+   const breakdown=document.getElementById('cart-verified-breakdown');if(breakdown){breakdown.textContent=verified;breakdown.hidden=false;}
+   if(!window.confirm(verified+' Continue to secure Square checkout?'))return;
    const money=(quote.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
    status.textContent='Verified total '+money+'. Opening secure Square checkout…';
    const payResponse=await fetch('/api/store-checkout',{

@@ -12,10 +12,11 @@ test('homepage to shopping cart verifies final total and sends stable checkout i
  await page.goto('/project-cart.html');
  await page.locator('#cart-shipping-zip').fill('30117');await page.locator('#square-ship-address').fill('123 Main St');await page.locator('#square-ship-city').fill('Carrollton');await page.locator('#square-ship-state').fill('GA');
  await page.locator('#cart-receipt-email').fill('buyer@example.test');await page.locator('#cart-terms-agree').check();
- await page.route('**/api/store-quote?**',route=>{quotes++;return route.fulfill({json:{checkoutEnabled:true,totalCents:12345,variantId:product.variantId,stock:10}});});
+ await page.route('**/api/store-quote?**',route=>{quotes++;return route.fulfill({json:{checkoutEnabled:true,productCents:10000,deliveryCents:1537,taxCents:808,totalCents:12345,variantId:product.variantId,stock:10}});});
  await page.route('**/api/store-checkout',route=>{request=route.request().postDataJSON();return route.fulfill({status:503,json:{error:'Processor unavailable'}});});
  page.on('dialog',d=>d.accept());
  await page.locator('#cart-pay-button').click();await expect(page.locator('#cart-pay-status')).toContainText('Processor unavailable');
+ await expect(page.locator('#cart-verified-breakdown')).toContainText('merchandise $100.00 + delivery $15.37 + destination sales tax $8.08 = $123.45');
  const first=request.requestId;expect(request.expectedTotal).toBe(12345);expect(request.email).toBe('buyer@example.test');expect(request.termsAccepted).toBe(true);
  await page.reload();await page.locator('#cart-shipping-zip').fill('30117');await page.locator('#square-ship-address').fill('123 Main St');await page.locator('#square-ship-city').fill('Carrollton');await page.locator('#square-ship-state').fill('GA');await page.locator('#cart-receipt-email').fill('buyer@example.test');await page.locator('#cart-terms-agree').check();
  await page.locator('#cart-pay-button').click();await expect(page.locator('#cart-pay-status')).toContainText('Processor unavailable');expect(request.requestId).toBe(first);expect(quotes).toBe(2);
