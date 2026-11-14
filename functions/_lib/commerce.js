@@ -32,18 +32,23 @@ export async function cj(env, path, body) {
  const options={method:body?'POST':'GET',headers:{'CJ-Access-Token':token,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{})};
  for(let attempt=0;attempt<2;attempt++){
   let retryable=false;
+  let diagnostic='unknown';
   try {
    const r=await fetch(CJ_BASE+path,options);
    const data=await r.json();
    if(r.ok&&(data.result||data.success)&&data.data)return data.data;
+   // Expose only sanitized HTTP status and numeric CJ error code. No tokens, request data, or response bodies.
+   const safeCode=/^\d{1,10}$/.test(String(data?.code??''))?String(data.code):'none';
+   diagnostic='HTTP '+r.status+' CJ code '+safeCode;
    retryable=r.status===429||r.status>=500||['1600200','402','406','429'].includes(String(data?.code??''));
    if(!retryable)throw new Error('Supplier unavailable');
   } catch(error) {
    if(error?.message==='Supplier unavailable')throw error;
    // A network timeout can also be transient; never keep retrying endlessly.
    retryable=true;
+   if(diagnostic==='unknown')diagnostic='network or invalid response';
   }
-  if(attempt===1)throw new Error('Supplier temporarily unavailable or rate limited');
+  if(attempt===1)throw new Error('Supplier temporarily unavailable or rate limited ('+diagnostic+')');
   if(retryable)await new Promise(resolve=>setTimeout(resolve,450));
  }
  throw new Error('Supplier unavailable');
