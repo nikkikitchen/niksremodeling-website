@@ -7,7 +7,7 @@ test.beforeEach(async({page})=>{
 test('click menus toggle, switch, ignore hovering, and close outside or on Escape',async({page},info)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
- const mobile=info.project.name!=='desktop';
+ const mobile=!['desktop','firefox'].includes(info.project.name);
  const prefix=mobile?'mobile-':'';
  const projects=page.locator(`[aria-controls="${prefix}projects-menu"]`);
  const shopping=page.locator(`[aria-controls="${prefix}shopping-menu"]`);
@@ -37,7 +37,7 @@ test('main project packages, nested hubs, mobile details and custom workflows re
   }else{
    await expect(cards).toHaveCount(4);
    expect(await cards.locator('.pkg-image strong').allTextContents()).toEqual(id==='accessibility'?['Basic','Standard','Premium','Custom']:['Basic','Standard','Deluxe','Custom']);
-   if(info.project.name!=='desktop'){
+   if(!['desktop','firefox'].includes(info.project.name)){
     await cards.first().locator('summary').click();await expect(cards.first().locator('details')).toHaveAttribute('open','');
    }
    await cards.first().locator('.pkg-add').click();await expect(page.locator('#pkg-measure-form')).toBeVisible();
@@ -54,6 +54,7 @@ test('Single retail product can initiate verified payment but never uses an unve
  await page.locator('#cart-terms-agree').check();await expect(page.locator('#cart-pay-button')).toBeEnabled();
  await expect(page.locator('#cart-shipping-zip')).toBeVisible();
  await expect(page.locator('#square-ship-address')).toBeVisible();
+ await page.locator('#cart-receipt-email').fill('buyer@example.test');
  await page.locator('#cart-pay-button').click();
  await expect(page.locator('#cart-pay-status')).toContainText('complete delivery street');
  await expect(page.locator('#cart-tax-amount')).toHaveText('Needs confirmation');

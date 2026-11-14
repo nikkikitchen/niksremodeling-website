@@ -45,7 +45,7 @@ test('retail checkout verifies supplier, Square, tax, ZIP and final total before
  const cart=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  for(const required of ['usCjWarehouseUnits','selectConfirmedFreight','destinationSalesTax','SQUARE_LOCATION_ID'])
   assert.ok(quote.includes(required),'Quote must verify '+required);
- for(const required of ['q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','idempotency_key','ask_for_shipping_address:true','destination-sales-tax'])
+ for(const required of ['q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','createCheckout','ask_for_shipping_address:false','destination-sales-tax'])
   assert.ok(checkout.includes(required),'Checkout missing '+required);
  assert.ok(cart.includes('initCartSecureCheckout(c)'));
  assert.ok(cart.includes('Online purchases temporarily paused'));

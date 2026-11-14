@@ -26,7 +26,7 @@ test('Square checkout requires a fresh verified destination tax and supplier quo
   body:JSON.stringify({
    productId:'1963146233541074945',variantId:'1963146233666904066',
    quantity:1,zip:'99999',address:'123 Example St',city:'Example',state:'GA',
-   expectedTotal:8627,requestId:'valid-test-request-123456'
+   expectedTotal:8627,requestId:crypto.randomUUID(),termsAccepted:true,email:'buyer@example.test'
   })
  });
  const previous=globalThis.fetch;
@@ -44,7 +44,7 @@ test('valid direct orders fail closed when upstream supplier cannot verify stock
  try{
   const request=new Request('https://niksremodeling.com/api/store-checkout',{
    method:'POST',headers:{Origin:'https://niksremodeling.com','Content-Type':'application/json'},
-   body:JSON.stringify({productId:'1963146233541074945',variantId:'1963146233666904066',quantity:1,zip:'30117',address:'Test address',city:'Carrollton',state:'GA',expectedTotal:100,requestId:'mock-request-12345678'})
+   body:JSON.stringify({productId:'1963146233541074945',variantId:'1963146233666904066',quantity:1,zip:'30117',address:'Test address',city:'Carrollton',state:'GA',expectedTotal:100,requestId:crypto.randomUUID(),termsAccepted:true,email:'buyer@example.test'})
   });
   const response=await onRequestPost({request,env:{SQUARE_ACCESS_TOKEN:'mock',SQUARE_LOCATION_ID:'mock',CJ_ACCESS_TOKEN:'mock',ZIPTAX_API_KEY:'mock'}});
   assert.equal(response.status,503);

@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {onRequestGet as quote} from '../functions/api/store-quote.js';
 import {onRequestPost as checkout} from '../functions/api/store-checkout.js';
-const env={CJ_ACCESS_TOKEN:'private-cj',SQUARE_ACCESS_TOKEN:'private-square',SQUARE_LOCATION_ID:'location',STORE_ALLOWED_ZIPS:'30117',ZIPTAX_API_KEY:'tax-provider-key'};
+import {transactionEnv} from './helpers/transaction-db.mjs';
+const env={...transactionEnv(),CJ_ACCESS_TOKEN:'private-cj',SQUARE_ACCESS_TOKEN:'private-square',SQUARE_LOCATION_ID:'location',STORE_ALLOWED_ZIPS:'30117',ZIPTAX_API_KEY:'tax-provider-key'};
 const PID='1963146233541074945',VID='1963146233666904066';
 let stock=10,wrongTotal=false,calls=[];
 const mock=async(url,opts={})=>{
@@ -17,11 +18,11 @@ const mock=async(url,opts={})=>{
   shipping:{taxable:'Y'}
  });
  if(String(url).includes('/locations/'))return Response.json({location:{status:'ACTIVE',currency:'USD',capabilities:['CREDIT_CARD_PROCESSING']}});
- if(String(url).includes('/payment-links'))return Response.json({payment_link:{order_id:'order-test',url:'https://square.link/u/test'},related_resources:{orders:[{id:'order-test',total_money:{amount:wrongTotal?8600:8627,currency:'USD'}}]}});
+ if(String(url).includes('/payment-links')){const orderId='order-'+JSON.parse(opts.body).idempotency_key;return Response.json({payment_link:{order_id:orderId,url:'https://sandbox.square.link/u/test'},related_resources:{orders:[{id:orderId,total_money:{amount:wrongTotal?8600:8627,currency:'USD'}}]}});}
  throw Error('Unexpected request: '+url);
 };
 const req=body=>new Request('https://niksremodeling.com/api/store-checkout',{method:'POST',headers:{Origin:'https://niksremodeling.com','Content-Type':'application/json'},body:JSON.stringify(body)});
-const order=(total=8627)=>({productId:PID,variantId:VID,quantity:1,zip:'30117',address:'123 Main St',city:'Carrollton',state:'GA',expectedTotal:total,requestId:'unique-test-request-1234'});
+const order=(total=8627)=>({productId:PID,variantId:VID,quantity:1,zip:'30117',address:'123 Main St',city:'Carrollton',state:'GA',expectedTotal:total,requestId:crypto.randomUUID(),termsAccepted:true,email:'buyer@example.test'});
 
 test('verified stock, freight and tax allow exact-value hosted Square checkout',async()=>{
  const previous=globalThis.fetch;stock=10;wrongTotal=false;calls=[];globalThis.fetch=mock;
@@ -38,7 +39,7 @@ test('verified stock, freight and tax allow exact-value hosted Square checkout',
   assert.equal(q.checkoutPaused,false);
   const payment=await checkout({request:req(order(q.totalCents)),env});
   assert.equal(payment.status,200);
-  assert.match((await payment.json()).url,/^https:\/\/square\.link\//);
+  assert.match((await payment.json()).url,/^https:\/\/sandbox\.square\.link\//);
   assert.equal(calls.some(c=>c.url.includes('/payment-links')),true);
  }finally{globalThis.fetch=previous;stock=10;}
 });
