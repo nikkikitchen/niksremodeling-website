@@ -59,8 +59,8 @@ test('Package summary shows proposed deposit and deferred balance, including mis
  assert.match(priced,/\$1,512\.05/);
  assert.match(priced,/id="cart-pay-button"[^>]*disabled/);
  const pending=fn([pkg(null)],svc,()=>false,()=>false);
- assert.match(pending,/deposit itemization pending/);
- assert.match(pending,/To be itemized/);
+ assert.match(pending,/Pending itemized quote/);
+ assert.doesNotMatch(pending,/To be itemized/);
  assert.match(pending,/id="cart-pay-button"[^>]*disabled/);
 });
 
