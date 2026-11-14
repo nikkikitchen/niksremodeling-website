@@ -1,0 +1,57 @@
+/* Customer-facing layout repairs: preserve photos, scope and price calculations. */
+body main .hero{background-image:linear-gradient(90deg,rgba(12,24,36,.88),rgba(12,24,36,.60) 55%,rgba(12,24,36,.2)),url('/assets/approved-493d744bf5f7.jpg')}
+body main .hero .content{padding:62px 0;max-width:700px;color:#fff!important}
+body main .hero .content h1,body main .hero .content p,body main .hero .eyebrow{color:#fff!important;text-shadow:0 1px 4px rgba(0,0,0,.25)}
+body main .hero .content p{font-size:18px;line-height:1.6;max-width:610px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+body main .hero .hero-actions .btn{min-height:48px;text-shadow:none;text-decoration:none}
+body main .hero .hero-actions .primary{background:#fff;color:#073c70}
+body main .hero .hero-actions .outline{background:rgba(0,0,0,.16);border:1px solid rgba(255,255,255,.7);color:#fff}
+body .assurance>.wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;padding-top:20px;padding-bottom:20px;line-height:1.5}
+body .assurance>.wrap>span{display:block}
+.nr-cart-page [hidden]{display:none!important}
+.nr-cart-page .nr-cart-line{align-items:start}
+.nr-cart-page .nr-cart-line-info{min-width:0}
+.nr-cart-page .nr-cart-line-info>strong{display:block;line-height:1.4}
+.nr-cart-page .nr-cart-meta{line-height:1.5;margin-top:7px}
+.nr-cart-page .nr-cart-line-price{line-height:1.5}
+.nr-cart-page .cart-price-scope{display:block;margin-top:4px}
+.nr-cart-page .nr-cart-price-chart{border:0;border-radius:0;padding:0;margin:8px 0 16px}
+.nr-cart-page .nr-cart-price-chart .cart-item{border:0;border-radius:0;border-bottom:1px solid #e2e8f0;padding:12px 0!important;line-height:1.45;gap:16px}
+.nr-cart-page .nr-cart-details{margin:8px 0;padding:10px 0}
+.nr-cart-page .cart-combined-project-row{background:#edf4fb;border-radius:8px!important;padding:14px!important;margin-top:12px}
+.nr-cart-page input:not([type="checkbox"]){display:block;min-height:46px;width:100%;max-width:100%;padding:11px 12px;border:1px solid #aebccc;border-radius:7px;background:#fff;color:#16202a;box-sizing:border-box;font:inherit}
+.nr-cart-page #nr-scheduling-form label,.nr-cart-page .nr-cart-pay-controls>label:has(#cart-receipt-email){display:grid;gap:7px;font-weight:600;line-height:1.4}
+.nr-cart-page .nr-cart-pay-controls>label:has(#cart-receipt-email){margin:16px 0}
+.nr-cart-page #nr-scheduling-form button{min-height:48px}
+.nr-cart-page #nr-scheduling-status{line-height:1.6;margin-top:16px}
+.nr-cart-page .nr-cart-approval-next{padding:18px;border-radius:9px;background:#edf4fb;margin-top:14px}
+.nr-cart-page .nr-cart-approval-next h4{font-size:18px;margin:0 0 10px}
+.nr-cart-page .nr-cart-approval-next p{line-height:1.6;margin:0 0 16px}
+.nr-cart-page .nr-cart-approval-next .btn{min-height:48px;width:100%;white-space:normal;text-align:center}
+.nr-cart-page .cart-checkout-summary[data-project-only="true"] #cart-pay-status{display:none}
+@media(max-width:620px){
+ body main .hero{min-height:0;background-position:60% center}
+ body main .hero .content{width:100%;padding:34px 0 38px}
+ body main .hero .content h1{font-size:40px;line-height:1.08;max-width:360px}
+ body main .hero .content p{font-size:16px;line-height:1.55;margin-bottom:0}
+ .hero-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:22px}
+ body #projects{padding:36px 0}
+ body #projects .project-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px}
+ body #projects .project-grid .tile{min-height:190px!important;box-shadow:0 3px 12px rgba(20,35,50,.09)}
+ body #projects .project-grid .tile>span{left:11px;right:11px;bottom:13px;font-size:16px;line-height:1.25}
+ body #projects .project-grid .tile>span small{display:block;margin-top:6px;font-size:12px;line-height:1.35}
+ body #projects .project-grid .tile:after{background:linear-gradient(transparent 20%,rgba(0,0,0,.88))}
+ .nr-cart-page .nr-cart-line{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:18px 0!important}
+ .nr-cart-page .nr-cart-line-price{grid-column:2;text-align:left!important;max-width:none;margin-top:4px}
+ .nr-cart-page .nr-cart-column-labels{display:none}
+ .nr-cart-page .nr-cart-item-symbol{width:34px;height:34px}
+ .nr-cart-page .nr-cart-meta{font-size:14px}
+ .nr-cart-page .nr-cart-price-chart .cart-item:has(#cart-shipping-amount),
+ .nr-cart-page .nr-cart-price-chart .cart-item:has(#cart-due-now){grid-template-columns:minmax(0,1fr);gap:5px}
+ .nr-cart-page #cart-shipping-amount,.nr-cart-page #cart-due-now{text-align:left;white-space:normal}
+ .nr-cart-page #cart-scheduling{padding:20px!important}
+}
+@media(max-width:360px){body #projects .project-grid .tile{min-height:210px!important}body #projects .project-grid .tile>span small{font-size:11px}}
+body #projects,.nr-cart-page #cart-scheduling{scroll-margin-top:88px}
+@media(max-width:620px){.nr-cart-page .nr-cart-line-price{width:auto;justify-self:stretch}}

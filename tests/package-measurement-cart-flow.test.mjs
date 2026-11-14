@@ -226,8 +226,8 @@ test('Combined project total includes quoted package minimum plus separate produ
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
     assert.match(d.body.textContent,/Project total/);
-    assert.equal(combined.textContent,'$450.00+ + tax pending',
-      'Include $350 package starting price plus $100 product and $8 estimated product tax');
+    assert.equal(combined.textContent,'$450.00 (starting estimate) + tax pending',
+      'Include $350 package starting price plus $100 product; unknown tax stays pending');
     assert.equal(d.getElementById('cart-due-now').textContent,'$247.13 + tax pending',
       'Show the $147.13 proposed materials deposit plus $100 merchandise without charging full unconfirmed labor');
     assert.equal(d.getElementById('cart-pay-button').disabled,true);
@@ -283,4 +283,33 @@ test('Basic Bathroom does not silently include a mirror or vanity light',async()
   assert.doesNotMatch(d.querySelector('.nr-cart-products').textContent,/Included — \$0 extra/);
   assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$47\.73/);
  }finally{dom.window.close()}
+});
+
+test('older saved carts never substitute zero for missing measurement details',()=>{
+ const source=readFileSync(new URL('app.js',root),'utf8'),start=source.indexOf('function packageMeasurementSummary(item){'),end=source.indexOf('\nfunction cartRequestMessage',start);
+ const summary=new Function(source.slice(start,end)+';return packageMeasurementSummary;')();
+ assert.equal(summary({measurements:{accentOnly:true,length:12,height:8}}),'12 × 8 ft. accent wall.');
+ assert.equal(summary({measurements:{length:10,width:8}}),'10 × 8 ft.');
+ assert.match(summary({measurements:{accentOnly:true,length:12,height:8,wallArea:96}}),/96 sq\. ft\. wall area/);
+});
+
+test('unpriced project packages show quote required instead of a zero-dollar project total',async()=>{
+ const dom=await load('project-cart.html','',[{name:'Accent Walls — Deluxe',source:'room-project-package',projectId:'accents',packageId:'deluxe',type:'Service',qty:1,price:null,startingAt:null,quoteRequired:true}]);
+ try{
+  const d=dom.window.document;
+  assert.equal(d.getElementById('cart-combined-project-total').textContent,'Quote required');
+  assert.equal(d.getElementById('cart-pay-button').disabled,true);
+  assert.equal(d.getElementById('cart-pay-button').closest('.nr-cart-pay-controls').hidden,true);
+  assert.ok(!d.querySelector('.cart-checkout-summary').textContent.includes('Painting labor'),'Unspecified work must not acquire a zero-dollar price');
+ }finally{dom.window.close();}
+});
+
+test('legacy project starting prices do not turn missing labor and fees into zero-dollar components',async()=>{
+ const dom=await load('project-cart.html','',[{name:'Legacy project',source:'room-project-package',projectId:'accents',packageId:'standard',type:'Service',qty:1,price:null,startingAt:835,quoteRequired:true}]);
+ try{
+  const rows=[...dom.window.document.querySelectorAll('.cart-checkout-summary .cart-item')];
+  for(const label of ['Labor after package discount','Project fees']){
+   const row=rows.find(el=>el.querySelector('span')?.textContent.startsWith(label));assert.ok(row);assert.equal(row.querySelector('strong').textContent,'Pending itemized quote');
+  }
+ }finally{dom.window.close();}
 });

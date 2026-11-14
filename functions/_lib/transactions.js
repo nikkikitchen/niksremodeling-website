@@ -1,3 +1,4 @@
+import {ensureTransactionRecords} from './transaction-schema.js';
 import {square} from './commerce.js';
 export const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'};
 export const json=(data,status=200)=>Response.json(data,{status,headers});
@@ -18,6 +19,7 @@ export function validPaymentUrl(url,env){
 }
 export async function createCheckout({env,id,kind,quote,customer,order,options={},origin,projectQuoteId=null,mode=null}){
  requireTransactions(env);
+ await ensureTransactionRecords(env);
  const db=env.BUSINESS_DB;
  const {stock:currentStock,...pricedQuote}=quote;
  const hash=await fingerprint({kind,quote:pricedQuote,customer,projectQuoteId,mode,environment:environment(env)});
@@ -43,6 +45,7 @@ export async function createCheckout({env,id,kind,quote,customer,order,options={
  return {url:payment.payment_link.url,orderId:id,totalCents:quote.totalCents};
 }
 export async function recordPayment(env,paymentId){
+ await ensureTransactionRecords(env);
  const {payment}=await square(env,'/v2/payments/'+encodeURIComponent(paymentId));
  if(!payment?.order_id)return;
  const db=env.BUSINESS_DB;

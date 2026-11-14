@@ -1,3 +1,4 @@
+import {ensureTransactionRecords} from '../_lib/transaction-schema.js';
 import {square} from '../_lib/commerce.js';
 import {json,recordPayment,environment} from '../_lib/transactions.js';
 export async function onRequestGet({request,env}){
@@ -5,6 +6,7 @@ export async function onRequestGet({request,env}){
  if(!/^[a-f0-9-]{36}$/.test(id||''))return json({error:'Invalid order reference.'},400);
  if(!env.BUSINESS_DB)return json({error:'Payment records unavailable.'},503);
  try{
+  await ensureTransactionRecords(env);
   let row=await env.BUSINESS_DB.prepare('SELECT * FROM checkout_orders WHERE id=?').bind(id).first();
   if(!row||row.environment!==environment(env))return json({error:'Order not found.'},404);
   // A return redirect is not evidence of payment. Reconcile through Square if

@@ -11,16 +11,24 @@ Use the existing GitHub → Cloudflare Pages project and `BUSINESS_DB` binding i
 `wrangler.jsonc`. Do not create another database or copy production credentials into
 browser scripts. The new migration is additive; existing catalog data is preserved.
 
-An account administrator with Cloudflare access must run:
+Record tables now initialize automatically when a request needs them. The normal
+release can also initialize them explicitly with `POST /api/initialize-records`,
+JSON `{"initializeRecords":true}`, and an Origin header matching the website.
+This endpoint accepts no SQL or business data; it only creates the fixed missing
+application tables/indexes with `IF NOT EXISTS`. It does not change existing catalog
+rows, grant owner access, configure processors, or enable payments. GET readiness
+checks stay read-only. No Cloudflare console SQL paste is required.
+
+The versioned migration remains compatible with Wrangler:
 
 ```
 npx wrangler d1 migrations apply niks-business --remote
 ```
 
-Apply the same migration to the preview database before sandbox tests. Use a separate
-preview database and **sandbox** Square account credentials. Do not test transactions
-on production using production tokens. Dashboard: Pages → existing project → Settings
-→ Variables and Secrets; set each environment separately, then redeploy.
+Use a separate preview database and **sandbox** Square credentials for payment tests.
+Dashboard: Pages → existing project → Settings → Variables and Secrets; set each
+environment separately, then redeploy. Record initialization does not supply missing
+payment notification keys or sandbox credentials.
 
 Server-only configuration:
 

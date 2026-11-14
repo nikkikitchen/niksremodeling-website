@@ -1,3 +1,4 @@
+import {transactionRecordsReady} from '../_lib/transaction-schema.js';
 import {square} from '../_lib/commerce.js';
 
 // Read-only launch diagnostics: never return tokens, identifiers, location
@@ -21,12 +22,14 @@ export async function onRequestGet({request,env={}}) {
  }
  // Destination tax is calculated per verified address, then Square validates the exact order total.
  taxActive=taxConfigured;
- let recordingReady=false;
- if(env.BUSINESS_DB&&env.SQUARE_WEBHOOK_SIGNATURE_KEY&&env.SQUARE_WEBHOOK_URL){try{await env.BUSINESS_DB.prepare('SELECT id FROM checkout_orders LIMIT 1').all();recordingReady=true;}catch{}}
- const ready=recordingReady&&paymentActive&&taxActive&&freightConfigured&&destinationConfigured;
+ const recordingReady=await transactionRecordsReady(env);
+ const notificationsConfigured=!!(env.SQUARE_WEBHOOK_SIGNATURE_KEY&&env.SQUARE_WEBHOOK_URL);
+ const ready=recordingReady&&notificationsConfigured&&paymentActive&&taxActive&&freightConfigured&&destinationConfigured;
  const checks={paymentProcessor:paymentActive?'ready':!paymentTokenPresent?'credentials missing':!paymentLocationPresent?'location ID missing':'location not verified',
   salesTax:taxActive?'configured; address verification required':'needs setup',
-  orderRecording:recordingReady?'configured':'needs database migration and payment notifications',
+  orderRecording:recordingReady?'ready':'needs record initialization',
+  paymentNotifications:notificationsConfigured?'configured; delivery verification required':'needs setup',
+  ownerReview:env.OWNER_ACCESS_DOMAIN&&env.OWNER_ACCESS_AUD&&env.OWNER_EMAILS?'configured; sign-in verification required':'needs owner access setup',
   supplier:freightConfigured?'configured':'needs setup',
   destination:!hasZip?'enter ZIP':'eligible for shipping quote'};
  return Response.json({checkoutReadyForVerification:ready,checkoutPaused:false,configurationReadyForTesting:ready,
