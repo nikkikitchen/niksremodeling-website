@@ -108,3 +108,16 @@ test('Garage Standard deposit, completed-work balance and checkout lock remain c
  await expect(page.locator('#cart-pay-button')).toBeDisabled();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });
+
+test('home page offers readable, visible actions before the project gallery',async({page},info)=>{
+ await page.goto('/');const actions=page.getByRole('navigation',{name:'Start your project'});await expect(actions).toBeVisible();
+ const project=actions.getByRole('link',{name:'Plan a Project'});await expect(project).toHaveAttribute('href','#projects');
+ await expect(actions.getByRole('link',{name:'Installation & Labor'})).toHaveAttribute('href','/installation.html');
+ await expect(actions.getByRole('link',{name:'Shop Products'})).toHaveAttribute('href','/shopping.html');
+ expect(await page.locator('.hero h1').evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
+ if(info.project.name==='phone'){
+  const box=await project.boundingBox();expect(box.y).toBeLessThan(page.viewportSize().height);
+  const first=await page.locator('#projects .tile').nth(0).boundingBox(),second=await page.locator('#projects .tile').nth(1).boundingBox();
+  expect(Math.abs(first.y-second.y)).toBeLessThan(2);expect(second.x).toBeGreaterThan(first.x);
+ }
+});

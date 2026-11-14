@@ -1,3 +1,4 @@
+import {ensureTransactionRecords} from '../_lib/transaction-schema.js';
 import {body,sameOrigin,invalid,json,fingerprint,safeError} from '../_lib/transactions.js';
 export async function onRequestPost({request,env}){
  try{
@@ -8,6 +9,7 @@ export async function onRequestPost({request,env}){
    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||!/^\d{5}$/.test(b.zip||'')||!details||details.length>6000||
    !/^\d{4}-\d{2}-\d{2}$/.test(b.date||'')||!Number.isFinite(Date.parse(b.date))||new Date(b.date).toISOString().slice(0,10)!==b.date||
    b.date<new Date().toISOString().slice(0,10))invalid('Check contact information, project details and preferred date.');
+  await ensureTransactionRecords(env);
   const hash=await fingerprint({name,phone,email,date:b.date,zip:b.zip,details});
   await env.BUSINESS_DB.prepare('INSERT OR IGNORE INTO scheduling_requests(id,request_key,fingerprint,customer_name,phone,email,preferred_date,zip,project_details) VALUES(?,?,?,?,?,?,?,?,?)')
    .bind(crypto.randomUUID(),b.requestId,hash,name,phone,email,b.date,b.zip,details).run();

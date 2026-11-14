@@ -32,7 +32,10 @@ test('measured Accent Standard requests scheduling and displays received referen
  await page.locator('#pkg-length-ft').fill('12');await page.locator('#pkg-height-ft').fill('8');
  await page.locator('#pkg-measure-form button[type=submit]').click();await expect(page.locator('#pkg-measure-result')).toBeVisible();
  await page.locator('#pkg-confirm-add').click();await expect(page).toHaveURL(/project-cart.html/);
- const form=page.locator('#nr-scheduling-form');await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=date]').fill('2099-01-01');await form.locator('[name=zip]').fill('30117');
+ const form=page.locator('#nr-scheduling-form');
+ await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toBeVisible();
+ for(const field of await form.locator('input').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
+ await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=date]').fill('2099-01-01');await form.locator('[name=zip]').fill('30117');
  let attempt=0,requestId;
  await page.route('**/api/scheduling',route=>{const b=route.request().postDataJSON();expect(b.details).toContain('12 × 8');if(!attempt++){requestId=b.requestId;return route.fulfill({status:503,json:{error:'Request service unavailable'}});}expect(b.requestId).toBe(requestId);return route.fulfill({status:201,json:{reference:'request-test',status:'requested',message:'Your request was received for owner review. Your preferred date is not confirmed.'}});});
  await form.locator('button').click();await expect(page.locator('#nr-scheduling-status')).toContainText('was not saved');await expect(page.locator('#nr-scheduling-status a')).toHaveAttribute('href',/^mailto:/);await expect(form.locator('button')).toBeEnabled();
@@ -57,5 +60,5 @@ for(const project of ['bathrooms','kitchen-pantry'])test(project+' Standard carr
 });
 
 test('labor-only installation remains quote-required and never enters merchandise checkout',async({page})=>{
- await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await page.locator('#cart-terms-agree').check();await expect(page.locator('#cart-pay-button')).toBeDisabled();await expect(page.locator('#cart-pay-status')).toContainText('confirmed quote');
+ await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await expect(page.locator('#cart-terms-agree')).toBeHidden();await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next')).toContainText('request your project quote');
 });

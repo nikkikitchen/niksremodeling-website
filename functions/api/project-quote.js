@@ -1,8 +1,10 @@
+import {ensureTransactionRecords} from '../_lib/transaction-schema.js';
 import {json} from '../_lib/transactions.js';
 export async function onRequestGet({request,env}){
  const token=new URL(request.url).searchParams.get('token');
  if(!/^[a-f0-9-]{72}$/.test(token||''))return json({error:'Invalid quote link.'},400);
  try{
+  await ensureTransactionRecords(env);
   const q=await env.BUSINESS_DB?.prepare('SELECT * FROM project_quotes WHERE token=?').bind(token).first();
   if(!q||q.revoked||Date.parse(q.expires_at)<=Date.now())return json({error:'Quote is unavailable or expired. Please request an updated quote.'},404);
   const checkout=q.active_checkout_id?await env.BUSINESS_DB.prepare('SELECT id,status,total_cents FROM checkout_orders WHERE id=?').bind(q.active_checkout_id).first():null;

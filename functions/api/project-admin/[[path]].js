@@ -1,9 +1,11 @@
+import {ensureTransactionRecords} from '../../_lib/transaction-schema.js';
 import {ownerRoute,privateJson} from '../../_lib/owner-auth.js';
 import {body,invalid,safeError} from '../../_lib/transactions.js';
 import {approvedQuote} from '../../_lib/project-quotes.js';
 export const onRequest=ownerRoute(async({request,env,owner})=>{
  const db=env.BUSINESS_DB,route=new URL(request.url).pathname.replace(/^\/api\/project-admin\/?/,'');
  try{
+  await ensureTransactionRecords(env);
   if(request.method==='GET'){
    if(route==='scheduling')return privateJson({requests:(await db.prepare('SELECT * FROM scheduling_requests ORDER BY created_at DESC LIMIT 200').all()).results});
    if(route==='orders')return privateJson({orders:(await db.prepare('SELECT id,kind,status,total_cents,project_quote_id,payment_mode,customer_json,quote_json,payment_id,square_order_id,receipt_url,paid_at,fulfillment_status FROM checkout_orders ORDER BY created_at DESC LIMIT 200').all()).results});

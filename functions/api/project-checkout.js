@@ -1,8 +1,9 @@
+import {ensureTransactionRecords} from '../_lib/transaction-schema.js';
 import {body,sameOrigin,invalid,json,createCheckout,requireTransactions,safeError} from '../_lib/transactions.js';
 import {square} from '../_lib/commerce.js';
 export async function onRequestPost({request,env}){
  try{
-  sameOrigin(request);const b=await body(request);requireTransactions(env);
+  sameOrigin(request);const b=await body(request);requireTransactions(env);await ensureTransactionRecords(env);
   if(!/^[a-f0-9-]{72}$/.test(b.token||'')||!['deposit','full'].includes(b.mode)||b.termsAccepted!==true)invalid('Choose an approved quote, payment option and accept the terms.');
   const db=env.BUSINESS_DB,q=await db.prepare('SELECT * FROM project_quotes WHERE token=?').bind(b.token).first();
   if(!q||q.revoked||Date.parse(q.expires_at)<=Date.now())invalid('Quote is unavailable or expired.',409);
