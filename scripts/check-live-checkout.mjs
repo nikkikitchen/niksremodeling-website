@@ -59,7 +59,9 @@ for(const base of urls){
    const body=JSON.parse(result.text||'{}');
    checkoutQuote={
     http:result.status,
-    ready:result.ok&&body.checkoutEnabled===true&&
+    checkoutPaused:body.checkoutPaused===true,
+    failingStage:result.ok?null:(typeof body.stage==='string'?body.stage:null),
+    ready:result.ok&&
      Number.isSafeInteger(body.totalCents)&&body.totalCents>0&&
      Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>0&&
      Number.isSafeInteger(body.taxCents)&&body.taxCents>=0&&Number(body.stock)>0,
@@ -67,7 +69,7 @@ for(const base of urls){
     shippingConfirmed:Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>0,
     taxConfirmed:Number.isSafeInteger(body.taxCents)&&body.taxCents>=0,
     totalConfirmed:Number.isSafeInteger(body.totalCents)&&body.totalCents>0,
-    reason:result.ok?null:String(body.error||result.error||'Quote unavailable').slice(0,160)
+    reason:result.ok?null:String(body.error||result.error||'Quote unavailable').slice(0,200)
    };
   }catch(error){
    checkoutQuote={http:result.status,ready:false,reason:String(error?.message||error).slice(0,160)};
