@@ -7,10 +7,10 @@ export const transactionJs=String.raw`
  document.getElementById('load-transactions').onclick=async()=>{
   list.textContent='Loading…';
   try{
-   const [s,o]=await Promise.all([api('scheduling'),api('orders')]);list.replaceChildren();
+   const [s,o,q]=await Promise.all([api('scheduling'),api('orders'),api('quotes')]);list.replaceChildren();
    for(const r of s.requests){
     const box=document.createElement('article'),text=document.createElement('p');
-    text.textContent=r.customer_name+' · '+r.phone+' · '+r.email+' · preferred '+r.preferred_date+' · '+r.zip+' · '+r.status+' — '+r.project_details;box.append(text);
+    text.textContent=r.customer_name+' · '+r.phone+' · '+r.email+' · preferred '+r.preferred_date+' · '+r.zip+' · '+r.status+' — '+r.project_details+(r.owner_note?' — Review note: '+r.owner_note:'');box.append(text);
     if(r.status==='requested')for(const decision of ['accepted','declined']){
      const b=document.createElement('button');b.type='button';b.textContent=decision==='accepted'?'Accept request':'Decline request';
      b.onclick=async()=>{const note=prompt('Enter the date and details you will communicate to the customer. Saving does not send email.');if(!note)return;b.disabled=true;try{const saved=await api('scheduling',{id:r.id,status:decision,note});alert(saved.message);document.getElementById('load-transactions').click();}catch(e){alert(e.message);b.disabled=false;}};box.append(b);
@@ -18,7 +18,12 @@ export const transactionJs=String.raw`
     list.append(box);
    }
    if(!s.requests.length)list.append(document.createTextNode('No scheduling requests.'));
-   for(const order of o.orders){const p=document.createElement('p');p.textContent=order.kind+' · '+order.id+' · '+order.status+' · '+money(order.total_cents)+' · fulfillment hold';list.append(p);}
+   for(const order of o.orders){
+    const customer=JSON.parse(order.customer_json),quote=JSON.parse(order.quote_json),p=document.createElement('p');
+    p.textContent=order.kind+' · '+order.id+' · '+order.status+' · '+money(order.total_cents)+' · '+customer.email+(customer.address?' · Deliver to '+[customer.address,customer.city,customer.state,customer.zip].join(', '):'')+' · '+(quote.name||'Project quote '+order.project_quote_id)+(quote.productId?' · CJ product '+quote.productId+' / variant '+quote.variantId+' / SKU '+quote.sku+' / '+quote.shippingMethod:'')+' · Square payment '+(order.payment_id||'unconfirmed')+' · fulfillment hold';list.append(p);
+    if(order.receipt_url){const a=document.createElement('a');a.href=order.receipt_url;a.textContent='View Square receipt';a.rel='noopener noreferrer';list.append(a);}
+   }
+   for(const quote of q.quotes){const p=document.createElement('p');p.textContent=quote.project_name+' · '+quote.customer_email+' · approved '+money(quote.total_cents)+' · deposit '+money(quote.deposit_cents)+' · '+(quote.revoked?'revoked':'valid until '+quote.expires_at)+' ';if(!quote.revoked){const a=document.createElement('a');a.href='/payment.html#quote='+encodeURIComponent(quote.token);a.textContent='Private customer quote link';p.append(a);}list.append(p);}
   }catch(e){list.textContent=e.message;}
  };
  function values(){

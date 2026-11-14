@@ -6,7 +6,7 @@ export const onRequest=ownerRoute(async({request,env,owner})=>{
  try{
   if(request.method==='GET'){
    if(route==='scheduling')return privateJson({requests:(await db.prepare('SELECT * FROM scheduling_requests ORDER BY created_at DESC LIMIT 200').all()).results});
-   if(route==='orders')return privateJson({orders:(await db.prepare('SELECT id,kind,status,total_cents,project_quote_id,payment_mode,customer_json,paid_at,fulfillment_status FROM checkout_orders ORDER BY created_at DESC LIMIT 200').all()).results});
+   if(route==='orders')return privateJson({orders:(await db.prepare('SELECT id,kind,status,total_cents,project_quote_id,payment_mode,customer_json,quote_json,payment_id,square_order_id,receipt_url,paid_at,fulfillment_status FROM checkout_orders ORDER BY created_at DESC LIMIT 200').all()).results});
    if(route==='quotes')return privateJson({quotes:(await db.prepare('SELECT * FROM project_quotes ORDER BY approved_at DESC LIMIT 200').all()).results});
   }
   if(request.method==='POST'){
