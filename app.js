@@ -826,7 +826,7 @@ function cartCheckoutSummary(items){
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div><details class="nr-cart-details"><summary>Estimated components</summary><div class="cart-item"><span>Painting labor</span><strong>'+money(pendingRoomPaintLabor)+'</strong></div><div class="cart-item"><span>Paint materials</span><strong>'+money(pendingRoomPaintMaterials)+'</strong></div><div class="cart-item"><span>Floor labor</span><strong>'+money(pendingBasementFloorLabor)+'</strong></div><div class="cart-item"><span>Lighting labor</span><strong>'+money(pendingBasementLightLabor)+'</strong></div><p>These components are included in the eventual quote, not extra charges.</p></details>':''}
- ${unconfirmedPackages.length?'<div class="cart-item"><span><strong>Project package estimate</strong></span><strong>'+money(packageStartingTotal)+'+</strong></div><div class="cart-item"><span>Materials &amp; supplies deposit (included)</span><strong>'+money(packageDepositEstimates)+(missingPackageDeposit?' + deposit itemization pending':'')+'</strong></div><div class="cart-item"><span>Labor after package discount (included)</span><strong>'+money(packageLaborEstimates)+'</strong></div><div class="cart-item"><span>Estimated balance after deposit (paid as work is completed)</span><strong>'+(missingPackageDeposit?'To be itemized':money(packageRemainingEstimate))+'</strong></div><details class="nr-cart-details"><summary>Package fees and details</summary><div class="cart-item"><span>Project fees</span><strong>'+money(packageOverheadEstimates)+'</strong></div>'+(packageUnallocated>0.01?'<div class="cart-item"><span>Measured work awaiting itemization</span><strong>'+money(packageUnallocated)+'</strong></div>':'')+'<p>All package amounts are included in the estimate, not extra charges.</p></details>':''}
+ ${unconfirmedPackages.length?'<div class="cart-item"><span><strong>Project package estimate</strong></span><strong>'+money(packageStartingTotal)+'+</strong></div><div class="cart-item"><span>Materials &amp; supplies deposit (included)</span><strong>'+(missingPackageDeposit?'Pending itemized quote':money(packageDepositEstimates))+'</strong></div><div class="cart-item"><span>Labor after package discount (included)</span><strong>'+money(packageLaborEstimates)+'</strong></div><div class="cart-item"><span>Estimated balance after deposit (paid as work is completed)</span><strong>'+(missingPackageDeposit?'Pending itemized quote':money(packageRemainingEstimate))+'</strong></div><details class="nr-cart-details"><summary>Package fees and details</summary><div class="cart-item"><span>Project fees</span><strong>'+money(packageOverheadEstimates)+'</strong></div>'+(packageUnallocated>0.01?'<div class="cart-item"><span>Measured work awaiting itemization</span><strong>'+money(packageUnallocated)+'</strong></div>':'')+'<p>All package amounts are included in the estimate, not extra charges.</p></details>':''}
  <div class="cart-item"><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
  ${estimatedLabor.hasServices&&additionalServices.some(x=>['Labor','Service'].includes(x.type))?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
  <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Enter ZIP for retail items; package delivery pending':remainingShippingPending?'Package delivery to be verified':'Not applicable'}</strong></div>
@@ -835,7 +835,7 @@ function cartCheckoutSummary(items){
  ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Payment after final approval: a materials deposit after quote approval, then labor draws tied to approved work completed, or pay the full approved project. No payment is accepted online yet.</p>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
  <div class="cart-item nr-cart-balance-row" ${unconfirmedPackages.length&&combinedEstimatedTotal===0?'style="display:none"':''}><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Other priced items':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
- <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span><strong>Materials deposit / due at approval</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${money(payableSubtotal+packageDepositEstimates)}${missingPackageDeposit?' + deposit itemization pending':''} + tax pending</strong></div>
+ <div class="cart-item" ${isRetailOnly?'style="display:none"':''}><span><strong>Materials deposit / due at approval</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
  <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>Project total${unconfirmedPackages.length?' (estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${money(combinedStartingBaseCents/100)}${unconfirmedPackages.length?'+':''}${pendingRoomPackages.length?' + quote required':''} + tax pending</strong></div>
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
@@ -846,6 +846,653 @@ function cartCheckoutSummary(items){
  <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
  </div>
  </section>`;
+}
+function cartSchedulingRequestMarkup(items){
+ const packages=items.filter(x=>['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source));
+ if(!packages.length)return '';
+ return '<section class="panel" id="cart-scheduling" style="margin:16px 0;padding:20px">'+
+  '<h3>Request Scheduling</h3><p>Ask us for a start date. We will confirm the project price, available dates, and any deposit before collecting payment.</p>'+
+  '<form id="nr-scheduling-form"><div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">'+
+  '<label>Your name<input name="name" required maxlength="90" autocomplete="name" placeholder="Full name"></label>'+
+  '<label>Phone<input name="phone" required type="tel" maxlength="25" autocomplete="tel" placeholder="Phone number"></label>'+
+  '<label>Preferred start date<input name="date" type="date" required></label>'+
+  '<label>Project ZIP<input name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required></label>'+
+  '</div><button class="btn primary" style="margin-top:14px" type="submit">Request a Start Date</button>'+
+  '<p class="calc-note" id="nr-scheduling-status" role="status">This sends a request, not a confirmed booking or deposit charge.</p></form>'+
+  '</section>';
+}
+function initCartSchedulingRequest(items){
+ const form=document.getElementById('nr-scheduling-form');
+ if(!form)return;
+ const date=form.elements.namedItem('date');
+ if(date)date.min=new Date().toLocaleDateString('en-CA');
+ form.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!form.reportValidity())return;
+  const name=String(form.elements.namedItem('name').value||'').trim();
+  const phone=String(form.elements.namedItem('phone').value||'').trim();
+  const dateValue=String(form.elements.namedItem('date').value||'').trim();
+  const zip=String(form.elements.namedItem('zip').value||'').trim();
+  const projects=items.filter(x=>!x.hiddenFromCustomer).map(x=>
+   x.name+'; starting estimate '+(Number(x.startingAt)>0?'
+ const button=document.getElementById('cart-pay-button');
+ const agree=document.getElementById('cart-terms-agree');
+ if(button)button.disabled=!(agree&&agree.checked&&button.dataset.eligible==='true'&&button.dataset.busy!=='true');
+}
+// Only one independently verified retail item may enter online checkout.
+// Packages, labor, unpriced goods and mixed carts remain quote-only.
+function cartSecureCheckoutPanel(items){
+ const visible=items.filter(x=>!x.hiddenFromCustomer);
+ return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Online purchase status">'+
+  '<h3>Online purchases temporarily paused</h3>'+
+  '<p>We are checking that sales tax and delivery charges are accurate before accepting payments. No online payment can be made right now.</p>'+
+  (visible.length?'<a class="btn outline" href="#cart-scheduling">Request a quote</a>':'')+
+  '</section>';
+}
+function initCartSecureCheckout(items){
+ const button=document.getElementById('cart-pay-button');
+ const status=document.getElementById('cart-pay-status');
+ if(!button||!status)return;
+ const visible=items.filter(x=>!x.hiddenFromCustomer);
+ const item=visible[0];
+ const eligible=visible.length===1&&['supplier-retail','bathroom-retail'].includes(item?.source)&&
+  !!item.productId&&!!item.variantId&&Number(item.qty)===1&&!item.pricingPending&&
+  !item.installationRequested&&!item.suppliesRequested&&!item.packageAllowanceCredit;
+ button.dataset.eligible=String(eligible);
+ if(!eligible){
+  status.textContent='This cart requires a confirmed quote before payment.';
+  updateCartPayButton();
+  return;
+ }
+ const zipInput=document.getElementById('cart-shipping-zip');
+ const addressInput=document.getElementById('square-ship-address');
+ const cityInput=document.getElementById('square-ship-city');
+ const stateInput=document.getElementById('square-ship-state');
+ status.textContent='Enter your delivery address, agree to the terms, then pay securely with Square.';
+ button.addEventListener('click',async()=>{
+  if(button.disabled||button.dataset.busy==='true')return;
+  const zip=String(zipInput?.value||'').trim();
+  const address=String(addressInput?.value||'').trim();
+  const city=String(cityInput?.value||'').trim();
+  const state=String(stateInput?.value||'').trim().toUpperCase();
+  if(!/^\d{5}$/.test(zip)||address.length<3||city.length<2||!/^[A-Z]{2}$/.test(state)){
+   status.textContent='Enter your complete delivery street, city, state and ZIP before paying.';return;
+  }
+  button.dataset.busy='true';updateCartPayButton();
+  status.textContent='Confirming US stock, shipping and exact destination sales tax…';
+  try{
+   const response=await fetch('/api/store-quote?'+new URLSearchParams({
+    zip,address,city,state,product:String(item.productId),variant:String(item.variantId)
+   }),{cache:'no-store'});
+   const quote=await response.json();
+   if(!response.ok||!quote.checkoutEnabled||!Number.isSafeInteger(quote.totalCents)||
+    String(quote.variantId)!==String(item.variantId)||Number(quote.stock)<1)
+    throw Error(quote.error||'The supplier could not verify this order. Please request a quote.');
+   // Prevent using an old or changed address or an unaccepted cart.
+   if(!document.getElementById('cart-terms-agree')?.checked||
+    zip!==String(zipInput?.value||'').trim()||
+    address!==String(addressInput?.value||'').trim()||
+    city!==String(cityInput?.value||'').trim()||
+    state!==String(stateInput?.value||'').trim().toUpperCase())
+    throw Error('Address or terms changed. Please try again.');
+   const money=(quote.totalCents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
+   status.textContent='Verified total '+money+'. Opening secure Square checkout…';
+   const payResponse=await fetch('/api/store-checkout',{
+    method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+    body:JSON.stringify({productId:String(item.productId),variantId:String(item.variantId),
+     quantity:1,zip,address,city,state,expectedTotal:quote.totalCents,
+     requestId:crypto.randomUUID()})
+   });
+   const payment=await payResponse.json();
+   if(!payResponse.ok||!payment.url||!/^https:\/\/(square\.link|checkout\.square\.site)\//.test(payment.url))
+    throw Error(payment.error||'Secure checkout is unavailable. No payment was taken.');
+   location.assign(payment.url);
+  }catch(error){
+   status.textContent=error.message||'Could not verify this order. No payment was taken.';
+  }finally{button.dataset.busy='false';updateCartPayButton();}
+ });
+ updateCartPayButton();
+}
+function cartShoppingChoices(items){
+ const interested=items.filter(x=>x.source==='supplier-retail'&&(x.installationRequested||x.suppliesRequested));
+ if(!interested.length)return '';
+ const wantsInstall=interested.some(x=>x.installationRequested);
+ const wantsSupplies=interested.some(x=>x.suppliesRequested&&!x.installationRequested);
+ return `<section class="panel" style="margin:14px 0;padding:18px"><h3>Complete Your Project</h3>
+ ${wantsInstall?'<p><strong>Installation requested, not yet priced.</strong> Choose the labor service to add it to your estimate. Products are not charged twice.</p>'+[...new Set(interested.filter(x=>x.installationRequested).map(x=>({appliances:'appliances',bathroom:'bathroom',cabinets:'cabinets',doors:'doors',flooring:'flooring',lighting:'electrical'})[x.department]).filter(Boolean))].map(category=>'<a class="btn primary" style="margin:4px" href="/installation.html#labor-category-'+category+'">Choose '+category+' installation</a>').join('')+'<a class="btn outline" href="/installation.html">All installation services</a>':''}
+ ${wantsSupplies?'<p><strong>Matching supplies requested.</strong> We will select the appropriate supplies for your chosen products and confirm the charge before payment. Installation is not added unless you request it.</p>':''}
+ </section>`;
+}
+function initCartShippingQuote(items){
+ const form=document.getElementById('cart-shipping-form');
+ if(!form)return;
+ const input=document.getElementById('cart-shipping-zip');
+ const status=document.getElementById('cart-shipping-status');
+ const shipping=document.getElementById('cart-shipping-amount');
+ const total=document.getElementById('cart-estimated-total');
+ const button=form.querySelector('button[type="submit"]');
+ const lines=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId)
+  .map(x=>({productId:String(x.productId),variantId:String(x.variantId),quantity:Number(x.qty)||1,name:String(x.name||'').slice(0,120)}));
+ if(!lines.length){
+  const shipping=document.getElementById('cart-shipping-amount');
+  input.addEventListener('input',()=>{if(/^\d{5}$/.test(input.value))try{localStorage.setItem('nr-delivery-zip',input.value)}catch{}});
+  try{const zip=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(zip||''))input.value=zip}catch{}
+  if(shipping&&items.some(x=>['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source)))shipping.textContent='Confirm whether included before approval';
+  return;
+ }
+ const initialTotal=total.textContent;
+ const packageDeliveryPending=items.some(x=>['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source));
+ let requestId=0;
+ try{const saved=localStorage.getItem('nr-delivery-zip');if(/^\d{5}$/.test(saved||''))input.value=saved;}catch{}
+ input.addEventListener('input',()=>{
+  requestId++;
+  // Cancel stale quotes when ZIP changes; support older carts that still have a button.
+  if(button)button.disabled=false;
+  shipping.textContent='Pending ZIP';
+  total.textContent=initialTotal;
+  status.textContent='';
+  form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
+  if(/^\d{5}$/.test(input.value))form.requestSubmit();
+ });
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(!form.reportValidity())return;
+  const mine=++requestId;
+  const zip=input.value.trim();
+  // Invalidate the previous quote before retrying the same ZIP, too.
+  total.textContent=initialTotal;
+  form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
+  shipping.textContent='Checking shipping…';
+  status.textContent='Calculating…';
+  if(button)button.disabled=true;
+  try{
+   const response=await fetch('/api/cart-shipping',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({zip,items:lines}),cache:'no-store'});
+   const result=await response.json();
+   if(mine!==requestId)return;
+   if(!response.ok||!Number.isSafeInteger(result.deliveryCents)||result.deliveryCents<0)
+    throw Error(result.error||'Shipping is not available for these items.');
+   const moneyValue=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
+   shipping.textContent=moneyValue(result.deliveryCents/100);
+   // The shipping event recalculates the complete total including estimated tax.
+   status.textContent='Delivery estimated for '+zip+(packageDeliveryPending?' on separate store products only. Package delivery is not included in this quote.':'.');
+   try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
+   form.dispatchEvent(new form.ownerDocument.defaultView.CustomEvent('nr:shipping-quoted',{
+    detail:{zip,deliveryCents:result.deliveryCents}
+   }));
+  }catch(error){
+   if(mine!==requestId)return;
+   shipping.textContent='Shipping needs confirmation';
+   // Clear stale freight and tax previews when shipping cannot be verified.
+   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
+   status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
+  }finally{if(mine===requestId&&button)button.disabled=false;}
+ });
+ if(/^\d{5}$/.test(input.value))form.requestSubmit();
+}
+
+function initCartTaxPreview(){
+ const form=document.getElementById('cart-shipping-form');
+ const zipInput=document.getElementById('cart-shipping-zip');
+ const tax=document.getElementById('cart-tax-amount');
+ const info=document.getElementById('cart-tax-status');
+ const rateLabel=document.getElementById('cart-tax-rate-label');
+ const total=document.getElementById('cart-estimated-total');
+ const dueNow=document.getElementById('cart-due-now');
+ const combined=document.getElementById('cart-combined-project-total');
+ if(!tax||!info||!total)return;
+ const retailCents=Number(total.dataset.retailCents);
+ if(!Number.isSafeInteger(retailCents)||retailCents<0)return;
+ const baseCents=Number(total.dataset.baseCents);
+ const payableCents=Number(total.dataset.payableCents);
+ const money=cents=>(cents/100).toLocaleString('en-US',{style:'currency',currency:'USD'});
+ let shippingCents=null,rate=null,verifiedZip='',lookupId=0;
+ const calculate=()=>{
+  // ZIP tax is a conservative preview, never a collectible final tax.
+  // The exact delivery address, item taxability and Square order total
+  // are checked again before opening any payment link.
+  const estimatedRate=rate??0;
+  const pending=rate===null?' + tax pending':'';
+  const taxCents=Math.round((retailCents+(shippingCents??0))*estimatedRate);
+  tax.textContent=rate===null?'Needs confirmation':money(taxCents);
+  if(rateLabel)rateLabel.textContent=rate===null?' · unverified':' · ZIP estimate '+(rate*100).toFixed(2)+'%';
+  info.textContent=rate===null
+    ?'Tax needs confirmation. The delivery address and type of work determine the applicable tax before payment.'
+    :'ZIP-based tax estimate only. The delivery address determines the final tax before payment.';
+  total.textContent=money(baseCents+(shippingCents??0)+taxCents)+pending;
+  if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0){
+   const depositCents=Number(dueNow.dataset.packageDepositCents)||0;
+   dueNow.textContent=money(payableCents+depositCents+(shippingCents??0)+taxCents)+(dueNow.dataset.missingPackageDeposit==='true'?' + deposit itemization pending':'')+pending;
+  }
+  const combinedBase=Number(combined?.dataset.baseCents);
+  if(combined&&Number.isSafeInteger(combinedBase)&&combinedBase>=0)
+   combined.textContent=money(combinedBase+(shippingCents??0)+taxCents)+
+    (combined.dataset.hasStarting==='true'?'+':'')+
+    (combined.dataset.hasUnpriced==='true'?' + quote required':'')+pending;
+ };
+ const lookup=async zip=>{
+  const mine=++lookupId;
+  if(!/^\d{5}$/.test(zip)){rate=null;verifiedZip='';calculate();return;}
+  if(verifiedZip===zip&&rate!==null)return;
+  rate=null;verifiedZip='';calculate();
+  try{
+   const response=await fetch('/api/cart-tax',{
+    method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+    body:JSON.stringify({zip,merchandiseCents:retailCents,shippingCents:0})
+   });
+   const data=await response.json();
+   if(mine!==lookupId||zip!==String(zipInput?.value||'').trim())return;
+   if(!response.ok||data.mode!=='zip-upper-estimate'||typeof data.ratePercent!=='number'||
+      !Number.isFinite(data.ratePercent)||data.ratePercent<0||data.ratePercent>25)
+    throw Error('Tax rate not verified');
+   rate=data.ratePercent/100;
+   verifiedZip=zip;
+  }catch{
+   if(mine!==lookupId)return;
+   rate=null;
+   verifiedZip='';
+  }
+  calculate();
+ };
+ calculate();
+ if(!form||!zipInput)return;
+ zipInput.addEventListener('input',()=>lookup(String(zipInput.value||'').trim()));
+ form.addEventListener('nr:shipping-cleared',()=>{
+  shippingCents=null;
+  calculate();
+ });
+ form.addEventListener('nr:shipping-quoted',event=>{
+  const cents=event.detail?.deliveryCents;
+  if(!Number.isSafeInteger(cents)||cents<0)return;
+  shippingCents=cents;
+  calculate();
+ });
+ if(/^\d{5}$/.test(zipInput.value||''))lookup(zipInput.value.trim());
+}
+
+function packageQuoteLink(item){
+ const kind=item?.source;
+ const field=kind==='bathroom-project-package'?'bathPackage':kind==='kitchen-project-package'?'kitchenPackage':kind==='room-project-package'?'roomPackage':kind==='accessibility-project-package'?'accessibilityPackage':null;
+ if(!field||!/^[a-z0-9-]{1,64}$/.test(String(item.packageId||'')))return '';
+ const project=kind==='bathroom-project-package'?'bathrooms':kind==='kitchen-project-package'?'kitchen-pantry':kind==='accessibility-project-package'?'accessibility':item.projectId;
+ if(!/^[a-z0-9-]{1,80}$/.test(String(project||'')))return '';
+ return '/project.html?'+new URLSearchParams({project,[field]:item.packageId,quote:'1'}).toString();
+}
+function renderCart(){
+ const c=reconcileProjectPackageFixtureChoices(reconcileBathroomFixtureAllowances(getCart()));
+ const visible=c.map((item,index)=>({item,index})).filter(({item})=>!item.hiddenFromCustomer);
+ const itemCount=visible.reduce((sum,{item})=>sum+(Number(item.qty)||1),0);
+  const packageSources=new Set(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package']);
+  const hasCompletePackage=visible.some(({item})=>packageSources.has(item.source));
+  const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
+ document.title='Review Cart | Nik\'s Remodeling';
+ document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'}</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
+
+ ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
+ <h2>Items</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
+ <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
+ <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
+ <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
+  ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
+  ${x.packageAllowanceCredit?'<div class="nr-cart-meta"><strong>Included in bathroom package:</strong> $'+x.packageAllowanceCredit.toFixed(2)+' fixture allowance applied. Delivery and applicable tax costs are confirmed before invoice approval.</div>':''}
+  ${x.source==='supplier-retail'&&/vanity (?:unit|cabinet)|cabinet with sink/i.test(x.name||'')?'<div class="nr-cart-meta">Separate vanity cabinet. Cabinet replacement labor is not included in this refresh package.</div>':''}
+  ${packageMeasurementSummary(x)?`<div class="nr-cart-meta"><strong>Measurements:</strong> ${escapeCartText(packageMeasurementSummary(x))}</div>`:''}
+  ${packageSources.has(x.source)&&packageQuoteLink(x)?`<a class="btn outline" href="${escapeCartText(packageQuoteLink(x))}">${packageMeasurementSummary(x)?"Edit Measurements":"Enter Measurements to Complete Quote"}</a>`:''}
+ <button class="nr-cart-remove" type="button" onclick="removeCart(${i})" aria-label="Remove ${escapeCartText(x.name)}">Remove</button></div>
+ <div class="nr-cart-line-price">${cartPriceMarkup(x)}</div>
+ </article>`).join('')}</div>
+ <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}</div>
+ </section><div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
+ ${nrProjectShoppingMarkup(c)}
+ ${cartSchedulingRequestMarkup(c)}
+
+ <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
+ '<div class="panel nr-cart-empty"><h2>Your cart is empty</h2><p>Add what you need directly—no extra picture gallery.</p><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0"><a class="btn primary" href="/?open=shopping">Add Products</a><a class="btn outline" href="/installation.html">Add Installation &amp; Labor</a><a class="btn outline" href="/#projects">Start a Project</a></div></div>'}
+ </div></section></main>`+footer();
+ const zipTop=document.getElementById('nr-cart-zip-top');
+ const zipForm=document.getElementById('cart-shipping-form');
+ const retailItems=visible.filter(({item})=>['supplier-retail','bathroom-retail'].includes(item.source));
+ const needsDeliveryAddress=visible.length===1&&retailItems.length===1&&Number(retailItems[0].item.qty)===1;
+ if(zipTop&&zipForm){
+  const zipStatus=document.getElementById('cart-shipping-status');
+  zipTop.insertAdjacentHTML('afterbegin','<h3>Check shipping &amp; taxes</h3>');
+  zipTop.appendChild(zipForm);
+  if(needsDeliveryAddress){
+   zipForm.insertAdjacentHTML('beforeend','<div class="nr-checkout-address"><label for="square-ship-address">Street address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street address" maxlength="150"></label><label for="square-ship-city">City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label for="square-ship-state">State<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div>');
+  }
+  if(zipStatus)zipTop.appendChild(zipStatus);
+ }else if(zipTop){zipTop.remove();}
+ updateCartCount();initCartShippingQuote(c);initCartTaxPreview();initCartSecureCheckout(c);initCartSchedulingRequest(c);
+}
+function removeCart(i){
+ const c=getCart();if(!Number.isInteger(i)||i<0||i>=c.length)return;
+ const removed=c.splice(i,1)[0];
+ const matches=(item,other)=>item.productId&&item.variantId&&
+  String(item.productId)===String(other.productId)&&String(item.variantId)===String(other.variantId);
+ if(['supplier-retail','bathroom-retail'].includes(removed.source)){
+  for(let j=c.length-1;j>=0;j--)if(c[j].source==='retail-installation'&&matches(c[j],removed))c.splice(j,1);
+ }else if(removed.source==='retail-installation'){
+  for(const item of c)if(['supplier-retail','bathroom-retail'].includes(item.source)&&matches(item,removed))item.installationRequested=false;
+ }
+ saveCart(c);
+ // Once the user removes the last cart item, don't retain stale calculator
+ // drafts that would otherwise restore deleted work into another estimate.
+ if(!c.length){try{localStorage.removeItem(MATERIAL_ESTIMATES_KEY)}catch{}}
+ renderCart();initNavMenus();}
+const MATERIAL_DETAIL_PAGES={"flooring":{"title":"Flooring","items":["Linoleum","Luxury Vinyl Plank (LVP)","Hardwood","Laminate","Carpet","Floor Tile","Underlayment","Baseboards","Quarter Round"]},"tile-stone":{"title":"Tile & Stone","items":["Ceramic Tile","Porcelain Tile","Natural Stone","Mosaic Tile","Backsplash Tile","Stone Veneer","Grout & Setting Materials"]},"drywall":{"title":"Drywall","items":["Drywall Panels","Moisture Resistant Board","Joint Compound","Tape & Corner Bead","Texture","Repair Materials"]},"lumber":{"title":"Lumber","items":["Framing Lumber","Plywood","OSB & Sheathing","Pressure Treated Lumber","Specialty Wood","Decking Boards"]},"trim-molding":{"title":"Trim & Molding","items":["Baseboards","Crown Molding","Door & Window Casing","Wainscoting","Decorative Trim","Stair Trim","Quarter Round"]},"paint-finishes":{"title":"Paint & Finishes","items":["Interior Paint","Exterior Paint","Primer","Stains","Sealers","Specialty Coatings","Painting Prep","Wallpaper","Limewash","Venetian Plaster","Textured Plaster","Metallic Finish"]},"insulation":{"title":"Insulation","items":["Batt Insulation","Blown Insulation","Rigid Foam","Spray Foam","Sound Control","Vapor Barriers"]},"roofing":{"title":"Roofing","items":["Asphalt Shingles","Metal Roofing","Underlayment","Flashing","Roof Ventilation","Gutters"]},"siding-exterior":{"title":"Siding & Exterior","items":["Vinyl Siding","Fiber Cement","Wood Siding","Exterior Trim","House Wrap","Soffit & Fascia"]},"doors-windows":{"title":"Doors & Windows","items":["Interior Doors","Exterior Doors","Windows","Patio Doors","Frames & Thresholds","Weatherstripping"]},"concrete-masonry":{"title":"Concrete & Masonry","items":["Concrete Mix","Block & Brick","Mortar","Pavers","Stone","Repair & Resurfacing"]}};
+const FLOORING_PRODUCT_TYPES=new Set(['Laminate','LVP','Luxury Vinyl Plank (LVP)','Hardwood','Floor Tile','Underlayment']);
+function renderFlooringSamples(type){
+ document.title=type+" | Nik's Remodeling";
+ document.body.innerHTML=header()+'<main class="wrap section"><a href="/material-flooring.html">← Flooring</a><h1>'+escapeCartText(type)+'</h1><div class="products store-card-grid"><p class="empty">Checking available products…</p></div></main>'+footer();
+ updateCartCount();loadRealCatalog('materials','flooring',type);
+}
+function loadRealCatalog(department,material,type){
+ const target=document.querySelector('.products');if(!target)return;
+ if(!target.children.length)target.innerHTML='<p class="empty">Checking available products…</p>';
+ import('/real-products.js?v='+encodeURIComponent(retailAssetVersion)).then(m=>m.mountCatalog(target,{department,material,type})).catch(()=>{target.innerHTML='<p class="empty">Product listings are temporarily unavailable. Please try again later.</p>';});
+}
+
+function renderMaterialDetail(){
+ const slug=document.body.dataset.material,category=MATERIAL_DETAIL_PAGES[slug];if(slug==='flooring'&&new URLSearchParams(location.search).has('type')){renderFlooringSamples(new URLSearchParams(location.search).get('type'));return}
+ if(!category){location.replace('/materials.html');return}
+ document.title=category.title+" Materials | Nik's Remodeling";
+ const photos={"flooring":["photo-1669476441555-3d8d8200e5fe","photo-1696451967084-c222dbc9853d","photo-1737098137073-45954f30e290","photo-1669476441555-3d8d8200e5fe","photo-1677928709896-696774cefc02","photo-1538619527368-10a650e3ba88","photo-1696451967084-c222dbc9853d"],"tile-stone":["photo-1538619527368-10a650e3ba88"],"drywall":["photo-1581578731548-c64695cc6952"],"lumber":["photo-1669476441555-3d8d8200e5fe"],"trim-molding":["photo-1737098137073-45954f30e290"],"paint-finishes":["photo-1645818000365-bb4ab9693173"],"insulation":["photo-1581578731548-c64695cc6952"],"roofing":["photo-1503387762-592deb58ef4e"],"siding-exterior":["photo-1503387762-592deb58ef4e"],"doors-windows":["photo-1600566753086-00f18fb6b3ea"],"concrete-masonry":["photo-1581578731548-c64695cc6952"]};
+ const calcKind={'flooring':'flooring','tile-stone':'tile','drywall':'drywall','lumber':'lumber','paint-finishes':'paint','concrete-masonry':'concrete','trim-molding':'trim','insulation':'insulation','roofing':'roofing','siding-exterior':'siding-exterior','doors-windows':'doors-windows'}[slug];const materialChoices=({
+  'paint-finishes':category.items,
+  'tile-stone':[...category.items,'Wall Tile','Decorative Stone Slabs','Stacked Stone Veneer'],
+  'siding-exterior':[...category.items,'Exterior-Grade Shiplap'],
+  'trim-molding':[...category.items,'Interior Shiplap'],
+  'lumber':[...category.items,'Shiplap Boards']
+ }[slug]||category.items).filter(item=>item!=='Other material');
+ const materialChoicePhotos={
+  'paint-finishes':['/assets/approved-0af816f48fb0.jpg','/assets/approved-a11ab0fcd37f.jpg','/assets/approved-e9fee5a04016.jpg','/assets/murals-card.jpg','/assets/approved-9753e3ad86f9.jpg','/assets/accent-walls-card.jpg','/assets/approved-739d17fd2952.jpg','/assets/wallpaper-card.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-8d4db6742d08.jpg','/assets/approved-17df84119d39.jpg','/assets/approved-de82473d9ce3.jpg'],
+  'tile-stone':['/assets/approved-0ab244a922c8.jpg','/assets/tile-shower.jpg','/assets/project-stone-real.jpg','/assets/approved-739d17fd2952.jpg','/assets/showers-card.png','/assets/fireplace-card.jpg','/assets/approved-b5c632fcfbc0.jpg','/assets/approved-9bfcb89f7800.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-de82473d9ce3.jpg'],
+  'flooring':['/assets/flooring-card.jpg','/assets/approved-de82473d9ce3.jpg','/assets/approved-9bfcb89f7800.jpg','/assets/approved-807c60a6001a.jpg','/assets/approved-0ab244a922c8.jpg','/assets/approved-a908c20ce632.jpg','/assets/approved-b5c632fcfbc0.jpg'],
+  'drywall':['/assets/catalog-8.jpg','/assets/approved-0af816f48fb0.jpg','/assets/approved-b5c632fcfbc0.jpg','/assets/approved-e9fee5a04016.jpg','/assets/approved-4cc0340eb1c1.jpg','/assets/approved-739d17fd2952.jpg'],
+  'lumber':['/assets/arches-columns.jpg','/assets/approved-4de99f88049f.jpg','/assets/approved-94fe00a25a93.jpg','/assets/custom-projects-card.jpg','/assets/approved-e9fee5a04016.jpg','/assets/stairs-card.jpg','/assets/approved-a11ab0fcd37f.jpg'],
+  'trim-molding':['/assets/approved-e9fee5a04016.jpg','/assets/arches-columns.jpg','/assets/entryways-card.jpg','/assets/approved-739d17fd2952.jpg','/assets/approved-4de99f88049f.jpg','/assets/stairs-card.jpg','/assets/approved-94fe00a25a93.jpg'],
+  'insulation':['/assets/project-attic.jpg','/assets/project-basement.jpg','/assets/approved-b5c632fcfbc0.jpg','/assets/catalog-8.jpg','/assets/approved-17df84119d39.jpg','/assets/approved-4cc0340eb1c1.jpg'],
+  'roofing':['/assets/approved-a11ab0fcd37f.jpg','/assets/entryways-card.jpg','/assets/idea-backyard-retreat.jpg','/assets/project-attic.jpg','/assets/approved-4de99f88049f.jpg','/assets/idea-outdoor-kitchen.jpg'],
+  'siding-exterior':['/assets/entryways-card.jpg','/assets/approved-a11ab0fcd37f.jpg','/assets/approved-4de99f88049f.jpg','/assets/idea-backyard-retreat.jpg','/assets/arches-columns.jpg','/assets/idea-outdoor-kitchen.jpg','/assets/approved-e9fee5a04016.jpg'],
+  'doors-windows':['/assets/entryways-card.jpg','/assets/approved-4de99f88049f.jpg','/assets/arches-columns.jpg','/assets/approved-e9fee5a04016.jpg','/assets/approved-739d17fd2952.jpg','/assets/approved-a11ab0fcd37f.jpg'],
+  'concrete-masonry':['/assets/patio-concrete.webp','/assets/concrete-card.jpg','/assets/idea-backyard-retreat.jpg','/assets/approved-0ab244a922c8.jpg','/assets/project-stone-real.jpg','/assets/approved-b5c632fcfbc0.jpg']
+ };
+ const MATERIAL_ITEM_PICTURES={"paint-finishes":{"Interior Paint":"https://images.unsplash.com/photo-1599619585752-c3edb42a414c?auto=format&fit=crop&w=900&q=82","Exterior Paint":"/assets/entryways-card.jpg","Primer":"/assets/approved-0af816f48fb0.jpg","Wallpaper":"/assets/wallpaper-card.jpg","Limewash":"https://images.unsplash.com/photo-1674816926928-efeddf11e559?auto=format&fit=crop&w=900&q=82","Venetian Plaster":"https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?auto=format&fit=crop&w=900&q=82","Textured Plaster":"https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=900&q=82","Metallic Finish":"/assets/approved-8d4db6742d08.jpg","Stains":"/assets/approved-a11ab0fcd37f.jpg"},"flooring":{"Baseboards":"/assets/approved-e9fee5a04016.jpg","Quarter Round":"/assets/approved-739d17fd2952.jpg","Hardwood":"https://images.unsplash.com/photo-1764726331220-b323be2b57b5?auto=format&fit=crop&w=900&q=82","Floor Tile":"/assets/tile-shower.jpg","Underlayment":"/assets/approved-b5c632fcfbc0.jpg"},"tile-stone":{"Stone Veneer":"https://images.unsplash.com/photo-1771607501057-6db4da07d98f?auto=format&fit=crop&w=900&q=82","Backsplash Tile":"/assets/kitchen.jpg","Wall Tile":"/assets/approved-4cc0340eb1c1.jpg","Decorative Stone Slabs":"/assets/fireplace-card.jpg","Stacked Stone Veneer":"https://images.unsplash.com/photo-1784528780206-6a0545dec6fd?auto=format&fit=crop&w=900&q=82"},"drywall":{"Drywall Panels":"https://images.unsplash.com/photo-1768321917995-2d992c50854b?auto=format&fit=crop&w=900&q=82","Moisture Resistant Board":"/assets/showers-card.png","Texture":"/assets/accent-walls-card.jpg","Repair Materials":"/assets/project-basement.jpg"},"roofing":{"Asphalt Shingles":"https://images.unsplash.com/photo-1655373617557-7138d45582d4?auto=format&fit=crop&w=900&q=82","Metal Roofing":"/assets/approved-a11ab0fcd37f.jpg","Roof Ventilation":"https://images.unsplash.com/photo-1577075473856-c12a2eb249b7?auto=format&fit=crop&w=900&q=82","Gutters":"/assets/entryways-card.jpg"},"insulation":{"Batt Insulation":"/assets/project-attic.jpg","Blown Insulation":"/assets/approved-17df84119d39.jpg","Sound Control":"/assets/project-basement.jpg"},"lumber":{"Framing Lumber":"/assets/arches-columns.jpg","Pressure Treated Lumber":"/assets/idea-backyard-retreat.jpg","Decking Boards":"https://images.unsplash.com/photo-1775204450568-1245d7334689?auto=format&fit=crop&w=900&q=82"},"siding-exterior":{"Exterior-Grade Shiplap":"https://images.unsplash.com/photo-1591411844637-3ea008cd96de?auto=format&fit=crop&w=900&q=82","Vinyl Siding":"https://images.unsplash.com/photo-1775695161075-f286033564df?auto=format&fit=crop&w=900&q=82"},"trim-molding":{"Interior Shiplap":"/assets/accent-walls-card.jpg"}};
+ const cardImages=materialChoicePhotos[slug]||['/assets/approved-a908c20ce632.jpg','/assets/kitchen.jpg','/assets/entryways-card.jpg','/assets/approved-4de99f88049f.jpg','/assets/approved-b5c632fcfbc0.jpg','/assets/approved-739d17fd2952.jpg','/assets/approved-0af816f48fb0.jpg','/assets/approved-9bfcb89f7800.jpg'];
+ const cards=materialChoices.map((item,i)=>{const itemKind=/tile/i.test(item)?'tile':slug==='paint-finishes'&&!['Interior Paint','Exterior Paint','Primer','Stains','Sealers','Specialty Coatings','Painting Prep'].includes(item)?'custom':calcKind;const name=category.title+' — '+item;const photo=(photos[slug][i]||photos[slug][0]);const img=MATERIAL_ITEM_PICTURES[slug]?.[item]||cardImages[i%cardImages.length];if(slug==='flooring'&&FLOORING_PRODUCT_TYPES.has(item))return '<article class="card material-option-card flooring-choice-card"><div class="pic"><img src="'+img+'" alt="Illustrative photo for '+item+'" loading="lazy"></div><div class="body"><h3>'+item+'</h3><a class="btn primary" href="/material-flooring.html?type='+encodeURIComponent(item)+'">Choose '+item+'</a></div></article>';return '<article class="card material-option-card" data-calc-kind="'+(itemKind||'')+'"><div class="pic"><img src="'+img+'" alt="Illustrative photo for '+item+'" loading="lazy"></div><div class="body"><h3>'+item+'</h3><p>Explore current '+item.toLowerCase()+' options for your project.</p><div class="card-actions"><a class="btn primary" href="/calculators.html?product='+encodeURIComponent(name)+(itemKind?'&material='+itemKind:'')+'">Plan Quantities</a><a class="add-project" href="/calculators.html?product='+encodeURIComponent(name)+(itemKind?'&material='+itemKind:'')+'">Plan Installation</a></div>'+servicePicker(name,['Installation','Removal','Prep'])+'</div></article>'}).join('');
+ document.body.innerHTML=header()+'<main><section class="category-hero" style="--hero-image:url(https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1800&q=85)"><div class="wrap"><div class="eyebrow">Materials</div><h1>'+category.title+'</h1><p>Find the right materials for your project. Product choices and pricing are confirmed from current suppliers.</p><a class="btn light" href="/materials.html">← All Materials</a></div></section><section class="section"><div class="wrap"><h2>Shop '+category.title+'</h2><p class="lead">Choose a type below. Specific products will appear here as supplier listings are approved.</p><div class="material-detail-grid">'+cards+'</div><h2>Available Products</h2><div class="products store-card-grid"><p class="empty">Checking available products…</p></div><div class="material-detail-help"><h3>Need a specific product?</h3><p>Tell us the material, size, color and quantity you need. We can check current options.</p><a class="btn primary" href="sms:6782314377">Text Your Material List →</a></div></div></section></main>'+footer();
+ updateCartCount();bindServicePickers();loadRealCatalog('materials',slug);
+}
+function initNavMenus(){
+ const cabinetMenu=document.querySelector('.nav-main[href="/cabinets.html"]')?.closest('.nav-menu')?.querySelector('.nav-dropdown');
+ if(cabinetMenu&&!cabinetMenu.dataset.workOptions){cabinetMenu.dataset.workOptions='1';const heading=document.createElement('span');heading.className='nav-group-label';heading.textContent='Cabinet Work';cabinetMenu.append(heading);CABINET_WORK_OPTIONS.forEach(option=>{const link=document.createElement('a');link.textContent=option.label;link.href='/calculators.html?material=refinish&cabinetOptions='+option.key;cabinetMenu.append(link)});}
+ const closeMenus=()=>document.querySelectorAll('.nav-menu.open').forEach(menu=>{
+  menu.classList.remove('open');
+  menu.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');
+ });
+ document.querySelectorAll('.nav-toggle').forEach(button=>{
+  if(button.dataset.navBound)return;
+  button.dataset.navBound='true';
+  button.addEventListener('click',()=>{
+   const menu=button.closest('.nav-menu'),open=!menu.classList.contains('open');
+   closeMenus();
+   menu.classList.toggle('open',open);button.setAttribute('aria-expanded',String(open));
+   if(open&&matchMedia('(max-width:820px)').matches){
+    const dropdown=menu.querySelector('.nav-dropdown'),nav=menu.closest('nav.nav');
+    if(dropdown&&nav){
+     const navBottom=Math.max(0,Math.ceil(nav.getBoundingClientRect().bottom));
+     dropdown.style.setProperty('--mobile-menu-top',navBottom+'px');
+     dropdown.style.setProperty('--mobile-menu-max-height',Math.max(90,window.innerHeight-navBottom-8)+'px');
+    }
+   }
+  });
+ });
+ if(!document.documentElement.dataset.navDismissBound){
+  document.documentElement.dataset.navDismissBound='true';
+  document.addEventListener('click',event=>{if(!event.target.closest('.nav-menu'))closeMenus();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'){
+   const toggle=document.querySelector('.nav-menu.open .nav-toggle');
+   closeMenus();toggle?.focus();
+  }});
+ }
+}
+// Cart shortcut opens the actual Shopping navigation on the homepage.
+document.addEventListener('DOMContentLoaded',()=>{
+ if(location.pathname!=='/'&&location.pathname!=='/index.html')return;
+ if(new URLSearchParams(location.search).get('open')!=='shopping')return;
+ const mobile=matchMedia('(max-width:820px)').matches;
+ const toggle=document.querySelector(mobile?'[aria-controls="mobile-shopping-menu"]':'[aria-controls="shopping-menu"]');
+ if(!toggle)return;
+ const menu=toggle.closest('.nav-menu');
+ if(menu){menu.classList.add('open');toggle.setAttribute('aria-expanded','true');toggle.scrollIntoView({block:'nearest'});}
+});
+document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();initNavMenus();
+ if(['materials','material-detail','calculators','material-prices'].includes(page)){
+  const script=document.createElement('script');
+  script.src='/material-prices.js?v='+encodeURIComponent(retailAssetVersion);
+  script.defer=true;
+  document.body.append(script);
+ }
+});
+// Keep category lists and menus in the same order without separating photos from cards.
+function choicePosition(text){
+ const label=String(text).trim();
+ if(/^(select (one|an?\b)|choose (one|an?\b|material\b)|all\b)/i.test(label))return -1;
+ if(/^(other\b|not sure\b|unsure\b|something else\b|none of (these|the above)\b)/i.test(label))return 1;
+ return 0;
+}
+function alphabetizeSiteLists() {
+ const collator=new Intl.Collator('en',{numeric:true,sensitivity:'base'});
+ const label=el=>{const copy=(el.querySelector('h2,h3,h4,summary')||el.querySelector('span')||el).cloneNode(true);copy.querySelectorAll('small,input,button').forEach(x=>x.remove());return copy.textContent.trim()};
+ const reorder=(parent,items,key=label,alphabetical=true)=>{
+  const sorted=items.slice().sort((a,b)=>choicePosition(key(a))-choicePosition(key(b))||(alphabetical?collator.compare(key(a),key(b)):0));
+  if(items.every((item,i)=>item===sorted[i]))return;
+  const slots=items.map(item=>{const marker=document.createComment('sort');item.before(marker);return marker});
+  sorted.forEach((item,i)=>slots[i].replaceWith(item));
+ };
+ document.querySelectorAll('.path-grid').forEach(parent=>reorder(parent,[...parent.querySelectorAll(':scope > .path-card')],card=>card.querySelector('.path-number').textContent.trim()));
+ // Keep the primary navigation in its intended workflow order (not alphabetical).
+ document.querySelectorAll('.nav-dropdown').forEach(menu=>{
+  if(menu.id==='labor-menu'||menu.id==='mobile-labor-menu')return;
+  let group=[];const flush=()=>{reorder(menu,group);group=[]};
+  [...menu.children].forEach(el=>{if(el.matches('a'))group.push(el);else flush()});flush();
+ });
+ document.querySelectorAll('.project-grid,.product-tile-grid,.shop-guide-grid,.category-tabs,.material-detail-grid,.products,.project-supply-grid,.labor-choices,.delivery-choices,.service-dropdown-options,.room-supply-list,.supply-grid,#recommended-tools ul').forEach(parent=>{
+  if(parent.closest('.calc-workspace'))return;
+  reorder(parent,[...parent.children].filter(el=>el.matches('a,article,label,button,li,.panel')));
+ });
+ document.querySelectorAll('#material-product-list,.paint-surfaces').forEach(parent=>{
+  const items=[...parent.children].filter(el=>el.matches('.area-product,label'));
+  reorder(parent,items,el=>el.querySelector('input[type="checkbox"]')?.value||label(el),false);
+ });
+ document.querySelectorAll('select').forEach(select=>{
+  const sequential=!!select.closest('.calc-workspace')&&select.id!=='material-type';
+  const value=select.value;
+  reorder(select,[...select.children].filter(el=>el.tagName==='OPTION' && el.value!==''),el=>el.textContent.trim(),!sequential);
+  select.value=value;
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ alphabetizeSiteLists();
+ let pending=false;
+ const observer=new MutationObserver(()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;observer.disconnect();alphabetizeSiteLists();observer.observe(document.body,{childList:true,subtree:true});});});
+ observer.observe(document.body,{childList:true,subtree:true});
+});
+
+function readAreaProducts(){
+ if(!document.querySelector('[name="project-option"][value="Materials"]:checked'))return [];
+ const rows=[...document.querySelectorAll('.area-product')].filter(row=>row.querySelector('[name="area-product"]').checked);
+ if(!rows.length)throw Error('Select the materials needed for this area.');
+ return rows.map(row=>{
+  let name=row.querySelector('[name="area-product"]').value;
+  if(name==='Other material'){name=document.getElementById('material-description').value.trim();if(!name)throw Error('Enter the other material name in Material details.');}
+  const result={name,mode:row.dataset.measure};
+  row.querySelectorAll('[data-product-setting]').forEach(input=>{
+   const key=input.dataset.productSetting;
+   if(key==='unit'){result.unit=input.value;return;}
+   if(key==='coverage'&&result.mode==='area'&&input.value.trim()===''){result.coverage=null;return;}
+   const value=Number(input.value);
+   if(!input.value.trim()||!Number.isFinite(value)||(key==='waste'?value<0:value<=0)||(key==='coats'&&!Number.isInteger(value)))throw Error('Enter valid '+key+' for '+name+'.');
+   result[key]=value;
+  });
+  if(result.mode==='manual'&&['Pieces','Bags','Boxes','Rolls','Sheets'].includes(result.unit)&&!Number.isSafeInteger(result.quantity))throw Error('Enter a whole number for '+name+'.');
+  return result;
+ });
+}
+function calculateAreaProducts(item,plans){
+ return plans.map(plan=>{
+  const area=item.measurements.area;
+  if(plan.mode==='volume')return {name:plan.name,quantity:item.purchase.quantity,unit:'cubic yards',area,detail:item.detail};
+  if(plan.mode==='studs')return {name:plan.name,quantity:item.measurements.studs,unit:'studs',detail:item.detail};
+  if(plan.mode==='paint'){
+   const surfaces=item.measurements.surfaces||[{area}];
+   const quantity=surfaces.reduce((sum,surface)=>sum+Math.ceil(surface.area*plan.coats/plan.coverage),0);
+   return {name:plan.name,quantity,unit:'gallons',area,coats:plan.coats,coverage:plan.coverage,detail:plan.name+': '+area.toFixed(1)+' sq. ft., '+plan.coats+' coat(s), '+plan.coverage+' sq. ft./gallon; rounded separately for each surface.'};
+  }
+  if(plan.mode==='area'){
+   const needed=area*(1+plan.waste/100),quantity=plan.coverage?Math.ceil(needed/plan.coverage-1e-9):Math.ceil(needed-1e-9);
+   return {name:plan.name,quantity,unit:plan.coverage?'packages':'sq. ft.',area,waste:plan.waste,coverage:plan.coverage,detail:plan.name+': '+area.toFixed(1)+' sq. ft. work area + '+plan.waste+'% waste'+(plan.coverage?', '+plan.coverage+' sq. ft./package':'')+'.'};
+  }
+  return {name:plan.name,quantity:plan.quantity,unit:plan.unit,detail:plan.name+': quantity entered.'};
+ });
+}
+
+function cabinetRemovalRate(qty){return qty>=10?50:qty>=6?55:qty>=3?65:75;}
+function cabinetRefinishingEstimate(){
+ const count=id=>{const n=materialNumber('cabinet-'+id);if(id==='door-adjust-qty'){if(!Number.isFinite(n)||n<0||Math.round(n*4)!==n*4)throw Error('Enter adjustment hours in quarter-hour increments.');return n;}if(!Number.isSafeInteger(n))throw Error('Enter whole counts for cabinet parts.');return n;};
+ const doors=count('doors'),drawers=count('drawers'),measurements={doors,drawers};
+ const labor=[];
+ const add=(service,quantity,unit)=>{const approved={'Adjust cabinet door':75,'Stain cabinet door interior':150,'Stain cabinet door exterior':150,'Stain cabinet box':150,'Paint or stain cabinet inside and out':225,'Install cabinet and paint outside':275,'Install cabinet and paint inside and out':325,'Install cabinet box':150,'Remove cabinet box and haul off':cabinetRemovalRate(quantity),'Paint cabinet door and matching box':150,'Paint cabinet interiors':225,'Install cabinet hardware':15,'Fill cabinet hardware hole and touch up paint if possible':15,'Install cabinet crown molding':3,'Install cabinet toe-kick':1.25,'Install cabinet filler strip':15,'Install cabinet end panel':75};const unitPrice=approved[service]??null;if(quantity)labor.push({service,scope:'Cabinet / Vanity Work',quantity,unit,...(unitPrice!==null?{price:unitPrice*quantity,unitPrice}: {})});};
+ add('Refinish doors — frames included',doors,'doors');add('Refinish drawer fronts — frames included',drawers,'drawer fronts');
+ CABINET_WORK_OPTIONS.filter(option=>option.fields.length).forEach(option=>{
+  if(!document.getElementById('cabinet-'+option.key).checked)return;
+  let total=0;option.fields.forEach(([id,label,service,unit])=>{const quantity=count(id);measurements[id]=quantity;total+=quantity;add(service,quantity,unit)});
+  if(!total)throw Error('Enter the quantity for '+option.label.toLowerCase()+'.');
+ });
+ const products=[...document.querySelectorAll('[name="area-product"]:checked')].map(box=>{
+  const name=box.value==='Other material'?document.getElementById('material-description').value.trim():box.value;
+  if(!name)throw Error('Enter the other material name.');const quantity=measurements[name==='Hardware'?'hardware-count':name.toLowerCase()]||null;return {name,quantity,unit:quantity?'pieces':'',detail:'Quantity to confirm from cabinet sizes.'};
+ });
+ if(!labor.length&&!products.length)throw Error('Enter doors or drawer fronts, select cabinet work, or choose materials.');
+ return {type:'custom',title:'Cabinet / Vanity Work',result:labor.length?labor.map(x=>x.quantity+' '+x.unit).join(' · '):'Cabinet materials requested',detail:'Labor per cabinet: install $150; paint or stain outside $150 or inside and out $225; install and paint outside $275 or inside and out $325. Doors and drawer fronts included. Removal and haul-off: 1–2 $75 each, 3–5 $65, 6–9 $55, 10+ $50. Hardware $15 per knob, pull or hinge; hole preparation $15 per door or drawer. Materials extra; $150 minimum trip charge.',measurements,labor,products,projectOptions:products.length?['Materials']:[],deliveryTypes:[]};
+}
+
+
+// Shared by shopping and the project calculator; choices appear only for selected items.
+function itemOptionFields(name){
+ const rules=[
+ [/assemble and install standard toilet/i,[['Bowl shape','Round','Elongated (oval)']]],
+ [/laminate/i,[['Installation','Floating'],['Water resistance','Standard','Water resistant'],['Padding','Attached pad','Separate underlayment']]],
+ [/luxury vinyl|\blvp\b|vinyl plank/i,[['Installation','Floating','Glue down'],['Padding','Attached pad','Separate underlayment']]],
+ [/linoleum|sheet vinyl/i,[['Material','Sheet vinyl','Linoleum'],['Installation','Glue down','Loose lay']]],
+ [/carpet/i,[['Style','Carpet roll','Carpet tiles'],['Installation','Stretch in with pad','Glue down']]],
+ [/shower.*(valve|faucet|head)|mixing valve/i,[['Valve type','Pressure balance','Thermostatic','Help identify existing valve'],['Work needed','New installation','Replace existing valve / trim'],['Finish','Chrome','Brushed nickel','Matte black','Bronze']]],
+ [/exhaust fan/i,[['Fan type','Fan only','Fan with light','Fan with heater'],['Venting','Existing outdoor duct','New duct needed','Not sure'],['Room size','Small bathroom','Large bathroom','Other room']]],
+ [/washer|washing machine/i,[['Style','Top load','Front load','Stackable'],['Connections','Existing connections','New connections needed']]],
+ [/range hood/i,[['Venting','Ducted outdoors','Recirculating','Not sure'],['Mounting','Under cabinet','Wall mount','Island']]],
+ [/stone veneer|stacked stone|thin brick|faux stone/i,[['Format','Individual pieces','Panels','Sheets'],['Location','Interior wall','Fireplace surround','Exterior wall'],['Surface condition','Ready for installation','Prep / repairs needed','Not sure']]],
+ [/shiplap|tongue.*groove|reclaimed wood|wood slat|fluted wood|board.*batten|beadboard|wainscoting|geometric wood/i,[['Material','Solid wood','MDF','PVC / composite'],['Finish','Painted','Stained','Unfinished'],['Layout','Horizontal','Vertical','Patterned']]],
+ [/acoustic/i,[['Style','Fabric panels','Wood slat panels','Acoustic foam'],['Mounting','Walls','Ceiling','Both']]],
+ [/vent duct|vent cap/i,[['Duct size','4 inch','6 inch','Other size'],['Work needed','New installation','Replace existing']]],
+ 
+ [/tile|mosaic|stone|slab/i,[['Material','Ceramic','Porcelain','Natural stone','Manufactured stone'],['Format','Individual tiles','Mosaic sheets','Large format','Slab / panel'],['Location','Floor','Wall','Backsplash','Shower / wet area','Exterior']]],
+ [/hardwood/i,[['Construction','Solid hardwood','Engineered hardwood'],['Installation','Nail / staple','Glue down','Floating']]],
+ [/vinyl|\blvp\b|linoleum|laminate|carpet|flooring/i,[['Flooring type','Luxury vinyl plank (LVP)','Laminate','Hardwood','Tile','Sheet vinyl / linoleum','Carpet'],['Installation','Floating','Glue down','Nail / staple']]],
+ [/vanity light/i,[['Fixture style','Light bar','Wall sconce','Multi-light fixture'],['Finish','Chrome','Brushed nickel','Matte black','Bronze','Other']]],
+ [/wall sconce/i,[['Mounting','Existing wall box','New location'],['Finish','Chrome','Brushed nickel','Matte black','Bronze','Other']]],
+ [/pendant light/i,[['Mounting','Existing ceiling box','New location'],['Drop length','Short','Medium','Long','Help me choose']]],
+ [/recessed light/i,[['Opening','Existing recessed fixture','New cutout'],['Trim size','4 inch','6 inch','Other / not sure']]],
+ [/track light/i,[['Mounting','Existing ceiling box','New location'],['Track length','2 feet','4 feet','6 feet','Other / not sure']]],
+ [/ceiling light/i,[['Mounting','Existing ceiling box','New location'],['Fixture style','Flush mount','Semi-flush mount','Chandelier','Help me choose']]],
+ [/vanity/i,[['Size','Single sink','Double sink'],['Mounting','Freestanding','Wall mounted'],['Top','With top and sink','Cabinet only']]],
+ [/faucet|mixing valve/i,[['Mounting','Single hole','Centerset','Widespread','Wall mounted'],['Finish','Chrome','Brushed nickel','Matte black','Bronze']]],
+ [/sink/i,[['Sink type','Single bowl','Double bowl','Vessel'],['Mounting','Drop in','Undermount','Wall mounted']]],
+ [/bathtub|tub replace|tub surround/i,[['Tub style','Alcove','Freestanding','Drop in'],['Material','Acrylic / fiberglass','Steel','Cast iron']]],
+ [/shower (base|glass|surround)/i,[['Style','Prefabricated','Custom sized'],['Size','Standard opening','Custom opening']]],
+ [/cabinet/i,[['Construction','Ready to assemble','Assembled stock','Custom'],['Finish','Painted','Stained','Unfinished']]],
+ [/countertop/i,[['Surface','Laminate','Butcher block','Quartz','Granite','Solid surface']]],
+ [/range|stove|cooktop|dryer/i,[['Power','Electric','Gas'],['Fit','Freestanding','Built in / slide in']]],
+ [/refrigerator/i,[['Style','Top freezer','Bottom freezer','Side by side','French door'],['Depth','Standard depth','Counter depth'],['Water connection','Needed','Already connected','No water / ice dispenser']]],
+ [/dishwasher/i,[['Width','18 inch','24 inch'],['Power connection','Plug in','Hardwired']]],
+ [/microwave/i,[['Placement','Countertop','Over range','Built in']]],
+ [/\b(?:doors?|doorways?)\b/i,[['Door type','Interior','Exterior','Sliding','French / double'],['Package','Slab only','Prehung'],['Material','Wood','Steel','Fiberglass','Composite']]],
+ [/window/i,[['Style','Single hung','Double hung','Sliding','Casement','Fixed'],['Frame','Vinyl','Wood','Aluminum','Fiberglass']]],
+ [/paint|stain|finish|sealer/i,[['Finish','Flat / matte','Eggshell','Satin','Semi gloss','Gloss'],['Color change','Same / similar color','New color','Multiple colors']]],
+ [/wallpaper/i,[['Type','Peel and stick','Pasted','Unpasted'],['Pattern','Solid / texture','Repeating pattern','Mural']]],
+ [/light|fan/i,[['Mounting','Existing fixture location','New location'],['Style','Flush mount','Pendant / hanging','Recessed','Wall mounted']]],
+ [/\b(?:sofas?|sectionals?|chairs?|beds?|tables?|desks?|dressers?|furniture)\b/i,[['Size','Small','Standard','Large / oversized'],['Assembly','Assembly needed','Already assembled']]],
+ [/drill|saw|sander|tool/i,[['Power','Cordless','Corded','Manual'],['Package','Tool only','Kit with accessories']]],
+ [/trim|molding|baseboard|casing/i,[['Material','Wood','MDF','PVC'],['Finish','Painted','Stained','Unfinished']]],
+ [/drywall/i,[['Panel type','Standard','Moisture resistant','Fire rated'],['Thickness','1/2 inch','5/8 inch']]],
+ [/lumber|plywood/i,[['Use','Interior','Exterior / treated'],['Grade','Standard construction','Appearance / finish grade']]]
+ ];
+ if(/\b(?:garden|flower|planting|raised)\s+beds?\b/i.test(name))return [];
+ if(/toilet tank parts|wax ring|toilet flange/i.test(name))return [];
+ if(/repair|resurface|tank parts|supply line|seat|underlayment|backer|adhesive|grout|primer|membrane|removal|haul off/i.test(name))return [];
+ return (rules.find(([pattern])=>pattern.test(name))?.[1]||[]).map(([label,...values])=>({label,values:[...values,'Help me choose']}));
+}
+function itemOptionSummary(options){return Object.entries(options||{}).map(([label,value])=>label+': '+value).join('; ');}
+
+// Match customer-facing names and choices, never the internal generic "custom" material type.
+function isCustomLabel(value){return /\bcustom\b/i.test(String(value||''));}
+function customUrl(url){const p=new URL(url,location.origin).searchParams;return ['product','workLabel'].some(k=>isCustomLabel(p.get(k)))||isCustomLabel(PROJECT_CATALOG[p.get('project')]?.title);}
+function customEstimate(item){return !!item&&(item.inPersonQuoteRequired||[item.name,item.title,item.workLabel,...Object.values(item.options||{}),...Object.values(item.itemOptions||{}).flatMap(x=>Object.values(x||{})),...(item.products||[]).flatMap(x=>[x.name,...Object.values(x.options||{})])].some(isCustomLabel)||(item.sourceQuery&&customUrl('/calculators.html'+item.sourceQuery)));}
+function customSelection(){return customUrl(location.href)||[...document.querySelectorAll('select')].some(s=>!s.disabled&&!s.closest('[hidden]')&&(!s.closest('.area-product')||s.closest('.area-product').querySelector('input:checked'))&&isCustomLabel(s.selectedOptions[0]?.textContent))||[...document.querySelectorAll('input:checked')].some(i=>isCustomLabel(i.value));}
+function customQuoteMarkup(name){return '<h2>In-person quote required</h2><p>'+escapeCartText(name||'Custom work')+' requires an in-person visit before pricing.</p><a class="btn primary" href="sms:'+SITE.text.replaceAll('-','')+'?body='+encodeURIComponent('I would like to arrange an in-person quote for '+(name||'custom work')+'.')+'">Request in-person quote</a> <a class="btn outline" href="tel:'+SITE.phone.replaceAll('-','')+'">Call to schedule</a>';}
+function renderCustomQuotePage(name){document.body.innerHTML=header()+'<main class="wrap section">'+customQuoteMarkup(name)+'</main>'+footer();updateCartCount();}
+function showCustomQuote(name){let box=document.getElementById('custom-quote-request');if(!box){box=document.createElement('section');box.id='custom-quote-request';box.className='wrap panel';document.querySelector('main').prepend(box);}box.innerHTML=customQuoteMarkup(name);box.scrollIntoView({behavior:'smooth'});}
+document.addEventListener('click',event=>{const control=event.target.closest('button,a');if(!control)return;const url=control.dataset.calcUrl||control.getAttribute('href');const card=control.closest('.card,.project-work-card');const name=card?.querySelector('h2,h3,summary')?.textContent;if((url&&/calculators.html/.test(url)&&customUrl(url))||(isCustomLabel(name)&&/calculate|add|next|options/i.test(control.textContent))){event.preventDefault();event.stopImmediatePropagation();showCustomQuote(name);}},true);
+document.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.page==='calculators'&&customUrl(location.href))renderCustomQuotePage(new URLSearchParams(location.search).get('workLabel')||'Custom work');});
+
+function requiresInPersonQuote(item){if(!item)return false;if(item.type==='Material estimate'&&!item.quoteRequired)return false;return !!(item.quoteRequired||item.pricingPending||item.price===null||item.price===undefined||item.price===''||!Number.isFinite(Number(item.price)));}
+
+// Owner-approved October 24, 2026. Labor only; material pricing stays separate.
+window.ROOM_LABOR_SERVICES={
+ hang:{label:'Drywall installation',sheetRate:75,wallRate:0},
+ finish:{label:'Drywall finishing',sheetRate:0,wallRate:2.25},
+ prime:{label:'Prime walls — one coat',sheetRate:0,wallRate:0.75},
+ paint1:{label:'Paint walls — one coat',sheetRate:0,wallRate:0.75},
+ paint2:{label:'Paint walls — two coats',sheetRate:0,wallRate:1.5},
+ 'hang-finish':{label:'Install and finish drywall',sheetRate:75,wallRate:2},
+ 'finish-prime':{label:'Finish and prime drywall',sheetRate:0,wallRate:2.75},
+ 'hang-finish-prime':{label:'Install, finish and prime drywall',sheetRate:75,wallRate:2.5},
+ 'finish-prime-paint':{label:'Finish, prime and paint walls — two paint coats',sheetRate:0,wallRate:4},
+ full:{label:'Install, finish, prime and paint walls — two paint coats',sheetRate:75,wallRate:3.75}
+};
+window.CEILING_LABOR_MULTIPLIER=1.2;
+window.roomLaborQuote=function(area,key,ceilingArea=0){
+ const service=window.ROOM_LABOR_SERVICES[key];
+ if(!service||!Number.isFinite(area)||!Number.isFinite(ceilingArea)||area<0||ceilingArea<0||area+ceilingArea<=0)throw Error('Enter a valid area and choose the work.');
+ const sheets=Math.ceil(area/32),ceilingSheets=Math.ceil(ceilingArea/32);
+ const wallAmount=sheets*service.sheetRate+area*service.wallRate;
+ // Ceiling paint is one white coat, even when the same room includes two wall coats.
+ const ceilingPaintReduction=['paint2','finish-prime-paint','full'].includes(key)?0.75:0;
+ const ceilingAmount=(ceilingSheets*service.sheetRate+ceilingArea*(service.wallRate-ceilingPaintReduction))*window.CEILING_LABOR_MULTIPLIER;
+ const amount=Math.round((wallAmount+ceilingAmount)*100)/100;
+ return {...service,key,area,sheets,ceilingArea,ceilingSheets,wallAmount,ceilingAmount:Math.round(ceilingAmount*100)/100,amount};
+};
+window.roomLaborSize=function(floor){return floor<=40?'Small':floor<=144?'Medium':floor<=250?'Large':'Larger project';};
+
+// Quantity discounts share the total removal count across rooms on the same visit.
+function doorRemovalRate(quantity){return quantity>=4?75:quantity>=3?85:quantity>=2?100:150;}
+function repriceRemovalGroups(cart){
+ const counts={};for(const item of cart)if(item.removalGroup)counts[item.removalGroup]=(counts[item.removalGroup]||0)+Number(item.removalCount||item.qty||1);
+ return cart.map(item=>item.removalGroup==='doors'?{...item,price:doorRemovalRate(counts.doors)*(item.removalCount||1)}:item.removalGroup==='cabinets'?{...item,price:cabinetRemovalRate(counts.cabinets)*(item.removalCount||1)}:item);
+}
+
+// The shared managed catalog supplies new product placements without a site deployment.
+document.addEventListener('DOMContentLoaded',()=>{import('/catalog-client.js?v='+encodeURIComponent(retailAssetVersion)).catch(()=>{});});
++Number(x.startingAt).toFixed(2):'quote required')+
+   (x.measurements?.accentOnly?'; wall '+x.measurements.length+' × '+x.measurements.height+' ft.':'')
+  ).join('\n');
+  const body='Scheduling request for Nik’s Remodeling\n\nName: '+name+'\nPhone: '+phone+
+    '\nPreferred date: '+dateValue+'\nZIP: '+zip+'\n\nProject:\n'+projects+
+    '\n\nPlease confirm scope, final price, start date, and deposit before payment.';
+  const status=document.getElementById('nr-scheduling-status');
+  if(status)status.textContent='Opening your email app with the scheduling request. Please send the message to complete your request.';
+  location.href='mailto:'+SITE.email+'?subject='+encodeURIComponent('Scheduling request — Nik’s Remodeling')+'&body='+encodeURIComponent(body);
+ });
 }
 function updateCartPayButton(){
  const button=document.getElementById('cart-pay-button');
