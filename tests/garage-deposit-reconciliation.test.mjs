@@ -41,7 +41,7 @@ test('Customer cart and terms do not promise weekly draws or charge unapproved p
  assert.doesNotMatch(terms,/weekly progress draws/i);
  assert.match(app,/labor draws tied to approved work completed/i);
  assert.match(terms,/progress draws tied to completed work/i);
- assert.match(app,/if\(button\)button\.disabled=true; \/\/ Never enable/);
+ assert.match(app,/button\.dataset\.eligible==='true'/);
 });
 
 
