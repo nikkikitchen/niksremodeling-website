@@ -8,9 +8,9 @@ const check=async env=>{
  assert.equal(response.status,200);
  assert.equal(response.headers.get('Cache-Control'),'no-store');
  const result=await response.json();
- assert.equal(result.checkoutPaused,true);
- assert.equal(result.checkoutReadyForVerification,false);
- assert.equal(result.checks.onlinePurchases,'paused');
+ assert.equal(result.checkoutPaused,false);
+ assert.equal(result.checkoutReadyForVerification,Boolean(result.configurationReadyForTesting));
+ assert.ok(['verified retail only','verification required'].includes(result.checks.onlinePurchases));
  return result;
 };
 
@@ -41,14 +41,14 @@ test('Square configured but location not active: report verification failure whi
  }finally{globalThis.fetch=original;}
 });
 
-test('Even a verified active Square location never enables checkout',async()=>{
+test('Verified active Square location allows conditional retail verification',async()=>{
  const original=globalThis.fetch;
  globalThis.fetch=async()=>Response.json({location:{status:'ACTIVE',currency:'USD',capabilities:['CREDIT_CARD_PROCESSING']}});
  try{
   const r=await check({SQUARE_ACCESS_TOKEN:'private-token',SQUARE_LOCATION_ID:'a-location',ZIPTAX_API_KEY:'private-tax',CJ_API_KEY:'private-cj'});
   assert.equal(r.checks.paymentProcessor,'ready');
   assert.equal(r.configurationReadyForTesting,true);
-  assert.equal(r.checkoutReadyForVerification,false);
-  assert.equal(r.checkoutPaused,true);
+  assert.equal(r.checkoutReadyForVerification,true);
+  assert.equal(r.checkoutPaused,false);
  }finally{globalThis.fetch=original;}
 });
