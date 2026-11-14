@@ -10,9 +10,9 @@ assert.ok(start>=0&&end>start,'Cart secure checkout function exists');
 const render=new Function(app.slice(start,end)+'\nreturn cartSecureCheckoutPanel;')();
 const domFor=items=>new JSDOM('<body>'+render(items)+'</body>').window.document;
 
-test('merchandise cart shows purchase hold without a checkout or verification button',()=>{
+test('merchandise cart has a Pay button which starts disabled until terms accepted',()=>{
  const d=domFor([{source:'supplier-retail',type:'Product',productId:'1963146233541074945',variantId:'1963146233666904066',qty:1}]);
- assert.match(d.body.textContent,/Online purchases temporarily paused/);
+ assert.ok(d.getElementById('cart-pay-button'));
  assert.equal(d.getElementById('square-check-price'),null);
  assert.equal(d.getElementById('square-pay'),null);
  assert.ok(d.querySelector('a[href="#cart-scheduling"]'),'A quote request remains available');
@@ -34,7 +34,7 @@ test('empty and mixed carts never create a payable button',()=>{
  }
 });
 
-test('Review Cart uses one summary with terms and a disabled Pay button',()=>{
+test('Review Cart uses one summary with terms and an initially disabled Pay button',()=>{
  const start=app.indexOf('function renderCart(){');
  const end=app.indexOf('\nfunction removeCart(',start);
  const source=app.slice(start,end);
@@ -48,7 +48,7 @@ test('Review Cart uses one summary with terms and a disabled Pay button',()=>{
  assert.ok(summary.indexOf('id="cart-terms-agree"')<summary.indexOf('id="cart-pay-button"'));
 });
 
-test('cart keeps one compact delivery address form while online payment is paused',()=>{
+test('cart includes compact delivery address fields for verified checkout',()=>{
  const start=app.indexOf('function renderCart(){');
  const end=app.indexOf('\nfunction removeCart(',start);
  const source=app.slice(start,end);
