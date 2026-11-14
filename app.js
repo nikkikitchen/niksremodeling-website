@@ -876,6 +876,7 @@ function cartSchedulingRequestMarkup(items){
   '<label>Phone<input name="phone" required type="tel" maxlength="25" autocomplete="tel" placeholder="Phone number"></label>'+
   '<label>Preferred start date<input name="date" type="date" required></label>'+
   '<label>Project ZIP<input name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required></label>'+
+  '<label class="nr-request-notes">Project details (optional)<textarea name="notes" maxlength="2000" rows="4" placeholder="Tell us about your goals, existing damage, access needs, or anything else we should review."></textarea></label>'+
   '</div><button class="btn primary" style="margin-top:14px" type="submit">Request a Quote &amp; Start Date</button>'+
   '<p class="calc-note" id="nr-scheduling-status" role="status">This sends a request, not a confirmed booking or deposit charge.</p></form>'+
   '</section>';
@@ -894,12 +895,14 @@ function initCartSchedulingRequest(items){
   const zip=String(form.elements.namedItem('zip').value||'').trim();
   const projects=items.filter(x=>!x.hiddenFromCustomer).map(x=>
    x.name+'; starting estimate '+(Number(x.startingAt)>0?'$'+Number(x.startingAt).toFixed(2):'quote required')+
-   (x.measurements?.accentOnly?'; wall '+x.measurements.length+' × '+x.measurements.height+' ft.':'')
+   (packageMeasurementSummary(x)?'; '+packageMeasurementSummary(x):'')+
+   (Array.isArray(x.scope)&&x.scope.length?'; selected work: '+x.scope.join(', '):'')
   ).join('\n');
   const status=document.getElementById('nr-scheduling-status');
   const button=form.querySelector('button');if(button.disabled)return;
   const email=String(form.elements.namedItem('email').value||'').trim();
-  const payload={name,phone,email,date:preferred,zip,details:projects};
+  const notes=String(form.elements.namedItem('notes')?.value||'').trim();
+  const payload={name,phone,email,date:preferred,zip,details:projects+(notes?'\n\nCustomer notes: '+notes:'')};
   const signature=JSON.stringify(payload);
   if(form.dataset.payload!==signature){form.dataset.requestId=crypto.randomUUID();form.dataset.payload=signature;}
   button.disabled=true;status.textContent='Submitting your scheduling request…';
@@ -912,7 +915,7 @@ function initCartSchedulingRequest(items){
   }catch(error){
    status.textContent=error.message+' Your request was not saved and no date has been confirmed. ';
    const fallback=document.createElement('a');fallback.textContent='Email a scheduling request';
-   fallback.href='mailto:'+SITE.email+'?subject='+encodeURIComponent('Scheduling request — Nik’s Remodeling')+'&body='+encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nPreferred date: '+preferred+'\nZIP: '+zip+'\nProject: '+projects+'\nPlease confirm scope, price and availability.');
+   fallback.href='mailto:'+SITE.email+'?subject='+encodeURIComponent('Scheduling request — Nik’s Remodeling')+'&body='+encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nPreferred date: '+preferred+'\nZIP: '+zip+'\nProject: '+payload.details+'\nPlease confirm scope, price and availability.');
    status.append(fallback);button.disabled=false;
   }
 

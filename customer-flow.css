@@ -20,7 +20,7 @@ body .assurance>.wrap>span{display:block}
 .nr-cart-page .nr-cart-price-chart .cart-item{border:0;border-radius:0;border-bottom:1px solid #e2e8f0;padding:12px 0!important;line-height:1.45;gap:16px}
 .nr-cart-page .nr-cart-details{margin:8px 0;padding:10px 0}
 .nr-cart-page .cart-combined-project-row{background:#edf4fb;border-radius:8px!important;padding:14px!important;margin-top:12px}
-.nr-cart-page input:not([type="checkbox"]){display:block;min-height:46px;width:100%;max-width:100%;padding:11px 12px;border:1px solid #aebccc;border-radius:7px;background:#fff;color:#16202a;box-sizing:border-box;font:inherit}
+.nr-cart-page input:not([type="checkbox"]),.nr-cart-page textarea{display:block;min-height:46px;width:100%;max-width:100%;padding:11px 12px;border:1px solid #aebccc;border-radius:7px;background:#fff;color:#16202a;box-sizing:border-box;font:inherit}
 .nr-cart-page #nr-scheduling-form label,.nr-cart-page .nr-cart-pay-controls>label:has(#cart-receipt-email){display:grid;gap:7px;font-weight:600;line-height:1.4}
 .nr-cart-page .nr-cart-pay-controls>label:has(#cart-receipt-email){margin:16px 0}
 .nr-cart-page #nr-scheduling-form button{min-height:48px}
@@ -55,3 +55,6 @@ body .assurance>.wrap>span{display:block}
 @media(max-width:360px){body #projects .project-grid .tile{min-height:210px!important}body #projects .project-grid .tile>span small{font-size:11px}}
 body #projects,.nr-cart-page #cart-scheduling{scroll-margin-top:88px}
 @media(max-width:620px){.nr-cart-page .nr-cart-line-price{width:auto;justify-self:stretch}}
+
+.nr-cart-page .nr-request-notes{grid-column:1/-1}
+.nr-cart-page textarea{min-height:120px;resize:vertical;line-height:1.5}
