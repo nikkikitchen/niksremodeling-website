@@ -54,5 +54,5 @@ for(const project of ['bathrooms','kitchen-pantry'])test(project+' Standard carr
 });
 
 test('labor-only installation remains quote-required and never enters merchandise checkout',async({page})=>{
- await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'retail-installation',qty:1,price:225,installationRequested:true}])));await page.goto('/project-cart.html');await page.locator('#cart-terms-agree').check();await expect(page.locator('#cart-pay-button')).toBeDisabled();await expect(page.locator('#cart-pay-status')).toContainText('confirmed quote');
+ await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await page.locator('#cart-terms-agree').check();await expect(page.locator('#cart-pay-button')).toBeDisabled();await expect(page.locator('#cart-pay-status')).toContainText('confirmed quote');
 });
