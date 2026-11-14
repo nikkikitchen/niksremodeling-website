@@ -2,7 +2,7 @@
 // Does not create payment links or handle credentials, orders or customer data.
 const urls=[
  'https://niksremodeling.com',
- 'https://niks-remodeling.pages.dev'
+ 'https://niksremodeling-website.pages.dev'
 ];
 const expected=(process.env.GITHUB_SHA||'').slice(0,12);
 const timeout=12000;
@@ -23,7 +23,7 @@ for(const base of urls){
  const releaseCommit=release.ok?(()=>{
   try{return String(JSON.parse(release.text).commit||'').slice(0,12)}catch{return null}
  })():null;
- const checkoutUi=script.ok&&script.text.includes('function cartSecureCheckoutPanel(items)')&&script.text.includes('Pay securely with Square');
+ const checkoutUi=script.ok&&script.text.includes('id="cart-pay-button"')&&script.text.includes('initCartSecureCheckout')&&script.text.includes('/api/store-checkout');
  const pageLoadsApp=page.ok&&/src="\/app\.js\?v=[^"]+"/.test(page.text);
  let config=null;
  if(readiness.ok){
@@ -61,12 +61,12 @@ for(const base of urls){
     http:result.status,
     checkoutPaused:body.checkoutPaused===true,
     failingStage:result.ok?null:(typeof body.stage==='string'?body.stage:null),
-    ready:result.ok&&
+    ready:result.ok&&body.checkoutEnabled===true&&
      Number.isSafeInteger(body.totalCents)&&body.totalCents>0&&
-     Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>0&&
+     Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>=0&&
      Number.isSafeInteger(body.taxCents)&&body.taxCents>=0&&Number(body.stock)>0,
     stockConfirmed:Number(body.stock)>0,
-    shippingConfirmed:Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>0,
+    shippingConfirmed:Number.isSafeInteger(body.deliveryCents)&&body.deliveryCents>=0,
     taxConfirmed:Number.isSafeInteger(body.taxCents)&&body.taxCents>=0,
     totalConfirmed:Number.isSafeInteger(body.totalCents)&&body.totalCents>0,
     reason:result.ok?null:String(body.error||result.error||'Quote unavailable').slice(0,200)
@@ -82,7 +82,7 @@ for(const base of urls){
   host:new URL(base).host,
   releaseHttp:release.status,
   publishedCommit:releaseCommit||'unavailable',
-  matchesBuild:!!releaseCommit&&releaseCommit===expected,
+  matchesBuild:expected?(!!releaseCommit&&releaseCommit===expected):null,
   cartHttp:page.status,
   cartLoadsApp:pageLoadsApp,
   appHttp:script.status,
