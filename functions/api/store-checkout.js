@@ -27,10 +27,8 @@ export async function onRequestPost({request,env}){
     Number(body?.quantity)!==1)
   return fail('Check the product, quantity and delivery ZIP before checkout.',400);
  if(![...catalog,...retailCatalog].some(x=>String(x.id)===productId))return fail('This item is not enabled for checkout.',400);
- // HARD PURCHASE HOLD: never create a Square payment link until verified tax,
- // delivery pricing and end-to-end payment tests have been approved.
- // This deliberately cannot be bypassed by an environment flag or browser state.
- return fail('Online purchases are temporarily paused while we verify shipping and sales tax. No payment was taken.');
+ // A purchase is allowed only after fresh supplier inventory, shipping and exact
+ // destination tax are confirmed. All other carts remain quote-only.
  // Retail shipping is decided by the verified supplier freight quote, not a labor-service ZIP whitelist.
  try{
   const requestUrl=new URL('/api/store-quote',origin);
@@ -47,7 +45,7 @@ export async function onRequestPost({request,env}){
   if(String(q.variantId)!==variantId||Number(q.stock)<1)return fail('This product option is unavailable.');
   if(q.totalCents!==expectedTotal)return fail('Price or tax changed. Review the new total before paying.',409);
   if(!Number.isSafeInteger(q.subtotalCents)||q.subtotalCents<=0||
-     !Number.isSafeInteger(q.deliveryCents)||q.deliveryCents<=0)
+     !Number.isSafeInteger(q.deliveryCents)||q.deliveryCents<0)
    return fail('Delivery pricing needs confirmation.');
   const {location}=await square(env,'/v2/locations/'+encodeURIComponent(env.SQUARE_LOCATION_ID));
   if(location?.status!=='ACTIVE'||location.currency!=='USD'||
