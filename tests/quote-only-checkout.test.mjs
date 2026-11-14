@@ -80,3 +80,17 @@ test('CJ does not retry a permanent authentication error',async()=>{
   assert.equal(calls,1);
  }finally{globalThis.fetch=original;}
 });
+
+test('CJ reports sanitized upstream status and numeric error code after bounded failure',async()=>{
+ const {cj}=await import('../functions/_lib/commerce.js');
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({result:false,code:'1600000',message:'secret not for clients'}),{status:503});};
+ try {
+  await assert.rejects(cj({CJ_ACCESS_TOKEN:'mock'},'/product/query?pid=example'),error=>{
+   assert.match(error.message,/HTTP 503 CJ code 1600000/);
+   assert.doesNotMatch(error.message,/secret not for clients/);
+   return true;
+  });
+  assert.equal(calls,2);
+ }finally{globalThis.fetch=original;}
+});
