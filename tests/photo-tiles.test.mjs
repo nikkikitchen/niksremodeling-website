@@ -52,8 +52,9 @@ test('retail checkout verifies supplier, Square, tax, ZIP and final total before
  assert.ok(!cart.slice(cart.indexOf('function cartSecureCheckoutPanel(items){'),cart.indexOf('function initCartSecureCheckout(items){')).includes('square-pay'), 'Checkout panel must not render a pay button');
  assert.ok(!quote.includes('STORE_ALLOWED_ZIPS'),'Product checkout should not use a labor-service ZIP whitelist');
  assert.ok(!checkout.includes('STORE_ALLOWED_ZIPS'),'Payment checkout should not use a labor-service ZIP whitelist');
- assert.ok(quote.includes('const checkoutEnabled=false;'));
- assert.ok(checkout.includes('HARD PURCHASE HOLD'), 'Server must block payment-link creation while testing');
+ assert.ok(quote.includes('const checkoutEnabled=!!locationId&&stock>0'));
+ assert.ok(checkout.includes('q.totalCents!==expectedTotal'));
+ assert.ok(checkout.includes('if(!quoteResponse.ok||!q.checkoutEnabled'), 'Only fresh verified quotes can create Square links');
 });
 
 test('appliance dryers show a laundry image, not kitchen images',()=>{
