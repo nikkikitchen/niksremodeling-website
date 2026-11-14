@@ -709,13 +709,30 @@ window.beginPackageQuote=function(projectId,projectTitle,choice,source){
               incrementalProjectFee:extraFee
             }}
           };
+        }else if(choice.id==='deluxe'){
+          // Standard's published finish is a costed paint-and-sponge baseline.
+          // Preserve its real materials / labor / fee split, then itemize the
+          // extra measured area at approved painting and $75/hour labor rates.
+          const extraArea=Math.max(0,wallArea-baselineArea);
+          const extraGrossLabor=rounded5(extraArea*1.50)+
+            Math.ceil(extraArea/32)*75+Math.max(0,length-12)*3;
+          const extraMaterials=Math.max(0,wallGallons-1)*48.60+
+            Math.max(0,Math.ceil(wallArea/350)-1)*47.22;
+          const extraNetLabor=Math.round(extraGrossLabor*.93*100)/100;
+          const deposit=Math.round(((Number(choice.depositEstimate)||0)+extraMaterials)*100)/100;
+          const labor=Math.round(((Number(choice.laborEstimate)||0)+extraNetLabor)*100)/100;
+          measuredMinimum=rounded5(starting+extraMaterials+extraNetLabor+
+            (extraGrossLabor+extraMaterials)*.10);
+          measuredQuote={
+            startingAt:Math.max(starting,measuredMinimum),
+            depositEstimate:deposit,laborEstimate:labor,
+            overheadAllowance:Math.round((Math.max(starting,measuredMinimum)-deposit-labor)*100)/100,
+            priceBasis:{...(choice.priceBasis||{}),measuredAccentAdjustment:{
+              extraArea,extraGrossLabor,extraMaterials,discountedExtraLabor:extraNetLabor}}
+          };
         }else{
-          // The specialty finish has no verified delivered material price.
-          // Do not invent a deposit/labor breakdown for the larger wall.
-          measuredMinimum=rounded5(starting*Math.max(1,wallArea/baselineArea));
-          measuredQuote={startingAt:Math.max(starting,measuredMinimum),
-            depositEstimate:null,laborEstimate:null,overheadAllowance:null,
-            priceBasis:null};
+          // Unpriced premium finishes remain individually quoted.
+          measuredQuote=null;
         }
       }
       // For larger defined Bathroom/Kitchen packages, increase the measured minimum
