@@ -893,7 +893,12 @@ function initCartSchedulingRequest(items){
    const result=await response.json();if(!response.ok)throw Error(result.error||'Request could not be submitted.');
    status.textContent=result.message+' Reference: '+result.reference;
    button.textContent='Request received';
-  }catch(error){status.textContent=error.message+' No date has been confirmed.';button.disabled=false;}
+  }catch(error){
+   status.textContent=error.message+' Your request was not saved and no date has been confirmed. ';
+   const fallback=document.createElement('a');fallback.textContent='Email a scheduling request';
+   fallback.href='mailto:'+SITE.email+'?subject='+encodeURIComponent('Scheduling request — Nik’s Remodeling')+'&body='+encodeURIComponent('Name: '+name+'\nPhone: '+phone+'\nEmail: '+email+'\nPreferred date: '+preferred+'\nZIP: '+zip+'\nProject: '+projects+'\nPlease confirm scope, price and availability.');
+   status.append(fallback);button.disabled=false;
+  }
 
  });
 }

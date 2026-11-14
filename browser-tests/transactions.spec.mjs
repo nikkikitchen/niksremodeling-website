@@ -33,7 +33,9 @@ test('measured Accent Standard requests scheduling and displays received referen
  await page.locator('#pkg-measure-form button[type=submit]').click();await expect(page.locator('#pkg-measure-result')).toBeVisible();
  await page.locator('#pkg-confirm-add').click();await expect(page).toHaveURL(/project-cart.html/);
  const form=page.locator('#nr-scheduling-form');await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=date]').fill('2099-01-01');await form.locator('[name=zip]').fill('30117');
- await page.route('**/api/scheduling',route=>{const b=route.request().postDataJSON();expect(b.details).toContain('12 × 8');return route.fulfill({status:201,json:{reference:'request-test',status:'requested',message:'Your request was received for owner review. Your preferred date is not confirmed.'}});});
+ let attempt=0,requestId;
+ await page.route('**/api/scheduling',route=>{const b=route.request().postDataJSON();expect(b.details).toContain('12 × 8');if(!attempt++){requestId=b.requestId;return route.fulfill({status:503,json:{error:'Request service unavailable'}});}expect(b.requestId).toBe(requestId);return route.fulfill({status:201,json:{reference:'request-test',status:'requested',message:'Your request was received for owner review. Your preferred date is not confirmed.'}});});
+ await form.locator('button').click();await expect(page.locator('#nr-scheduling-status')).toContainText('was not saved');await expect(page.locator('#nr-scheduling-status a')).toHaveAttribute('href',/^mailto:/);await expect(form.locator('button')).toBeEnabled();
  await form.locator('button').click();await expect(page.locator('#nr-scheduling-status')).toContainText('request-test');await expect(page.locator('#nr-scheduling-status')).toContainText('not confirmed');await expect(form.locator('button')).toBeDisabled();
 });
 for(const mode of ['deposit','full'])test('approved '+mode+' shows itemization and sends approved amount',async({page})=>{
