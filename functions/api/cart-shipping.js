@@ -5,7 +5,7 @@ import {cj, retailCents, usCjWarehouseUnits} from '../_lib/commerce.js';
 // CJ's free tier can be limited to one request per second. Each cart item
 // requires multiple supplier calls. Pace and retry transient supplier failures.
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-function cartSupplierRequests(env) {
+export function cartSupplierRequests(env) {
   const interval=env.CJ_CART_REQUEST_SPACING_MS==='0'?0:1100;
   let lastStarted=0;
   return async (_env,path,body)=>{
