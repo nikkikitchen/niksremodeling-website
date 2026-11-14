@@ -127,3 +127,10 @@ test('concurrent CJ requests share authentication and never share tokens across 
   assert.equal(await accessToken({CJ_API_KEY:'other-key'}),'token-other-key');assert.equal(calls,2);
  },async(url,options)=>{calls++;await new Promise(resolve=>setTimeout(resolve,10));const key=JSON.parse(options.body).apiKey;return Response.json({result:true,data:{accessToken:'token-'+key,accessTokenExpiryDate:'2099-01-01T00:00:00Z'}});});
 });
+
+test('payment review never displays an unverified remaining project balance',async()=>{
+ const env=transactionEnv(),q=await seedQuote(env),id=crypto.randomUUID();
+ env.BUSINESS_DB.sqlite.prepare("INSERT INTO checkout_orders(id,fingerprint,kind,environment,status,total_cents,customer_json,quote_json,project_quote_id) VALUES(?,?,'project','sandbox','review',13500,'{}','{}',?)").run(id,'review-fixture',q.id);
+ const response=await status({env,request:new Request('https://example.test/api/payment-status?order='+id)});
+ assert.equal(response.status,200);const result=await response.json();assert.equal(result.status,'review');assert.equal(result.balanceCents,null);assert.equal(result.receiptUrl,null);
+});

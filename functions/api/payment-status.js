@@ -17,7 +17,7 @@ export async function onRequestGet({request,env}){
   let balanceCents=null;
   if(row.project_quote_id){
    const quote=await env.BUSINESS_DB.prepare('SELECT total_cents FROM project_quotes WHERE id=?').bind(row.project_quote_id).first();
-   if(quote)balanceCents=quote.total_cents-(row.status==='paid'?row.total_cents:0);
+   if(quote&&row.status!=='review')balanceCents=quote.total_cents-(row.status==='paid'?row.total_cents:0);
   }
   return json({status:row.status,totalCents:row.total_cents,balanceCents,receiptUrl:row.status==='paid'?row.receipt_url:null,
    checkoutUrl:row.status==='pending'?row.payment_url:null,fulfillment:'manual review required',sandbox:row.environment==='sandbox'});
