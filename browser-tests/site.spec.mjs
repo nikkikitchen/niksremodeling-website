@@ -59,9 +59,13 @@ test('Single retail product can initiate verified payment but never uses an unve
  await expect(page.locator('#cart-pay-status')).toContainText('complete delivery street');
  await expect(page.locator('#cart-tax-amount')).toHaveText('Needs confirmation');
  await expect(page.locator('#cart-estimated-total')).toContainText('tax pending');
- const label=await page.locator('.nr-cart-balance-row > span').boundingBox();
- const value=await page.locator('#cart-estimated-total').boundingBox();
- expect(value.y).toBeGreaterThanOrEqual(label.y+label.height);
+ await expect(page.locator('#cart-estimated-total')).toBeHidden();
+ for(const row of await page.locator('.nr-cart-price-chart > .cart-item:visible').all()){
+  const label=await row.locator(':scope > span').boundingBox();
+  const value=await row.locator(':scope > strong').boundingBox();
+  expect(label).not.toBeNull();expect(value).not.toBeNull();
+  expect(value.y>=label.y+label.height || value.x>=label.x+label.width).toBe(true);
+ }
  await expect(page.locator('#square-pay')).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
  expect(errors).toEqual([]);
@@ -109,14 +113,16 @@ test('Garage Standard deposit, completed-work balance and checkout lock remain c
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });
 
-test('home page offers readable, visible actions before the project gallery',async({page},info)=>{
- await page.goto('/');const actions=page.getByRole('navigation',{name:'Start your project'});await expect(actions).toBeVisible();
- const project=actions.getByRole('link',{name:'Plan a Project'});await expect(project).toHaveAttribute('href','#projects');
- await expect(actions.getByRole('link',{name:'Installation & Labor'})).toHaveAttribute('href','/installation.html');
- await expect(actions.getByRole('link',{name:'Shop Products'})).toHaveAttribute('href','/shopping.html');
- expect(await page.locator('.hero h1').evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
+test('home page keeps the simplified introduction and project gallery readable',async({page},info)=>{
+ await page.goto('/');
+ const heading=page.locator('.hero h1');
+ await expect(heading).toHaveText('Buy it. Install it. Or remodel it all.');
+ await expect(heading).toBeVisible();
+ await expect(page.locator('.hero p')).toContainText('review everything in one cart');
+ await expect(page.locator('#projects h2')).toHaveText('Choose Your Room or Project');
+ expect(await heading.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
  if(info.project.name==='phone'){
-  const box=await project.boundingBox();expect(box.y).toBeLessThan(page.viewportSize().height);
+  const box=await heading.boundingBox();expect(box.y).toBeLessThan(page.viewportSize().height);
   const first=await page.locator('#projects .tile').nth(0).boundingBox(),second=await page.locator('#projects .tile').nth(1).boundingBox();
   expect(Math.abs(first.y-second.y)).toBeLessThan(2);expect(second.x).toBeGreaterThan(first.x);
  }
