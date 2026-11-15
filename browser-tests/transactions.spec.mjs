@@ -28,10 +28,17 @@ test('multi-item, multiple quantity and mixed carts remain explicitly quote-only
 });
 test('measured Accent Standard requests scheduling and displays received reference without booking confirmation',async({page})=>{
  await page.goto('/');const menu=page.locator('button[aria-controls$="projects-menu"]:visible').first();const id=await menu.getAttribute('aria-controls');await menu.click();await page.locator('#'+id+' a[href="/project.html?project=accents"]').first().click();
- const standard=page.locator('.pkg-choice').nth(1);await standard.locator('.pkg-add').click();await expect(page.locator('#pkg-measure-form')).toBeVisible();
+ const standard=page.locator('.pkg-choice').nth(1);
+ await expect(standard.locator('img')).toHaveAttribute('src','/assets/accent-standard-approved.jpg');
+ await expect(standard).toContainText('Starting at $835');
+ await standard.locator('.pkg-add').click();await expect(page.locator('#pkg-measure-form')).toBeVisible();
  await page.locator('#pkg-length-ft').fill('12');await page.locator('#pkg-height-ft').fill('8');
  await page.locator('#pkg-measure-form button[type=submit]').click();await expect(page.locator('#pkg-measure-result')).toBeVisible();
  await page.locator('#pkg-confirm-add').click();await expect(page).toHaveURL(/project-cart.html/);
+ const cart=await page.evaluate(()=>JSON.parse(localStorage.getItem('nr-cart')));
+ expect(cart).toHaveLength(1);expect(cart[0]).toMatchObject({projectId:'accents',packageId:'deluxe',startingAt:835,depositEstimate:242.39,laborEstimate:511.5,overheadAllowance:81.11,price:null,quoteRequired:true,measurements:{length:12,height:8,wallArea:96}});
+ await expect(page.locator('img[src="/assets/accent-standard-approved.jpg"]').first()).toBeVisible();
+ await expect(page.locator('#cart-combined-project-total')).toContainText('$835.00');
  const form=page.locator('#nr-scheduling-form');
  await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toBeVisible();
  for(const field of await form.locator('input').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
