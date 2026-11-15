@@ -841,7 +841,7 @@ function cartCheckoutSummary(items){
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div>'+(pendingComponentRows?'<details class="nr-cart-details"><summary>Estimated components</summary>'+pendingComponentRows+'<p>These components are included in the eventual quote, not extra charges.</p></details>':''):''}
- <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Pending':unconfirmedPackages.length||pendingRoomPackages.length?'Included':'$0.00'}</strong></div>
+ <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length||items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!unconfirmedPackages.includes(x)&&!pendingRoomPackages.includes(x))?'Pending':unconfirmedPackages.length||pendingRoomPackages.length?'Included':remainingShippingPending?'Pending':'$0.00'}</strong></div>
 
  <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
  <div class="cart-item nr-cart-balance-row" hidden><span><strong>Other priced items total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
