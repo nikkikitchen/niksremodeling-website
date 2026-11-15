@@ -44,7 +44,7 @@ test('measured Accent Standard requests scheduling and displays received referen
  await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);
  await expect(page.locator('.cart-combined-project-row:visible')).toHaveCount(1);
  await expect(page.locator('.nr-cart-package-price:visible')).toHaveCount(0);
- await expect(page.locator('#cart-shipping-amount')).toHaveText('Included');
+ await expect(page.locator('#cart-shipping-amount')).toHaveText('$0.00');
  const form=page.locator('#nr-scheduling-form');
  await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toHaveText('Request start date');
  await expect(page.locator('#project-checkout-button')).toBeVisible();await expect(page.locator('#project-checkout-button')).toBeEnabled();
@@ -84,8 +84,14 @@ test('projects, retail, labor and mixed carts share the same basic summary',asyn
  const project={name:'Accent Walls — Standard',type:'Service',source:'room-project-package',projectId:'accents',packageId:'deluxe',qty:1,price:null,startingAt:835,depositEstimate:242.39,laborEstimate:511.5,overheadAllowance:81.11,quoteRequired:true};
  for(const items of [[project],[product],[{name:'Installation',type:'Labor',price:225,qty:1}],[project,product]]){
   await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),items);await page.goto('/project-cart.html');
+  if(items.length===1&&items[0].source==='room-project-package'){
+   await expect(page.locator('#cart-services-subtotal')).toHaveText('$835.00');
+   await expect(page.locator('#cart-products-subtotal')).toHaveText('$0.00');
+   await expect(page.locator('#cart-shipping-amount')).toHaveText('$0.00');
+   await expect(page.locator('#cart-tax-amount')).toHaveText('$0.00');
+  }
   const labels=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();
-  expect(labels.slice(0,5).map(x=>x.trim())).toEqual(['Products & materials','Services','Delivery / shipping','Estimated sales tax','Total estimate']);
+  expect(labels.slice(0,5).map(x=>x.trim())).toEqual(['Projects & services','Merchandise','Delivery / shipping','Estimated sales tax','Total estimate']);
   await expect(page.locator('#cart-combined-project-total')).toBeVisible();
   await expect(page.locator('input[name=zip]:visible')).toHaveCount(1);
   if(items.some(item=>['Labor','Service'].includes(item.type))){
@@ -112,12 +118,13 @@ test('project checkout opens a review without charging an unapproved estimate',a
 test('mixed cart separates merchandise services freight tax and final total without double counting',async({page})=>{
  const packageItem={name:'Accent Walls — Basic',type:'Service',source:'room-project-package',projectId:'accents',packageId:'basic',qty:1,price:null,startingAt:585,depositEstimate:227.39,laborEstimate:300,overheadAllowance:57.61,quoteRequired:true};
  await page.route('**/api/cart-shipping',r=>r.fulfill({json:{deliveryCents:75350,units:1}}));
- await page.route('**/api/cart-tax',r=>r.fulfill({json:{mode:'zip-upper-estimate',ratePercent:0}}));
+ let taxRate=0;await page.route('**/api/cart-tax',r=>r.fulfill({json:{mode:'zip-upper-estimate',ratePercent:taxRate}}));
  await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),[{...product,name:'Dual tap refrigerator',price:723.50},packageItem]);await page.goto('/project-cart.html');
  await page.locator('#cart-shipping-zip').fill('30117');
  await expect(page.locator('#cart-products-subtotal')).toHaveText('$723.50');await expect(page.locator('#cart-services-subtotal')).toHaveText('$585.00');
  await expect(page.locator('#cart-shipping-amount')).toHaveText('$753.50');await expect(page.locator('#cart-tax-amount')).toHaveText('$0.00');await expect(page.locator('#cart-combined-project-total')).toHaveText('$2,062.00');
  await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('$1,704.39');await expect(page.locator('.nr-cart-remaining-balance strong')).toHaveText('$357.61');
- const rows=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();expect(rows.map(x=>x.trim())).toEqual(['Products & materials','Services','Delivery / shipping','Estimated sales tax','Total estimate','Deposit','Balance left owed']);
+ const rows=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();expect(rows.map(x=>x.trim())).toEqual(['Projects & services','Merchandise','Delivery / shipping','Estimated sales tax','Total estimate','Deposit','Balance left owed']);
+ taxRate=7;await page.locator('#cart-shipping-zip').fill('30118');await expect(page.locator('#cart-tax-amount')).toHaveText('$103.39');await expect(page.locator('#cart-combined-project-total')).toHaveText('$2,165.39');
  await page.evaluate(()=>{const items=JSON.parse(localStorage.getItem('nr-cart'));delete items[1].depositEstimate;localStorage.setItem('nr-cart',JSON.stringify(items));});await page.reload();await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('Pending');
 });
