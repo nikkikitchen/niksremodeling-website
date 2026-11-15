@@ -225,7 +225,7 @@ test('Combined project total includes quoted package minimum plus separate produ
     const d=dom.window.document;
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
-    assert.match(d.body.textContent,/Project total/);
+    assert.match(d.body.textContent,/Estimated full project total/);
     assert.equal(combined.textContent,'$450.00 (starting estimate) + tax pending',
       'Include $350 package starting price plus $100 product; unknown tax stays pending');
     assert.equal(d.getElementById('cart-due-now').textContent,'$247.13 + tax pending',
@@ -257,7 +257,7 @@ test('Deluxe Bathroom cart credits included vanity light and mirror, keeps repla
   assert.equal((text.match(/Included — \$0 extra/g)||[]).length,2,'Light and mirror should be included exactly once');
   assert.match(text,/vanity unit/i);
   assert.match(text,/\$56\.03/,'New vanity cabinet is not part of cosmetic Deluxe');
-  assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$56\.03/);
+  assert.match(d.querySelector('.nr-cart-summary').textContent,/Other items\$56\.03/);
   assert.match(d.getElementById('cart-combined-project-total').textContent,/\$2,616\.03/);
   assert.equal(d.querySelector('button[data-cart-request]'),null,'No competing invoice buttons');
   assert.equal(d.querySelectorAll('.cart-checkout-summary').length,1);
@@ -281,7 +281,7 @@ test('Basic Bathroom does not silently include a mirror or vanity light',async()
  try{
   const d=dom.window.document;
   assert.doesNotMatch(d.querySelector('.nr-cart-products').textContent,/Included — \$0 extra/);
-  assert.match(d.querySelector('.nr-cart-summary').textContent,/Products & materials\$47\.73/);
+  assert.match(d.querySelector('.nr-cart-summary').textContent,/Other items\$47\.73/);
  }finally{dom.window.close()}
 });
 
@@ -308,8 +308,9 @@ test('legacy project starting prices do not turn missing labor and fees into zer
  const dom=await load('project-cart.html','',[{name:'Legacy project',source:'room-project-package',projectId:'accents',packageId:'standard',type:'Service',qty:1,price:null,startingAt:835,quoteRequired:true}]);
  try{
   const rows=[...dom.window.document.querySelectorAll('.cart-checkout-summary .cart-item')];
-  for(const label of ['Labor after package discount','Project fees']){
-   const row=rows.find(el=>el.querySelector('span')?.textContent.startsWith(label));assert.ok(row);assert.equal(row.querySelector('strong').textContent,'Pending itemized quote');
-  }
+  assert.ok(rows.some(el=>el.textContent.includes('Package price (starting estimate)')));
+  assert.ok(!rows.some(el=>/Labor after package discount|Project fees/.test(el.textContent)),
+   'Legacy projects must not expose unfinished internal accounting as zero-dollar charges');
+  assert.equal(dom.window.document.getElementById('cart-pay-button').disabled,true);
  }finally{dom.window.close();}
 });
