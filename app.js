@@ -835,23 +835,24 @@ function cartCheckoutSummary(items){
  const supplierShippingItems=items.filter(x=>!x.hiddenFromCustomer&&['supplier-retail','bathroom-retail'].includes(x.source)&&x.productId&&x.variantId);
  const remainingShippingPending=unconfirmedPackages.length>0||pendingRoomPackages.length>0||items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!supplierShippingItems.includes(x));
  const isRetailOnly=items.filter(x=>!x.hiddenFromCustomer).every(x=>['supplier-retail','bathroom-retail'].includes(x.source));
- const shippingChecker='<form id="cart-shipping-form" class="cart-delivery-check"><label for="cart-shipping-zip">Project ZIP code<input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="5-digit ZIP" required></label></form><p id="cart-shipping-status" class="nr-cart-inline-status" role="status" aria-live="polite"></p>';
+ const shippingChecker='<form id="cart-shipping-form" class="cart-delivery-check"><label for="cart-shipping-zip">ZIP code<input id="cart-shipping-zip" name="zip" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}" maxlength="5" placeholder="5-digit ZIP" required></label></form><p id="cart-shipping-status" class="nr-cart-inline-status" role="status" aria-live="polite"></p>';
  return `<section class="panel cart-checkout-summary" data-project-only="${projectOnly}" aria-label="Order summary" style="margin:18px 0;padding:20px">
- <h3>${projectOnly?'Project Estimate':'Order Summary'}</h3>
+ <h3>Order Total</h3>
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
  ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div>'+(pendingComponentRows?'<details class="nr-cart-details"><summary>Estimated components</summary>'+pendingComponentRows+'<p>These components are included in the eventual quote, not extra charges.</p></details>':''):''}
- ${unconfirmedPackages.length?'<div class="cart-item"'+(projectOnly?' hidden':'')+'><span><strong>Project package estimate</strong></span><strong>'+money(packageStartingTotal)+'+</strong></div><div class="cart-item"><span>Materials &amp; supplies deposit (included)</span><strong>'+(missingPackageDeposit?'Pending itemized quote':money(packageDepositEstimates))+'</strong></div><div class="cart-item"><span>Labor after package discount (included)</span><strong>'+(missingPackageLabor?'Pending itemized quote':money(packageLaborEstimates))+'</strong></div><div class="cart-item"><span>Estimated balance after deposit (paid as work is completed)</span><strong>'+(missingPackageDeposit?'Pending itemized quote':money(packageRemainingEstimate))+'</strong></div><details class="nr-cart-details" '+(projectOnly?'open':'')+'><summary>Package fees and details</summary><div class="cart-item"><span>Project fees</span><strong>'+(missingPackageFees?'Pending itemized quote':money(packageOverheadEstimates))+'</strong></div>'+(packageUnallocated>0.01?'<div class="cart-item"><span>Measured work awaiting itemization</span><strong>'+money(packageUnallocated)+'</strong></div>':'')+'<p>All package amounts are included in the estimate, not extra charges.</p></details>':''}
- <div class="cart-item" ${projectOnly&&payableSubtotal===0?'hidden':''}><span>Products &amp; materials</span><strong>${money(payableSubtotal)}</strong></div>
- ${estimatedLabor.hasServices&&additionalServices.some(x=>['Labor','Service'].includes(x.type))?`<div class="cart-item"><span>${unconfirmedPackages.length?'Additional services / labor':'Labor'}</span><strong>${money(laborSubtotal)}${estimatedLabor.pending?' + quote required':''}</strong></div>`:''}
+ ${unconfirmedPackages.length?'<div class="cart-item nr-cart-package-price"><span>Package price (starting estimate)</span><strong>'+money(packageStartingTotal)+'+</strong></div>':''}
+ ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div>':''}
+ ${payableSubtotal>0?'<div class="cart-item"><span>Other items</span><strong>'+money(payableSubtotal)+'</strong></div>':''}
+ ${!unconfirmedPackages.length&&estimatedLabor.hasServices?'<div class="cart-item"><span>Labor estimate</span><strong>'+money(laborSubtotal)+(estimatedLabor.pending?' + quote needed':'')+'</strong></div>':''}
  <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length?'Enter ZIP for retail items; package delivery pending':remainingShippingPending?'Package delivery to be verified':'Not applicable'}</strong></div>
 
  <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
  ${unconfirmedPackages.length?'<p class="nr-cart-quote-note">Payment after final approval: a materials deposit after quote approval, then labor draws tied to approved work completed, or pay the full approved project. Pay only using the private approved-quote link supplied after review.</p>':''}
  ${unpriced||pendingSupplies||estimatedLabor.pending?'<p class="nr-cart-quote-note" role="status">Some items require a quote.</p>':''}
- <div class="cart-item nr-cart-balance-row" ${(unconfirmedPackages.length||projectOnly)&&combinedEstimatedTotal===0?'style="display:none"':''}><span><strong>${unconfirmedPackages.length||pendingRoomPackages.length?'Other priced items':'Estimated total'}</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
- <div class="cart-item" ${isRetailOnly||projectOnly?'style="display:none"':''}><span><strong>Materials deposit / due at approval</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
- <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>Project total${unconfirmedPackages.length?' (estimate)':''}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${pendingRoomPackages.length&&combinedStartingBaseCents===0?'Quote required':money(combinedStartingBaseCents/100)+(unconfirmedPackages.length?' (starting estimate)':'')+(pendingRoomPackages.length?' + quote required':'')+' + tax pending'}</strong></div>
+ <div class="cart-item nr-cart-balance-row" hidden><span><strong>Other priced items total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
+ <div class="cart-item nr-cart-deposit" ${isRetailOnly||missingPackageDeposit||!unconfirmedPackages.length?'hidden':''}><span><strong>Estimated down payment</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
+ <div class="cart-item cart-combined-project-row" ${isRetailOnly?'style="display:none"':''}><span><strong>${unconfirmedPackages.length?'Estimated full project total':'Total price'}</strong></span><strong id="cart-combined-project-total" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${pendingRoomPackages.length&&combinedStartingBaseCents===0?'Quote required':money(combinedStartingBaseCents/100)+(unconfirmedPackages.length?' (starting estimate)':'')+(pendingRoomPackages.length?' + quote required':'')+' + tax pending'}</strong></div>
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
  <p id="cart-verified-breakdown" class="calc-note" role="status" hidden></p>
@@ -869,14 +870,14 @@ function cartSchedulingRequestMarkup(items){
  const packages=items.filter(x=>!x.hiddenFromCustomer&&(['Labor','Service'].includes(x.type)||['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source)));
  if(!packages.length)return '';
  return '<section class="panel" id="cart-scheduling" style="margin:16px 0;padding:20px">'+
-  '<h3>Request a Quote &amp; Start Date</h3><p>Send your project details and preferred date for review. We will confirm the scope, final price and availability before any payment.</p>'+
+  '<h3>Schedule your project</h3><p>We will confirm the final price and deposit before payment.</p>'+
   '<form id="nr-scheduling-form"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">'+
   '<label>Your name<input name="name" required maxlength="90" autocomplete="name" placeholder="Full name"></label>'+
   '<label>Email<input name="email" type="email" required maxlength="254" autocomplete="email"></label>'+
   '<label>Phone<input name="phone" required type="tel" maxlength="25" autocomplete="tel" placeholder="Phone number"></label>'+
   '<label>Preferred start date<input name="date" type="date" required></label>'+
   '<label>Project ZIP<input name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" required></label>'+
-  '<label class="nr-request-notes">Project details (optional)<textarea name="notes" maxlength="2000" rows="4" placeholder="Tell us about your goals, existing damage, access needs, or anything else we should review."></textarea></label>'+
+  '<label class="nr-request-notes">Notes (optional)<textarea name="notes" maxlength="2000" rows="4" placeholder="Tell us about your goals, existing damage, access needs, or anything else we should review."></textarea></label>'+
   '</div><button class="btn primary" style="margin-top:14px" type="submit">Request a Quote &amp; Start Date</button>'+
   '<p class="calc-note" id="nr-scheduling-status" role="status">This sends a request, not a confirmed booking or deposit charge.</p></form>'+
   '</section>';
@@ -931,7 +932,7 @@ function updateCartPayButton(){
 function cartSecureCheckoutPanel(items){
  const visible=items.filter(x=>!x.hiddenFromCustomer);
  return '<section class="panel" style="margin-top:14px;padding:18px" aria-label="Online purchase status">'+
-  '<h3>Online purchases temporarily paused</h3>'+
+  '<h3>Payment confirmation</h3>'+
   '<p>We are checking that sales tax and delivery charges are accurate before accepting payments. No online payment can be made right now.</p>'+
   (visible.length?'<a class="btn outline" href="#cart-scheduling">Request a quote</a>':'')+
   '</section>';
@@ -1190,12 +1191,12 @@ function renderCart(){
   const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
- <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'}</p></div><a class="btn outline" href="/?open=shopping">Add Products</a></div>
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'}</p></div></div>
 
  ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
- <h2>Items</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
+ <h2>Your Items</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
- <div class="nr-cart-item-symbol" aria-hidden="true">${['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
+ <div class="nr-cart-item-symbol" aria-hidden="true">${packageSources.has(x.source)?'🖼️':['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
   ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
   ${x.packageAllowanceCredit?'<div class="nr-cart-meta"><strong>Included in bathroom package:</strong> $'+x.packageAllowanceCredit.toFixed(2)+' fixture allowance applied. Delivery and applicable tax costs are confirmed before invoice approval.</div>':''}
@@ -1207,7 +1208,7 @@ function renderCart(){
  </article>`).join('')}</div>
  <div class="nr-cart-actions">${!hasCompletePackage||hasStandaloneProducts?'<a class="btn outline" href="/installation.html">'+(hasCompletePackage?'Add Installation for Other Items':'Add Installation')+'</a>':''}</div>
  </section><div class="nr-cart-zip-top" id="nr-cart-zip-top" aria-label="Delivery ZIP"></div><aside class="nr-cart-summary">${cartCheckoutSummary(c)}</aside></div>
- ${nrProjectShoppingMarkup(c)}
+
  ${cartSchedulingRequestMarkup(c)}
 
  <div class="nr-cart-bottom"><a class="btn outline" href="tel:${SITE.phone.replaceAll('-','')}">Call Nik’s Remodeling</a></div>`:
@@ -1219,10 +1220,10 @@ function renderCart(){
  const needsDeliveryAddress=visible.length===1&&retailItems.length===1&&Number(retailItems[0].item.qty)===1;
  if(zipTop&&zipForm){
   const zipStatus=document.getElementById('cart-shipping-status');
-  zipTop.insertAdjacentHTML('afterbegin','<h3>Check shipping &amp; taxes</h3>');
+  zipTop.insertAdjacentHTML('afterbegin','<h3>ZIP code</h3>');
   zipTop.appendChild(zipForm);
   if(needsDeliveryAddress){
-   zipForm.insertAdjacentHTML('beforeend','<div class="nr-checkout-address"><label for="square-ship-address">Street address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street address" maxlength="150"></label><label for="square-ship-city">City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label for="square-ship-state">State<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div>');
+   zipForm.insertAdjacentHTML('beforeend','<div class="nr-checkout-address"><label for="square-ship-address">Delivery address<input id="square-ship-address" autocomplete="shipping street-address" placeholder="Street address" maxlength="150"></label><label for="square-ship-city">City<input id="square-ship-city" autocomplete="shipping address-level2" maxlength="80"></label><label for="square-ship-state">State<input id="square-ship-state" autocomplete="shipping address-level1" maxlength="2" placeholder="GA"></label></div>');
   }
   if(zipStatus)zipTop.appendChild(zipStatus);
  }else if(zipTop){zipTop.remove();}
