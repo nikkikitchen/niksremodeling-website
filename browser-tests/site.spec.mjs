@@ -57,7 +57,7 @@ test('Single retail product can initiate verified payment but never uses an unve
  await page.locator('#cart-receipt-email').fill('buyer@example.test');
  await page.locator('#cart-pay-button').click();
  await expect(page.locator('#cart-pay-status')).toContainText('complete delivery street');
- await expect(page.locator('#cart-tax-amount')).toHaveText('Needs confirmation');
+ await expect(page.locator('#cart-tax-amount')).toHaveText('$0.00');
  await expect(page.locator('#cart-estimated-total')).toContainText('tax pending');
  await expect(page.locator('#cart-estimated-total')).toBeHidden();
  for(const row of await page.locator('.nr-cart-price-chart > .cart-item:visible').all()){
@@ -108,7 +108,7 @@ test('Garage Standard deposit, completed-work balance and checkout lock remain c
  await expect(page.locator('#cart-due-now')).toContainText('$407.95');
  await expect(page.locator('#cart-combined-project-total')).toContainText('$1,920.00');
  await expect(page.locator('.cart-checkout-summary')).toContainText('$1,512.05');
- await expect(page.locator('#cart-tax-amount')).toContainText('Needs confirmation');
+ await expect(page.locator('#cart-tax-amount')).toContainText('$0.00');
  await expect(page.locator('#cart-pay-button')).toBeDisabled();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });

@@ -231,7 +231,7 @@ test('Combined project total includes quoted package minimum plus separate produ
     assert.equal(d.getElementById('cart-due-now').textContent,'$247.13',
       'Show the $147.13 proposed materials deposit plus $100 merchandise without charging full unconfirmed labor');
     assert.equal(d.getElementById('cart-pay-button').disabled,true);
-    assert.equal(d.getElementById('cart-tax-amount').textContent,'Needs confirmation',
+    assert.equal(d.getElementById('cart-tax-amount').textContent,'$0.00',
       'Do not assess interim retail tax on unconfirmed package labor');
   }finally{dom.window.close();}
 });

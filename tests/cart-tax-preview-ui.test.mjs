@@ -30,10 +30,11 @@ const submit=ui=>{
  ui.zip.value='36269';
  ui.form.dispatchEvent(new ui.dom.window.Event('submit',{cancelable:true,bubbles:true}));
 };
-test('unknown tax stays pending before any verified location lookup',()=>{
+test('tax preview starts at zero without marking tax as verified',()=>{
  const ui=mount(async()=>{throw Error('No shipping request expected');});
  try{
-  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.tax.textContent,'$0.00');
+  assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.rateLabel.textContent,' · unverified');
   assert.equal(ui.total.textContent,'$100.00 + tax pending');
   assert.equal(ui.due.textContent,'$60.00 + tax pending','upfront amount includes merchandise and tax, not $40 labor');
@@ -55,13 +56,15 @@ test('verified freight does not invent a tax rate when tax lookup is unavailable
   assert.equal(shippingCalls,1);
   assert.equal(otherCalls,0,'direct shipping submission does not initiate a duplicate tax lookup');
   assert.equal(ui.shipping.textContent,'$81.00');
-  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.tax.textContent,'$0.00');
+  assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.total.textContent,'$181.00 + tax pending');
   assert.equal(ui.due.textContent,'$141.00 + tax pending','upfront amount includes merchandise, freight and tax, not labor');
   assert.equal(ui.rateLabel.textContent,' · unverified');
   ui.zip.value='3011';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
-  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.tax.textContent,'$0.00');
+  assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.total.textContent,'$100.00 + tax pending');
  }finally{ui.dom.window.close();}
 });
@@ -71,7 +74,8 @@ test('unknown supplier freight never becomes zero or a fake final price',async()
   submit(ui);
   await flush();await flush();
   assert.equal(ui.shipping.textContent,'Shipping needs confirmation');
-  assert.equal(ui.tax.textContent,'Needs confirmation');
+  assert.equal(ui.tax.textContent,'$0.00');
+  assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.total.textContent,'$100.00 + tax pending');
   assert.match(ui.info.textContent,/Tax needs confirmation/);
  }finally{ui.dom.window.close();}

@@ -844,7 +844,7 @@ function cartCheckoutSummary(items){
  ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div>'+(pendingComponentRows?'<details class="nr-cart-details"><summary>Estimated components</summary>'+pendingComponentRows+'<p>These components are included in the eventual quote, not extra charges.</p></details>':''):''}
  <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length||items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!unconfirmedPackages.includes(x)&&!pendingRoomPackages.includes(x))?'Pending':unconfirmedPackages.length||pendingRoomPackages.length?'Included':remainingShippingPending?'Pending':'$0.00'}</strong></div>
 
- <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
+ <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">$0.00</strong></div>
  <div class="cart-item nr-cart-balance-row" hidden><span><strong>Other priced items total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
  <div class="cart-item nr-cart-deposit" ${isRetailOnly||missingPackageDeposit||!unconfirmedPackages.length?'hidden':''}><span><strong>Deposit</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
  ${unconfirmedPackages.length&&!missingPackageDeposit?'<div class="cart-item nr-cart-remaining-balance"><span>Balance</span><strong>'+money(packageRemainingEstimate)+'</strong></div><p class="nr-cart-weekly-draw-note" style="font-size:.82rem;color:#596777;margin:2px 0 10px">Weekly draws for completed work.</p>':''}
@@ -858,13 +858,13 @@ function cartCheckoutSummary(items){
  <button class="btn primary" id="cart-pay-button" type="button" disabled style="margin-top:12px;padding:10px 22px">Pay</button>
  <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
  </div>
- ${projectOnly?'<div class="nr-cart-approval-next"><button class="btn outline" id="project-checkout-button" type="button" disabled style="width:100%;margin-bottom:8px">Continue to checkout</button><small style="display:block;margin-bottom:12px">After quote approval</small><a class="btn primary" href="#cart-scheduling">Request start date</a></div>':''}
+ ${projectOnly?'<div class="nr-cart-approval-next"><button class="btn outline" id="project-checkout-button" type="button" style="width:100%;margin-bottom:8px">Continue to checkout</button><a class="btn primary" href="#cart-scheduling" aria-controls="cart-scheduling" aria-expanded="false">Request start date</a></div>':''}
  </section>`;
 }
 function cartSchedulingRequestMarkup(items){
  const packages=items.filter(x=>!x.hiddenFromCustomer&&(['Labor','Service'].includes(x.type)||['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source)));
  if(!packages.length)return '';
- return '<section class="panel" id="cart-scheduling" style="margin:16px 0;padding:20px">'+
+ return '<section class="panel" id="cart-scheduling" hidden style="margin:16px 0;padding:20px">'+
   '<h3>Schedule your project</h3>'+
   '<form id="nr-scheduling-form"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">'+
   '<label>Your name<input name="name" required maxlength="90" autocomplete="name" placeholder="Full name"></label>'+
@@ -880,6 +880,17 @@ function cartSchedulingRequestMarkup(items){
 function initCartSchedulingRequest(items){
  const form=document.getElementById('nr-scheduling-form');
  if(!form)return;
+ const section=document.getElementById('cart-scheduling');
+ const reveal=()=>{
+  section.hidden=false;
+  document.querySelectorAll('[href="#cart-scheduling"]').forEach(link=>link.setAttribute('aria-expanded','true'));
+  section.scrollIntoView?.({behavior:'smooth',block:'start'});
+  form.querySelector('input:not([type="hidden"])')?.focus({preventScroll:true});
+ };
+ document.querySelectorAll('[href="#cart-scheduling"]').forEach(link=>link.addEventListener('click',event=>{
+  event.preventDefault();history.replaceState(null,'','#cart-scheduling');reveal();
+ }));
+ if(location.hash==='#cart-scheduling')reveal();
  const zipInput=document.getElementById('cart-shipping-zip');
  const syncZip=()=>{form.elements.namedItem('zip').value=String(zipInput?.value||'').trim();};
  syncZip();zipInput?.addEventListener('input',syncZip);
@@ -1116,7 +1127,8 @@ function initCartTaxPreview(){
   const estimatedRate=rate??0;
   const pending=rate===null?' + tax pending':'';
   const taxCents=Math.round((retailCents+(shippingCents??0))*estimatedRate);
-  tax.textContent=rate===null?'Needs confirmation':money(taxCents);
+  tax.textContent=money(taxCents);
+  tax.dataset.verified=String(rate!==null);
   if(rateLabel)rateLabel.textContent=combined?.dataset.compact==='true'?'':rate===null?' · unverified':' · ZIP estimate '+(rate*100).toFixed(2)+'%';
   info.textContent=rate===null
     ?'Tax needs confirmation. The delivery address and type of work determine the applicable tax before payment.'
@@ -1226,6 +1238,15 @@ function renderCart(){
   }
   if(zipStatus)zipTop.appendChild(zipStatus);
  }else if(zipTop){zipTop.remove();}
+ document.getElementById('project-checkout-button')?.addEventListener('click',()=>{
+  const review={items:visible.map(({item})=>({name:String(item.name||''),measurements:packageMeasurementSummary(item)})),
+   total:document.getElementById('cart-combined-project-total')?.textContent||'',
+   deposit:document.getElementById('cart-due-now')?.textContent||'',
+   balance:document.querySelector('.nr-cart-remaining-balance strong')?.textContent||''};
+  try{sessionStorage.setItem('nr-project-checkout-review',JSON.stringify(review));}
+  catch{alert('Could not open checkout. Please try again.');return;}
+  location.assign('/payment.html#cart');
+ });
  updateCartCount();initCartShippingQuote(c);initCartTaxPreview();initCartSecureCheckout(c);initCartSchedulingRequest(c);
 }
 function removeCart(i){

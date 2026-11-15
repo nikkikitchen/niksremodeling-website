@@ -47,7 +47,10 @@ test('measured Accent Standard requests scheduling and displays received referen
  await expect(page.locator('#cart-shipping-amount')).toHaveText('Included');
  const form=page.locator('#nr-scheduling-form');
  await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toHaveText('Request start date');
- await expect(page.locator('#project-checkout-button')).toBeVisible();await expect(page.locator('#project-checkout-button')).toBeDisabled();
+ await expect(page.locator('#project-checkout-button')).toBeVisible();await expect(page.locator('#project-checkout-button')).toBeEnabled();
+ await expect(page.locator('#cart-scheduling')).toBeHidden();
+ await page.locator('.nr-cart-approval-next a').click();
+ await expect(page.locator('#cart-scheduling')).toBeVisible();
  for(const field of await form.locator('input:visible').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
  await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=notes]').fill('Please review the existing wall damage.');await form.locator('[name=date]').fill('2099-01-01');await page.locator('#cart-shipping-zip').fill('30117');
  let attempt=0,requestId;
@@ -88,4 +91,15 @@ test('projects, retail, labor and mixed carts share the same basic summary',asyn
   await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);
   await expect(page.getByText('Payment after final approval:',{exact:false})).toHaveCount(0);
  }
+});
+
+test('project checkout opens a review without charging an unapproved estimate',async({page})=>{
+ const calls=[];page.on('request',r=>{if(r.url().includes('/api/project-checkout')||r.url().includes('/api/store-checkout'))calls.push(r.url());});
+ await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Accent Walls — Standard',type:'Service',source:'room-project-package',projectId:'accents',packageId:'deluxe',qty:1,price:null,startingAt:835,depositEstimate:242.39,laborEstimate:511.5,overheadAllowance:81.11,quoteRequired:true}])));
+ await page.goto('/project-cart.html');await expect(page.locator('#cart-scheduling')).toBeHidden();await expect(page.locator('#cart-tax-amount')).toHaveText('$0.00');
+ await page.locator('#project-checkout-button').click();await expect(page).toHaveURL(/payment.html#cart/);
+ await expect(page.locator('h1')).toHaveText('Checkout');await expect(page.locator('#payment-details')).toContainText('$835.00');await expect(page.locator('#payment-details')).toContainText('$242.39');
+ await expect(page.locator('#payment-status')).toHaveText('Final approval required before payment.');await expect(page.locator('#request-approval')).toHaveAttribute('href',/^mailto:contact@niksremodeling.com/);
+ await expect(page.getByRole('button',{name:'Pay securely with Square'})).toHaveCount(0);expect(calls).toEqual([]);
+ await page.getByRole('link',{name:'Back to cart'}).click();await expect(page.locator('#cart-scheduling')).toBeHidden();
 });

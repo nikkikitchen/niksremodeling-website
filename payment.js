@@ -30,5 +30,14 @@
    };
   }catch(error){status.textContent=error.message;}
  }
- if(order)check(order);else if(token)quote();else status.textContent='Open the private quote or order link provided by Nik’s Remodeling.';
+ function cartReview(){
+  document.querySelector('h1').textContent='Checkout';
+  let review;try{review=JSON.parse(sessionStorage.getItem('nr-project-checkout-review')||'null');}catch{}
+  if(!review||!Array.isArray(review.items)||!review.items.length){status.textContent='Your cart is empty.';details.innerHTML='<a class="btn primary" href="/project-cart.html">Back to cart</a>';return;}
+  status.textContent='Final approval required before payment.';
+  details.innerHTML='<ul>'+review.items.map(item=>'<li>'+escape(item.name)+(item.measurements?'<br><small>'+escape(item.measurements)+'</small>':'')+'</li>').join('')+'</ul><p><strong>Total estimate: '+escape(review.total)+'</strong></p>'+(review.deposit?'<p>Deposit: '+escape(review.deposit)+'</p>':'')+(review.balance?'<p>Balance: '+escape(review.balance)+'</p>':'')+'<a class="btn primary" id="request-approval">Request approval</a> <a class="btn outline" href="/project-cart.html">Back to cart</a>';
+  const message=review.items.map(item=>item.name+(item.measurements?' — '+item.measurements:'')).join('\n')+'\nTotal estimate: '+review.total+'\nPlease review my project and send an approved payment link.';
+  document.getElementById('request-approval').href='mailto:contact@niksremodeling.com?subject='+encodeURIComponent('Project checkout approval')+'&body='+encodeURIComponent(message);
+ }
+ if(order)check(order);else if(token)quote();else if(location.hash==='#cart')cartReview();else status.textContent='Open the private quote or order link provided by Nik’s Remodeling.';
 })();
