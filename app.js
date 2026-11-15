@@ -1196,7 +1196,7 @@ function renderCart(){
  ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
  <h2>Your Items</h2><div class="nr-cart-column-labels"><span>Item</span><span>Price</span></div>
  <div class="cart-list">${visible.map(({item:x,index:i})=>`<article class="nr-cart-line">
- <div class="nr-cart-item-symbol" aria-hidden="true">${packageSources.has(x.source)?'🖼️':['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
+ <div class="nr-cart-item-symbol" aria-hidden="true">${packageSources.has(x.source)&&x.projectId==='accents'?'<img src="/assets/accent-walls-card.jpg" alt="" loading="lazy" style="width:84px;height:84px;object-fit:cover;border-radius:8px">':packageSources.has(x.source)&&PROJECT_CATALOG?.[x.projectId]?.image?'<img src="'+escapeCartText(PROJECT_CATALOG[x.projectId].image)+'" alt="" loading="lazy" style="width:84px;height:84px;object-fit:cover;border-radius:8px">':['Labor','Service'].includes(x.type)?'🔧':x.source==='project-calculator'?'🏠':'🛒'}</div>
  <div class="nr-cart-line-info"><strong>${escapeCartText(x.name)}</strong><div class="nr-cart-meta">${escapeCartText(x.type||'Project')} · Quantity: ${Number(x.qty)||1}</div>
   ${packageSources.has(x.source)?'<div class="nr-cart-meta"><strong>Complete package:</strong> Labor, materials and standard supplies included. No separate installation charge for included work.</div>':''}
   ${x.packageAllowanceCredit?'<div class="nr-cart-meta"><strong>Included in bathroom package:</strong> $'+x.packageAllowanceCredit.toFixed(2)+' fixture allowance applied. Delivery and applicable tax costs are confirmed before invoice approval.</div>':''}
