@@ -103,7 +103,7 @@ test('Garage Standard deposit, completed-work balance and checkout lock remain c
  await page.addInitScript(item=>localStorage.setItem('nr-cart',JSON.stringify([item])),garage);
  await page.goto('/project-cart.html');
  await expect(page.locator('#cart-shipping-zip')).toBeVisible();
- await expect(page.locator('#cart-shipping-amount')).toContainText('Confirm');
+ await expect(page.locator('#cart-shipping-amount')).toHaveText('Included');
  await expect(page.locator('.nr-cart-balance-row')).toBeHidden();
  await expect(page.locator('#cart-due-now')).toContainText('$407.95');
  await expect(page.locator('#cart-combined-project-total')).toContainText('$1,920.00');

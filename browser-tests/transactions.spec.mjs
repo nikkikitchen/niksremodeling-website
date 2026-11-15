@@ -44,7 +44,7 @@ test('measured Accent Standard requests scheduling and displays received referen
  await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);
  await expect(page.locator('.cart-combined-project-row:visible')).toHaveCount(1);
  await expect(page.locator('.nr-cart-package-price:visible')).toHaveCount(0);
- await expect(page.locator('#cart-shipping-amount')).toBeHidden();
+ await expect(page.locator('#cart-shipping-amount')).toHaveText('Included');
  const form=page.locator('#nr-scheduling-form');
  await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toBeVisible();
  for(const field of await form.locator('input:visible').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
@@ -74,4 +74,17 @@ for(const project of ['bathrooms','kitchen-pantry'])test(project+' Standard carr
 
 test('labor-only installation remains quote-required and never enters merchandise checkout',async({page})=>{
  await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await expect(page.locator('#cart-terms-agree')).toBeHidden();await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next')).toContainText('Choose start date');
+});
+
+test('projects, retail, labor and mixed carts share the same basic summary',async({page})=>{
+ const project={name:'Accent Walls — Standard',type:'Service',source:'room-project-package',projectId:'accents',packageId:'deluxe',qty:1,price:null,startingAt:835,depositEstimate:242.39,laborEstimate:511.5,overheadAllowance:81.11,quoteRequired:true};
+ for(const items of [[project],[product],[{name:'Installation',type:'Labor',price:225,qty:1}],[project,product]]){
+  await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),items);await page.goto('/project-cart.html');
+  const labels=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();
+  expect(labels.slice(0,3).map(x=>x.trim())).toEqual(['Delivery / shipping','Estimated sales tax','Total estimate']);
+  await expect(page.locator('#cart-combined-project-total')).toBeVisible();
+  await expect(page.locator('input[name=zip]:visible')).toHaveCount(1);
+  await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);
+  await expect(page.getByText('Payment after final approval:',{exact:false})).toHaveCount(0);
+ }
 });

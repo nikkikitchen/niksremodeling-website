@@ -57,7 +57,7 @@ for(const entry of packageCases)test(entry.project+' package collects measuremen
     assert.equal(items[0].quoteRequired,true,'A starting price must not be treated as a final invoice');
     assert.equal(items[0].price,null);
     w.renderCart();
-    assert.match(d.body.textContent,/Complete package:.*Labor, materials and standard supplies included/);
+    assert.match(d.body.textContent,/Labor, materials & supplies included/);
     assert.equal(d.querySelector('.nr-cart-actions a[href="/installation.html"]'),null,
       'Do not suggest paying for installation twice for a complete package');
     assert.ok(d.querySelector('.nr-cart-meta')?.textContent);
@@ -187,7 +187,7 @@ test('Accent Wall Basic advertises the single-color starting price and never tak
   assert.equal(item.price,null);
   assert.equal(item.quoteRequired,true);
   w.renderCart();
-  assert.equal(d.getElementById('cart-due-now').textContent,`$${Number(item.depositEstimate).toFixed(2)} + tax pending`, 'Show the proposed materials deposit even while payment remains disabled');
+  assert.equal(d.getElementById('cart-due-now').textContent,`$${Number(item.depositEstimate).toFixed(2)}`, 'Show the proposed materials deposit even while payment remains disabled');
   assert.equal(d.getElementById('cart-pay-button').disabled,true);
  }finally{dom.window.close()}
 });
@@ -225,7 +225,7 @@ test('Combined project total includes quoted package minimum plus separate produ
     const d=dom.window.document;
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
-    assert.match(d.body.textContent,/Package estimate/);
+    assert.match(d.body.textContent,/Total estimate/);
     assert.equal(combined.textContent,'$450.00 (starting estimate) + tax pending',
       'Include $350 package starting price plus $100 product; unknown tax stays pending');
     assert.equal(d.getElementById('cart-due-now').textContent,'$247.13 + tax pending',
@@ -257,7 +257,7 @@ test('Deluxe Bathroom cart credits included vanity light and mirror, keeps repla
   assert.equal((text.match(/Included — \$0 extra/g)||[]).length,2,'Light and mirror should be included exactly once');
   assert.match(text,/vanity unit/i);
   assert.match(text,/\$56\.03/,'New vanity cabinet is not part of cosmetic Deluxe');
-  assert.match(d.querySelector('.nr-cart-summary').textContent,/Other items\$56\.03/);
+  assert.equal(d.getElementById('cart-estimated-total').dataset.payableCents,'5603');
   assert.match(d.getElementById('cart-combined-project-total').textContent,/\$2,616\.03/);
   assert.equal(d.querySelector('button[data-cart-request]'),null,'No competing invoice buttons');
   assert.equal(d.querySelectorAll('.cart-checkout-summary').length,1);
@@ -281,7 +281,7 @@ test('Basic Bathroom does not silently include a mirror or vanity light',async()
  try{
   const d=dom.window.document;
   assert.doesNotMatch(d.querySelector('.nr-cart-products').textContent,/Included — \$0 extra/);
-  assert.match(d.querySelector('.nr-cart-summary').textContent,/Other items\$47\.73/);
+  assert.equal(d.getElementById('cart-estimated-total').dataset.payableCents,'4773');
  }finally{dom.window.close()}
 });
 
@@ -308,7 +308,7 @@ test('legacy project starting prices do not turn missing labor and fees into zer
  const dom=await load('project-cart.html','',[{name:'Legacy project',source:'room-project-package',projectId:'accents',packageId:'standard',type:'Service',qty:1,price:null,startingAt:835,quoteRequired:true}]);
  try{
   const rows=[...dom.window.document.querySelectorAll('.cart-checkout-summary .cart-item')];
-  assert.ok(rows.some(el=>el.textContent.includes('Package estimate')));
+  assert.ok(rows.some(el=>el.textContent.includes('Total estimate')));
   assert.ok(!rows.some(el=>/Labor after package discount|Project fees/.test(el.textContent)),
    'Legacy projects must not expose unfinished internal accounting as zero-dollar charges');
   assert.equal(dom.window.document.getElementById('cart-pay-button').disabled,true);

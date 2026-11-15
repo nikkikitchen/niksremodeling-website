@@ -139,7 +139,7 @@ test('package-only ZIP retrieves a material tax preview without inventing suppli
   assert.equal(calls,1);
   assert.equal(document.getElementById('cart-tax-amount').textContent,'$28.56');
   assert.equal(document.getElementById('cart-due-now').textContent,'$436.51');
-  assert.match(document.getElementById('cart-shipping-amount').textContent,/Confirm whether included/);
+  assert.match(document.getElementById('cart-shipping-amount').textContent,/Included/);
   assert.match(document.getElementById('cart-combined-project-total').textContent,/\$1,948\.56/);
  }finally{dom.window.close();}
 });
