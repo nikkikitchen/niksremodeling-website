@@ -33,7 +33,7 @@ test('Bathroom and Kitchen package prices derive from itemized labor, materials,
 
 test('cart shows simple package pricing and preserves payment safeguards',()=>{
  assert.ok(room.includes('window.beginPackageQuote=function('));
- for(const term of ['Package price (starting estimate)','Estimated down payment','Estimated full project total','Delivery / shipping','Estimated sales tax']){
+ for(const term of ['Package estimate','Deposit estimate','Balance','Delivery / shipping','Estimated sales tax']){
   assert.ok(app.includes(term),term+' missing');
  }
  for(const retired of ['Request Deposit + Weekly Draws','Request Pay-in-Full Invoice','Request one full-payment invoice for entire approved cart'])assert.ok(!app.includes(retired));
@@ -41,7 +41,7 @@ test('cart shows simple package pricing and preserves payment safeguards',()=>{
  assert.match(app,/id="cart-pay-button"[^>]*disabled/);
  assert.ok(!app.includes('Materials &amp; supplies deposit (included)'));
  assert.ok(!app.includes('Labor after package discount (included)'));
- assert.ok(app.includes('No separate installation charge for included work.'));
+ assert.ok(app.includes('Labor, materials &amp; supplies included.'));
  assert.ok(!app.includes('Overhead and contingency'),'Do not restore confusing fee label.');
  assert.ok(app.includes('Payment confirmation'));
  assert.ok(app.includes('initCartSecureCheckout(c)'));

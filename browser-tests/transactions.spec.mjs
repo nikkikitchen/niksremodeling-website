@@ -39,10 +39,16 @@ test('measured Accent Standard requests scheduling and displays received referen
  expect(cart).toHaveLength(1);expect(cart[0]).toMatchObject({projectId:'accents',packageId:'deluxe',startingAt:835,depositEstimate:242.39,laborEstimate:511.5,overheadAllowance:81.11,price:null,quoteRequired:true,measurements:{length:12,height:8,wallArea:96}});
  await expect(page.locator('img[src="/assets/accent-standard-approved.jpg"]').first()).toBeVisible();
  await expect(page.locator('#cart-combined-project-total')).toContainText('$835.00');
+ await expect(page.locator('input[name=zip]:visible')).toHaveCount(1);
+ await expect(page.getByText('Payment after final approval:',{exact:false})).toHaveCount(0);
+ await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);
+ await expect(page.locator('.cart-combined-project-row:visible')).toHaveCount(1);
+ await expect(page.locator('.nr-cart-package-price:visible')).toHaveCount(0);
+ await expect(page.locator('#cart-shipping-amount')).toBeHidden();
  const form=page.locator('#nr-scheduling-form');
  await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toBeVisible();
- for(const field of await form.locator('input').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
- await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=notes]').fill('Please review the existing wall damage.');await form.locator('[name=date]').fill('2099-01-01');await form.locator('[name=zip]').fill('30117');
+ for(const field of await form.locator('input:visible').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
+ await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=notes]').fill('Please review the existing wall damage.');await form.locator('[name=date]').fill('2099-01-01');await page.locator('#cart-shipping-zip').fill('30117');
  let attempt=0,requestId;
  await page.route('**/api/scheduling',route=>{const b=route.request().postDataJSON();expect(b.details).toContain('12 × 8');expect(b.details).toContain('existing wall damage');expect(b.details).toContain('selected work:');if(!attempt++){requestId=b.requestId;return route.fulfill({status:503,json:{error:'Request service unavailable'}});}expect(b.requestId).toBe(requestId);return route.fulfill({status:201,json:{reference:'request-test',status:'requested',message:'Your request was received for owner review. Your preferred date is not confirmed.'}});});
  await form.locator('button').click();await expect(page.locator('#nr-scheduling-status')).toContainText('was not saved');await expect(page.locator('#nr-scheduling-status a')).toHaveAttribute('href',/^mailto:/);expect(new URL(await page.locator('#nr-scheduling-status a').getAttribute('href')).searchParams.get('body')).toContain('existing wall damage');await expect(form.locator('button')).toBeEnabled();
@@ -67,5 +73,5 @@ for(const project of ['bathrooms','kitchen-pantry'])test(project+' Standard carr
 });
 
 test('labor-only installation remains quote-required and never enters merchandise checkout',async({page})=>{
- await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await expect(page.locator('#cart-terms-agree')).toBeHidden();await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next')).toContainText('request your project quote');
+ await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await expect(page.locator('#cart-terms-agree')).toBeHidden();await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next')).toContainText('Choose start date');
 });

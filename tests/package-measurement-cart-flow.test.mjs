@@ -225,7 +225,7 @@ test('Combined project total includes quoted package minimum plus separate produ
     const d=dom.window.document;
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
-    assert.match(d.body.textContent,/Estimated full project total/);
+    assert.match(d.body.textContent,/Package estimate/);
     assert.equal(combined.textContent,'$450.00 (starting estimate) + tax pending',
       'Include $350 package starting price plus $100 product; unknown tax stays pending');
     assert.equal(d.getElementById('cart-due-now').textContent,'$247.13 + tax pending',
@@ -308,7 +308,7 @@ test('legacy project starting prices do not turn missing labor and fees into zer
  const dom=await load('project-cart.html','',[{name:'Legacy project',source:'room-project-package',projectId:'accents',packageId:'standard',type:'Service',qty:1,price:null,startingAt:835,quoteRequired:true}]);
  try{
   const rows=[...dom.window.document.querySelectorAll('.cart-checkout-summary .cart-item')];
-  assert.ok(rows.some(el=>el.textContent.includes('Package price (starting estimate)')));
+  assert.ok(rows.some(el=>el.textContent.includes('Package estimate')));
   assert.ok(!rows.some(el=>/Labor after package discount|Project fees/.test(el.textContent)),
    'Legacy projects must not expose unfinished internal accounting as zero-dollar charges');
   assert.equal(dom.window.document.getElementById('cart-pay-button').disabled,true);

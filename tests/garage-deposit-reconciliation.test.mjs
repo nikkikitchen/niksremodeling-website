@@ -39,7 +39,7 @@ test('Customer cart and terms do not promise weekly draws or charge unapproved p
  const terms=readFileSync(new URL('../terms.html',import.meta.url),'utf8');
  assert.doesNotMatch(app,/labor in weekly draws|weekly draw amounts/i);
  assert.doesNotMatch(terms,/weekly progress draws/i);
- assert.match(app,/labor draws tied to approved work completed/i);
+ assert.match(app,/Weekly draws for completed work\./i);
  assert.match(terms,/progress draws tied to completed work/i);
  assert.match(app,/button\.dataset\.eligible==='true'/);
 });
@@ -53,9 +53,9 @@ test('Package summary shows proposed deposit and deferred balance, including mis
  const svc=()=>({hasServices:false,total:0,pending:false});
  const pkg=deposit=>({name:'Garage Standard',source:'room-project-package',type:'Service',price:null,qty:1,startingAt:1920,depositEstimate:deposit,laborEstimate:1325.25,overheadAllowance:186.8,quoteRequired:true});
  const priced=fn([pkg(407.95)],svc,()=>false,()=>false);
- assert.match(priced,/Package price \(starting estimate\)/);
+ assert.match(priced,/Package estimate/);
  assert.match(priced,/\$407\.95/);
- assert.match(priced,/Estimated down payment/);
+ assert.match(priced,/Deposit estimate/);
  assert.match(priced,/id="cart-combined-project-total"[^>]*>\$1,920\.00/);
  assert.match(priced,/id="cart-pay-button"[^>]*disabled/);
  const pending=fn([pkg(null)],svc,()=>false,()=>false);

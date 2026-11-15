@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
 test('Review Cart presents simple package totals without exposing internal cost accounting',()=>{
- for(const term of ['Order Total','Package price (starting estimate)','Estimated down payment','Estimated full project total','Delivery / shipping','Estimated sales tax'])
+ for(const term of ['Summary','Package estimate','Deposit estimate','Balance','Delivery / shipping','Estimated sales tax'])
   assert.ok(app.includes(term),'Missing '+term);
  for(const retired of ['Materials &amp; supplies deposit (included)','Labor after package discount (included)','Package fees and details'])
   assert.ok(!app.includes(retired),'Retired cart detail: '+retired);
