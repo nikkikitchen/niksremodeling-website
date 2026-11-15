@@ -48,7 +48,7 @@ test('retail checkout verifies supplier, Square, tax, ZIP and final total before
  for(const required of ['q.totalCents!==expectedTotal','q.stock','CREDIT_CARD_PROCESSING','createCheckout','ask_for_shipping_address:false','destination-sales-tax'])
   assert.ok(checkout.includes(required),'Checkout missing '+required);
  assert.ok(cart.includes('initCartSecureCheckout(c)'));
- assert.ok(cart.includes('Online purchases temporarily paused'));
+ assert.ok(cart.includes('Payment confirmation'));
  assert.ok(!cart.slice(cart.indexOf('function cartSecureCheckoutPanel(items){'),cart.indexOf('function initCartSecureCheckout(items){')).includes('square-pay'), 'Checkout panel must not render a pay button');
  assert.ok(!quote.includes('STORE_ALLOWED_ZIPS'),'Product checkout should not use a labor-service ZIP whitelist');
  assert.ok(!checkout.includes('STORE_ALLOWED_ZIPS'),'Payment checkout should not use a labor-service ZIP whitelist');
