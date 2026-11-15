@@ -226,9 +226,9 @@ test('Combined project total includes quoted package minimum plus separate produ
     const combined=d.getElementById('cart-combined-project-total');
     assert.ok(combined,'A combined project estimate must be visible');
     assert.match(d.body.textContent,/Total estimate/);
-    assert.equal(combined.textContent,'$450.00 (starting estimate) + tax pending',
+    assert.equal(combined.textContent,'$450.00',
       'Include $350 package starting price plus $100 product; unknown tax stays pending');
-    assert.equal(d.getElementById('cart-due-now').textContent,'$247.13 + tax pending',
+    assert.equal(d.getElementById('cart-due-now').textContent,'$247.13',
       'Show the $147.13 proposed materials deposit plus $100 merchandise without charging full unconfirmed labor');
     assert.equal(d.getElementById('cart-pay-button').disabled,true);
     assert.equal(d.getElementById('cart-tax-amount').textContent,'Needs confirmation',

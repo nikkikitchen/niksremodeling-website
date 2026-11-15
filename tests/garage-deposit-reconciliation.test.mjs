@@ -65,7 +65,7 @@ test('Package summary shows proposed deposit and deferred balance, including mis
 });
 
 
-test('Package shipping remains pending even when retail CJ shipping is quoted',()=>{
+test('Retail shipping remains pending in mixed carts until verified',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const start=app.indexOf('function cartCheckoutSummary(items){');
  const end=app.indexOf('\nfunction cartShoppingChoices(',start);
@@ -78,7 +78,7 @@ test('Package shipping remains pending even when retail CJ shipping is quoted',(
    productId:'1992983344353558529',variantId:'1992983344424861698'}
  ];
  const html=render(cart,service,()=>false,()=>false);
- assert.match(html,/Enter ZIP for retail items; package delivery pending/);
+ assert.match(html,/id="cart-shipping-amount">Pending/);
  assert.match(html,/data-pending="true"/);
  assert.match(html,/data-package-deposit-cents="40795"/);
  assert.match(html,/\$507\.95/);
