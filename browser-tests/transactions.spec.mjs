@@ -23,7 +23,7 @@ test('homepage to shopping cart verifies final total and sends stable checkout i
 });
 test('multi-item, multiple quantity and mixed carts remain explicitly quote-only',async({page})=>{
  for(const items of [[product,product],[{...product,qty:2}],[product,{name:'Labor',type:'Labor',price:150,qty:1}]]){
-  await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),items);await page.goto('/project-cart.html');await page.locator('#cart-terms-agree').check();await expect(page.locator('#cart-pay-button')).toBeDisabled();await expect(page.locator('#cart-pay-status')).toContainText('confirmed quote');
+  await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),items);await page.goto('/project-cart.html');await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.getByRole('button',{name:'Continue to checkout',exact:true})).toHaveCount(1);await expect(page.locator('#project-checkout-button')).toBeEnabled();
  }
 });
 test('measured Accent Standard requests scheduling and displays received reference without booking confirmation',async({page})=>{
@@ -85,7 +85,7 @@ test('projects, retail, labor and mixed carts share the same basic summary',asyn
  for(const items of [[project],[product],[{name:'Installation',type:'Labor',price:225,qty:1}],[project,product]]){
   await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),items);await page.goto('/project-cart.html');
   const labels=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();
-  expect(labels.slice(0,3).map(x=>x.trim())).toEqual(['Total estimate','Delivery / shipping','Estimated sales tax']);
+  expect(labels.slice(0,5).map(x=>x.trim())).toEqual(['Products & materials','Services','Delivery / shipping','Estimated sales tax','Total estimate']);
   await expect(page.locator('#cart-combined-project-total')).toBeVisible();
   await expect(page.locator('input[name=zip]:visible')).toHaveCount(1);
   if(items.some(item=>['Labor','Service'].includes(item.type))){
@@ -107,4 +107,17 @@ test('project checkout opens a review without charging an unapproved estimate',a
  await expect(page.locator('#payment-status')).toHaveText('Final approval required before payment.');await expect(page.locator('#request-approval')).toHaveAttribute('href',/^mailto:contact@niksremodeling.com/);
  await expect(page.getByRole('button',{name:'Pay securely with Square'})).toHaveCount(0);expect(calls).toEqual([]);
  await page.getByRole('link',{name:'Back to cart'}).click();await expect(page.locator('#cart-scheduling')).toBeHidden();
+});
+
+test('mixed cart separates merchandise services freight tax and final total without double counting',async({page})=>{
+ const packageItem={name:'Accent Walls — Basic',type:'Service',source:'room-project-package',projectId:'accents',packageId:'basic',qty:1,price:null,startingAt:585,depositEstimate:227.39,laborEstimate:300,overheadAllowance:57.61,quoteRequired:true};
+ await page.route('**/api/cart-shipping',r=>r.fulfill({json:{deliveryCents:75350,units:1}}));
+ await page.route('**/api/cart-tax',r=>r.fulfill({json:{mode:'zip-upper-estimate',ratePercent:0}}));
+ await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),[{...product,name:'Dual tap refrigerator',price:723.50},packageItem]);await page.goto('/project-cart.html');
+ await page.locator('#cart-shipping-zip').fill('30117');
+ await expect(page.locator('#cart-products-subtotal')).toHaveText('$723.50');await expect(page.locator('#cart-services-subtotal')).toHaveText('$585.00');
+ await expect(page.locator('#cart-shipping-amount')).toHaveText('$753.50');await expect(page.locator('#cart-tax-amount')).toHaveText('$0.00');await expect(page.locator('#cart-combined-project-total')).toHaveText('$2,062.00');
+ await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('$1,704.39');await expect(page.locator('.nr-cart-remaining-balance strong')).toHaveText('$357.61');
+ const rows=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();expect(rows.map(x=>x.trim())).toEqual(['Products & materials','Services','Delivery / shipping','Estimated sales tax','Total estimate','Deposit','Balance left owed']);
+ await page.evaluate(()=>{const items=JSON.parse(localStorage.getItem('nr-cart'));delete items[1].depositEstimate;localStorage.setItem('nr-cart',JSON.stringify(items));});await page.reload();await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('Pending');
 });
