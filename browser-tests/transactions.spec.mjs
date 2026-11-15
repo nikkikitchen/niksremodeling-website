@@ -126,5 +126,14 @@ test('mixed cart separates merchandise services freight tax and final total with
  await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('$1,704.39');await expect(page.locator('.nr-cart-remaining-balance strong')).toHaveText('$357.61');
  const rows=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();expect(rows.map(x=>x.trim())).toEqual(['Projects & services','Merchandise','Delivery / shipping','Estimated sales tax','Total estimate','Deposit','Balance left owed']);
  taxRate=7;await page.locator('#cart-shipping-zip').fill('30118');await expect(page.locator('#cart-tax-amount')).toHaveText('$103.39');await expect(page.locator('#cart-combined-project-total')).toHaveText('$2,165.39');
- await page.evaluate(()=>{const items=JSON.parse(localStorage.getItem('nr-cart'));delete items[1].depositEstimate;localStorage.setItem('nr-cart',JSON.stringify(items));});await page.reload();await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('Pending');
+ await page.evaluate(()=>{const items=JSON.parse(localStorage.getItem('nr-cart'));delete items[1].depositEstimate;localStorage.setItem('nr-cart',JSON.stringify(items));});await page.reload();await expect(page.locator('#cart-due-now')).toBeVisible();await expect(page.locator('#cart-due-now')).toHaveText('$0.00');
+});
+
+test('all unfilled amount slots show zero without authorizing an unpriced payment',async({page})=>{
+ let checkoutCalls=0;page.on('request',r=>{if(/\/api\/(project|store)-checkout/.test(r.url()))checkoutCalls++;});
+ await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Custom project',type:'Service',source:'room-project-package',projectId:'accents',packageId:'custom',qty:1,price:null,startingAt:null,quoteRequired:true}])));await page.goto('/project-cart.html');
+ const amounts=page.locator('.nr-cart-price-chart > .cart-item:visible > strong');await expect(amounts).toHaveCount(7);expect(await amounts.allTextContents()).toEqual(Array(7).fill('$0.00'));
+ await expect(page.locator('.nr-cart-line-price')).toHaveText('$0.00');await expect(page.locator('#cart-combined-project-total')).toHaveAttribute('data-has-unpriced','true');await expect(page.locator('#cart-pay-button')).toBeDisabled();
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('nr-cart'))[0].quoteRequired)).toBe(true);
+ await page.locator('#project-checkout-button').click();await expect(page.locator('#payment-status')).toHaveText('Final approval required before payment.');await expect(page.getByRole('button',{name:'Pay securely with Square'})).toHaveCount(0);expect(checkoutCalls).toBe(0);
 });

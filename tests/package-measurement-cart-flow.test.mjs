@@ -293,11 +293,12 @@ test('older saved carts never substitute zero for missing measurement details',(
  assert.match(summary({measurements:{accentOnly:true,length:12,height:8,wallArea:96}}),/96 sq\. ft\. wall area/);
 });
 
-test('unpriced project packages show quote required instead of a zero-dollar project total',async()=>{
+test('unpriced project packages show a numeric placeholder while payment remains blocked',async()=>{
  const dom=await load('project-cart.html','',[{name:'Accent Walls — Deluxe',source:'room-project-package',projectId:'accents',packageId:'deluxe',type:'Service',qty:1,price:null,startingAt:null,quoteRequired:true}]);
  try{
   const d=dom.window.document;
-  assert.equal(d.getElementById('cart-combined-project-total').textContent,'Quote required');
+  assert.equal(d.getElementById('cart-combined-project-total').textContent,'$0.00');
+  assert.equal(d.getElementById('cart-combined-project-total').dataset.hasUnpriced,'true');
   assert.equal(d.getElementById('cart-pay-button').disabled,true);
   assert.equal(d.getElementById('cart-pay-button').closest('.nr-cart-pay-controls').hidden,true);
   assert.ok(!d.querySelector('.cart-checkout-summary').textContent.includes('Painting labor'),'Unspecified work must not acquire a zero-dollar price');

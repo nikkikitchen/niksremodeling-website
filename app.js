@@ -759,15 +759,13 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
- if(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package'].includes(x.source)&&Number(x.startingAt)>0)return 'Starting at '+Number(x.startingAt).toLocaleString('en-US',{style:'currency',currency:'USD'});
- if(x.source==='retail-installation'&&(x.price==null||x.pricingPending))return 'Installation quote needed';
- if(customEstimate(x)||requiresInPersonQuote(x))return 'In-person quote required';
+ const money=value=>value.toLocaleString('en-US',{style:'currency',currency:'USD'});
+ if(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package'].includes(x.source)&&Number(x.startingAt)>0)return money(Number(x.startingAt));
+ if(customEstimate(x)||requiresInPersonQuote(x))return money(0);
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
- if(x.type==='Material estimate'&&!known)return 'Material price to be confirmed';
- const costs=x.internalCosts;
- const scope=x.packageAllowanceCredit?'Included '+x.packageFixtureKind+' fixture · $'+x.packageAllowanceCredit.toFixed(2)+' package allowance credit · delivery may be extra':x.fixtureAllowanceReplaced?'Labor + supplies · selected toilet priced separately':costs?(costs.fixture>0?'Materials + labor · supplies included':'Labor · supplies included'):['Labor','Service'].includes(x.type)?'Labor only':/material|suppl/i.test(x.type||'')?'Materials only':'Item only';
- return (x.packageAllowanceCredit&&Math.abs(Number(x.price)*(Number(x.qty)||1))<0.005?'Included — $0 extra':known?(Number(x.price)*(Number(x.qty)||1)).toLocaleString('en-US',{style:'currency',currency:'USD'}):'Quote needed')+'<small class="cart-price-scope">'+scope+'</small>';
+ return money(known?Number(x.price)*(Number(x.qty)||1):0);
 }
+
 function cartCheckoutSummary(items){
  const paidItems=items.filter(x=>!x.hiddenFromCustomer&&!['Labor','Service'].includes(x.type)&&!x.internalCosts&&!customEstimate(x)&&!requiresInPersonQuote(x));
  const amount=paidItems.reduce((sum,x)=>{const n=Number(x.price);return sum+(Number.isFinite(n)&&n>=0?n*(Number(x.qty)||1):0)},0);
@@ -848,15 +846,15 @@ function cartCheckoutSummary(items){
  <h3>Summary</h3>
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
- <div class="cart-item"><span>Projects &amp; services</span><strong id="cart-services-subtotal">${servicesPending?(servicesSubtotal>0?money(servicesSubtotal)+' + quote required':'Quote required'):money(servicesSubtotal)}</strong></div>
- <div class="cart-item"><span>Merchandise</span><strong id="cart-products-subtotal">${unpriced?(amount>0?money(amount)+' + quote required':'Quote required'):money(amount)}</strong></div>
- <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length||items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!unconfirmedPackages.includes(x)&&!pendingRoomPackages.includes(x))?'Pending':unconfirmedPackages.length||pendingRoomPackages.length?'$0.00':remainingShippingPending?'Pending':'$0.00'}</strong></div>
+ <div class="cart-item"><span>Projects &amp; services</span><strong id="cart-services-subtotal">${money(servicesSubtotal)}</strong></div>
+ <div class="cart-item"><span>Merchandise</span><strong id="cart-products-subtotal">${money(amount)}</strong></div>
+ <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount" data-verified="false">$0.00</strong></div>
 
  <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">$0.00</strong></div>
- <div class="cart-item cart-combined-project-row" ><span><strong>Total estimate</strong></span><strong id="cart-combined-project-total" data-compact="true" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${hasPendingPrice}">${hasPendingPrice&&combinedStartingBaseCents===0?'Quote required':money(combinedStartingBaseCents/100)+(hasPendingPrice?' + quote required':'')}</strong></div>
+ <div class="cart-item cart-combined-project-row" ><span><strong>Total estimate</strong></span><strong id="cart-combined-project-total" data-compact="true" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${hasPendingPrice}">${money(combinedStartingBaseCents/100)}</strong></div>
  <div class="cart-item nr-cart-balance-row" hidden><span><strong>Other priced items total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
- <div class="cart-item nr-cart-deposit"><span><strong>Deposit</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}" data-project-work="${hasProjectWork}">${!hasProjectWork?money(0):missingPackageDeposit?'Pending':money(payableSubtotal+packageDepositEstimates)+' + tax pending'}</strong></div>
- <div class="cart-item nr-cart-remaining-balance"><span>Balance left owed</span><strong data-base-cents="${Math.round((hasProjectWork?Math.max(0,combinedStartingBaseCents/100-payableSubtotal-packageDepositEstimates):combinedStartingBaseCents/100)*100)}">${hasPendingPrice||hasProjectWork&&missingPackageDeposit?'Pending':money(hasProjectWork?Math.max(0,combinedStartingBaseCents/100-payableSubtotal-packageDepositEstimates):combinedStartingBaseCents/100)}</strong></div>
+ <div class="cart-item nr-cart-deposit"><span><strong>Deposit</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}" data-project-work="${hasProjectWork}">${!hasProjectWork||missingPackageDeposit?money(0):money(payableSubtotal+packageDepositEstimates)}</strong></div>
+ <div class="cart-item nr-cart-remaining-balance"><span>Balance left owed</span><strong data-base-cents="${Math.round((hasProjectWork?Math.max(0,combinedStartingBaseCents/100-payableSubtotal-packageDepositEstimates):combinedStartingBaseCents/100)*100)}">${hasPendingPrice||hasProjectWork&&missingPackageDeposit?money(0):money(hasProjectWork?Math.max(0,combinedStartingBaseCents/100-payableSubtotal-packageDepositEstimates):combinedStartingBaseCents/100)}</strong></div>
  ${hasProjectWork?'<p class="nr-cart-weekly-draw-note" style="font-size:.82rem;color:#596777;margin:2px 0 10px">Weekly draws for completed work.</p>':''}
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
@@ -1071,7 +1069,7 @@ function initCartShippingQuote(items){
   requestId++;
   // Cancel stale quotes when ZIP changes; support older carts that still have a button.
   if(button)button.disabled=false;
-  shipping.textContent='Pending ZIP';
+  shipping.textContent='$0.00';shipping.dataset.verified='false';
   total.textContent=initialTotal;
   status.textContent='';
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
@@ -1085,7 +1083,7 @@ function initCartShippingQuote(items){
   // Invalidate the previous quote before retrying the same ZIP, too.
   total.textContent=initialTotal;
   form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
-  shipping.textContent='Checking shipping…';
+  shipping.textContent='$0.00';shipping.dataset.verified='false';
   status.textContent='Calculating…';
   if(button)button.disabled=true;
   try{
@@ -1096,7 +1094,7 @@ function initCartShippingQuote(items){
    if(!response.ok||!Number.isSafeInteger(result.deliveryCents)||result.deliveryCents<0)
     throw Error(result.error||'Shipping is not available for these items.');
    const moneyValue=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD'});
-   shipping.textContent=moneyValue(result.deliveryCents/100);
+   shipping.textContent=moneyValue(result.deliveryCents/100);shipping.dataset.verified='true';
    // The shipping event recalculates the complete total including estimated tax.
    status.textContent='';
    try{localStorage.setItem('nr-delivery-zip',zip);}catch{}
@@ -1105,7 +1103,7 @@ function initCartShippingQuote(items){
    }));
   }catch(error){
    if(mine!==requestId)return;
-   shipping.textContent='Shipping needs confirmation';
+   shipping.textContent='$0.00';shipping.dataset.verified='false';
    // Clear stale freight and tax previews when shipping cannot be verified.
    form.dispatchEvent(new form.ownerDocument.defaultView.Event('nr:shipping-cleared'));
    status.textContent=error.message||'Shipping cannot be confirmed right now. No shipping amount has been added.';
@@ -1146,17 +1144,14 @@ function initCartTaxPreview(){
   total.textContent=money(baseCents+(shippingCents??0)+taxCents)+pending;
   if(dueNow&&Number.isSafeInteger(payableCents)&&payableCents>=0){
    const depositCents=Number(dueNow.dataset.packageDepositCents)||0;
-   dueNow.textContent=dueNow.dataset.projectWork==='false'?money(0):dueNow.dataset.missingPackageDeposit==='true'?'Pending':money(payableCents+depositCents+(shippingCents??0)+taxCents)+(combined?.dataset.compact==='true'?'':pending);
+   dueNow.textContent=dueNow.dataset.projectWork==='false'?money(0):dueNow.dataset.missingPackageDeposit==='true'?money(0):money(payableCents+depositCents+(shippingCents??0)+taxCents);
   }
   const combinedBase=Number(combined?.dataset.baseCents);
   if(combined&&Number.isSafeInteger(combinedBase)&&combinedBase>=0){
-   combined.textContent=combined.dataset.hasUnpriced==='true'&&combinedBase===0?'Quote required':
-    money(combinedBase+(shippingCents??0)+taxCents)+
-    (combined.dataset.hasStarting==='true'&&combined.dataset.compact!=='true'?' (starting estimate)':'')+
-    (combined.dataset.hasUnpriced==='true'?' + quote required':'')+(combined.dataset.compact==='true'?'':pending);
+   combined.textContent=money(combinedBase+(shippingCents??0)+taxCents);
   }
   const balance=document.querySelector('.nr-cart-remaining-balance strong');
-  if(balance&&dueNow?.dataset.projectWork==='false')balance.textContent=combined?.dataset.hasUnpriced==='true'?'Pending':money(combinedBase+(shippingCents??0)+taxCents);
+  if(balance&&dueNow?.dataset.projectWork==='false')balance.textContent=combined?.dataset.hasUnpriced==='true'?money(0):money(combinedBase+(shippingCents??0)+taxCents);
  };
  const lookup=async zip=>{
   const mine=++lookupId;

@@ -40,10 +40,10 @@ test('A new ZIP immediately re-enables Check shipping and invalidates the stale 
   ui.input.value='3011';
   ui.input.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
   assert.equal(ui.button.disabled,false);
-  assert.equal(ui.shipping.textContent,'Pending ZIP');
+  assert.equal(ui.shipping.textContent,'$0.00');
   finish(Response.json({deliveryCents:9000,units:3}));
   await flush();
-  assert.equal(ui.shipping.textContent,'Pending ZIP','stale response cannot overwrite new ZIP');
+  assert.equal(ui.shipping.textContent,'$0.00','stale response cannot overwrite new ZIP');
   assert.equal(ui.total.textContent,'$100.00 + shipping pending');
  }finally{ui.dom.window.close();}
 });

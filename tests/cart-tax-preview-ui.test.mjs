@@ -37,7 +37,7 @@ test('tax preview starts at zero without marking tax as verified',()=>{
   assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.rateLabel.textContent,' · unverified');
   assert.equal(ui.total.textContent,'$100.00 + tax pending');
-  assert.equal(ui.due.textContent,'$60.00 + tax pending','upfront amount includes merchandise and tax, not $40 labor');
+  assert.equal(ui.due.textContent,'$60.00','upfront amount includes merchandise and tax, not $40 labor');
   assert.match(ui.info.textContent,/delivery address and type of work determine the applicable tax/);
   assert.match(ui.info.textContent,/Tax needs confirmation/);
  }finally{ui.dom.window.close();}
@@ -59,7 +59,7 @@ test('verified freight does not invent a tax rate when tax lookup is unavailable
   assert.equal(ui.tax.textContent,'$0.00');
   assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.total.textContent,'$181.00 + tax pending');
-  assert.equal(ui.due.textContent,'$141.00 + tax pending','upfront amount includes merchandise, freight and tax, not labor');
+  assert.equal(ui.due.textContent,'$141.00','upfront amount includes merchandise, freight and tax, not labor');
   assert.equal(ui.rateLabel.textContent,' · unverified');
   ui.zip.value='3011';
   ui.zip.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}));
@@ -68,12 +68,14 @@ test('verified freight does not invent a tax rate when tax lookup is unavailable
   assert.equal(ui.total.textContent,'$100.00 + tax pending');
  }finally{ui.dom.window.close();}
 });
-test('unknown supplier freight never becomes zero or a fake final price',async()=>{
+test('zero freight preview stays unverified when supplier verification fails',async()=>{
  const ui=mount(async()=>Response.json({error:'Supplier freight unavailable.'},{status:503}));
  try{
   submit(ui);
   await flush();await flush();
-  assert.equal(ui.shipping.textContent,'Shipping needs confirmation');
+  assert.equal(ui.shipping.textContent,'$0.00');
+  assert.equal(ui.shipping.dataset.verified,'false');
+  assert.match(ui.dom.window.document.getElementById('cart-shipping-status').textContent,/Supplier freight unavailable/);
   assert.equal(ui.tax.textContent,'$0.00');
   assert.equal(ui.tax.dataset.verified,'false','Zero preview must not mark tax as verified');
   assert.equal(ui.total.textContent,'$100.00 + tax pending');
@@ -135,7 +137,7 @@ test('package-only ZIP adds no separate delivery or sales tax',async()=>{
   await flush();await flush();
   assert.equal(calls,0,'A complete project must not request extra tax or freight');
   assert.equal(document.getElementById('cart-tax-amount').textContent,'$0.00');
-  assert.equal(document.getElementById('cart-due-now').textContent,'$407.95 + tax pending');
+  assert.equal(document.getElementById('cart-due-now').textContent,'$407.95');
   assert.equal(document.getElementById('cart-shipping-amount').textContent,'$0.00');
   assert.match(document.getElementById('cart-combined-project-total').textContent,/\$1,920\.00/);
  }finally{dom.window.close();}

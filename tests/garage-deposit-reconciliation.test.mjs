@@ -65,7 +65,7 @@ test('Package summary shows proposed deposit and deferred balance, including mis
 });
 
 
-test('Retail shipping remains pending in mixed carts until verified',()=>{
+test('Mixed cart freight starts at zero without being verified',()=>{
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const start=app.indexOf('function cartCheckoutSummary(items){');
  const end=app.indexOf('\nfunction cartShoppingChoices(',start);
@@ -78,7 +78,7 @@ test('Retail shipping remains pending in mixed carts until verified',()=>{
    productId:'1992983344353558529',variantId:'1992983344424861698'}
  ];
  const html=render(cart,service,()=>false,()=>false);
- assert.match(html,/id="cart-shipping-amount">Pending/);
+ assert.match(html,/id="cart-shipping-amount" data-verified="false">\$0\.00/);
  assert.match(html,/data-pending="true"/);
  assert.match(html,/data-package-deposit-cents="40795"/);
  assert.match(html,/\$507\.95/);
