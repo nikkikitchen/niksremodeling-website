@@ -24,7 +24,7 @@ const render=items=>checkout(items,serviceSummary,()=>false,()=>false);
 
 test('Due now includes materials inside a labor package but excludes the labor itself',()=>{
  const html=render(make(900));
- assert.match(html,/Products &amp; materials<\/span><strong>\$500\.00/);
+ assert.match(html,/Other items<\/span><strong>\$500\.00/);
  assert.match(html,/Labor<\/span><strong>\$600\.00/);
  assert.match(html,/id="cart-tax-amount">Needs confirmation/);
  assert.match(html,/id="cart-estimated-total"[^>]*>\$1,100\.00 \+ tax pending/);
@@ -33,7 +33,7 @@ test('Due now includes materials inside a labor package but excludes the labor i
 
 test('Replacing a packaged fixture does not charge its allowance twice',()=>{
  const html=render(make(800,100));
- assert.match(html,/Products &amp; materials<\/span><strong>\$400\.00/);
+ assert.match(html,/Other items<\/span><strong>\$400\.00/);
  assert.match(html,/Labor<\/span><strong>\$600\.00/);
  assert.match(html,/id="cart-tax-amount">Needs confirmation/);
  assert.match(html,/id="cart-estimated-total"[^>]*>\$1,000\.00 \+ tax pending/);
