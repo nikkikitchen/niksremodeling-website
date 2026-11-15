@@ -1,18 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-
 const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
-
-test('Review Cart tells customers which package amounts are deposits, deferred labor, and included fees',()=>{
- assert.ok(app.includes('Materials &amp; supplies'));
- assert.ok(app.includes('Labor after package discount (included)'));
- assert.ok(!app.includes('Labor after 7% package discount (included)'));
- assert.ok(!app.includes('Labor after 8% package discount (included)'));
- assert.ok(!app.includes('Labor after 9% package discount (included)'));
- assert.ok(!app.includes('Labor after 10% package discount (included)'));
- assert.ok(app.includes('Project fees'));
- assert.ok(app.includes('Project package estimate'));
- assert.ok(app.includes('Project total'));
+test('Review Cart presents simple package totals without exposing internal cost accounting',()=>{
+ for(const term of ['Order Total','Package price (starting estimate)','Estimated down payment','Estimated full project total','Delivery / shipping','Estimated sales tax'])
+  assert.ok(app.includes(term),'Missing '+term);
+ for(const retired of ['Materials &amp; supplies deposit (included)','Labor after package discount (included)','Package fees and details'])
+  assert.ok(!app.includes(retired),'Retired cart detail: '+retired);
  assert.doesNotMatch(app,/Overhead (?:and|&) Contingenc(?:y|ies)/i);
+ assert.ok(app.includes('data-package-deposit-cents='),'Deposit calculations must remain');
+ assert.ok(app.includes('cart-combined-project-total'),'Total calculation must remain');
 });
