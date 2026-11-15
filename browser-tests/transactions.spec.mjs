@@ -46,7 +46,8 @@ test('measured Accent Standard requests scheduling and displays received referen
  await expect(page.locator('.nr-cart-package-price:visible')).toHaveCount(0);
  await expect(page.locator('#cart-shipping-amount')).toHaveText('Included');
  const form=page.locator('#nr-scheduling-form');
- await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toBeVisible();
+ await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next a')).toHaveText('Request start date');
+ await expect(page.locator('#project-checkout-button')).toBeVisible();await expect(page.locator('#project-checkout-button')).toBeDisabled();
  for(const field of await form.locator('input:visible').all())expect((await field.boundingBox()).height).toBeGreaterThanOrEqual(44);
  await form.locator('[name=name]').fill('Customer');await form.locator('[name=phone]').fill('555-555-5555');await form.locator('[name=email]').fill('customer@example.test');await form.locator('[name=notes]').fill('Please review the existing wall damage.');await form.locator('[name=date]').fill('2099-01-01');await page.locator('#cart-shipping-zip').fill('30117');
  let attempt=0,requestId;
@@ -73,7 +74,7 @@ for(const project of ['bathrooms','kitchen-pantry'])test(project+' Standard carr
 });
 
 test('labor-only installation remains quote-required and never enters merchandise checkout',async({page})=>{
- await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await expect(page.locator('#cart-terms-agree')).toBeHidden();await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next')).toContainText('Choose start date');
+ await page.goto('/');await page.evaluate(()=>localStorage.setItem('nr-cart',JSON.stringify([{name:'Faucet installation',type:'Labor',source:'labor-catalog',qty:1,price:225}])));await page.goto('/project-cart.html');await expect(page.locator('#cart-terms-agree')).toBeHidden();await expect(page.locator('#cart-pay-button')).toBeHidden();await expect(page.locator('.nr-cart-approval-next')).toContainText('Request start date');
 });
 
 test('projects, retail, labor and mixed carts share the same basic summary',async({page})=>{
@@ -81,7 +82,7 @@ test('projects, retail, labor and mixed carts share the same basic summary',asyn
  for(const items of [[project],[product],[{name:'Installation',type:'Labor',price:225,qty:1}],[project,product]]){
   await page.goto('/');await page.evaluate(items=>localStorage.setItem('nr-cart',JSON.stringify(items)),items);await page.goto('/project-cart.html');
   const labels=await page.locator('.nr-cart-price-chart > .cart-item:visible > span').allTextContents();
-  expect(labels.slice(0,3).map(x=>x.trim())).toEqual(['Delivery / shipping','Estimated sales tax','Total estimate']);
+  expect(labels.slice(0,3).map(x=>x.trim())).toEqual(['Total estimate','Delivery / shipping','Estimated sales tax']);
   await expect(page.locator('#cart-combined-project-total')).toBeVisible();
   await expect(page.locator('input[name=zip]:visible')).toHaveCount(1);
   await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);

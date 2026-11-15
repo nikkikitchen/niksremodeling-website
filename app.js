@@ -840,13 +840,13 @@ function cartCheckoutSummary(items){
  <h3>Summary</h3>
  ${shippingChecker}
  <div class="nr-cart-price-chart" role="group" aria-label="Price breakdown">
+ <div class="cart-item cart-combined-project-row" ><span><strong>Total estimate</strong></span><strong id="cart-combined-project-total" data-compact="true" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${pendingRoomPackages.length&&combinedStartingBaseCents===0?'Quote required':money(combinedStartingBaseCents/100)+(unconfirmedPackages.length&&!projectOnly?' (starting estimate)':'')+(pendingRoomPackages.length?' + quote required':'')+(projectOnly?'':' + tax pending')}</strong></div>
  ${pendingRoomPackages.length?'<div class="cart-item"><span>Custom project</span><strong>Quote required</strong></div>'+(pendingComponentRows?'<details class="nr-cart-details"><summary>Estimated components</summary>'+pendingComponentRows+'<p>These components are included in the eventual quote, not extra charges.</p></details>':''):''}
  <div class="cart-item"><span>Delivery / shipping</span><strong id="cart-shipping-amount">${supplierShippingItems.length||items.some(x=>!x.hiddenFromCustomer&&x.shippingAndTaxNotIncluded&&!unconfirmedPackages.includes(x)&&!pendingRoomPackages.includes(x))?'Pending':unconfirmedPackages.length||pendingRoomPackages.length?'Included':remainingShippingPending?'Pending':'$0.00'}</strong></div>
 
  <div class="cart-item"><span>Estimated sales tax <small id="cart-tax-rate-label"></small></span><strong id="cart-tax-amount">Needs confirmation</strong></div>
  <div class="cart-item nr-cart-balance-row" hidden><span><strong>Other priced items total</strong></span><strong id="cart-estimated-total" data-base-cents="${Math.round(combinedEstimatedTotal*100)}" data-payable-cents="${Math.round(payableSubtotal*100)}" data-retail-cents="${retailGoodsCents}" data-pending="${unpriced||pendingSupplies||estimatedLabor.pending||remainingShippingPending}">${money(combinedEstimatedTotal)} + tax pending</strong></div>
- <div class="cart-item cart-combined-project-row" ><span><strong>Total estimate</strong></span><strong id="cart-combined-project-total" data-compact="true" data-base-cents="${combinedStartingBaseCents}" data-has-starting="${unconfirmedPackages.length>0}" data-has-unpriced="${pendingRoomPackages.length>0}">${pendingRoomPackages.length&&combinedStartingBaseCents===0?'Quote required':money(combinedStartingBaseCents/100)+(unconfirmedPackages.length&&!projectOnly?' (starting estimate)':'')+(pendingRoomPackages.length?' + quote required':'')+(projectOnly?'':' + tax pending')}</strong></div>
- <div class="cart-item nr-cart-deposit" ${isRetailOnly||missingPackageDeposit||!unconfirmedPackages.length?'hidden':''}><span><strong>Deposit estimate</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
+ <div class="cart-item nr-cart-deposit" ${isRetailOnly||missingPackageDeposit||!unconfirmedPackages.length?'hidden':''}><span><strong>Deposit</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}">${missingPackageDeposit?'Pending itemized quote':money(payableSubtotal+packageDepositEstimates)} + tax pending</strong></div>
  ${unconfirmedPackages.length&&!missingPackageDeposit?'<div class="cart-item nr-cart-remaining-balance"><span>Balance</span><strong>'+money(packageRemainingEstimate)+'</strong></div><p class="nr-cart-weekly-draw-note" style="font-size:.82rem;color:#596777;margin:2px 0 10px">Weekly draws for completed work.</p>':''}
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
@@ -858,7 +858,7 @@ function cartCheckoutSummary(items){
  <button class="btn primary" id="cart-pay-button" type="button" disabled style="margin-top:12px;padding:10px 22px">Pay</button>
  <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
  </div>
- ${projectOnly?'<div class="nr-cart-approval-next"><a class="btn primary" href="#cart-scheduling">Choose start date</a></div>':''}
+ ${projectOnly?'<div class="nr-cart-approval-next"><button class="btn outline" id="project-checkout-button" type="button" disabled style="width:100%;margin-bottom:8px">Continue to checkout</button><small style="display:block;margin-bottom:12px">After quote approval</small><a class="btn primary" href="#cart-scheduling">Request start date</a></div>':''}
  </section>`;
 }
 function cartSchedulingRequestMarkup(items){

@@ -55,7 +55,7 @@ test('Package summary shows proposed deposit and deferred balance, including mis
  const priced=fn([pkg(407.95)],svc,()=>false,()=>false);
  assert.match(priced,/Total estimate/);
  assert.match(priced,/\$407\.95/);
- assert.match(priced,/Deposit estimate/);
+ assert.match(priced,/Deposit/);
  assert.match(priced,/id="cart-combined-project-total"[^>]*>\$1,920\.00/);
  assert.match(priced,/id="cart-pay-button"[^>]*disabled/);
  const pending=fn([pkg(null)],svc,()=>false,()=>false);
