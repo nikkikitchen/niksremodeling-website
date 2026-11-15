@@ -253,8 +253,11 @@ test('Deluxe Bathroom cart credits included vanity light and mirror, keeps repla
  try{
   const w=dom.window,d=w.document;
   const text=d.querySelector('.nr-cart-products').textContent;
-  assert.match(text,/Included — \$0 extra/);
-  assert.equal((text.match(/Included — \$0 extra/g)||[]).length,2,'Light and mirror should be included exactly once');
+  for(const name of ['Bathroom Vanity Light Bar 24-Inch Black','Black Round Wall Mirror 20-Inch']){
+   const row=[...d.querySelectorAll('.nr-cart-line')].find(row=>row.textContent.includes(name));
+   assert.equal(row.querySelector('.nr-cart-line-price').textContent.trim(),'$0.00','Included fixtures must have no extra charge');
+  }
+  assert.equal([...d.querySelectorAll('.nr-cart-line-price')].filter(row=>row.textContent.trim()==='$0.00').length,2,'Light and mirror should be included exactly once');
   assert.match(text,/vanity unit/i);
   assert.match(text,/\$56\.03/,'New vanity cabinet is not part of cosmetic Deluxe');
   assert.equal(d.getElementById('cart-estimated-total').dataset.payableCents,'5603');
