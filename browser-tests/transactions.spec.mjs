@@ -88,6 +88,11 @@ test('projects, retail, labor and mixed carts share the same basic summary',asyn
   expect(labels.slice(0,3).map(x=>x.trim())).toEqual(['Total estimate','Delivery / shipping','Estimated sales tax']);
   await expect(page.locator('#cart-combined-project-total')).toBeVisible();
   await expect(page.locator('input[name=zip]:visible')).toHaveCount(1);
+  if(items.some(item=>['Labor','Service'].includes(item.type))){
+   await expect(page.locator('#cart-scheduling')).toBeHidden();
+   await page.getByRole('link',{name:'Request start date',exact:true}).click();
+   await expect(page.locator('#cart-scheduling')).toBeVisible();
+  }
   await expect(page.getByText('Some items require a quote.',{exact:true})).toHaveCount(0);
   await expect(page.getByText('Payment after final approval:',{exact:false})).toHaveCount(0);
  }

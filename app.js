@@ -858,7 +858,7 @@ function cartCheckoutSummary(items){
  <button class="btn primary" id="cart-pay-button" type="button" disabled style="margin-top:12px;padding:10px 22px">Pay</button>
  <p class="calc-note" id="cart-pay-status" role="status">Online payments temporarily unavailable while tax and shipping are verified.</p>
  </div>
- ${projectOnly?'<div class="nr-cart-approval-next"><button class="btn outline" id="project-checkout-button" type="button" style="width:100%;margin-bottom:8px">Continue to checkout</button><a class="btn primary" href="#cart-scheduling" aria-controls="cart-scheduling" aria-expanded="false">Request start date</a></div>':''}
+ ${items.some(x=>!x.hiddenFromCustomer&&(['Labor','Service'].includes(x.type)||['room-project-package','bathroom-project-package','kitchen-project-package','accessibility-project-package'].includes(x.source)))?'<div class="nr-cart-approval-next"><button class="btn outline" id="project-checkout-button" type="button" style="width:100%;margin-bottom:8px">Continue to checkout</button><a class="btn primary" href="#cart-scheduling" aria-controls="cart-scheduling" aria-expanded="false">Request start date</a></div>':''}
  </section>`;
 }
 function cartSchedulingRequestMarkup(items){
