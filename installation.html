@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  // Product browsing remains optional: never change labor rates or add unverified stock.
  const matchingShopPages={bathroom:'/bathroom.html',cabinets:'/cabinets.html',doors:'/shop-installed.html',flooring:'/material-flooring.html',electrical:'/shop-installed.html',paint:'/material-paint-finishes.html'};
  if(matchingShopPages[category.id]){
-  const shop=make('a','Browse products included in your final quote','btn outline');
+  const shop=make('a','Browse products for your installed quote','btn outline');
   shop.href=matchingShopPages[category.id];
   shop.setAttribute('aria-label','Shop products for '+category.label);
   shop.style.margin='12px 0';
