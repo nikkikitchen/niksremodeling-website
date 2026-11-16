@@ -49,6 +49,25 @@ test('Nik supplies products by default across installation categories, without i
  }finally{dom.window.close();}
 });
 
+test('toilet tank and flange repair default to Nik supplied parts without pretending an unverified parts cost is complete',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window;
+  for(const [id,labor] of [['toilet-tank-repair',125],['toilet-flange',250]]){
+   const p=w.BATHROOM_PACKAGES.find(x=>x.id===id);
+   assert.ok(p,id+' exists');
+   assert.equal(p.labor,labor,'approved labor unchanged');
+   assert.equal(p.materialsPricingPending,true,'Nik-provided parts require landed cost verification');
+   const category=w.LABOR_CATALOG.find(x=>x.id==='bathroom');
+   const item=category.groups.flatMap(group=>Object.values(group.actions).flat()).find(x=>x.id===id);
+   assert.match(item.priceText,/Final installed price pending verified replacement parts/);
+   assert.doesNotMatch(item.note,/Labor only|parts not included/i);
+  }
+  const calculator=readFileSync('project-calculator-options.js','utf8');
+  assert.match(calculator,/p\.materialsPricingPending\s*&&\s*!own/,'Nik-supplied missing parts must remain an unpriced quote');
+ }finally{dom.window.close();}
+});
+
 test('customer-supplied products preserve approved labor rates and remove material quote pending flag',async()=>{
  const dom=await openInstallation();
  try{
