@@ -13,7 +13,7 @@ test('bathroom installation shows supplied fixture estimate before customer-supp
 });
 
 test('customer-provided materials remains an opt-in, not the default',()=>{
- assert.match(steps,/id="customer-provides-materials"> I'll supply my own materials/);
+ assert.match(steps,/id="customer-provides-materials"> I’ll supply my own materials/);
  assert.doesNotMatch(steps,/id="customer-provides-materials" checked/);
 });
 
