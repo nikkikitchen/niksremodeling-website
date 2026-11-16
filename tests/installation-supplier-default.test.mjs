@@ -266,7 +266,7 @@ test('installation review labels unverified installed amounts as labor portions,
   const row=d.getElementById('labor-task-door-hinge-existing');
   row.querySelector('button').click();
   let review=d.getElementById('labor-review-list').textContent;
-  assert.match(review,/Labor portion\s*·\s*\$15\.00/,'Nik-supplied goods keep the labor amount explicitly provisional');
+  assert.match(review,/Labor portion\s*·\s*\$15(?:\.00)?\b/,'Nik-supplied goods keep the labor amount explicitly provisional regardless of currency formatter decimals');
   assert.match(review,/Final installed total pending verified costs/);
   assert.match(d.getElementById('labor-review-total').textContent,/installed quote pending/);
   row.querySelector('.labor-customer-materials').checked=true;
