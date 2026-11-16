@@ -22,7 +22,7 @@ window.BATHROOM_PACKAGES=[{"id":"toilet-install","label":"Assemble and install s
 // the approved 35% materials markup; no unverified product is reserved or sold.
 // Never add ordinary job consumables as a separate customer charge.
 const BATHROOM_STARTER_ESTIMATES={
- 'vanity-install':{fixture:430,supplies:0,internalSupplyBudget:25,note:'Standard single 24–36 inch vanity with sink/top and basic faucet, existing compatible connections. Fixture allowance is a planning budget, not a confirmed product price. Removal, plumbing changes and wall/floor repairs are separate.'},
+ 'vanity-install':{fixture:740,supplies:0,internalSupplyBudget:25,note:'Standard single 24–36 inch vanity with sink/top and basic faucet, existing compatible connections. Preliminary $740 fixture allowance assumes a roughly $548 retail example plus 35% materials markup; this is not a confirmed product price. Removal, plumbing changes and wall/floor repairs are separate.'},
  'faucet-replace':{fixture:80,supplies:0,internalSupplyBudget:15,note:'Standard vanity faucet with existing compatible connections. Fixture allowance is estimated. Special fittings, shutoff repairs and plumbing changes are separate.'},
  'vanity-light-install':{fixture:85,supplies:0,internalSupplyBudget:10},
  'vanity-light-replace':{fixture:85,supplies:0,internalSupplyBudget:10},
@@ -570,7 +570,7 @@ function serviceEstimateSummary(items){
  const priced=services.filter(x=>x.price!==null && x.price!==undefined && x.price!=='' && Number.isFinite(Number(x.price)) && Number(x.price)>=0);
  const subtotal=priced.reduce((sum,x)=>sum+Number(x.price)*(Number(x.qty)||1),0);
  const adjustment=priced.length&&!priced.every(x=>x.flatService||window.BATHROOM_PACKAGES.find(p=>p.id===x.packageId)?.flatService)?Math.max(0,150-subtotal):0;
- return {hasServices:services.length>0,subtotal,adjustment,total:subtotal+adjustment,pending:priced.length<services.length};
+ return {hasServices:services.length>0,subtotal,adjustment,total:subtotal+adjustment,pending:priced.length<services.length||services.some(x=>x.materialsPricingPending||x.quoteRequired)};
 }
 
 function installationSupplies(item){
@@ -777,6 +777,7 @@ function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'
 function cartPriceMarkup(x){
  const money=value=>value.toLocaleString('en-US',{style:'currency',currency:'USD'});
  if(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package'].includes(x.source)&&Number(x.startingAt)>0)return money(Number(x.startingAt));
+ if(x.materialsPricingPending&&Number.isFinite(Number(x.price)))return money(Number(x.price)*(Number(x.qty)||1))+'<small style="display:block">Labor portion only; materials quote pending</small>';
  if(customEstimate(x)||requiresInPersonQuote(x))return money(0);
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
  return money(known?Number(x.price)*(Number(x.qty)||1):0);
@@ -874,6 +875,7 @@ function cartCheckoutSummary(items){
  <div class="cart-item nr-cart-deposit"><span><strong>Deposit</strong></span><strong id="cart-due-now" data-package-deposit-cents="${Math.round(packageDepositEstimates*100)}" data-missing-package-deposit="${missingPackageDeposit}" data-project-work="${hasProjectWork}">${!hasProjectWork||missingPackageDeposit?money(0):money(payableSubtotal+packageDepositEstimates)}</strong></div>
  <div class="cart-item nr-cart-remaining-balance"><span>Balance left owed</span><strong data-base-cents="${Math.round((hasProjectWork?Math.max(0,combinedStartingBaseCents/100-payableSubtotal-packageDepositEstimates):combinedStartingBaseCents/100)*100)}">${hasPendingPrice||hasProjectWork&&missingPackageDeposit?money(0):money(hasProjectWork?Math.max(0,combinedStartingBaseCents/100-payableSubtotal-packageDepositEstimates):combinedStartingBaseCents/100)}</strong></div>
  ${hasProjectWork?'<p class="nr-cart-weekly-draw-note" style="font-size:.82rem;color:#596777;margin:2px 0 10px">Weekly draws for completed work.</p>':''}
+ ${items.some(x=>x.materialsPricingPending)?'<p class="nr-cart-quote-note"><strong>Installed price not final:</strong> Nik’s will supply the required products and materials. The amount shown is only the priced labor portion. Product/material costs, delivery and applicable tax are confirmed before approval; no payment is due from this estimate.</p>':''}
  ${items.some(x=>x.packageAllowanceCredit)?'<p class="nr-cart-quote-note">Fixture credits are confirmed in the final invoice.</p>':''}
  </div>
  <p id="cart-verified-breakdown" class="calc-note" role="status" hidden></p>
