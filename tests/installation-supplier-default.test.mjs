@@ -74,7 +74,16 @@ test('customer-supplied products preserve approved labor rates and remove materi
   const w=dom.window,d=w.document;
   const task=d.getElementById('labor-task-door-hinge-existing');
   const toggle=task.querySelector('.labor-customer-materials');
+  assert.match(task.querySelector('.labor-line-price').textContent,/full installed price pending/i);
   toggle.checked=true;
+  toggle.dispatchEvent(new w.Event('change'));
+  assert.match(task.querySelector('.labor-line-price').textContent,/Customer-supplied products\/materials · labor price only/);
+  assert.doesNotMatch(task.querySelector('.labor-line-price').textContent,/full installed price pending/i);
+  toggle.checked=false;
+  toggle.dispatchEvent(new w.Event('change'));
+  assert.match(task.querySelector('.labor-line-price').textContent,/full installed price pending/i);
+  toggle.checked=true;
+  toggle.dispatchEvent(new w.Event('change'));
   task.querySelector('button').click();
   const item=w.getCart()[0];
   assert.equal(item.price,15);
