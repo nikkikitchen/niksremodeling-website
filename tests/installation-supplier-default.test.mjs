@@ -110,6 +110,42 @@ test('installation cards distinguish unchanged labor component from unverified i
 });
 
 
+test('approved kitchen backsplash labor and in-person countertop quotes stay consistent',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window,d=w.document;
+  const kitchen=w.LABOR_CATALOG.find(c=>c.id==='kitchen');
+  assert.ok(kitchen,'Kitchen labor section exists');
+  const tasks=kitchen.groups.flatMap(g=>Object.values(g.actions).flat());
+  const backsplash=tasks.find(t=>t.id==='kitchen-install-backsplash');
+  assert.ok(backsplash,'Backsplash labor exists');
+  assert.equal(backsplash.label,'Tile backsplash installation');
+  assert.equal(backsplash.price,350,'October 24 approved labor starting rate');
+  assert.equal(backsplash.status,'approved');
+  assert.equal(backsplash.startingAt,true,'$350 is a starting labor rate, not a fixed installed total');
+  const row=d.getElementById('labor-task-'+backsplash.id);
+  assert.ok(row);
+  assert.match(row.querySelector('.labor-line-price').textContent,/Starting at \\$350/);
+  assert.equal(row.querySelector('.labor-customer-materials').checked,false,'Nik supplies materials by default');
+  row.querySelector('button').click();
+  const cart=w.getCart().find(item=>item.taskId===backsplash.id);
+  assert.ok(cart);
+  assert.equal(cart.price,350,'Labor starting price remains unchanged');
+  assert.equal(cart.materialsPricingPending,true,'No unverified tile or shipping price becomes final');
+  assert.equal(cart.quoteRequired,true);
+  for(const id of ['kitchen-install-laminate-countertop','kitchen-install-butcher-block-countertop','kitchen-install-granite-countertop','kitchen-install-quartz-countertop']){
+   const task=tasks.find(t=>t.id===id);
+   assert.ok(task,id+' exists');
+   assert.equal(task.price,null,id+' has no invented flat labor rate');
+   assert.equal(task.status,'pending',id+' requires in-person estimate');
+   assert.match(task.note,/in-person assessment/i);
+   const line=d.getElementById('labor-task-'+id);
+   assert.ok(line,id+' is visible');
+   assert.match(line.querySelector('.labor-line-price').textContent,/In-person quote required/);
+  }
+ }finally{dom.window.close();}
+});
+
 test('all approved physical installation and finishing services need a verified goods path',async()=>{
  const dom=await openInstallation();
  try{
