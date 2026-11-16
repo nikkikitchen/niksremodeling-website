@@ -41,7 +41,7 @@ test('cart shows simple package pricing and preserves payment safeguards',()=>{
  assert.match(app,/id="cart-pay-button"[^>]*disabled/);
  assert.ok(!app.includes('Materials &amp; supplies deposit (included)'));
  assert.ok(!app.includes('Labor after package discount (included)'));
- assert.ok(app.includes('Labor, materials &amp; supplies included.'));
+ assert.ok(app.includes('Labor and standard project materials included.'));
  assert.ok(!app.includes('Overhead and contingency'),'Do not restore confusing fee label.');
  assert.ok(app.includes('Payment confirmation'));
  assert.ok(app.includes('initCartSecureCheckout(c)'));
