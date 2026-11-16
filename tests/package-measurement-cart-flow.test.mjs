@@ -57,7 +57,7 @@ for(const entry of packageCases)test(entry.project+' package collects measuremen
     assert.equal(items[0].quoteRequired,true,'A starting price must not be treated as a final invoice');
     assert.equal(items[0].price,null);
     w.renderCart();
-    assert.match(d.body.textContent,/Labor, materials & supplies included/);
+    assert.match(d.body.textContent,/Labor and standard project materials included/);
     assert.equal(d.querySelector('.nr-cart-actions a[href="/installation.html"]'),null,
       'Do not suggest paying for installation twice for a complete package');
     assert.ok(d.querySelector('.nr-cart-meta')?.textContent);
