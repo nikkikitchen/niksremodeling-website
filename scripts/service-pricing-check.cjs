@@ -7,7 +7,7 @@ const approvedBathroomTotals={
  'toilet-install':405,'smart-toilet-install':1500,
  'toilet-tank-repair':150,'toilet-wax-ring':150,
  'toilet-remove':150,'vanity-remove':150,'bath-drywall-repair':225,
- 'vanity-install':730,'faucet-replace':305,'tub-resurface':675,
+ 'vanity-install':1040,'faucet-replace':305,'tub-resurface':675,
  'tub-replace':3500,'shower-valve-install':800,
  'vanity-light-install':260,'vanity-light-replace':260
 };
