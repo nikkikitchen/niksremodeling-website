@@ -171,3 +171,56 @@ test('all approved physical installation and finishing services need a verified 
   assert.ok(checked>35,'audit broad enough to cover category services');
  }finally{dom.window.close();}
 });
+
+
+test('approved labor anchor rates remain unchanged when supplier defaults change',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window;
+  const approvedBathroomLabor={
+   'toilet-install':175,
+   'smart-toilet-install':650,
+   'toilet-tank-repair':125,
+   'toilet-wax-ring':125,
+   'toilet-flange':250,
+   'vanity-install':300,
+   'faucet-replace':225,
+   'vanity-light-install':175,
+   'tub-resurface':450,
+   'tub-replace':1600,
+   'shower-valve-install':450
+  };
+  for(const [id,expected] of Object.entries(approvedBathroomLabor)){
+   const task=w.BATHROOM_PACKAGES.find(p=>p.id===id);
+   assert.ok(task,'Bathroom labor task '+id+' exists');
+   assert.equal(task.labor,expected,id+' owner-approved LABOR component must not be replaced with a fixture allowance');
+  }
+  const approvedOtherLabor={
+   'cabinet-box-install':150,
+   'cabinet-crown':3,
+   'cabinet-filler':15,
+   'cabinet-hole-prep':15,
+   'cabinet-end-panel':75,
+   'door-hinge-existing':15,
+   'window-trim-complete':150,
+   'door-adjust':75,
+   'ceiling-existing-light':150,
+   'recessed-light-replace':175,
+   'drywall-sheet-install':75,
+   'kitchen-install-kitchen-sink':225,
+   'kitchen-replace-kitchen-faucet':175,
+   'kitchen-install-backsplash':350
+  };
+  const tasks=w.LABOR_CATALOG.flatMap(c=>c.groups).flatMap(g=>Object.values(g.actions).flat());
+  for(const [id,expected] of Object.entries(approvedOtherLabor)){
+   const matches=tasks.filter(t=>t.id===id);
+   assert.equal(matches.length,1,id+' must exist exactly once across the labor catalog');
+   assert.equal(matches[0].price,expected,id+' approved labor component must not drift when material prices change');
+   assert.equal(matches[0].status,'approved',id+' should remain approved');
+  }
+  assert.deepEqual(Array.from(w.FLOORING_LABOR_RATES.LVP),[350,575,800],
+   'existing LVP labor size chart stays unchanged');
+  assert.equal(w.serviceEstimateSummary([{type:'Labor',price:75,qty:1}]).total,150,
+   'single service minimum remains $150');
+ }finally{dom.window.close();}
+});
