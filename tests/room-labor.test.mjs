@@ -160,8 +160,8 @@ test('installation fixture starter pricing is competitive and job supplies never
   assert.ok(p.internalSupplyBudget>=0,'An owner-only budget must be present');
  }
  const vanity=w.LABOR_CATALOG.find(x=>x.id==='bathroom').groups.find(x=>x.id==='vanity').actions.Install[0];
- assert.match(vanity.priceText,/Installation labor: \\$300/);
- assert.match(vanity.priceText,/Estimated with a standard fixture: \\$730/);
+ assert.match(vanity.priceText,/Installation labor: \$300/);
+ assert.match(vanity.priceText,/Estimated with a standard fixture: \$730/);
  const appliance=w.LABOR_CATALOG.find(x=>x.id==='appliances').groups.flatMap(g=>Object.values(g.actions).flat()).find(x=>x.label==='Dishwasher installation');
  assert.ok(appliance);
  d.getElementById('labor-task-'+appliance.id).querySelector('button').click();
