@@ -30,7 +30,8 @@
   document.addEventListener('estimate-rendered',()=>{if(current===3&&!materialEstimates.length)show(2);});
   summary.addEventListener('click',e=>{const button=e.target.closest('button');if(!button)return;if(/Edit|Recalculate/.test(button.textContent))show(2);else if(/Add Work|Add Another/.test(button.textContent)){own.querySelector('input').checked=false;show(1);}});
   document.addEventListener('work-options-change',()=>{if(current!==3)show(current);});
-  // The standard estimate includes Nik's supplied materials. The customer must opt into supplying their own.\n  const editId=new URLSearchParams(location.search).get('editRoom');if(editId){const saved=materialEstimates.find(x=>x.roomId===editId);own.querySelector('input').checked=!!saved?.customerProvidesMaterials;}
+  // The standard estimate includes Nik's supplied materials. The customer must opt into supplying their own.
+  const editId=new URLSearchParams(location.search).get('editRoom');if(editId){const saved=materialEstimates.find(x=>x.roomId===editId);own.querySelector('input').checked=!!saved?.customerProvidesMaterials;}
   const context=new URLSearchParams(location.search);
   // The Installation / Labor catalog already chose the bathroom job.
   // Don't send customers back through the generic "What would you like done?" step.
