@@ -74,3 +74,18 @@ test('vanity with faucet allowance includes a reviewed 35 percent markup plannin
  assert.match(app,/this is not a confirmed product price/i);
  assert.match(readFileSync('scripts/service-pricing-check.cjs','utf8'),/'vanity-install':1040/);
 });
+
+
+test('installation cards distinguish unchanged labor component from unverified installed price',async()=>{
+ const dom=await openInstallation();
+ try{
+  const d=dom.window.document;
+  for(const id of ['cabinet-box-install','door-hinge-existing','paint-accent']){
+   const row=d.getElementById('labor-task-'+id);
+   assert.ok(row,'approved task '+id+' exists');
+   assert.ok(row.querySelector('.labor-customer-materials'),'Nik supplies materials for '+id);
+   assert.match(row.querySelector('.labor-line-price').textContent,/Labor portion only.*full installed price pending/);
+   assert.doesNotMatch(row.querySelector('.labor-line-copy').textContent,/Labor only/i,'no contradictory labor-only copy');
+  }
+ }finally{dom.window.close();}
+});
