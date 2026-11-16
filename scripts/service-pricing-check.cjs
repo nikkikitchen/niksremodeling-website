@@ -4,12 +4,12 @@ async function load(file,query='') { let html=fs.readFileSync(file,'utf8').repla
 (async()=>{
 const d=await load('installation.html');const w=d.window,doc=w.document;
 const approvedBathroomTotals={
- 'toilet-install':550,'smart-toilet-install':2550,
+ 'toilet-install':405,'smart-toilet-install':1500,
  'toilet-tank-repair':150,'toilet-wax-ring':150,
  'toilet-remove':150,'vanity-remove':150,'bath-drywall-repair':225,
- 'vanity-install':1475,'faucet-replace':400,'tub-resurface':675,
- 'tub-replace':3500,'shower-valve-install':625,
- 'vanity-light-install':300,'vanity-light-replace':300
+ 'vanity-install':730,'faucet-replace':305,'tub-resurface':675,
+ 'tub-replace':3500,'shower-valve-install':800,
+ 'vanity-light-install':260,'vanity-light-replace':260
 };
 for(const [id,expected] of Object.entries(approvedBathroomTotals)){
  const p=w.BATHROOM_PACKAGES.find(x=>x.id===id);
@@ -22,14 +22,14 @@ for(const id of ['toilet-remove','vanity-remove','bath-drywall-repair']){
 }
 const bathroomCatalog=w.LABOR_CATALOG.find(c=>c.id==='bathroom');
 const toiletInstall=bathroomCatalog.groups.find(g=>g.id==='toilet').actions.Install.find(t=>t.id==='toilet-install');
-assert.match(toiletInstall.priceText,/Labor: \$175/);
-assert.match(toiletInstall.priceText,/Installed estimate.*\$550/);
+assert.match(toiletInstall.priceText,/Installation labor: \$175/);
+assert.match(toiletInstall.priceText,/Estimated with a standard fixture: \$405/);
 const toiletRemoval=bathroomCatalog.groups.find(g=>g.id==='toilet').actions.Remove.find(t=>t.id==='toilet-remove');
-assert.match(toiletRemoval.priceText,/\$150.*included/);
+assert.match(toiletRemoval.priceText,/\$150/);
 const vanityLights=bathroomCatalog.groups.find(g=>g.id==='vanity-lights');
 assert(vanityLights,'Vanity lights must appear separately from vanity cabinetry on labor page');
-assert.match(vanityLights.actions.Install[0].priceText,/Labor: \$150/);
-assert.match(vanityLights.actions.Replace[0].priceText,/Installed estimate.*\$300/);
+assert.match(vanityLights.actions.Install[0].priceText,/Installation labor: \$175/);
+assert.match(vanityLights.actions.Replace[0].priceText,/Estimated with a standard fixture: \$260/);
 const cabinetCategory=w.LABOR_CATALOG.find(c=>c.id==='cabinets');
 const cabinetTask=(label)=>cabinetCategory.groups.flatMap(g=>Object.values(g.actions).flat()).find(t=>t.label===label);
 for(const [label,price,unit] of [
@@ -54,7 +54,7 @@ const exteriorDoor=w.LABOR_CATALOG.find(c=>c.id==='doors').groups.flatMap(g=>Obj
 assert.equal(exteriorDoor.price,475,'October 17 owner-approved exterior door price');
 assert.equal(w.serviceEstimateSummary([{type:'Labor',price:75,qty:1}]).total,150);
 assert.equal(w.serviceEstimateSummary([{type:'Labor',price:125,qty:2},{type:'Labor',price:126,qty:1}]).total,376);
-assert(!/Replace fill valve|Replace flush valve|Replace flapper|Price to set/.test(doc.body.textContent));assert.match(doc.body.textContent,/Diagnose and replace toilet tank parts/);assert.match(doc.body.textContent,/150 service charge/);assert.equal(w.bathroomPackageTotal(w.BATHROOM_PACKAGES.find(p=>p.id==='faucet-replace')),400);assert.equal(w.bathroomPackageTotal(w.BATHROOM_PACKAGES.find(p=>p.id==='faucet-replace'),true),250);assert.equal(w.serviceEstimateSummary([{type:'Labor',packageId:'toilet-wax-ring',price:150,qty:1}]).total,150);assert.equal(w.serviceEstimateSummary([{type:'Labor',price:75,qty:1}]).total,150);const cabinetRemoval=w.LABOR_CATALOG.find(c=>c.id==='cabinets').groups.find(g=>g.id==='cabinet').actions.Remove[0];assert.equal(cabinetRemoval.price,125);assert.match(cabinetRemoval.note,/Haul-off included/i);assert.equal(w.serviceEstimateSummary([{type:'Labor',price:cabinetRemoval.price,qty:1}]).total,150);assert.equal(w.serviceEstimateSummary([{type:'Labor',price:cabinetRemoval.price,qty:2}]).total,250);assert.match(w.cartPriceMarkup({name:'Repair flange',type:'Labor'}),/In-person quote required/);assert(!w.projectEstimateMarkup([{name:'Flange',type:'Labor'}]).includes('$150'));d.window.close();
+assert(!/Replace fill valve|Replace flush valve|Replace flapper|Price to set/.test(doc.body.textContent));assert.match(doc.body.textContent,/Diagnose and replace toilet tank parts/);assert.match(doc.body.textContent,/150 service charge/);assert.equal(w.bathroomPackageTotal(w.BATHROOM_PACKAGES.find(p=>p.id==='faucet-replace')),305);assert.equal(w.bathroomPackageTotal(w.BATHROOM_PACKAGES.find(p=>p.id==='faucet-replace'),true),225);assert.equal(w.serviceEstimateSummary([{type:'Labor',packageId:'toilet-wax-ring',price:150,qty:1}]).total,150);assert.equal(w.serviceEstimateSummary([{type:'Labor',price:75,qty:1}]).total,150);const cabinetRemoval=w.LABOR_CATALOG.find(c=>c.id==='cabinets').groups.find(g=>g.id==='cabinet').actions.Remove[0];assert.equal(cabinetRemoval.price,125);assert.match(cabinetRemoval.note,/Haul-off included/i);assert.equal(w.serviceEstimateSummary([{type:'Labor',price:cabinetRemoval.price,qty:1}]).total,150);assert.equal(w.serviceEstimateSummary([{type:'Labor',price:cabinetRemoval.price,qty:2}]).total,250);assert.match(w.cartPriceMarkup({name:'Repair flange',type:'Labor'}),/In-person quote required/);assert(!w.projectEstimateMarkup([{name:'Flange',type:'Labor'}]).includes('$150'));d.window.close();
 for(const id of ['toilet-tank-repair','toilet-wax-ring','toilet-flange']){
 const base=await load('calculators.html');const p=base.window.BATHROOM_PACKAGES.find(p=>p.id===id);base.window.close();
 const page=await load('calculators.html','?'+new URLSearchParams({room:'Bathroom',location:'interior',material:'bathroom',materials:p.label}));const w=page.window,doc=w.document;
