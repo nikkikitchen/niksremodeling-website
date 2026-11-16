@@ -125,7 +125,7 @@ test('approved kitchen backsplash labor and in-person countertop quotes stay con
   assert.equal(backsplash.startingAt,true,'$350 is a starting labor rate, not a fixed installed total');
   const row=d.getElementById('labor-task-'+backsplash.id);
   assert.ok(row);
-  assert.match(row.querySelector('.labor-line-price').textContent,/Starting at \\$350/);
+  assert.ok(row.querySelector('.labor-line-price').textContent.includes('Starting at $350'));
   assert.equal(row.querySelector('.labor-customer-materials').checked,false,'Nik supplies materials by default');
   row.querySelector('button').click();
   const cart=w.getCart().find(item=>item.taskId===backsplash.id);
