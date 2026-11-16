@@ -89,3 +89,30 @@ test('installation cards distinguish unchanged labor component from unverified i
   }
  }finally{dom.window.close();}
 });
+
+
+test('all approved physical installation and finishing services need a verified goods path',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window,d=w.document;
+  const physicalWork=/\b(?:install(?:ation)?|replac(?:e|ement)|repair|paint(?:ing)?|stain(?:ing)?|finish(?:ing)?|prim(?:e|ing)|patch|seal|caulk|grout|texture|resurface|insulat(?:e|ion)|wiring|vent|supply line|hookup|hardware|mount(?:ing)?|refinish(?:ing)?|recaulk(?:ing)?|regrout(?:ing)?|waterproof(?:ing)?|coat(?:ing)?|glue|adhesive|tile|hang(?:ing)?|plumb(?:ing)?|polish(?:ing)?)\b/i;
+  let checked=0;
+  for(const category of w.LABOR_CATALOG){
+   for(const group of category.groups){
+    for(const tasks of Object.values(group.actions)){
+     for(const task of tasks){
+      if(task.status!=='approved'||!physicalWork.test(task.label))continue;
+      const row=d.getElementById('labor-task-'+task.id);
+      assert.ok(row,task.id+' is rendered');
+      const toggle=row.querySelector('.labor-customer-materials');
+      assert.ok(toggle,task.id+' requires a Nik-supplied product or consumables cost path');
+      assert.equal(toggle.checked,false,task.id+' defaults to Nik supplying');
+      assert.match(row.querySelector('.labor-line-price').textContent,/installed price pending/i,task.id+' does not imply final installed pricing');
+      checked++;
+     }
+    }
+   }
+  }
+  assert.ok(checked>35,'audit broad enough to cover category services');
+ }finally{dom.window.close();}
+});
