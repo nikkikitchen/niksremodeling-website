@@ -22,6 +22,8 @@ window.BATHROOM_PACKAGES=[{"id":"toilet-install","label":"Assemble and install s
 // the approved 35% materials markup; no unverified product is reserved or sold.
 // Never add ordinary job consumables as a separate customer charge.
 const BATHROOM_STARTER_ESTIMATES={
+ 'toilet-tank-repair':{materialsPricingPending:true,note:'Nik’s supplies the compatible replacement tank parts by default. The $125 labor component is not the complete installed quote; parts, fit, delivery and applicable tax are confirmed before approval.'},
+ 'toilet-flange':{materialsPricingPending:true,note:'Nik’s supplies the compatible replacement flange and fittings by default. The $250 labor component is not the complete installed quote; parts, fit, delivery and applicable tax are confirmed before approval. Surrounding floor damage and plumbing changes are separately quoted.'},
  'vanity-install':{fixture:740,supplies:0,internalSupplyBudget:25,note:'Standard single 24–36 inch vanity with sink/top and basic faucet, existing compatible connections. Preliminary $740 fixture allowance assumes a roughly $548 retail example plus 35% materials markup; this is not a confirmed product price. Removal, plumbing changes and wall/floor repairs are separate.'},
  'faucet-replace':{fixture:80,supplies:0,internalSupplyBudget:15,note:'Standard vanity faucet with existing compatible connections. Fixture allowance is estimated. Special fittings, shutoff repairs and plumbing changes are separate.'},
  'vanity-light-install':{fixture:85,supplies:0,internalSupplyBudget:10},
