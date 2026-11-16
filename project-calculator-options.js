@@ -57,7 +57,9 @@
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
-    materials.checked = params.has('material') || params.has('product');
+    // Default to Nik supplying materials even when the calculator opens without a material link.
+    // The customer-supplied checkbox, when selected, takes precedence.
+    materials.checked = !['1','true','yes'].includes((params.get('customerSupplies')||'').toLowerCase());
     const deliveryDetails = document.createElement('fieldset');
     deliveryDetails.className = 'delivery-choices project-options';
     const deliveryLegend = document.createElement('legend');
@@ -691,6 +693,7 @@
       const own=document.getElementById('customer-provides-materials');if(own)own.checked=false;
       editingId=null;history.replaceState(null,'',location.pathname);
       panel.querySelectorAll('input[type="checkbox"]').forEach(el=>{el.checked=false;el.indeterminate=false});
+      panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
       document.getElementById('material-name').value='';
       document.getElementById('misc-hours').value='';
       cabinetFields.querySelectorAll('input[type=number]').forEach(input=>input.value='0');
