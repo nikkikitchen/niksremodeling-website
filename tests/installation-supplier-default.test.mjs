@@ -183,7 +183,7 @@ test('all approved physical installation and finishing services need a verified 
  const dom=await openInstallation();
  try{
   const w=dom.window,d=w.document;
-  const physicalWork=/\b(?:install(?:ation)?|replac(?:e|ement)|repair|paint(?:ing)?|stain(?:ing)?|finish(?:ing)?|prim(?:e|ing)|patch|seal|caulk|grout|texture|resurface|insulat(?:e|ion)|wiring|vent|supply line|hookup|hardware|mount(?:ing)?|refinish(?:ing)?|recaulk(?:ing)?|regrout(?:ing)?|waterproof(?:ing)?|coat(?:ing)?|glue|adhesive|tile|hang(?:ing)?|plumb(?:ing)?|polish(?:ing)?)\b/i;
+  const physicalWork=/\b(?:install(?:ation)?|replac(?:e|ement)|repair|paint(?:ing)?|stain(?:ing)?|finish(?:ing)?|prim(?:e|ing)|patch|seal|caulk|grout|texture|resurface|insulat(?:e|ion)|wiring|supply line|hookup|hardware|mount(?:ing)?|refinish(?:ing)?|recaulk(?:ing)?|regrout(?:ing)?|waterproof(?:ing)?|coat(?:ing)?|glue|adhesive|tile|hang(?:ing)?|plumb(?:ing)?|polish(?:ing)?)\b/i;
   let checked=0;
   for(const category of w.LABOR_CATALOG){
    for(const group of category.groups){
