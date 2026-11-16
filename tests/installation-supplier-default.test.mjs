@@ -87,6 +87,39 @@ test('customer-supplied products preserve approved labor rates and remove materi
  }finally{dom.window.close();}
 });
 
+test('vent cleaning remains a labor-only service without an invented product quote',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window,d=w.document;
+  const service=w.LABOR_CATALOG.flatMap(c=>c.groups).flatMap(g=>Object.values(g.actions).flat()).find(t=>t.label==='Dryer vent cleaning');
+  assert.ok(service,'dryer vent cleaning must remain available');
+  assert.equal(service.status,'approved');
+  assert.equal(service.price,150);
+  const row=d.getElementById('labor-task-'+service.id);
+  assert.ok(row);
+  assert.equal(row.querySelector('.labor-customer-materials'),null,'cleaning does not require a customer-supplied product switch');
+  row.querySelector('button').click();
+  const line=w.getCart().find(x=>x.taskId===service.id);
+  assert.ok(line);
+  assert.equal(line.price,150,'approved service charge unchanged');
+  assert.equal(line.materialsPricingPending,undefined,'cleaning requires no external material quote');
+  assert.equal(line.quoteRequired,undefined);
+  assert.doesNotMatch(d.getElementById('labor-review-total').textContent,/installed quote pending/i);
+ }finally{dom.window.close();}
+});
+
+test('installation summary calls out incomplete installed quote when Nik supplies goods',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window,d=w.document;
+  const row=d.getElementById('labor-task-cabinet-end-panel');
+  assert.ok(row);
+  row.querySelector('button').click();
+  assert.equal(w.getCart().find(x=>x.taskId==='cabinet-end-panel').materialsPricingPending,true);
+  assert.match(d.getElementById('labor-review-total').textContent,/installed quote pending/i);
+ }finally{dom.window.close();}
+});
+
 test('vanity with faucet allowance includes a reviewed 35 percent markup planning budget, not a guaranteed SKU',()=>{
  const app=readFileSync('app.js','utf8');
  assert.match(app,/'vanity-install':\{fixture:740/);
