@@ -257,3 +257,22 @@ test('approved labor anchor rates remain unchanged when supplier defaults change
    'single service minimum remains $150');
  }finally{dom.window.close();}
 });
+
+
+test('installation review labels unverified installed amounts as labor portions, not final prices',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window,d=w.document;
+  const row=d.getElementById('labor-task-door-hinge-existing');
+  row.querySelector('button').click();
+  let review=d.getElementById('labor-review-list').textContent;
+  assert.match(review,/Labor portion\s*·\s*\$15\.00/,'Nik-supplied goods keep the labor amount explicitly provisional');
+  assert.match(review,/Final installed total pending verified costs/);
+  assert.match(d.getElementById('labor-review-total').textContent,/installed quote pending/);
+  row.querySelector('.labor-customer-materials').checked=true;
+  row.querySelector('button').click();
+  review=d.getElementById('labor-review-list').textContent;
+  assert.match(review,/Customer supplies products\/materials/);
+  assert.doesNotMatch(review,/Labor portion\s*·/,'labor-only opt-out does not imply an unverified Nik-supplied installed quote');
+ }finally{dom.window.close();}
+});
