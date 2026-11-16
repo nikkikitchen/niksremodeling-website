@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 const read = path => readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const source=read('room-projects.js');
 const published=JSON.parse(read('docs/package-audit-2026-11-13.json'));
-const provisional=JSON.parse(source.match(/window\\.NIK_PROVISIONAL_PACKAGE_PRICES=(\\{.*?\\});\\nfor\\(const \\[id,tiers\\]/s)?.[1]||'null');
+const provisional=JSON.parse(source.match(/window\.NIK_PROVISIONAL_PACKAGE_PRICES=(\{.*?\});\nfor\(const \[id,tiers\]/s)?.[1]||'null');
 
 function extractJsonObject(marker) {
  const start=source.indexOf(marker);
@@ -14,7 +14,7 @@ function extractJsonObject(marker) {
  let depth=0,inside=false,escape=false;
  for(let i=position;i<source.length;i++){
   const c=source[i];
-  if(inside){if(escape)escape=false;else if(c==='\\\\')escape=true;else if(c==='"')inside=false;}
+  if(inside){if(escape)escape=false;else if(c==='\\')escape=true;else if(c==='"')inside=false;}
   else if(c==='"')inside=true;
   else if(c==='{')depth++;
   else if(c==='}'&&!--depth)return JSON.parse(source.slice(position,i+1));
@@ -23,7 +23,7 @@ function extractJsonObject(marker) {
 }
 const recalculated=extractJsonObject('window.NIK_RECALCULATED_PACKAGE_SPECS=');
 const prices=new Map(published.flatMap(group=>group.packages.map(p=>{
- const match=p.price.match(/Starting at \\$([\\d,]+)/);
+ const match=p.price.match(/Starting at \$([\d,]+)/);
  return [ [group.id,p.name.toLowerCase()].join(':'),match?Number(match[1].replaceAll(',','')):null ];
 })));
 const cents=value=>Math.round(Number(value)*100);
@@ -56,7 +56,7 @@ test('never treat an unpriced package as approved for payment',()=>{
  const entries=published.flatMap(group=>group.packages.map(p=>({id:group.id,name:p.name,price:p.price})));
  assert.equal(entries.length,172,'Audit snapshot changed: review scope coverage');
  for(const entry of entries){
-  assert.match(entry.price,/Starting at \\$[\\d,]+|Project quote required|Individually quoted/,'Unknown package price status '+entry.id+' '+entry.name);
+  assert.match(entry.price,/Starting at \$[\d,]+|Project quote required|Individually quoted/,'Unknown package price status '+entry.id+' '+entry.name);
  }
 });
 
