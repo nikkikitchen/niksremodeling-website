@@ -323,7 +323,12 @@
     ceilingDimensions.addEventListener('input',()=>{try{const p=ceilingPlan();document.getElementById('ceiling-quantity-preview').textContent=p.area+' sq. ft. — '+p.products.map(x=>x.name+': '+x.quantity+' '+x.unit).join(' · ');}catch{document.getElementById('ceiling-quantity-preview').textContent='Enter both measurements to see estimated quantities.'}});
 
     if(!initialParams.has('material')&&!initialParams.has('product'))types.value='';
-    else if(['bathroom','prep','misc','delivery','debris','refinish','custom','trim','insulation','roofing','siding-exterior','doors-windows'].includes(initialParams.get('material')))types.value=initialParams.get('material');
+    else if([...types.options].some(option=>option.value===initialParams.get('material')))types.value=initialParams.get('material');
+    // The caller already chose a material. Never require a room name to estimate quantity.
+    if(initialParams.get('mode')==='materials'&&initialParams.has('material')){
+      const room=document.getElementById('material-name');
+      if(!room.value.trim())room.value='Material planning';
+    }
     (initialParams.get('cabinetOptions')||'').split('|').forEach(key=>{const box=document.getElementById('cabinet-'+key);if(box)box.checked=true;});
     if(initialParams.has('cabinetItem')){const note=document.createElement('p');note.className='calc-note';note.textContent='Cabinet work for: '+initialParams.get('cabinetItem');cabinetFields.prepend(note);}
     if(initialParams.has('room'))document.getElementById('material-name').value=initialParams.get('room');
