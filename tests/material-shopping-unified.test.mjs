@@ -4,9 +4,9 @@ import {existsSync,readFileSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 
 async function load(query){
-  const html=readFileSync('calculators.html','utf8').replace(/<script\\b[^>]*src=["']([^"']+)["'][^>]*><\\/script>/g,(tag,src)=>{
-    const path=src.split('?')[0].replace(/^\\//,'');
-    return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\\/script/gi,'<\\\\/script')+'</script>':'';
+  const html=readFileSync('calculators.html','utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(tag,src)=>{
+    const path=src.split('?')[0].replace(/^\//,'');
+    return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
   });
   const dom=new JSDOM(html,{
     url:'https://niksremodeling.com/calculators.html'+query,
@@ -53,7 +53,7 @@ test('Shopping drywall uses the same calculator engine with work already selecte
 
 test('Material detail cards use one unified Calculate Materials path',()=>{
  const source=readFileSync('app.js','utf8');
- assert.match(source,/calculators\\.html\\?mode=materials&product=/);
- assert.match(source,/>Calculate Materials<\\/a>/);
- assert.doesNotMatch(source,/>Plan Installation<\\/a>/);
+ assert.match(source,/calculators\.html\?mode=materials&product=/);
+ assert.match(source,/>Calculate Materials<\/a>/);
+ assert.doesNotMatch(source,/>Plan Installation<\/a>/);
 });
