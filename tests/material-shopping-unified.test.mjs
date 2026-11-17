@@ -60,3 +60,61 @@ test('Material detail cards use one unified Calculate Materials path',()=>{
  assert.match(source,/>Calculate Materials<\/a>/);
  assert.doesNotMatch(source,/>Plan Installation<\/a>/);
 });
+
+test('Non-sheet materials reuse the shared calculator without inventing drywall sheet or stud counts',async()=>{
+ const cases=[
+  {kind:'custom',product:'Drywall — Joint Compound',unit:'pails'},
+  {kind:'custom',product:'Drywall — Tape & Corner Bead',unit:'rolls'},
+  {kind:'custom',product:'Lumber — Plywood',unit:'sheets'},
+  {kind:'custom',product:'Lumber — Decking Boards',unit:'pieces'},
+  {kind:'custom',product:'Trim & Molding — Crown Molding',unit:'linear ft.'},
+  {kind:'custom',product:'Insulation — Batt Insulation',unit:'sq. ft.'},
+  {kind:'custom',product:'Roofing — Asphalt Shingles',unit:'bundles'},
+  {kind:'custom',product:'Paint & Finishes — Wallpaper',unit:'pieces'}
+ ];
+ for(const item of cases){
+  const dom=await load('?mode=materials&material='+item.kind+'&product='+encodeURIComponent(item.product));
+  try{
+   const w=dom.window,doc=w.document;
+   assert.equal(doc.querySelector('.calc-workspace').dataset.step,'2',item.product);
+   assert.equal(doc.querySelector('#material-name').closest('.field').hidden,true,item.product);
+   assert.equal(doc.querySelector('#material-type').closest('.field').hidden,true,item.product);
+   assert.equal(doc.querySelector('#custom-unit').value,item.unit,item.product);
+   assert.equal(doc.querySelector('[data-material="custom"]').hidden,false,item.product);
+   assert.equal(doc.querySelector('#work-services').hidden,true,item.product);
+   doc.querySelector('#custom-quantity').value='2';
+   w.calcMaterial();
+   assert.equal(doc.querySelector('#mat-error').hidden,true,item.product+': '+doc.querySelector('#mat-error').textContent);
+   const results=w.eval('materialEstimates');
+   assert.equal(results.length,1,item.product);
+   assert.equal(results[0].purchase.quantity,2,item.product);
+   assert.equal(results[0].purchase.unit,item.unit,item.product);
+   assert.ok(results[0].result.includes(item.unit),item.product);
+   assert.equal(results[0].labor.length,0,item.product);
+  }finally{dom.window.close()}
+ }
+});
+test('Every Materials tile points to the same estimator with the material already chosen',async()=>{
+ const categories=['flooring','tile-stone','drywall','lumber','trim-molding','paint-finishes','insulation','roofing','siding-exterior','doors-windows','concrete-masonry'];
+ const pageFiles=categories.map(slug=>'material-'+slug+'.html');
+ for(const file of pageFiles){
+  const html=readFileSync(file,'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(tag,src)=>{
+    const path=src.split('?')[0].replace(/^\//,'');
+    return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
+  });
+  const dom=new JSDOM(html,{url:'https://niksremodeling.com/'+file,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};}});
+  try{
+   await new Promise(resolve=>setTimeout(resolve,70));
+   const links=[...dom.window.document.querySelectorAll('.material-option-card .card-actions a[href*="calculators.html"]')];
+   assert.ok(links.length>0,file+' must offer calculator links');
+   for(const link of links){
+    const url=new URL(link.href);
+    assert.equal(url.pathname,'/calculators.html',file);
+    assert.equal(url.searchParams.get('mode'),'materials',file);
+    assert.ok(url.searchParams.get('product'),file);
+    assert.ok(url.searchParams.get('material'),file);
+    assert.equal(link.textContent.trim(),'Calculate Materials',file);
+   }
+  }finally{dom.window.close()}
+ }
+});
