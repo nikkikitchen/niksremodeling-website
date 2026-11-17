@@ -570,7 +570,15 @@
         materialChoice.value=initialParams.get('product');
         panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
         panel.querySelectorAll('[name="labor-service"],[name="labor-hourly"]').forEach(box=>box.checked=false);
+        const countBefore=materialEstimates.length;
         originalCalc();
+        if(materialEstimates.length>countBefore){
+          const newest=materialEstimates[materialEstimates.length-1];
+          if(newest&&!newest.roomId){
+            newest.roomId='materials-'+Date.now()+'-'+Math.floor(Math.random()*1000000);
+            saveMaterialEstimates();
+          }
+        }
         return;
       }
       // Miscellaneous labor uses the approved hourly rate rather than a generic quote screen.
@@ -796,7 +804,19 @@
         materialEstimates.filter(Boolean).forEach(item=>{
           const room=item.roomName||item.title||'Project area';
           const add=(name,type,extra={})=>cart.push({name:room+': '+name+(item.fixtureStylePreference?' — preferred toilet style: '+item.fixtureStylePreference:''),type,qty:1,source:'project-calculator',roomId:item.roomId,room,measurements:item.measurements,workLabel:item.workLabel,exact:item.exact,purchase:item.purchase,...extra});
-          if(item.type!=='plan' && item.projectOptions?.includes('Materials')){if(item.products)item.products.forEach(product=>add(product.name+(itemOptionSummary(product.options)?' ('+itemOptionSummary(product.options)+')':'')+' — '+(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit),'Material estimate',{options:product.options,materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel,...(Number.isFinite(product.price)?{price:product.price}:{}),...(item.paintPackage||product.includesSupplies?{includesSupplies:true}:{})}));else add(item.result+' — '+item.title,'Material estimate');}
+          if(item.type!=='plan' && item.projectOptions?.includes('Materials')){
+            if(item.products)item.products.forEach(product=>add(product.name+(itemOptionSummary(product.options)?' ('+itemOptionSummary(product.options)+')':'')+' — '+(product.quantity==null?'quantity to confirm':product.quantity+' '+product.unit),'Material estimate',{options:product.options,materialQuantity:product.quantity,materialUnit:product.unit,workArea:product.area,workLabel:item.workLabel,...(Number.isFinite(product.price)?{price:product.price}:{}),...(item.paintPackage||product.includesSupplies?{includesSupplies:true}:{})}));
+            else{
+              const reference=typeof window.NIK_STANDALONE_MATERIAL_ESTIMATE==='function'?window.NIK_STANDALONE_MATERIAL_ESTIMATE(item):null;
+              if(reference)add(reference.referenceName+' — '+reference.units+' '+reference.unit,'Material estimate',{
+                referenceOnly:true,referenceSubtotal:reference.subtotal,referenceId:reference.referenceId,
+                referenceUnitPrice:reference.unitPrice,referenceQuantity:reference.units,price:null,
+                pricingPending:true,quoteRequired:true,materialQuantity:reference.units,materialUnit:reference.unit,
+                note:'Reference price includes the materials markup. Stock, shipping, destination tax and exact specification must be verified before payment.'
+              });
+              else add(item.result+' — '+item.title,'Material estimate',{price:null,pricingPending:true,quoteRequired:true});
+            }
+          }
           (Array.isArray(item.labor)?item.labor:item.labor?[item.labor]:[]).forEach(x=>{
             const quote=typeof flooringLaborEstimate==='function'?flooringLaborEstimate(item,x.service):null;
             const taskLabel=x.fixedPackage?x.scope:[x.service,x.scope].filter((value,index,all)=>value&&all.indexOf(value)===index).join(' — ');
@@ -849,7 +869,11 @@
       materialEstimates.forEach(item=>{
         if(item.projectOptions?.includes('Materials')){
           if(item.products?.length)item.products.forEach(product=>serviceItems.push({type:'Material estimate',name:namedCost(item,product.name),price:product.price,qty:1}));
-          else serviceItems.push({type:'Material estimate',name:namedCost(item,item.workLabel||'Selected material')});
+          else{
+            const reference=typeof window.NIK_STANDALONE_MATERIAL_ESTIMATE==='function'?window.NIK_STANDALONE_MATERIAL_ESTIMATE(item):null;
+            serviceItems.push({type:'Material estimate',name:namedCost(item,reference?.referenceName||item.workLabel||'Selected material'),price:reference?.subtotal??null,qty:1,
+              pricingPending:true,referenceOnly:!!reference});
+          }
         }
         installationSupplies(item).forEach(supply=>serviceItems.push({type:'Included project costs',name:namedCost(item,supply.name),...includedProjectCosts([supply])}));
       });
