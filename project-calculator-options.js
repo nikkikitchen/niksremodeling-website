@@ -65,7 +65,7 @@
     deliveryDetails.append(deliveryLegend,
       makeBox('Store Pickup & Delivery', 'delivery-type', 'Store Pickup & Delivery', 'We pick up materials, supplies, or tools from a local store and bring them to your jobsite.'),
       makeBox('Furniture & Appliance Delivery', 'delivery-type', 'Furniture & Appliance Delivery', 'Furniture or appliances brought to your home. Setup and installation are quoted separately.'));
-    const firstField = panel.querySelector('.field');
+    const firstField = document.getElementById('material-name').closest('.field');
     panel.insertBefore(choicesPanel, firstField);
     choicesPanel.insertAdjacentElement('afterend', miscDetails);
     miscDetails.insertAdjacentElement('afterend', deliveryDetails);
