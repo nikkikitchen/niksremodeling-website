@@ -37,7 +37,7 @@ test('Shopping drywall uses the same calculator engine with work already selecte
  assert.equal(document.querySelector('#material-name').closest('.field').hidden,true,'room not asked');
  assert.equal(document.querySelector('#material-type').closest('.field').hidden,true,'drywall not asked again');
  assert.equal(document.querySelector('.room-questions').hidden,true,'no duplicate project questions');
- assert.equal(document.querySelector('#material-products').closest('.field').hidden,true,'do not reselect drywall');
+ assert.equal(document.querySelector('#material-products').parentElement.hidden,true,'do not reselect drywall');
  assert.equal(document.querySelector('#material-choice').value,'Drywall — Drywall Panels');
  assert.equal(document.querySelector('#work-services').hidden,true,'installation not assumed for materials-only purchase');
  assert.equal(document.querySelector('#dry-waste').value,'0.15');
