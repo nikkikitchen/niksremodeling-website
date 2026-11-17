@@ -537,6 +537,22 @@
         box.checked=box.value===chosen;
       });
       materialChoice.value=chosen;
+      if(types.value==='custom'){
+        // A non-sheet material can be estimated as a purchase quantity without
+        // making customers fill out a completely unrelated room calculator.
+        quantityMethod.value='measure';
+        const customFields=document.querySelector('.material-fields[data-material="custom"]');
+        customFields.hidden=false;
+        customFields.querySelector('h3').textContent='Material quantity';
+        const units=document.getElementById('custom-unit');
+        for(const [value,label] of [['sheets','Sheets'],['rolls','Rolls'],['pails','Pails'],['bags','Bags'],['bundles','Bundles'],['gallons','Gallons'],['boxes','Boxes']]){
+          if(![...units.options].some(option=>option.value===value)){
+            const option=document.createElement('option');option.value=value;option.textContent=label;units.append(option);
+          }
+        }
+        const recommended=/Joint Compound/i.test(chosen)?'pails':/Plywood|OSB|Sheathing|Rigid Foam/i.test(chosen)?'sheets':/Tape|House Wrap|Vapor Barriers|Underlayment/i.test(chosen)?'rolls':/Shingles/i.test(chosen)?'bundles':/Trim|Molding|Baseboards|Casing|Quarter Round|Gutters/i.test(chosen)?'linear ft.':/Stone|Pavers|Siding|Insulation|Roofing/i.test(chosen)?'sq. ft.':'pieces';
+        units.value=recommended;
+      }
       materialDetails.hidden=true;questionBox.hidden=true;workServices.hidden=true;extras.hidden=true;choices.hidden=true;
       panel.querySelector('.delivery-choices').hidden=true;
       // The product was chosen on the previous page; no duplicate category,
