@@ -1,15 +1,16 @@
 (()=>{'use strict';
 const groups=[
-['Framing lumber',['2×4','2×6','2×8','2×10','2×12'],['8','10','12','14','16','20'],['Standard framing','Pressure-treated']],
-['Posts & timbers',['4×4','4×6','6×6'],['8','10','12','16'],['Pressure-treated','Untreated']],
-['Deck boards',['5/4×6','2×6'],['8','10','12','14','16','20'],['Pressure-treated','Cedar','Composite']],
+['Framing lumber',['2×4','2×6','2×8','2×10','2×12'],['8','10','12','14','16','20'],['Standard framing','Pressure-treated (rating unverified)','Pressure-treated above-ground','Pressure-treated ground-contact']],
+['Posts & timbers',['4×4','4×6','6×6'],['8','10','12','16'],['Pressure-treated (rating unverified)','Pressure-treated above-ground','Pressure-treated ground-contact','Untreated']],
+['Deck surface boards',['5/4×6','2×6','2×8'],['8','10','12','14','16','20'],['Pressure-treated (rating unverified)','Pressure-treated above-ground','Pressure-treated ground-contact','Cedar','Composite']],
+['Deck joists & framing',['2×6','2×8','2×10','2×12'],['8','10','12','14','16','20'],['Pressure-treated above-ground','Pressure-treated ground-contact','Pressure-treated (rating unverified)']],
 ['Finish boards',['1×2','1×4','1×6','1×8','1×10','1×12'],['6','8','10','12','16'],['Select pine','Common pine','Primed']],
 ['Sheet goods',['15/32-in OSB','1/2-in plywood','3/4-in ACX plywood','3/4-in treated plywood'],['4×8','4×10'],['Standard','Exterior / treated']]
 ];
 const reference={
 'Framing lumber|2×4|8|Standard framing':'2x4x8 Stud Lumber (Standard)',
-'Posts & timbers|4×4|8|Pressure-treated':'Pressure-Treated 4x4x8 Lumber',
-'Deck boards|5/4×6|12|Pressure-treated':'Pressure-Treated 5/4x6x12 Decking Board',
+'Posts & timbers|4×4|8|Pressure-treated (rating unverified)':'Pressure-Treated 4x4x8 Lumber',
+'Deck surface boards|5/4×6|12|Pressure-treated (rating unverified)':'Pressure-Treated 5/4x6x12 Decking Board',
 'Finish boards|1×4|8|Select pine':'1x4x8 Select Pine Board',
 'Sheet goods|15/32-in OSB|4×8|Standard':'4x8 Sheet of 15/32-in OSB Sheathing',
 'Sheet goods|3/4-in ACX plywood|4×8|Standard':'4x8 Sheet of 3/4-in ACX Plywood'
@@ -36,10 +37,11 @@ function boot(){
  const estimator=node('a','Estimate project materials','btn outline');estimator.href='/calculators.html?mode=materials&material=lumber';
  const actions=node('div',undefined,'lumber-actions');actions.append(save,estimator);
  output.append(description,cost,notice,actions);panel.append(categories,fields,output);
- const disclaimer=node('p','Reference prices include materials markup. Stock, supplier SKU, freight and tax must be confirmed before checkout. Other size combinations remain quote requests.','calc-note');panel.append(disclaimer);
+ const disclaimer=node('p','Select an actual board size and treatment rating. Ground-contact lumber is priced only when its exact rating is verified; ordinary pressure-treated references are not assumed to be ground-contact rated. Price, stock, freight and tax must be confirmed before checkout.','calc-note');panel.append(disclaimer);
  old.replaceWith(panel);wrap.insertBefore(heading,panel);
  const style=node('style');style.textContent='.lumber-selector{padding:20px;margin:18px 0 32px;background:#f5f8fc;border:1px solid #cfdce9;border-radius:12px}.lumber-categories,.lumber-actions{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.lumber-categories button{padding:12px;border-radius:8px;border:1px solid #a7b9c9;background:white;cursor:pointer;color:#174d81;font-weight:700}.lumber-categories button[aria-pressed=true]{background:#174d81;color:white}.lumber-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.lumber-field{display:flex;flex-direction:column;gap:6px;font-weight:700}.lumber-field select,.lumber-field input{padding:12px;width:100%;background:white;border:1px solid #abbaca;border-radius:8px}.lumber-output{margin:18px 0 0;background:white;padding:18px;border-radius:8px}.lumber-output h3{margin:0 0 8px}.lumber-actions{margin-top:14px}@media(max-width:750px){.lumber-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:420px){.lumber-fields{grid-template-columns:1fr}}';document.head.append(style);
  let active=groups[0],items=[];
+ const params=new URLSearchParams(location.search);
  const setOptions=(s,options)=>{s.replaceChildren();for(const v of options){const o=node('option',v);o.value=v;s.append(o);}};
  const identifier=()=>[active[0],size.value,length.value,treatment.value].join('|');
  const currentItem=()=>items.find(x=>x.name===reference[identifier()]);
@@ -53,7 +55,8 @@ function boot(){
  function pick(group){
   active=group;categories.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.textContent===group[0])));
   setOptions(size,group[1]);setOptions(length,group[2]);setOptions(treatment,group[3]);
-  if(group[0]==='Deck boards'){size.value='5/4×6';length.value='12';treatment.value='Pressure-treated';}
+  if(group[0]==='Deck surface boards'){size.value='5/4×6';length.value='12';treatment.value='Pressure-treated (rating unverified)';}
+  if(group[0]==='Deck joists & framing'){size.value='2×8';length.value='12';treatment.value='Pressure-treated ground-contact';}
   draw();
  }
  for(const group of groups){const b=node('button',group[0]);b.type='button';b.addEventListener('click',()=>pick(group));categories.append(b);}
@@ -73,7 +76,7 @@ function boot(){
    notice.textContent=item?'Added to materials planning list. Not an order.':'Saved in this browser for a future quote. No price or order was created.';
   }catch{notice.textContent='Browser storage unavailable; please copy the selected dimensions for your quote.';}
  });
- pick(groups[0]);
+ pick(groups.find(g=>g[0]==='Deck surface boards' && /deck/i.test(params.get('type')||''))||groups[0]);
  fetch('/material-price-reference.json').then(r=>{if(!r.ok)throw Error('prices unavailable');return r.json();}).then(j=>{if(j.markupAlreadyIncluded!==true)throw Error('markup status');items=j.items||[];draw();}).catch(()=>{notice.textContent='Reference prices unavailable; all selections are quote-only.';});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
