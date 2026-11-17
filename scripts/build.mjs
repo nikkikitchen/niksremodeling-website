@@ -19,7 +19,7 @@ for(const file of files.filter(name=>/\.(?:html|js|json)$/.test(name))){
 // Block releases that would reintroduce missing photographs, dead local links,
 // unrelated accessibility choices, or broken browser scripts. A failed build
 // keeps the previous working Cloudflare Pages deployment serving customers.
-const integrityPages = ['project-package-photos.js','material-prices.js','app.js','real-products.js','store-cards.js','retail-catalog.js','room-projects.js','project-options.js','project-calculator-options.js','calculator-steps.js','shopping-flow.js','shop-installed.js','shop-installed.html','bathroom-shop.js','store.js','product-search.js','index.html','shopping.html','installation.html'];
+const integrityPages = ['project-package-photos.js','material-prices.js','reference-catalog.js','app.js','real-products.js','store-cards.js','retail-catalog.js','room-projects.js','project-options.js','project-calculator-options.js','calculator-steps.js','shopping-flow.js','shop-installed.js','shop-installed.html','bathroom-shop.js','store.js','product-search.js','index.html','shopping.html','installation.html'];
 // Keep JavaScript module dependencies in the published build; otherwise a missing
 // module can silently stop stock-marker initialization on every shopping page.
 for(const required of ['bathroom-catalog.js','retail-catalog.js','store-catalog.js']){
