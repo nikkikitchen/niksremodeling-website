@@ -4,6 +4,7 @@ import {existsSync,readFileSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 
 async function load(query){
+  const browserErrors=[];
   const html=readFileSync('calculators.html','utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(tag,src)=>{
     const path=src.split('?')[0].replace(/^\//,'');
     return existsSync(path)?'<script>'+readFileSync(path,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>':'';
@@ -13,6 +14,7 @@ async function load(query){
     runScripts:'dangerously',
     pretendToBeVisual:true,
     beforeParse(window){
+      window.addEventListener('error',event=>{browserErrors.push(event.error?.stack||event.message);});
       window.HTMLElement.prototype.scrollIntoView=function(){};
       window.scrollTo=()=>{};
     }
@@ -22,6 +24,7 @@ async function load(query){
        dom.window.document.querySelector('.material-only-workflow'))break;
     await new Promise(resolve=>setTimeout(resolve,50));
   }
+  if(!dom.window.document.querySelector('.calc-workspace[data-step]'))assert.fail('Shared calculator was not initialized: '+browserErrors.join(' | '));
   return dom;
 }
 
