@@ -102,7 +102,9 @@ test('do not guess prices for nonstandard drywall, specialty materials, unknown 
 test('reference material cart lines display their estimated amounts but remain quote-only',()=>{
  const source=readFileSync('app.js','utf8');
  assert.match(source,/referencePlanningTotal/);
- assert.match(source,/referenceOnly:true,quoteRequired:true,pricingPending:true/);
+ const shared=readFileSync('project-calculator-options.js','utf8');
+ assert.match(shared,/referenceOnly:true,referenceSubtotal:/);
+ assert.match(shared,/pricingPending:true,quoteRequired:true/);
  assert.match(source,/source==='material-price-reference'/);
  assert.match(source,/Reference materials estimate:/);
 });
