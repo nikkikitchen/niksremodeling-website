@@ -520,7 +520,43 @@
     }
     const originalCalc=window.calcMaterial;
     const originalRender=window.renderMaterialEstimates;
+    // Materials storefront and project estimates share the same quantity/price
+    // calculation engine. Shopping simply enters that engine with work selected.
+    const materialOnly=initialParams.get('mode')==='materials'&&initialParams.has('product')&&
+      [...types.options].some(option=>option.value===initialParams.get('material'));
+    if(materialOnly){
+      const chosen=initialParams.get('product');
+      document.getElementById('material-name').value='Material planning';
+      projectLocation.value='interior';locationField.hidden=true;
+      types.closest('.field').hidden=true;
+      const selected=panel.querySelector('[name="project-option"][value="Materials"]');
+      selected.checked=true;
+      panel.querySelectorAll('[name="labor-service"],[name="labor-hourly"]').forEach(box=>box.checked=false);
+      document.querySelectorAll('.area-product').forEach(row=>{
+        const box=row.querySelector('[name="area-product"]');
+        box.checked=box.value===chosen;
+      });
+      materialChoice.value=chosen;
+      materialDetails.hidden=true;questionBox.hidden=true;workServices.hidden=true;extras.hidden=true;choices.hidden=true;
+      panel.querySelector('.delivery-choices').hidden=true;
+      // The product was chosen on the previous page; no duplicate category,
+      // room, project-condition, labor or retailer-identity questions.
+      panel.classList.add('material-only-workflow');
+      const style=document.createElement('style');
+      style.textContent='.material-only-workflow .material-fields[data-material]:not([hidden]){border:0;padding:0}.material-only-workflow .room-supply-list,.material-only-workflow #material-products,.material-only-workflow #project-extras,.material-only-workflow .room-questions,.material-only-workflow #work-services,.material-only-workflow .labor-choices{display:none!important}';
+      document.head.append(style);
+    }
     window.calcMaterial=function() {
+      if(materialOnly){
+        // Reuse exactly the site's shared quantity engine, not the old extra
+        // project-work, room-location, and product-identification validator.
+        const error=document.getElementById('mat-error');error.hidden=true;
+        materialChoice.value=initialParams.get('product');
+        panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
+        panel.querySelectorAll('[name="labor-service"],[name="labor-hourly"]').forEach(box=>box.checked=false);
+        originalCalc();
+        return;
+      }
       // Miscellaneous labor uses the approved hourly rate rather than a generic quote screen.
       if(!measuredCeiling()&&customSelection()){const error=document.getElementById("mat-error");error.hidden=false;error.textContent="In-person quote required before pricing custom work.";showCustomQuote();return;}
       const error=document.getElementById('mat-error');error.hidden=true;
