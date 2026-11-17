@@ -1229,7 +1229,7 @@ function renderCart(){
   const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
- <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'}</p></div></div>
+ <div class="nr-cart-title"><div><h1>Your Cart</h1><p class="lead">${itemCount} item${itemCount===1?'':'s'}</p></div>${itemCount?'<button type="button" class="btn outline nr-print-estimate" onclick="window.print()">Print / Save Estimate</button>':''}</div><p class="nr-estimate-print-note" hidden>Project estimate · Prices are preliminary until the scope, availability, taxes, and delivery are confirmed. This is not an invoice or payment receipt.</p>
 
  ${c.length?`<div class="nr-cart-layout"><section class="panel nr-cart-products" aria-label="Cart items">
  <h2>Your Items</h2><div class="nr-cart-column-labels" ><span>Item</span><span>Price</span></div>
