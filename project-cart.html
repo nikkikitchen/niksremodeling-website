@@ -12,4 +12,17 @@ body[data-page="cart"] .nr-cart-line .nr-cart-meta{font-size:.83rem}
 body[data-page="cart"] .nr-cart-details{display:none}
 @media(max-width:600px){body[data-page="cart"] .nr-cart-zip-top .nr-checkout-address{grid-template-columns:1fr 1fr}body[data-page="cart"] .nr-cart-zip-top .nr-checkout-address label:first-child{grid-column:1/-1}}
 body[data-page="cart"] .nr-cart-remaining-balance{order:3}body[data-page="cart"] .nr-cart-weekly-draw-note{order:4}
+
+@media print{
+ @page{size:auto;margin:0.55in}
+ body[data-page="cart"]{background:#fff!important;color:#111!important;font-size:11pt}
+ body[data-page="cart"] .topline,body[data-page="cart"] .brandbar,body[data-page="cart"] .nav,body[data-page="cart"] footer,body[data-page="cart"] .nr-cart-zip-top,body[data-page="cart"] .nr-cart-actions,body[data-page="cart"] .nr-cart-bottom,body[data-page="cart"] .nr-cart-remove,body[data-page="cart"] .nr-cart-line-info a,body[data-page="cart"] button,body[data-page="cart"] form,body[data-page="cart"] .nr-cart-summary .btn,body[data-page="cart"] .nr-cart-scheduling,body[data-page="cart"] .nr-cart-checkout{display:none!important}
+ body[data-page="cart"] .nr-cart-title:before{content:"Nik’s Remodeling — Everything Under The Roof";display:block;font-weight:800;font-size:18pt;border-bottom:2px solid #222;padding-bottom:10px;margin-bottom:14px}
+ body[data-page="cart"] .nr-estimate-print-note[hidden]{display:block!important;margin:0 0 18px;font-size:10pt}
+ body[data-page="cart"] .nr-cart-layout{display:block!important}
+ body[data-page="cart"] .nr-cart-layout>.panel,body[data-page="cart"] .nr-cart-summary{box-shadow:none!important;border:0!important;padding:4px 0!important;width:100%!important;max-width:none!important}
+ body[data-page="cart"] .nr-cart-line{break-inside:avoid}
+ body[data-page="cart"] .nr-cart-price-chart{break-inside:avoid}
+ body[data-page="cart"] a[href]:after{content:none}
+}
 </style></head><body data-page="cart"><script src="/app.js?v=simple-cart-20261115"></script><script src="/room-projects.js?v=package-audit-20261109b"></script><script src="/project-options.js?v=package-measures-20261105a"></script><script src="/shopping-flow.js?v=service-quotes-20261015"></script></body></html>
