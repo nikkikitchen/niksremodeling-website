@@ -105,6 +105,6 @@ test('reference material cart lines display their estimated amounts but remain q
  const shared=readFileSync('project-calculator-options.js','utf8');
  assert.match(shared,/referenceOnly:true,referenceSubtotal:/);
  assert.match(shared,/pricingPending:true,quoteRequired:true/);
- assert.match(source,/source==='material-price-reference'/);
+ assert.match(source,/x\.referenceOnly&&Number\.isFinite\(x\.referenceSubtotal\)/);
  assert.match(source,/Reference materials estimate:/);
 });
