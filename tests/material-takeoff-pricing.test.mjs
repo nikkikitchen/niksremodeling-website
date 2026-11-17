@@ -52,8 +52,11 @@ test('standard drywall is priced at marked-up reference selling rate once and fl
   assert.ok(price);
   assert.match(price.textContent,/\$87\.76/);
   assert.match(price.textContent,/35% materials markup already included/);
-  dom.window.document.querySelector('.material-result button').click(); // first button is Add estimate to cart
+  const add=[...dom.window.document.querySelectorAll('.material-result button')].find(x=>x.textContent==='Add materials estimate to cart');
+  assert.ok(add,'priced material Add to Cart button must be rendered');
+  add.click();
   const cart=JSON.parse(dom.window.localStorage.getItem('nr-cart'));
+  assert.ok(Array.isArray(cart),'Add to Cart must persist the reference estimate');
   assert.equal(cart.length,1);
   assert.equal(cart[0].referenceSubtotal,87.76);
   assert.equal(cart[0].quoteRequired,true);
