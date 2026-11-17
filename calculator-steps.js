@@ -45,11 +45,17 @@
   if(quantityOnly){
     progress.firstElementChild.hidden=true;
     progress.firstElementChild.setAttribute('aria-hidden','true');
+    progress.children[1].textContent='1 · Measurements';
+    progress.children[2].textContent='2 · Estimate';
     document.getElementById('material-name').closest('.field').hidden=true;
-    title.textContent='Material quantities';
   }
   show(preselectedWorkContext?2:1);
-  if(quantityOnly)title.textContent='Material measurements & quantities';
+  if(quantityOnly){
+    title.textContent='Enter measurements';
+    own.hidden=true;
+    // The user has already selected the material from Shopping.
+    // There is no additional "Choose work" step in this route.
+  }
  }
  // The planner is created by another script after page load.
  // Observe when it is ready rather than trusting a one-time timer.
