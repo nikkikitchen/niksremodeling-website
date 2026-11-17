@@ -507,21 +507,6 @@ function renderMaterialEstimates(){const list=document.getElementById('material-
    ' ('+materialQuote.units+' '+materialQuote.unit+' × '+materialQuote.unitPrice.toLocaleString('en-US',{style:'currency',currency:'USD'})+
    '; standard '+materialQuote.referenceName+'). 35% materials markup already included; tax, delivery, stock and exact specifications require confirmation.';
   info.append(quote);
-  const addReference=document.createElement('button');addReference.type='button';addReference.className='btn outline';
-  addReference.textContent='Add materials estimate to cart';
-  addReference.onclick=()=>{
-   const cart=getCart();const name=materialQuote.referenceName+' — '+materialQuote.units+' '+materialQuote.unit;
-   const sourceKey='reference:'+materialQuote.referenceId+':'+item.product+':'+materialQuote.units;
-   if(!cart.some(x=>x.source==='material-price-reference'&&x.referenceKey===sourceKey)){
-    cart.push({source:'material-price-reference',referenceKey:sourceKey,name,qty:1,type:'Material estimate',price:null,
-     referenceSubtotal:materialQuote.subtotal,referenceUnitPrice:materialQuote.unitPrice,referenceQuantity:materialQuote.units,
-     referenceId:materialQuote.referenceId,referenceOnly:true,quoteRequired:true,pricingPending:true,
-     note:'Estimated material selling price, markup included. Tax, delivery and final specification require verification.'});
-    saveCart(cart);
-   }
-   addReference.textContent='Added to Review Cart';addReference.disabled=true;
-  };
-  info.append(addReference);
  }
 
  if(standardPrice&&!materialQuote){
@@ -821,7 +806,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
  const money=value=>value.toLocaleString('en-US',{style:'currency',currency:'USD'});
- if(x.source==='material-price-reference'&&Number.isFinite(x.referenceSubtotal)&&x.referenceSubtotal>0)return money(x.referenceSubtotal)+' (estimate)';
+ if(x.referenceOnly&&Number.isFinite(x.referenceSubtotal)&&x.referenceSubtotal>0)return money(x.referenceSubtotal)+' (estimate)';
  if(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package'].includes(x.source)&&Number(x.startingAt)>0)return money(Number(x.startingAt));
  if(customEstimate(x)||requiresInPersonQuote(x))return money(0);
  const known=x.price!==null&&x.price!==undefined&&x.price!==''&&Number.isFinite(Number(x.price));
@@ -1273,7 +1258,7 @@ function renderCart(){
   visible.sort((a,b)=>Number(packageSources.has(b.item.source))-Number(packageSources.has(a.item.source)));
   const hasCompletePackage=visible.some(({item})=>packageSources.has(item.source));
   const hasStandaloneProducts=visible.some(({item})=>!packageSources.has(item.source)&&!['Labor','Service'].includes(item.type));
- const referencePlanningTotal=visible.filter(({item})=>item.source==='material-price-reference'&&Number.isFinite(Number(item.referenceSubtotal))&&Number(item.referenceSubtotal)>0)
+ const referencePlanningTotal=visible.filter(({item})=>item.referenceOnly&&Number.isFinite(Number(item.referenceSubtotal))&&Number(item.referenceSubtotal)>0)
   .reduce((sum,{item})=>sum+Number(item.referenceSubtotal),0);
  document.title='Review Cart | Nik\'s Remodeling';
  document.body.innerHTML=header()+`<main><section class="section"><div class="wrap nr-cart-page">
