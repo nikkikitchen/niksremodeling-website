@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Contact Nik's Remodeling in West Georgia and East Alabama.">
+<title>Contact Nik's Remodeling</title><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/customer-flow.css">
+<style>
+.nr-contact-wrap{max-width:760px;margin:32px auto}.nr-contact-panel{background:#fff;border:1px solid #d9e2ed;border-radius:12px;padding:24px;margin:20px 0}.nr-contact-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.nr-contact-email{font-size:1.25rem;overflow-wrap:anywhere}.nr-contact-note{color:#526173}.nr-contact-panel h2{margin-top:0}.nr-contact-panel button{cursor:pointer}
+</style></head>
+<body data-page="contact">
+<script src="/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const email='contact@niksremodeling.com';
+ document.title='Contact | Nik\'s Remodeling';
+ document.body.innerHTML=header()+'<main class="wrap section nr-contact-wrap">'+
+  '<p><a href="/">← Home</a></p><h1>Contact Nik’s Remodeling</h1>'+
+  '<p class="lead">Questions about a project, products, or an estimate? Get in touch.</p>'+
+  '<section class="nr-contact-panel"><h2>Email</h2><p class="nr-contact-email"><strong>'+email+'</strong></p>'+
+  '<p class="nr-contact-note">Use your usual email website. No email app installation is needed.</p>'+
+  '<div class="nr-contact-actions"><button class="btn primary" type="button" id="nr-copy-contact">Copy Email Address</button>'+
+  '<a class="btn outline" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=contact%40niksremodeling.com" target="_blank" rel="noopener noreferrer">Write in Gmail</a>'+
+  '<a class="btn outline" href="https://outlook.live.com/mail/0/deeplink/compose?to=contact%40niksremodeling.com" target="_blank" rel="noopener noreferrer">Write in Outlook</a>'+
+  '</div><p class="nr-contact-note" id="nr-contact-feedback" role="status" aria-live="polite"></p></section>'+
+  '<section class="nr-contact-panel"><h2>Call or Text</h2><p><a href="tel:6782314377">678-231-4377</a></p>'+
+  '<p class="nr-contact-note">Serving West Georgia and East Alabama.</p></section>'+
+  '<p><a class="btn outline" href="/project-cart.html">Review Your Project Estimate</a></p></main>'+footer(false);
+ updateCartCount();
+ initNavMenus();
+ document.getElementById('nr-copy-contact').addEventListener('click',async()=>{
+  const status=document.getElementById('nr-contact-feedback');
+  try{await navigator.clipboard.writeText(email);status.textContent='Email address copied. Paste it into your email website.';}
+  catch{status.textContent='Select and copy the address above, then paste it into your email website.';}
+ });
+});
+</script></body></html>
