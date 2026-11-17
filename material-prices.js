@@ -94,6 +94,63 @@
     }
     return changed;
   }
+  // Explicit defaults for material takeoffs selected in Shopping. These are
+  // already-marked-up REFERENCE selling prices, not inventory or checkout offers.
+  // A generic category does not license using an unrelated material or pack size.
+  function standaloneMaterialEstimate(estimate){
+    if(!estimate||estimate.isSample||!estimate.product)return null;
+    if(estimate.exact&&Object.values(estimate.exact).some(value=>String(value||'').trim()))return null;
+    const name=String(estimate.product);
+    const purchase=estimate.purchase||{};
+    const qty=Number(purchase.quantity);
+    const unit=String(purchase.unit||'').toLowerCase();
+    const dims=estimate.measurements||{};
+    const rules={
+      'Drywall — Drywall Panels':{id:2,kind:'drywall',unit:'sheets'},
+      'Drywall — Joint Compound':{id:33,kind:'custom',unit:'pails'},
+      'Lumber — Framing Lumber':{id:1,kind:'lumber',unit:'studs'},
+      'Lumber — Plywood':{id:4,kind:'custom',unit:'sheets'},
+      'Lumber — OSB & Sheathing':{id:3,kind:'custom',unit:'sheets'},
+      'Lumber — Decking Boards':{id:41,kind:'custom',unit:'pieces'},
+      'Lumber — Pressure Treated Lumber':{id:40,kind:'custom',unit:'pieces'},
+      'Lumber — Shiplap Boards':{id:66,kind:'custom',unit:'pieces'},
+      'Trim & Molding — Baseboards':{id:14,kind:'custom',unit:'linear ft.'},
+      'Flooring — Baseboards':{id:14,kind:'custom',unit:'linear ft.'},
+      'Trim & Molding — Quarter Round':{id:38,kind:'custom',unit:'linear ft.'},
+      'Flooring — Quarter Round':{id:38,kind:'custom',unit:'linear ft.'},
+      'Paint & Finishes — Interior Paint':{id:6,kind:'paint',unit:'gallons'},
+      'Paint & Finishes — Primer':{id:53,kind:'paint',unit:'gallons'},
+      'Roofing — Asphalt Shingles':{id:10,kind:'custom',unit:'bundles'},
+      'Tile & Stone — Ceramic Tile':{id:13,kind:'flooring',unit:'sq. ft.'},
+      'Tile & Stone — Porcelain Tile':{id:13,kind:'flooring',unit:'sq. ft.'}
+    };
+    const rule=rules[name];
+    if(!rule||estimate.type!==rule.kind)return null;
+    let count;
+    if(rule.kind==='drywall'){
+      if(dims.sheetArea!==32||unit!=='sheets')return null;
+      count=qty;
+    }else if(rule.kind==='lumber'){
+      if(!(dims.height>0&&dims.height<=8)||!Number.isSafeInteger(dims.studs)||dims.studs<=0)return null;
+      // Layout count is before offcut allowance; round to actual whole studs.
+      count=Math.ceil(dims.studs*1.15);
+    }else if(rule.kind==='flooring'){
+      if(unit!=='sq. ft.'||!Number.isFinite(qty))return null;
+      count=qty; // the shared flooring calculator already includes 15% waste.
+    }else if(rule.unit==='linear ft.'){
+      if(unit!=='linear ft.'||!Number.isFinite(qty)||qty<=0)return null;
+      count=Math.ceil(qty*1.15/(rule.id===14?12:8));
+    }else{
+      if(unit!==rule.unit||!Number.isFinite(qty)||qty<=0)return null;
+      count=qty; // Whole items/pails/rolls are explicit purchase quantities.
+    }
+    if(!Number.isFinite(count)||count<=0)return null;
+    const ref=byId.get(rule.id);
+    if(!ref||!Number.isFinite(ref.price)||ref.price<=0)return null;
+    const total=Math.round(count*ref.price*100)/100;
+    return {referenceId:ref.id,referenceName:ref.name,unitPrice:ref.price,units:count,unit:ref.unit,subtotal:total,provisional:ref.priceStatus==='research-provisional',markupAlreadyIncluded:reference.markupAlreadyIncluded};
+  }
+  window.NIK_STANDALONE_MATERIAL_ESTIMATE=standaloneMaterialEstimate;
   window.NIK_MATERIAL_REFERENCE=reference;
   window.NIK_MATERIAL_PRICE_FOR=referenceFor;
   window.NIK_PRICE_PROJECT_PRODUCTS=applyFallbackPrices;
