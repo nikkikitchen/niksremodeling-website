@@ -57,7 +57,15 @@
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
-    materials.checked = params.has('material') || params.has('product');
+    // Installation includes Nik's standard materials unless the customer opts out.
+    const installationInput = installation.querySelector('input');
+    materials.checked = params.has('material') || params.has('product') || !!installationInput?.checked;
+    const syncSupplyPreference = () => {
+      const own = document.getElementById('customer-provides-materials');
+      if (own?.checked) materials.checked = false;
+      else if (installationInput?.checked) materials.checked = true;
+      update();
+    };
     const deliveryDetails = document.createElement('fieldset');
     deliveryDetails.className = 'delivery-choices project-options';
     const deliveryLegend = document.createElement('legend');
@@ -79,6 +87,10 @@
     };
     choicesPanel.addEventListener('change', update);
     deliveryDetails.addEventListener('change', update);
+    installationInput?.addEventListener('change',syncSupplyPreference);
+    document.addEventListener('change',event=>{
+      if(event.target?.id==='customer-provides-materials')syncSupplyPreference();
+    });
     update();
     initPlanner(panel, update);
   };
