@@ -10,6 +10,8 @@ test('verified contractor resource links appear in homepage footer',()=>{
   try{
     const footer=dom.window.document.querySelector('footer');
     assert.ok(footer,'Homepage footer must exist');
+    const resources=footer.querySelector('.resource-links');
+    assert.equal(resources?.parentElement?.className,'wrap','Resource links should span the footer below the four-column grid');
     const links=[...footer.querySelectorAll('.resource-links a')];
     assert.equal(links.length,2);
     assert.equal(links[0].href,'https://apps.apple.com/us/app/struk-jobsite-documentation/id6802196405');
