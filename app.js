@@ -317,9 +317,9 @@ function shopGuide(page){
 
 function materialWoodMenu(){
  return '<details class="material-wood-menu"><summary><strong>Wood &amp; Lumber</strong><small>Tap to shop lumber, boards, sheet goods and trim</small></summary><div class="material-wood-subcategories">'+
-  '<a href="/material-lumber.html"><strong>Lumber</strong><small>2×4, 2×6, 2×8, 4×4, decking boards and posts</small></a>'+
-  '<a href="/material-lumber.html"><strong>Wood</strong><small>Boards, framing, decking, plywood and OSB — same complete catalog</small></a>'+
-  '<a href="/material-trim-molding.html"><strong>Trim &amp; Molding</strong><small>Baseboard, casing, crown, chair rail and shoe molding</small></a></div></details>';
+  '<a href="/material-lumber.html"><strong>Lumber</strong><small>Framing, posts, decking, boards, panels, trim and shims</small></a>'+
+  '<a href="/material-lumber.html"><strong>Wood</strong><small>Same complete catalog: boards, plywood, OSB, planks, molding and shims</small></a>'+
+  '<a href="/material-lumber.html#wood-wood-trim-molding"><strong>Trim &amp; Molding</strong><small>Jump straight to the trim section of the same catalog</small></a></div></details>';
 }
 function renderCategory(page){
  const p=PAGES[page],products=PRODUCTS[page]||fallbackProducts(page),imgs=PRODUCT_IMAGES[page]||PRODUCT_IMAGES.installation;
@@ -1348,11 +1348,10 @@ function renderMaterialDetail(){
  if(!category){location.replace('/materials.html');return}
  document.title=category.title+" Materials | Nik's Remodeling";
  if(slug==='wood'||slug==='lumber'){
-  // These categories are simple item-and-quantity shopping, not project measurement calculators.
-  // Both lists share their selected items, while Wood and Lumber show separate product families.
-  const other=slug==='wood'?'Lumber':'Wood';
-  const otherSlug=other.toLowerCase();
-  document.body.innerHTML=header()+'<main><section class="category-hero"><div class="wrap"><div class="eyebrow">Shop Materials</div><h1>'+category.title+'</h1><p>Choose your materials, exact sizes and quantities. Measurements and project takeoffs stay under Projects.</p><a class="btn light" href="/materials.html">← All Materials</a></div></section><section class="section"><div class="wrap"><p><a href="/material-'+otherSlug+'.html">Browse '+other+' →</a></p><p class="lead">Select dimensions, grade, treatment, and quantity below to create your shopping list.</p><div class="material-detail-grid"></div></div></section></main>'+footer();
+  // Wood and Lumber are two entry points to the exact same wood-derived materials catalog.
+  // Shopping by item and quantity stays separate from project measurement calculators.
+  document.title='Wood & Lumber Materials | Nik\'s Remodeling';
+  document.body.innerHTML=header()+'<main><section class="category-hero"><div class="wrap"><div class="eyebrow">Shop Materials</div><h1>Wood &amp; Lumber</h1><p>Choose framing, posts, decking, boards, plywood, OSB, panels, trim or shims. Select exact sizes and quantities. Project takeoffs stay under Projects.</p><a class="btn light" href="/materials.html">← All Materials</a></div></section><section class="section"><div class="wrap"><p class="lead">Select dimensions, type, grade, treatment, and quantity below to create your shopping list.</p><div class="material-detail-grid"></div></div></section></main>'+footer();
   updateCartCount();
   return;
  }
