@@ -5,72 +5,84 @@ import {JSDOM} from 'jsdom';
 
 const script=readFileSync('lumber-shop.js','utf8');
 const reference=JSON.parse(readFileSync('material-price-reference.json','utf8'));
-const build=readFileSync('scripts/build.mjs','utf8');
 
 function openLumber(){
- const dom=new JSDOM('<!doctype html><main><section><p class="lead">Lumber</p><div class="material-detail-grid"></div></section></main>',{
-  url:'https://niksremodeling.com/material-lumber.html',
-  runScripts:'dangerously'
+ const dom=new JSDOM('<!doctype html><main><section><p class="lead"></p><div class="material-detail-grid"></div></section></main>',{
+   url:'https://niksremodeling.com/material-lumber.html',runScripts:'dangerously'
  });
  dom.window.fetch=async()=>({ok:true,json:async()=>reference});
  dom.window.eval(script);
  dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
  return dom;
 }
-async function settled(){
- await new Promise(resolve=>setTimeout(resolve,20));
+const settle=()=>new Promise(resolve=>setTimeout(resolve,20));
+function row(doc,group,size){
+ const result=[...doc.querySelectorAll('.wood-product-row')].find(node=>node.dataset.group===group&&node.dataset.size===size);
+ assert.ok(result,group+' '+size+' should be listed');
+ return result;
 }
-function field(doc,label){
- const root=[...doc.querySelectorAll('.lumber-field')].find(x=>x.textContent.includes(label));
- assert.ok(root,'Missing '+label);
- return root.querySelector('input,select');
-}
-function set(dom,control,value){
- control.value=value;
- control.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
+function set(dom,node,value){
+ node.value=value;
+ node.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
 }
 
-test('wood variant selector is included in the actual publish list',()=>{
- assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js/);
- assert.match(build,/'lumber-shop\.js'/);
+test('material lumber includes current wood catalog and publishing config',()=>{
+ assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js\?v=20261118b"/);
+ assert.match(readFileSync('scripts/build.mjs','utf8'),/'lumber-shop\.js'/);
 });
-test('wood and decking reference prices apply once to exact size, length and treatment',async()=>{
+test('all lumber categories, board sizes and only two grades are visible',async()=>{
  const dom=openLumber();
  try{
-  await settled();
+  await settle();
   const doc=dom.window.document;
-  const size=field(doc,'Board dimensions'),length=field(doc,'Length');
-  const treatment=field(doc,'Type / treatment'),qty=field(doc,'Number of pieces');
-  assert.equal(size.value,'2×4');
-  assert.equal(length.value,'8');
-  assert.equal(treatment.value,'Standard framing');
-  assert.match(doc.querySelector('.lumber-output').textContent,/\$5\.60/);
-  set(dom,qty,'3');
-  assert.match(doc.querySelector('.lumber-output').textContent,/\$16\.80/);
-  const deck=[...doc.querySelectorAll('.lumber-categories button')].find(x=>x.textContent==='Deck surface boards');
-  deck.click();
-  assert.equal(size.value,'5/4×6');
-  assert.equal(length.value,'12');
-  assert.equal(treatment.value,'Pressure-treated (rating unverified)');
-  assert.match(doc.querySelector('.lumber-output').textContent,/\$22\.28/);
-  assert.match(doc.querySelector('.lumber-output').textContent,/\$66\.84/);
-  set(dom,treatment,'Pressure-treated ground-contact');
-  assert.match(doc.querySelector('.lumber-output').textContent,/Exact variant: quote required/);
-  assert.doesNotMatch(doc.querySelector('.lumber-output').textContent,/\$22\.28/,'Do not silently substitute an unverified treatment rating');
-  const save=doc.querySelector('.lumber-actions button');
-  save.click();
-  const requests=JSON.parse(dom.window.localStorage.getItem('nr-wood-lumber-list-v1'));
-  assert.equal(requests.length,1);
-  assert.equal(requests[0].price,null,'Unverified grade must not become zero-dollar purchasable item');
-  set(dom,treatment,'Pressure-treated (rating unverified)');
-  set(dom,qty,'2');
-  save.click();
-  const list=JSON.parse(dom.window.localStorage.getItem('nr-wood-lumber-list-v1'));
+  const groups=[...doc.querySelectorAll('.wood-family')];
+  assert.equal(groups.length,7);
+  assert.ok(doc.querySelector('.lumber-selector'));
+  assert.equal(doc.querySelectorAll('.lumber-categories button').length,0,'retired one-active-category selector');
+  for(const size of ['2×4','2×6','2×8','2×10','2×12']){
+   const selection=row(doc,'Interior framing lumber',size);
+   const fields=selection.querySelectorAll('select');
+   assert.deepEqual([...fields[0].options].map(o=>o.value),['8','12','16']);
+   assert.deepEqual([...fields[2].options].map(o=>o.value),['Standard / construction','Premium / select']);
+  }
+  row(doc,'Pressure-treated & exterior framing','2×8');
+  row(doc,'Posts & timbers','4×4');
+  row(doc,'Deck surface boards','5/4×6');
+  row(doc,'Deck joists & framing','2×12');
+  row(doc,'Interior & finish boards','1×4');
+  row(doc,'Plywood & OSB','3/4-in ACX plywood');
+  assert.equal(doc.querySelectorAll('.wood-family img').length,0,'lumber choices should not require photos');
+  assert.doesNotMatch(doc.querySelector('.lumber-selector').textContent,/Calculate Materials|Stud spacing/);
+ }finally{dom.window.close();}
+});
+test('quantity 24 uses exact 2x4x8 reference, other grades and lengths require quotes',async()=>{
+ const dom=openLumber();
+ try{
+  await settle();
+  const doc=dom.window.document,selection=row(doc,'Interior framing lumber','2×4');
+  const fields=selection.querySelectorAll('select');
+  const qty=selection.querySelector('input[type="number"]');
+  set(dom,qty,'24');
+  assert.match(selection.querySelector('.wood-price').textContent,/\$134\.40/);
+  selection.querySelector('button').click();
+  let list=JSON.parse(dom.window.localStorage.getItem('nr-wood-lumber-list-v2'));
+  assert.equal(list[0].qty,24);
+  assert.match(doc.querySelector('.wood-total').textContent,/\$134\.40/);
+  set(dom,fields[2],'Premium / select');
+  assert.match(selection.querySelector('.wood-price').textContent,/Quote required/);
+  set(dom,fields[0],'12');
+  assert.match(selection.querySelector('.wood-price').textContent,/Quote required/);
+  set(dom,fields[0],'8');
+  set(dom,fields[2],'Standard / construction');
+  assert.match(selection.querySelector('.wood-price').textContent,/\$134\.40/);
+  const outside=row(doc,'Pressure-treated & exterior framing','2×4');
+  const treatments=outside.querySelectorAll('select');
+  set(dom,treatments[1],'Pressure-treated ground-contact');
+  assert.match(outside.querySelector('.wood-price').textContent,/Quote required/);
+  outside.querySelector('button').click();
+  list=JSON.parse(dom.window.localStorage.getItem('nr-wood-lumber-list-v2'));
   assert.equal(list.length,2);
-  assert.equal(list[1].qty,2);
-  assert.equal(list[1].price,22.28);
-  assert.match(doc.querySelector('.wood-total').textContent,/\$44\.56/);
-  assert.match(doc.querySelector('.wood-total').textContent,/1 item type\(s\) still need a quote/);
+  assert.match(doc.querySelector('.wood-total').textContent,/1 item type\(s\) require a quote/);
   assert.doesNotMatch(doc.querySelector('.lumber-selector').textContent,/Pay with Square|Proceed to checkout/);
  }finally{dom.window.close();}
 });
