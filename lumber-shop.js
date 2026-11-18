@@ -21,16 +21,19 @@ const element=(tag,label,cls)=>{const e=document.createElement(tag);if(label!==u
 const currency=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
 const validQty=n=>Number.isSafeInteger(n)&&n>=1&&n<=999;
 function boot(){
- if(!/^\/material-lumber(?:\.html)?\/?$/.test(location.pathname))return;
+ const isWood=/^\/material-wood(?:\.html)?\/?$/.test(location.pathname);
+ const isLumber=/^\/material-lumber(?:\.html)?\/?$/.test(location.pathname);
+ if(!isWood&&!isLumber)return;
+ const visibleGroups=groups.filter(group=>['Interior & finish boards','Plywood & OSB'].includes(group.name)===isWood);
  const old=document.querySelector('.material-detail-grid');if(!old)return;
  const parent=old.parentElement;
  const lead=parent.querySelector('.lead');
  if(lead)lead.textContent='Choose a board, length, grade, treatment and number of pieces. Everything is shown below. Project measurements and material takeoffs belong under Projects.';
- const heading=element('h2','Wood & Lumber Catalog');
+ const heading=element('h2',isWood?'Wood Catalog':'Lumber Catalog');
  const catalog=element('section',undefined,'lumber-selector');
  const menu=element('nav',undefined,'wood-jump-links');
- menu.setAttribute('aria-label','Lumber sections');
- const descriptions=element('p','Shop wood directly—no generic calculator. We offer standard and premium grades where appropriate instead of a confusing middle grade.','calc-note');
+ menu.setAttribute('aria-label',isWood?'Wood sections':'Lumber sections');
+ const descriptions=element('p','Shop materials directly—no generic calculator. We offer standard and premium grades where appropriate instead of a confusing middle grade.','calc-note');
  catalog.append(descriptions,menu);
  const references=new Map();
  const updateRows=[];
@@ -96,7 +99,7 @@ function boot(){
   const button=element('button','Add to list','btn primary');button.type='button';
   const status=element('span',undefined,'wood-status');status.setAttribute('role','status');
   const currentId=()=>itemId(group.name,size,length.value,kind.value,grade?.value||'');
-  const currentName=()=>size+' × '+length.value+(group.name==='Plywood & OSB'?' ft sheet':' ft')+' — '+kind.value+(grade?' — '+grade.value:'');
+  const currentName=()=>group.name+': '+size+' × '+length.value+(group.name==='Plywood & OSB'?' ft sheet':' ft')+' — '+kind.value+(grade?' — '+grade.value:'');
   const draw=()=>{
    const number=Number(qty.value),unit=getPrice(currentId());
    button.disabled=!validQty(number);
@@ -115,13 +118,13 @@ function boot(){
    const id=currentId(),rows=read(),existing=rows.find(r=>r.id===id);
    if(existing)existing.qty=Math.min(999,existing.qty+n);
    else rows.push({id,name:currentName(),qty:n});
-   if(write(rows)){drawList();status.textContent='Added '+n+' piece(s) to your lumber list.';}
+   if(write(rows)){drawList();status.textContent='Added '+n+' piece(s) to your materials list.';}
    else status.textContent='Could not save in this browser.';
   });
   updateRows.push(draw);draw();
   return row;
  }
- for(const group of groups){
+ for(const group of visibleGroups){
   const section=element('section',undefined,'wood-family');
   section.id='wood-'+group.name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
   const link=element('a',group.name);link.href='#'+section.id;menu.append(link);
