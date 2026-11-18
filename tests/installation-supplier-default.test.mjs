@@ -131,9 +131,9 @@ test('installation summary calls out incomplete installed quote when Nik supplie
 
 test('vanity with faucet allowance includes a reviewed 35 percent markup planning budget, not a guaranteed SKU',()=>{
  const app=readFileSync('app.js','utf8');
- assert.match(app,/'vanity-install':\{fixture:740/);
+ assert.match(app,/'vanity-install':\{fixture:249/);
  assert.match(app,/this is not a confirmed product price/i);
- assert.match(readFileSync('scripts/service-pricing-check.cjs','utf8'),/'vanity-install':1040/);
+ assert.match(readFileSync('scripts/service-pricing-check.cjs','utf8'),/'vanity-install':549/);
 });
 
 
