@@ -108,14 +108,13 @@ test('Every Materials tile points to the same estimator with the material alread
    // Lumber uses a dimension-first selector instead of the retired generic tile grid.
    if(file==='material-lumber.html'){
     const selector=dom.window.document.querySelector('.lumber-selector');
-    assert.ok(selector,'Wood & Lumber selector must render');
-    const link=selector.querySelector('.lumber-actions a[href*="calculators.html"]');
-    assert.ok(link,'Wood selector must retain the shared calculator');
-    const url=new URL(link.href);
-    assert.equal(url.pathname,'/calculators.html');
-    assert.equal(url.searchParams.get('mode'),'materials');
-    assert.ok(url.searchParams.get('material'));
-    assert.ok(url.searchParams.get('product'),'board group must be selected already');
+    assert.ok(selector,'Wood & Lumber shopping catalog must render');
+    assert.ok(selector.querySelectorAll('.wood-product-row').length>=20,'board sizes must be visible');
+    assert.ok(selector.querySelector('.wood-list'),'selections must build a list');
+    assert.equal(selector.querySelectorAll('a[href*="calculators.html"]').length,0,'shopping lumber must not send customers to the project calculator');
+    const projectsLink=selector.querySelector('.wood-project-cta a');
+    assert.ok(projectsLink,'takeoff should be reached under Projects');
+    assert.equal(new URL(projectsLink.href).pathname,'/');
     continue;
    }
    const links=[...dom.window.document.querySelectorAll('.material-option-card .card-actions a[href*="calculators.html"]')];
