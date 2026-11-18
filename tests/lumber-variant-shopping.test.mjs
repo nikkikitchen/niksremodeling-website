@@ -62,7 +62,9 @@ test('one category at a time, all wood-based families accessible',async()=>{
   await tick();const d=dom.window.document,s=d.querySelector('.wood-category-select');
   for(const [g,v] of [['Plywood & OSB','3/4-in ACX plywood'],['Wood trim & molding','3.25-in baseboard'],['Wood shims','8-in wood shims'],['Posts & timbers','4×4']]){
    s.value=g;s.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
-   assert.equal(d.querySelector('.wood-size-choice').dataset.value,v);
+   assert.ok([...d.querySelectorAll('.wood-size-choice')].some(button=>button.dataset.value===v),'Category '+g+' should offer '+v);
+   choose(d,'.wood-size-choice',v);
+   assert.equal(d.querySelector('.wood-size-choice.selected').dataset.value,v);
   }
   d.querySelector('.wood-add').click();assert.equal(data(dom)[0].source,'wood-lumber-reference');
   const addOne=d.querySelector('.wood-cart-counter button[aria-label^="Add one"]');
