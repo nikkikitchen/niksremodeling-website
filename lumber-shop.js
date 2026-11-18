@@ -149,5 +149,9 @@ function boot(){
   for(const draw of updateRows)draw();drawList();
  }).catch(()=>{for(const draw of updateRows)draw();drawList();});
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+// app.js renders the material detail area on DOMContentLoaded. A deferred script
+// runs while readyState is often 'interactive', before that renderer is called.
+// Wait for the event instead of booting before .material-detail-grid exists.
+if(document.readyState==='complete')boot();
+else document.addEventListener('DOMContentLoaded',boot,{once:true});
 })();

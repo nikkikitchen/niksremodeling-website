@@ -27,7 +27,7 @@ function set(dom,node,value){
 }
 
 test('material lumber includes current wood catalog and publishing config',()=>{
- assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js\?v=20261118c"/);
+ assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js\?v=20261118d"/);
  assert.match(readFileSync('scripts/build.mjs','utf8'),/'lumber-shop\.js'/);
 });
 test('all lumber categories, board sizes and only two grades are visible',async()=>{
