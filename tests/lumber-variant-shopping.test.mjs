@@ -2,112 +2,71 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
-
 const script=readFileSync('lumber-shop.js','utf8');
-const reference=JSON.parse(readFileSync('material-price-reference.json','utf8'));
-
-function openLumber(){
- const dom=new JSDOM('<!doctype html><main><section><p class="lead"></p><div class="material-detail-grid"></div></section></main>',{
-   url:'https://niksremodeling.com/material-lumber.html',runScripts:'dangerously'
- });
- dom.window.fetch=async()=>({ok:true,json:async()=>reference});
+const ref=JSON.parse(readFileSync('material-price-reference.json','utf8'));
+function load(path='/material-lumber.html',items=[]){
+ const dom=new JSDOM('<main><section><p class="lead"></p><div class="material-detail-grid"></div></section></main>',{url:'https://niksremodeling.com'+path,runScripts:'dangerously'});
+ dom.window.localStorage.setItem('nr-cart',JSON.stringify(items));
+ dom.window.fetch=async()=>({ok:true,json:async()=>ref});
  dom.window.eval(script);
  dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
  return dom;
 }
-const settle=()=>new Promise(resolve=>setTimeout(resolve,20));
-function row(doc,group,size){
- const result=[...doc.querySelectorAll('.wood-product-row')].find(node=>node.dataset.group===group&&node.dataset.size===size);
- assert.ok(result,group+' '+size+' should be listed');
- return result;
-}
-function set(dom,node,value){
- node.value=value;
- node.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
-}
-
-test('material lumber includes current wood catalog and publishing config',()=>{
- assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js\?v=20261118d"/);
- assert.match(readFileSync('scripts/build.mjs','utf8'),/'lumber-shop\.js'/);
+const tick=()=>new Promise(resolve=>setTimeout(resolve,25));
+const data=dom=>JSON.parse(dom.window.localStorage.getItem('nr-cart'));
+const choose=(doc,selector,v)=>{
+ const b=[...doc.querySelectorAll(selector)].find(x=>x.dataset.value===v);
+ assert.ok(b,selector+' '+v);b.click();
+};
+test('both Wood and Lumber show the same compact catalog, not a long chart',async()=>{
+ assert.match(readFileSync('material-lumber.html','utf8'),/lumber-shop\.js\?v=20261118e/);
+ for(const path of ['/material-lumber.html','/material-wood.html']){
+  const dom=load(path);
+  try{
+   await tick();const d=dom.window.document;
+   assert.ok(d.querySelector('.lumber-selector'));
+   assert.equal(d.querySelector('.wood-category-select').options.length,11);
+   assert.equal(d.querySelectorAll('.wood-size-choice').length,5);
+   assert.equal(d.querySelectorAll('.wood-product-row').length,0);
+   assert.equal(d.querySelector('input'),null,'no typing');
+   assert.ok(d.querySelector('.wood-list'));
+   assert.ok(d.querySelector('.wood-view-cart')||d.querySelector('a[href="/project-cart.html"]'));
+  }finally{dom.window.close()}
+ }
 });
-test('all lumber categories, board sizes and only two grades are visible',async()=>{
- const dom=openLumber();
+test('single item picker offers plus/minus and keeps added items in the real site cart',async()=>{
+ const dom=load('/material-lumber.html',[{name:'Toilet',qty:1,type:'Product',source:'supplier-retail',price:200}]);
  try{
-  await settle();
-  const doc=dom.window.document;
-  const groups=[...doc.querySelectorAll('.wood-family')];
-  assert.equal(groups.length,11);
-  assert.ok(doc.querySelector('.lumber-selector'));
-  assert.equal(doc.querySelectorAll('.lumber-categories button').length,0,'retired one-active-category selector');
-  for(const size of ['2×4','2×6','2×8','2×10','2×12']){
-   const selection=row(doc,'Interior framing lumber',size);
-   const fields=selection.querySelectorAll('select');
-   assert.deepEqual([...fields[0].options].map(o=>o.value),['8','12','16']);
-   assert.deepEqual([...fields[2].options].map(o=>o.value),['Standard / construction','Premium / select']);
+  await tick();const d=dom.window.document;
+  choose(d,'.wood-size-choice','2×4');choose(d,'.wood-length-choice','8');
+  d.querySelector('.wood-qty-ten').click();d.querySelector('.wood-qty-plus').click();
+  assert.equal(d.querySelector('.wood-qty-value').textContent,'12');
+  assert.match(d.querySelector('.wood-price').textContent,/\$67\.20/);
+  d.querySelector('.wood-add').click();
+  let cart=data(dom);assert.equal(cart.length,2);assert.equal(cart[0].name,'Toilet');
+  assert.equal(cart[1].qty,12);assert.equal(cart[1].price,null);assert.equal(cart[1].quoteRequired,true);
+  assert.equal(cart[1].referenceSubtotal,67.2);
+  assert.match(d.querySelector('.wood-cart-bar').textContent,/13 items in cart/);
+  assert.equal(d.querySelector('.wood-qty-value').textContent,'1');
+  d.querySelector('.wood-add').click();assert.equal(data(dom)[1].qty,13,'same selection merges');
+  choose(d,'.wood-size-choice','2×6');d.querySelector('.wood-add').click();
+  cart=data(dom);assert.equal(cart.length,3);
+  assert.equal(cart[2].referenceSubtotal,null);
+  assert.match(d.querySelector('.wood-cart-lines').textContent,/Price to confirm/);
+  assert.equal(d.querySelector('.wood-category-select').value,'Interior framing lumber');
+ }finally{dom.window.close()}
+});
+test('one category at a time, all wood-based families accessible',async()=>{
+ const dom=load('/material-wood.html');
+ try{
+  await tick();const d=dom.window.document,s=d.querySelector('.wood-category-select');
+  for(const [g,v] of [['Plywood & OSB','3/4-in ACX plywood'],['Wood trim & molding','3.25-in baseboard'],['Wood shims','8-in wood shims'],['Posts & timbers','4×4']]){
+   s.value=g;s.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
+   assert.equal(d.querySelector('.wood-size-choice').dataset.value,v);
   }
-  row(doc,'Pressure-treated & exterior framing','2×8');
-  row(doc,'Posts & timbers','4×4');
-  row(doc,'Deck surface boards','5/4×6');
-  row(doc,'Deck joists & framing','2×12');
-  row(doc,'Interior & finish boards','1×4');
-  row(doc,'Plywood & OSB','3/4-in ACX plywood');
-  row(doc,'Wall planks & shiplap','1×6 shiplap plank');
-  row(doc,'Wood paneling & fiberboard','1/4-in beadboard panel');
-  row(doc,'Wood trim & molding','3.25-in baseboard');
-  row(doc,'Wood shims','8-in wood shims');
-  assert.equal(doc.querySelectorAll('.wood-family img').length,0,'lumber choices should not require photos');
-  assert.doesNotMatch(doc.querySelector('.lumber-selector').textContent,/Calculate Materials|Stud spacing/);
- }finally{dom.window.close();}
-});
-test('Wood and Lumber addresses show the same complete catalog',async()=>{
- const dom=new JSDOM('<!doctype html><main><section><p class="lead"></p><div class="material-detail-grid"></div></section></main>',{url:'https://niksremodeling.com/material-wood.html',runScripts:'dangerously'});
- dom.window.fetch=async()=>({ok:true,json:async()=>reference});
- dom.window.eval(script);
- dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
- try{
-  await settle();
-  const doc=dom.window.document;
-  assert.equal(doc.querySelectorAll('.wood-family').length,11);
-  row(doc,'Interior framing lumber','2×4');
-  row(doc,'Interior & finish boards','1×4');
-  row(doc,'Plywood & OSB','3/4-in ACX plywood');
-  row(doc,'Wood trim & molding','3.25-in baseboard');
-  row(doc,'Wood shims','8-in wood shims');
-  assert.ok(doc.querySelector('.wood-list'));
-  const woodNames=[...doc.querySelectorAll('.wood-family h3')].map(node=>node.textContent);
-  const lumber=openLumber();
-  try {assert.deepEqual(woodNames,[...lumber.window.document.querySelectorAll('.wood-family h3')].map(node=>node.textContent));}
-  finally {lumber.window.close();}
- }finally{dom.window.close();}
-});
-test('quantity 24 uses exact 2x4x8 reference, other grades and lengths require quotes',async()=>{
- const dom=openLumber();
- try{
-  await settle();
-  const doc=dom.window.document,selection=row(doc,'Interior framing lumber','2×4');
-  const fields=selection.querySelectorAll('select');
-  const qty=selection.querySelector('input[type="number"]');
-  set(dom,qty,'24');
-  assert.match(selection.querySelector('.wood-price').textContent,/\$134\.40/);
-  selection.querySelector('button').click();
-  let list=JSON.parse(dom.window.localStorage.getItem('nr-wood-lumber-list-v2'));
-  assert.equal(list[0].qty,24);
-  assert.match(doc.querySelector('.wood-total').textContent,/\$134\.40/);
-  set(dom,fields[2],'Premium / select');
-  assert.match(selection.querySelector('.wood-price').textContent,/Quote required/);
-  set(dom,fields[0],'12');
-  assert.match(selection.querySelector('.wood-price').textContent,/Quote required/);
-  set(dom,fields[0],'8');
-  set(dom,fields[2],'Standard / construction');
-  assert.match(selection.querySelector('.wood-price').textContent,/\$134\.40/);
-  const outside=row(doc,'Pressure-treated & exterior framing','2×4');
-  const treatments=outside.querySelectorAll('select');
-  set(dom,treatments[1],'Pressure-treated ground-contact');
-  assert.match(outside.querySelector('.wood-price').textContent,/Quote required/);
-  outside.querySelector('button').click();
-  list=JSON.parse(dom.window.localStorage.getItem('nr-wood-lumber-list-v2'));
-  assert.equal(list.length,2);
-  assert.match(doc.querySelector('.wood-total').textContent,/1 item type\(s\) require a quote/);
-  assert.doesNotMatch(doc.querySelector('.lumber-selector').textContent,/Pay with Square|Proceed to checkout/);
- }finally{dom.window.close();}
+  d.querySelector('.wood-add').click();assert.equal(data(dom)[0].source,'wood-lumber-reference');
+  const addOne=d.querySelector('.wood-cart-counter button[aria-label^="Add one"]');
+  addOne.click();assert.equal(data(dom)[0].qty,2);
+  d.querySelector('.wood-cart-remove').click();assert.equal(data(dom).length,0);
+ }finally{dom.window.close()}
 });

@@ -812,6 +812,7 @@ function renderProject(){const id=new URLSearchParams(location.search).get('proj
 function escapeCartText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
 function cartPriceMarkup(x){
  const money=value=>value.toLocaleString('en-US',{style:'currency',currency:'USD'});
+ if(x.source==='wood-lumber-reference')return Number.isFinite(Number(x.referenceSubtotal))&&Number(x.referenceSubtotal)>0?money(Number(x.referenceSubtotal))+' (planning estimate)':'Price to confirm';
  if(x.referenceOnly&&Number.isFinite(x.referenceSubtotal)&&x.referenceSubtotal>0)return money(x.referenceSubtotal)+' (estimate)';
  if(['bathroom-project-package','kitchen-project-package','room-project-package','accessibility-project-package'].includes(x.source)&&Number(x.startingAt)>0)return money(Number(x.startingAt));
  if(customEstimate(x)||requiresInPersonQuote(x))return money(0);

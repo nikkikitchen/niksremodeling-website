@@ -20,143 +20,172 @@ const reference={
  'Plywood & OSB|15/32-in OSB|4×8|Standard|':'4x8 Sheet of 15/32-in OSB Sheathing',
  'Plywood & OSB|3/4-in ACX plywood|4×8|Standard|':'4x8 Sheet of 3/4-in ACX Plywood'
 };
+
 const key='nr-wood-lumber-list-v2';
-const element=(tag,label,cls)=>{const e=document.createElement(tag);if(label!==undefined)e.textContent=label;if(cls)e.className=cls;return e;};
-const currency=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
-const validQty=n=>Number.isSafeInteger(n)&&n>=1&&n<=999;
+const E=(tag,txt,cls)=>{const el=document.createElement(tag);if(txt!==undefined)el.textContent=txt;if(cls)el.className=cls;return el};
+const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
+const safeQty=n=>Number.isSafeInteger(n)&&n>=1&&n<=999;
 function boot(){
- const isWood=/^\/material-wood(?:\.html)?\/?$/.test(location.pathname);
- const isLumber=/^\/material-lumber(?:\.html)?\/?$/.test(location.pathname);
- if(!isWood&&!isLumber)return;
- // Both paths show precisely the same complete wood-derived material catalog.
- const visibleGroups=groups;
+ if(!/^\/material-(wood|lumber)(?:\.html)?\/?$/.test(location.pathname))return;
  const old=document.querySelector('.material-detail-grid');if(!old)return;
- const parent=old.parentElement;
- const lead=parent.querySelector('.lead');
- if(lead)lead.textContent='Choose a board, length, grade, treatment and number of pieces. Everything is shown below. Project measurements and material takeoffs belong under Projects.';
- const heading=element('h2','Wood & Lumber Catalog');
- const catalog=element('section',undefined,'lumber-selector');
- const menu=element('nav',undefined,'wood-jump-links');
- menu.setAttribute('aria-label','Wood and lumber sections');
- const descriptions=element('p','Find anything made from wood in one place: lumber, boards, deck planks, plywood, OSB, wall panels, trim and shims. Select the size, type and quantity—no generic calculator.','calc-note');
- catalog.append(descriptions,menu);
- const references=new Map();
- const updateRows=[];
- const itemId=(g,size,length,kind,grade)=>[g,size,length,kind,grade||''].join('|');
- const getPrice=id=>{
-  const name=reference[id];const entry=name&&references.get(name);
-  return entry&&Number.isFinite(Number(entry.price))&&Number(entry.price)>0?Number(entry.price):null;
+ const parent=old.parentElement,lead=parent.querySelector('.lead');
+ if(lead)lead.textContent='Tap one item, choose its details, add it to the cart, and keep shopping here. No typing needed.';
+ const prices=new Map();
+ const id=(g,s,l,k,grade)=>[g.name,s,l,k,grade||''].join('|');
+ const unitPrice=k=>{const p=prices.get(reference[k]);return p&&Number(p.price)>0?Number(p.price):null};
+ const read=()=>{try{if(typeof window.getCart==='function')return window.getCart();const c=JSON.parse(localStorage.getItem('nr-cart')||'[]');return Array.isArray(c)?c:[]}catch{return[]}};
+ const save=cart=>{try{if(typeof window.saveCart==='function')window.saveCart(cart);else{localStorage.setItem('nr-cart',JSON.stringify(cart));localStorage.setItem('nr-cart-updated-at',String(Date.now()));if(typeof window.updateCartCount==='function')window.updateCartCount()}return true}catch{return false}};
+ const item=(g,s,l,k,grade,qty)=>{
+  const woodKey=id(g,s,l,k,grade),p=unitPrice(woodKey);
+  return {source:'wood-lumber-reference',type:'Material estimate',name:g.name+': '+s+(g.unit==='sheets'?' — '+l+' sheet':g.unit==='packs'?' — '+l:' × '+l+' ft')+' — '+k+(grade?' — '+grade:''),woodKey,qty,price:null,pricingPending:true,quoteRequired:true,referenceOnly:p!==null,referenceSubtotal:p===null?null:Math.round(p*qty*100)/100,shippingAndTaxNotIncluded:true};
  };
- const read=()=>{try{const rows=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(rows)?rows.filter(r=>r&&typeof r.id==='string'&&validQty(Number(r.qty))):[];}catch{return[];}};
- const write=rows=>{try{localStorage.setItem(key,JSON.stringify(rows));return true;}catch{return false;}};
- const list=element('section',undefined,'wood-list');
- list.id='wood-list';
- list.append(element('h3','Your Wood & Lumber List'),element('p','Add different sizes and quantities. Each exact choice stays separate. Unverified choices remain quote requests—not zero-dollar items.'));
- const listing=element('div');listing.setAttribute('aria-live','polite');list.append(listing);
- const total=element('p',undefined,'wood-total');list.append(total);
- const listActions=element('div',undefined,'wood-actions');
- const clear=element('button','Clear list','btn outline');clear.type='button';
- const message=element('a','Text your lumber list for a quote','btn outline');
- listActions.append(clear,message);list.append(listActions);
- function drawList(){
-  const rows=read();listing.replaceChildren();let subtotal=0,unpriced=0;
-  if(!rows.length)listing.append(element('p','No boards added yet. Use the rows above to start your list.'));
-  for(const row of rows){
-   const line=element('div',undefined,'wood-list-row');
-   line.append(element('span',row.name));
-   const qty=element('input');qty.type='number';qty.min='1';qty.max='999';qty.step='1';qty.value=String(row.qty);
-   qty.setAttribute('aria-label','Quantity for '+row.name);
-   qty.addEventListener('change',()=>{
-    const n=Number(qty.value);if(!validQty(n)){qty.value=String(row.qty);return;}
-    const next=read(),target=next.find(r=>r.id===row.id);if(target){target.qty=n;if(write(next))drawList();}
-   });
-   const unit=getPrice(row.id);
-   if(unit===null)unpriced++;else subtotal+=unit*row.qty;
-   const price=element('span',unit===null?'Quote required':currency(unit*row.qty),'wood-list-price');
-   const remove=element('button','Remove');remove.type='button';
-   remove.addEventListener('click',()=>{if(write(read().filter(r=>r.id!==row.id)))drawList();});
-   line.append(qty,price,remove);listing.append(line);
+ const root=E('section',undefined,'lumber-selector');
+ root.setAttribute('aria-label','Wood and lumber shopping');
+ const label=E('label','Choose a wood category','wood-category-label');
+ const category=E('select',undefined,'wood-category-select');category.setAttribute('aria-label','Choose wood category');
+ for(const g of groups){const opt=E('option',g.name);opt.value=g.name;category.append(opt)}
+ label.append(category);
+ const picker=E('section',undefined,'wood-picker');
+ const intro=E('p','Choose a size, length and type. Your cart stays saved while you shop.','wood-intro');
+ const groupDesc=E('p',undefined,'wood-group-info');
+ const dims=E('div',undefined,'wood-chip-grid wood-size-choices');
+ const lens=E('div',undefined,'wood-chip-grid wood-length-choices');
+ const kinds=E('div',undefined,'wood-chip-grid wood-kind-choices');
+ const grades=E('div',undefined,'wood-chip-grid wood-grade-choices');
+ const sizeTitle=E('h3','1. Item size');
+ const lenTitle=E('h3','2. Length');
+ const kindTitle=E('h3','3. Type');
+ const gradeTitle=E('h3','4. Grade');
+ const qtyTitle=E('h3','Quantity');
+ const qtyBar=E('div',undefined,'wood-stepper');
+ const minus=E('button','−','wood-step-btn wood-qty-minus');
+ const plus=E('button','+','wood-step-btn wood-qty-plus');
+ const ten=E('button','+10','wood-step-btn wood-qty-ten');
+ for(const b of [minus,plus,ten])b.type='button';
+ minus.setAttribute('aria-label','Decrease quantity');plus.setAttribute('aria-label','Increase quantity');ten.setAttribute('aria-label','Increase quantity by ten');
+ const qtyView=E('output','1','wood-qty-value');qtyView.setAttribute('aria-live','polite');qtyBar.append(minus,qtyView,plus,ten);
+ const priceView=E('p',undefined,'wood-price');
+ const add=E('button','Add to Cart','btn primary wood-add');add.type='button';
+ const status=E('p','','wood-status');status.setAttribute('role','status');
+ picker.append(intro,groupDesc,sizeTitle,dims,lenTitle,lens,kindTitle,kinds,gradeTitle,grades,qtyTitle,qtyBar,priceView,add,status);
+ const basket=E('section',undefined,'wood-list');basket.id='wood-list';
+ const basketItems=E('div',undefined,'wood-cart-lines');basketItems.setAttribute('aria-live','polite');
+ const summary=E('p',undefined,'wood-total');
+ const basketActions=E('div',undefined,'wood-actions');
+ const keep=E('button','Keep Shopping','btn outline');keep.type='button';
+ keep.addEventListener('click',()=>category.focus());
+ const review=E('a','Review Cart','btn outline');review.href='/project-cart.html';
+ basketActions.append(keep,review);
+ basket.append(E('h3','Your Cart'),basketItems,summary,basketActions);
+ const footer=E('div',undefined,'wood-cart-bar');
+ const footerLabel=E('strong','0 items in cart');const footerLink=E('a','Review Cart','btn primary');footerLink.href='/project-cart.html';
+ footer.append(footerLabel,footerLink);
+ const project=E('p',undefined,'wood-project-cta');
+ const projectLink=E('a','Projects calculator');projectLink.href='/#projects';
+ project.append('Need to calculate the boards for a project? Use the ',projectLink,' instead.');
+ root.append(E('h2','Wood & Lumber'),label,picker,basket,project,footer);
+ const chosen={size:null,length:null,kind:null,grade:null,qty:1};
+ const group=()=>groups.find(g=>g.name===category.value)||groups[0];
+ const chips=(target,options,current,attr,change)=>{
+  target.replaceChildren();
+  for(const value of options){
+   const b=E('button',value,'wood-choice '+attr);b.type='button';b.dataset.value=value;
+   if(attr==='wood-size-choice')b.dataset.size=value;
+   b.setAttribute('aria-pressed',String(value===current));
+   if(value===current)b.classList.add('selected');
+   b.addEventListener('click',()=>{change(value);draw()});target.append(b);
   }
-  total.textContent='Priced reference subtotal: '+currency(subtotal)+(unpriced?' · '+unpriced+' item type(s) require a quote':'')+'. Shipping and tax not included.';
-  message.href='sms:6782314377?body='+encodeURIComponent('Wood and lumber quote request:\n'+(rows.map(r=>r.qty+' × '+r.name).join('\n')||'Please help me select materials.'));
+ };
+ function draw(){
+  const g=group();
+  if(!g.sizes.includes(chosen.size))chosen.size=g.sizes[0];
+  if(!g.lengths.includes(chosen.length))chosen.length=g.lengths[0];
+  if(!g.kinds.includes(chosen.kind))chosen.kind=g.kinds[0];
+  if(!g.grades||!g.grades.includes(chosen.grade))chosen.grade=g.grades?.[0]||null;
+  groupDesc.textContent=g.desc;
+  chips(dims,g.sizes,chosen.size,'wood-size-choice',v=>chosen.size=v);
+  chips(lens,g.lengths,chosen.length,'wood-length-choice',v=>chosen.length=v);
+  chips(kinds,g.kinds,chosen.kind,'wood-kind-choice',v=>chosen.kind=v);
+  kindTitle.hidden=g.kinds.length<2;kinds.hidden=g.kinds.length<2;
+  if(g.grades){chips(grades,g.grades,chosen.grade,'wood-grade-choice',v=>chosen.grade=v);gradeTitle.hidden=false;grades.hidden=false}
+  else{grades.replaceChildren();gradeTitle.hidden=true;grades.hidden=true}
+  lenTitle.textContent=g.unit==='sheets'?'2. Sheet size':g.unit==='packs'?'2. Package size':'2. Length';
+  qtyView.textContent=String(chosen.qty);
+  minus.disabled=chosen.qty<=1;plus.disabled=chosen.qty>=999;ten.disabled=chosen.qty>989;
+  const p=unitPrice(id(g,chosen.size,chosen.length,chosen.kind,chosen.grade));
+  priceView.textContent=p===null?'Price to confirm':money(p*chosen.qty)+' planning estimate';
+  priceView.append(E('small','Final supplier price and stock will be verified before payment.'));
+  add.textContent='Add '+chosen.qty+' to Cart';
  }
- clear.addEventListener('click',()=>{if(write([]))drawList();});
- function select(options,label){
-  const s=element('select');s.setAttribute('aria-label',label);
-  for(const value of options){const op=element('option',value);op.value=value;s.append(op);}return s;
- }
- function field(label,control){
-  const l=element('label',undefined,'wood-field');l.append(element('span',label),control);return l;
- }
- function product(group,size){
-  const row=element('article',undefined,'wood-product-row');
-  row.dataset.size=size;row.dataset.group=group.name;
-  row.append(element('strong',size,'wood-dimension'));
-  const length=select(group.lengths,'Length or sheet size for '+size);
-  const kind=select(group.kinds,'Treatment or material for '+size);
-  const grade=group.grades?select(group.grades,'Grade for '+size):null;
-  const qty=element('input');qty.type='number';qty.min='1';qty.max='999';qty.step='1';qty.inputMode='numeric';qty.value='1';
-  qty.setAttribute('aria-label',(group.unit==='sheets'?'Sheets':group.unit==='packs'?'Packs':'Pieces')+' for '+size);
-  const price=element('div',undefined,'wood-price');
-  const amount=element('strong');
-  const note=element('small');
-  price.append(amount,note);
-  const button=element('button','Add to list','btn primary');button.type='button';
-  const status=element('span',undefined,'wood-status');status.setAttribute('role','status');
-  const currentId=()=>itemId(group.name,size,length.value,kind.value,grade?.value||'');
-  const currentName=()=>group.name+': '+size+(group.unit==='sheets'?' — '+length.value+' ft sheet':group.unit==='packs'?' — '+length.value:' × '+length.value+' ft')+' — '+kind.value+(grade?' — '+grade.value:'');
-  const draw=()=>{
-   const number=Number(qty.value),unit=getPrice(currentId());
-   button.disabled=!validQty(number);
-   amount.textContent=!validQty(number)?'Enter 1–999 pieces':unit===null?'Quote required':currency(unit*number)+' subtotal';
-   note.textContent=unit===null?'Exact grade, size and treatment need pricing':currency(unit)+' each · planning reference';
-   status.textContent='';
-  };
-  row.append(field(group.unit==='sheets'?'Sheet size':group.unit==='packs'?'Packaging':'Length (ft)',length),field('Type / treatment',kind));
-  if(grade)row.append(field('Grade',grade));
-  row.append(field(group.unit==='sheets'?'Sheets':group.unit==='packs'?'Packs':'Pieces',qty),price,button,status);
-  for(const input of [length,kind,grade,qty].filter(Boolean)){
-   input.addEventListener('change',draw);input.addEventListener('input',draw);
+ function renderCart(){
+  const cart=read(),wood=cart.filter(x=>x.source==='wood-lumber-reference');basketItems.replaceChildren();
+  if(!wood.length)basketItems.append(E('p','No wood items yet. Add your first item above.'));
+  let known=0,pending=0;
+  for(const entry of wood){
+   const line=E('div',undefined,'wood-cart-line');
+   const title=E('span',entry.name,'wood-cart-name');
+   const counter=E('div',undefined,'wood-cart-counter');
+   const less=E('button','−'),more=E('button','+'),remove=E('button','Remove','wood-cart-remove');
+   for(const b of [less,more,remove])b.type='button';
+   less.setAttribute('aria-label','Remove one '+entry.name);
+   more.setAttribute('aria-label','Add one '+entry.name);
+   less.disabled=Number(entry.qty)<=1;more.disabled=Number(entry.qty)>=999;
+   const adjust=next=>{
+    const fresh=read(),idx=fresh.findIndex(x=>x.source==='wood-lumber-reference'&&x.woodKey===entry.woodKey);
+    if(idx<0)return;
+    if(next===0)fresh.splice(idx,1);
+    else if(safeQty(next)){fresh[idx].qty=next;const p=unitPrice(entry.woodKey);fresh[idx].referenceSubtotal=p===null?null:Math.round(p*next*100)/100;fresh[idx].referenceOnly=p!==null}
+    else return;
+    if(save(fresh))renderCart();
+   };
+   less.addEventListener('click',()=>adjust(Number(entry.qty)-1));
+   more.addEventListener('click',()=>adjust(Number(entry.qty)+1));
+   remove.addEventListener('click',()=>adjust(0));
+   counter.append(less,E('strong',String(entry.qty)),more,remove);
+   const p=unitPrice(entry.woodKey);
+   const display=E('small',p===null?'Price to confirm':money(p*Number(entry.qty))+' planning estimate');
+   if(p===null)pending++;else known+=p*Number(entry.qty);
+   line.append(title,counter,display);basketItems.append(line);
   }
-  button.addEventListener('click',()=>{
-   const n=Number(qty.value);if(!validQty(n)){qty.reportValidity();return;}
-   const id=currentId(),rows=read(),existing=rows.find(r=>r.id===id);
-   if(existing)existing.qty=Math.min(999,existing.qty+n);
-   else rows.push({id,name:currentName(),qty:n});
-   if(write(rows)){drawList();status.textContent='Added '+n+' '+(group.unit==='sheets'?'sheet(s)':group.unit==='packs'?'pack(s)':'piece(s)')+' to your materials list.';}
-   else status.textContent='Could not save in this browser.';
-  });
-  updateRows.push(draw);draw();
-  return row;
+  summary.textContent=wood.length+' wood item type(s) saved'+(known?' · '+money(known)+' planning estimate':'')+(pending?' · '+pending+' awaiting pricing':'');
+  const total=cart.filter(x=>!x.hiddenFromCustomer).reduce((n,x)=>n+(Number(x.qty)||1),0);
+  footerLabel.textContent=total+' item'+(total===1?'':'s')+' in cart';
  }
- for(const group of visibleGroups){
-  const section=element('section',undefined,'wood-family');
-  section.id='wood-'+group.name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-  const link=element('a',group.name);link.href='#'+section.id;menu.append(link);
-  section.append(element('h3',group.name),element('p',group.desc,'wood-family-note'));
-  const rows=element('div',undefined,'wood-family-rows');
-  for(const size of group.sizes)rows.append(product(group,size));
-  section.append(rows);catalog.append(section);
- }
- catalog.append(list);
- catalog.append(element('p','All shown prices are planning references only and already include the established materials markup where listed. Prices do not prove stock, grade, treatment rating or availability; do not charge until a supplier item is verified.','calc-note'));
- const project=element('p',undefined,'wood-project-cta');
- const projectLink=element('a','Calculate a project material takeoff');projectLink.href='/#projects';
- project.append('Need the website to estimate how many boards to buy? ',projectLink,'. The deck calculator stays under Projects.');
- catalog.prepend(project);
- old.replaceWith(catalog);parent.insertBefore(heading,catalog);
- const style=element('style');
- style.textContent='.lumber-selector{margin:18px 0 32px}.wood-jump-links{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.wood-jump-links a{display:inline-block;background:#eef5fd;border:1px solid #c8d8e8;border-radius:6px;padding:8px 10px}.wood-family,.wood-list{margin:16px 0;padding:16px;border:1px solid #cbd9e8;border-radius:10px;background:#fff}.wood-family h3{margin:0 0 6px;color:#164879}.wood-family-note{margin:0 0 15px;color:#576474}.wood-family-rows{display:grid;gap:9px}.wood-product-row{display:grid;grid-template-columns:70px minmax(75px,.7fr) minmax(150px,1.5fr) minmax(125px,1.25fr) 75px minmax(125px,1.2fr) auto;gap:9px;align-items:end;padding:12px;border-radius:8px;background:#f5f8fc;border:1px solid #e1e7ee}.wood-product-row:not(:has(.wood-field:nth-of-type(4))){grid-template-columns:70px minmax(75px,.7fr) minmax(150px,1.5fr) 75px minmax(125px,1.2fr) auto}.wood-dimension{align-self:center}.wood-field{display:flex;flex-direction:column;gap:5px;font-weight:650;font-size:13px}.wood-field select,.wood-field input{width:100%;min-width:0;border:1px solid #aabaca;border-radius:6px;padding:10px;background:white}.wood-price{align-self:center}.wood-price strong,.wood-price small{display:block}.wood-price small{color:#596575}.wood-product-row button{margin:0}.wood-status{grid-column:1/-1;color:#237647;font-size:13px}.wood-status:empty{display:none}.wood-list{background:#f6f9fd}.wood-list-row{display:grid;grid-template-columns:minmax(0,1fr) 80px 135px auto;align-items:center;gap:10px;border-bottom:1px solid #dce3ea;padding:11px 0}.wood-list-row input{width:75px;padding:8px}.wood-list-row button{border:0;background:transparent;color:#9b2828;text-decoration:underline;cursor:pointer}.wood-total{font-weight:700}.wood-actions{display:flex;gap:12px;flex-wrap:wrap}@media(max-width:1000px){.wood-product-row,.wood-product-row:not(:has(.wood-field:nth-of-type(4))){grid-template-columns:repeat(3,minmax(0,1fr))}.wood-dimension{grid-column:1/-1}.wood-product-row button{align-self:center}}@media(max-width:600px){.wood-family{padding:10px}.wood-product-row,.wood-product-row:not(:has(.wood-field:nth-of-type(4))){grid-template-columns:repeat(2,minmax(0,1fr))}.wood-dimension{grid-column:1/-1}.wood-product-row button{min-width:0}.wood-list-row{grid-template-columns:minmax(0,1fr) 75px}.wood-list-price{grid-column:1}.wood-list-row button{justify-self:start}}';
- document.head.append(style);drawList();
- if(typeof fetch==='function')fetch('/material-price-reference.json').then(r=>{if(!r.ok)throw Error('Unavailable');return r.json();}).then(data=>{
-  if(data.markupAlreadyIncluded!==true||!Array.isArray(data.items))throw Error('Unapproved reference');
-  for(const entry of data.items)references.set(entry.name,entry);
-  for(const draw of updateRows)draw();drawList();
- }).catch(()=>{for(const draw of updateRows)draw();drawList();});
+ function adjust(change){chosen.qty=Math.max(1,Math.min(999,chosen.qty+change));draw()}
+ minus.addEventListener('click',()=>adjust(-1));plus.addEventListener('click',()=>adjust(1));ten.addEventListener('click',()=>adjust(10));
+ category.addEventListener('change',()=>{chosen.size=null;chosen.length=null;chosen.kind=null;chosen.grade=null;chosen.qty=1;status.textContent='';draw()});
+ add.addEventListener('click',()=>{
+  const g=group(),entry=item(g,chosen.size,chosen.length,chosen.kind,chosen.grade,chosen.qty),cart=read();
+  const current=cart.find(x=>x.source==='wood-lumber-reference'&&x.woodKey===entry.woodKey);
+  if(current){
+   if(Number(current.qty)+chosen.qty>999){status.textContent='Maximum 999 pieces of this selection.';return}
+   const nextQty=Number(current.qty)+chosen.qty;
+   Object.assign(current,entry,{qty:nextQty,referenceSubtotal:entry.referenceSubtotal===null?null:Math.round(entry.referenceSubtotal*nextQty/chosen.qty*100)/100});
+  }else cart.push(entry);
+  if(!save(cart)){status.textContent='Could not save to your cart. Please try again.';return}
+  status.textContent='Added '+chosen.qty+' to your cart. Stay here and choose another item.';
+  chosen.qty=1;draw();renderCart();
+ });
+ const selectHash=()=>{
+  const match=groups.find(g=>'#wood-'+g.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')===location.hash);
+  if(match&&category.value!==match.name){category.value=match.name;chosen.size=null;draw()}
+ };
+ const style=E('style');style.textContent=".lumber-selector{max-width:780px;margin:18px auto 32px}.wood-picker,.wood-list{margin:14px 0;padding:16px;border:1px solid #c3d6e8;border-radius:14px;background:#fff}.wood-picker h3{font-size:1rem;margin:18px 0 9px;color:#164879}.wood-category-label{display:block;font-weight:750;margin:18px 0}.wood-category-select{width:100%;min-height:55px;border:2px solid #9bb6d0;border-radius:10px;padding:12px;font:inherit;color:#153d66;background:#fff}.wood-chip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px}.wood-choice{min-height:52px;border:2px solid #c6d6e5;border-radius:10px;padding:9px;background:#f4f8fc;color:#164879;font:inherit;font-weight:700;cursor:pointer}.wood-choice.selected{background:#164879;border-color:#164879;color:#fff}.wood-choice:focus-visible,.wood-category-select:focus-visible,.wood-step-btn:focus-visible{outline:3px solid #bd2933;outline-offset:2px}.wood-group-info,.wood-intro{color:#52677b}.wood-stepper{display:flex;align-items:center;gap:10px}.wood-step-btn{height:54px;min-width:54px;border:2px solid #164879;border-radius:10px;background:white;color:#164879;font-size:1.35rem;font-weight:800}.wood-step-btn:disabled{opacity:.35}.wood-qty-value{font-size:1.5rem;min-width:60px;text-align:center;font-weight:800}.wood-price{font-size:1.08rem;font-weight:800;margin:18px 0}.wood-price small{display:block;font-size:.78rem;color:#667382;font-weight:400}.wood-add{width:100%;min-height:56px;font-size:1.1rem}.wood-status{min-height:24px;color:#237647;font-weight:700}.wood-cart-line{padding:12px 0;border-bottom:1px solid #dfe7ef;display:grid;gap:8px}.wood-cart-name{font-weight:650;overflow-wrap:anywhere}.wood-cart-counter{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.wood-cart-counter button{min-height:38px;min-width:38px;border:1px solid #aabdd1;border-radius:7px;background:white;color:#164879;font-size:1rem}.wood-cart-counter .wood-cart-remove{border:0;color:#a52c34;text-decoration:underline;font-size:.85rem}.wood-total{font-size:.92rem;color:#52677b}.wood-actions{display:flex;gap:10px;flex-wrap:wrap}.wood-cart-bar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;background:#edf5ff;border:1px solid #bfd2e5;border-radius:10px;z-index:8}.wood-cart-bar .btn{white-space:nowrap}@media(max-width:600px){.lumber-selector{padding:0 4px}.wood-picker,.wood-list{padding:12px}.wood-chip-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wood-cart-bar{bottom:0}.wood-actions>*{flex:1}}";
+ old.replaceWith(root);parent.insertBefore(style,root);
+ selectHash();draw();renderCart();
+ window.addEventListener('hashchange',selectHash);
+ if(typeof fetch==='function')fetch('/material-price-reference.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Not available');return r.json()}).then(data=>{
+  if(data.markupAlreadyIncluded!==true||!Array.isArray(data.items))throw Error('Not approved');
+  for(const entry of data.items)prices.set(entry.name,entry);
+  const cart=read();let dirty=false;
+  for(const entry of cart)if(entry.source==='wood-lumber-reference'){
+   const p=unitPrice(entry.woodKey),sub=p===null?null:Math.round(p*(Number(entry.qty)||1)*100)/100;
+   if(entry.referenceSubtotal!==sub||entry.referenceOnly!==(p!==null)){entry.referenceSubtotal=sub;entry.referenceOnly=p!==null;entry.price=null;entry.quoteRequired=true;dirty=true}
+  }
+  if(dirty)save(cart);
+  draw();renderCart();
+ }).catch(()=>{draw();renderCart()});
 }
-// app.js renders the material detail area on DOMContentLoaded. A deferred script
-// runs while readyState is often 'interactive', before that renderer is called.
-// Wait for the event instead of booting before .material-detail-grid exists.
 if(document.readyState==='complete')boot();
 else document.addEventListener('DOMContentLoaded',boot,{once:true});
 })();

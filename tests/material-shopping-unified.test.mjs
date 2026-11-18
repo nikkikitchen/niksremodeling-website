@@ -109,7 +109,8 @@ test('Every Materials tile points to the same estimator with the material alread
    if(file==='material-lumber.html'||file==='material-wood.html'){
     const selector=dom.window.document.querySelector('.lumber-selector');
     assert.ok(selector,'Wood & Lumber shopping catalog must render');
-    assert.ok(selector.querySelectorAll('.wood-product-row').length>=10,'board sizes must be visible');
+    assert.ok(selector.querySelectorAll('.wood-size-choice').length>=4,'selected category must show large size buttons');
+    assert.equal(selector.querySelector('.wood-category-select').options.length,11);
     assert.ok(selector.querySelector('.wood-list'),'selections must build a list');
     assert.equal(selector.querySelectorAll('a[href*="calculators.html"]').length,0,'shopping lumber must not send customers to the project calculator');
     const projectsLink=selector.querySelector('.wood-project-cta a');
