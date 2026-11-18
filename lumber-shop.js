@@ -8,7 +8,11 @@ const groups=[
  {name:'Deck surface boards',desc:'Choose your exact deck board dimensions and type.',sizes:['5/4×6','2×6','2×8'],lengths:['8','12','16'],kinds:['Pressure-treated above-ground','Pressure-treated ground-contact','Cedar'],grades:['Standard grade','Premium grade']},
  {name:'Deck joists & framing',desc:'Structural deck framing with separately verified treatment requirements.',sizes:['2×6','2×8','2×10','2×12'],lengths:['8','12','16'],kinds:['Pressure-treated above-ground','Pressure-treated ground-contact'],grades:['Standard / #2','Premium / #1']},
  {name:'Interior & finish boards',desc:'Appearance boards for indoor trim, shelving and finish work.',sizes:['1×2','1×4','1×6','1×8','1×10','1×12'],lengths:['8','12','16'],kinds:['Pine','Primed pine'],grades:['Common / utility','Select / premium']},
- {name:'Plywood & OSB',desc:'Sheet goods: choose exact thickness and sheet dimensions; grades are inherent in the named product.',sizes:['7/16-in OSB','15/32-in OSB','1/2-in plywood','3/4-in ACX plywood','3/4-in treated plywood'],lengths:['4×8','4×10'],kinds:['Standard','Exterior / treated'],grades:null}
+ {name:'Plywood & OSB',desc:'Sheet goods: choose exact thickness and sheet dimensions; grades are inherent in the named product.',sizes:['7/16-in OSB','15/32-in OSB','1/2-in plywood','3/4-in ACX plywood','3/4-in treated plywood'],lengths:['4×8','4×10'],kinds:['Standard','Exterior / treated'],grades:null,unit:'sheets'},
+ {name:'Wall planks & shiplap',desc:'Wood plank, tongue-and-groove, and shiplap wall coverings. Confirm profile and actual coverage before ordering.',sizes:['1×6 shiplap plank','5.25-in nickel-gap plank','1×6 tongue-and-groove','1×8 tongue-and-groove'],lengths:['8','12','16'],kinds:['Pine','Primed pine','Cedar'],grades:['Common / utility','Select / premium']},
+ {name:'Wood paneling & fiberboard',desc:'Wood-based wall and utility panels. Check surface treatment and approved application.',sizes:['1/4-in beadboard panel','3/8-in beadboard panel','1/4-in hardboard panel','3/4-in MDF panel'],lengths:['4×8'],kinds:['Unfinished','Primed'],grades:null,unit:'sheets'},
+ {name:'Wood trim & molding',desc:'Select the profile and length. Exact shape, wood species, and finish will be confirmed before purchase.',sizes:['3.25-in baseboard','5.25-in baseboard','2.25-in door casing','3.625-in crown molding','2.5-in chair rail','3/4-in shoe molding','3/4-in quarter round'],lengths:['8','12','16'],kinds:['Unfinished pine','Primed pine','Primed MDF'],grades:['Standard','Premium']},
+ {name:'Wood shims',desc:'Wood shims are bought by the pack; the number of shims in each pack is confirmed with the supplier.',sizes:['8-in wood shims','12-in wood shims'],lengths:['Pack (count to confirm)'],kinds:['Pine','Cedar'],grades:null,unit:'packs'}
 ];
 const reference={
  'Interior framing lumber|2×4|8|Untreated|Standard / construction':'2x4x8 Stud Lumber (Standard)',
@@ -24,16 +28,17 @@ function boot(){
  const isWood=/^\/material-wood(?:\.html)?\/?$/.test(location.pathname);
  const isLumber=/^\/material-lumber(?:\.html)?\/?$/.test(location.pathname);
  if(!isWood&&!isLumber)return;
- const visibleGroups=groups.filter(group=>['Interior & finish boards','Plywood & OSB'].includes(group.name)===isWood);
+ // Both paths show precisely the same complete wood-derived material catalog.
+ const visibleGroups=groups;
  const old=document.querySelector('.material-detail-grid');if(!old)return;
  const parent=old.parentElement;
  const lead=parent.querySelector('.lead');
  if(lead)lead.textContent='Choose a board, length, grade, treatment and number of pieces. Everything is shown below. Project measurements and material takeoffs belong under Projects.';
- const heading=element('h2',isWood?'Wood Catalog':'Lumber Catalog');
+ const heading=element('h2','Wood & Lumber Catalog');
  const catalog=element('section',undefined,'lumber-selector');
  const menu=element('nav',undefined,'wood-jump-links');
- menu.setAttribute('aria-label',isWood?'Wood sections':'Lumber sections');
- const descriptions=element('p','Shop materials directly—no generic calculator. We offer standard and premium grades where appropriate instead of a confusing middle grade.','calc-note');
+ menu.setAttribute('aria-label','Wood and lumber sections');
+ const descriptions=element('p','Find anything made from wood in one place: lumber, boards, deck planks, plywood, OSB, wall panels, trim and shims. Select the size, type and quantity—no generic calculator.','calc-note');
  catalog.append(descriptions,menu);
  const references=new Map();
  const updateRows=[];
@@ -91,7 +96,7 @@ function boot(){
   const kind=select(group.kinds,'Treatment or material for '+size);
   const grade=group.grades?select(group.grades,'Grade for '+size):null;
   const qty=element('input');qty.type='number';qty.min='1';qty.max='999';qty.step='1';qty.inputMode='numeric';qty.value='1';
-  qty.setAttribute('aria-label','Pieces for '+size);
+  qty.setAttribute('aria-label',(group.unit==='sheets'?'Sheets':group.unit==='packs'?'Packs':'Pieces')+' for '+size);
   const price=element('div',undefined,'wood-price');
   const amount=element('strong');
   const note=element('small');
@@ -99,7 +104,7 @@ function boot(){
   const button=element('button','Add to list','btn primary');button.type='button';
   const status=element('span',undefined,'wood-status');status.setAttribute('role','status');
   const currentId=()=>itemId(group.name,size,length.value,kind.value,grade?.value||'');
-  const currentName=()=>group.name+': '+size+' × '+length.value+(group.name==='Plywood & OSB'?' ft sheet':' ft')+' — '+kind.value+(grade?' — '+grade.value:'');
+  const currentName=()=>group.name+': '+size+(group.unit==='sheets'?' — '+length.value+' ft sheet':group.unit==='packs'?' — '+length.value:' × '+length.value+' ft')+' — '+kind.value+(grade?' — '+grade.value:'');
   const draw=()=>{
    const number=Number(qty.value),unit=getPrice(currentId());
    button.disabled=!validQty(number);
@@ -107,9 +112,9 @@ function boot(){
    note.textContent=unit===null?'Exact grade, size and treatment need pricing':currency(unit)+' each · planning reference';
    status.textContent='';
   };
-  row.append(field(group.name==='Plywood & OSB'?'Sheet size':'Length (ft)',length),field('Type / treatment',kind));
+  row.append(field(group.unit==='sheets'?'Sheet size':group.unit==='packs'?'Packaging':'Length (ft)',length),field('Type / treatment',kind));
   if(grade)row.append(field('Grade',grade));
-  row.append(field('Pieces',qty),price,button,status);
+  row.append(field(group.unit==='sheets'?'Sheets':group.unit==='packs'?'Packs':'Pieces',qty),price,button,status);
   for(const input of [length,kind,grade,qty].filter(Boolean)){
    input.addEventListener('change',draw);input.addEventListener('input',draw);
   }
@@ -118,7 +123,7 @@ function boot(){
    const id=currentId(),rows=read(),existing=rows.find(r=>r.id===id);
    if(existing)existing.qty=Math.min(999,existing.qty+n);
    else rows.push({id,name:currentName(),qty:n});
-   if(write(rows)){drawList();status.textContent='Added '+n+' piece(s) to your materials list.';}
+   if(write(rows)){drawList();status.textContent='Added '+n+' '+(group.unit==='sheets'?'sheet(s)':group.unit==='packs'?'pack(s)':'piece(s)')+' to your materials list.';}
    else status.textContent='Could not save in this browser.';
   });
   updateRows.push(draw);draw();
