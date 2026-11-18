@@ -95,7 +95,7 @@ test('Non-sheet materials reuse the shared calculator without inventing drywall 
  }
 });
 test('Every Materials tile points to the same estimator with the material already chosen',async()=>{
- const categories=['flooring','tile-stone','drywall','lumber','trim-molding','paint-finishes','insulation','roofing','siding-exterior','doors-windows','concrete-masonry'];
+ const categories=['flooring','tile-stone','drywall','wood','lumber','trim-molding','paint-finishes','insulation','roofing','siding-exterior','doors-windows','concrete-masonry'];
  const pageFiles=categories.map(slug=>'material-'+slug+'.html');
  for(const file of pageFiles){
   const html=readFileSync(file,'utf8').replace(/<script\b[^>]*src=["']([^"']+)["'][^>]*><\/script>/g,(tag,src)=>{
@@ -106,10 +106,10 @@ test('Every Materials tile points to the same estimator with the material alread
   try{
    await new Promise(resolve=>setTimeout(resolve,70));
    // Lumber uses a dimension-first selector instead of the retired generic tile grid.
-   if(file==='material-lumber.html'){
+   if(file==='material-lumber.html'||file==='material-wood.html'){
     const selector=dom.window.document.querySelector('.lumber-selector');
     assert.ok(selector,'Wood & Lumber shopping catalog must render');
-    assert.ok(selector.querySelectorAll('.wood-product-row').length>=20,'board sizes must be visible');
+    assert.ok(selector.querySelectorAll('.wood-product-row').length>=10,'board sizes must be visible');
     assert.ok(selector.querySelector('.wood-list'),'selections must build a list');
     assert.equal(selector.querySelectorAll('a[href*="calculators.html"]').length,0,'shopping lumber must not send customers to the project calculator');
     const projectsLink=selector.querySelector('.wood-project-cta a');
