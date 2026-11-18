@@ -39,7 +39,7 @@ test('wood and decking reference prices apply once to exact size, length and tre
  try{
   await settled();
   const doc=dom.window.document;
-  const size=field(doc,'Board dimensions'),length=field(doc,'Length');
+  const size=field(doc,'Dimensions'),length=field(doc,'Length');
   const treatment=field(doc,'Type / treatment'),qty=field(doc,'Number of pieces');
   assert.equal(size.value,'2×4');
   assert.equal(length.value,'8');
@@ -47,11 +47,11 @@ test('wood and decking reference prices apply once to exact size, length and tre
   assert.match(doc.querySelector('.lumber-output').textContent,/\$5\.60/);
   set(dom,qty,'3');
   assert.match(doc.querySelector('.lumber-output').textContent,/\$16\.80/);
-  const deck=[...doc.querySelectorAll('.lumber-categories button')].find(x=>x.textContent==='Deck surface boards');
+  const deck=[...doc.querySelectorAll('.lumber-categories button')].find(x=>x.textContent==='5/4×6');
   deck.click();
   assert.equal(size.value,'5/4×6');
-  assert.equal(length.value,'12');
-  assert.equal(treatment.value,'Pressure-treated (rating unverified)');
+  set(dom,length,'12');
+  set(dom,treatment,'Pressure-treated (rating unverified)');
   assert.match(doc.querySelector('.lumber-output').textContent,/\$22\.28/);
   assert.match(doc.querySelector('.lumber-output').textContent,/\$66\.84/);
   set(dom,treatment,'Pressure-treated ground-contact');
@@ -73,4 +73,16 @@ test('wood and decking reference prices apply once to exact size, length and tre
   assert.match(doc.querySelector('.wood-total').textContent,/1 item type\(s\) still need a quote/);
   assert.doesNotMatch(doc.querySelector('.lumber-selector').textContent,/Pay with Square|Proceed to checkout/);
  }finally{dom.window.close();}
+});
+
+test('lumber selection is size-first, with no use categories or photos',async()=>{
+ const dom=openLumber();try{
+ const doc=dom.window.document;
+ const choices=[...doc.querySelectorAll('.lumber-categories button')].map(x=>x.textContent);
+ for(const value of ['2×4','2×6','2×8','4×4','5/4×6','3/4-in ACX plywood'])assert.ok(choices.includes(value),'Missing size '+value);
+ assert.ok(!choices.includes('Framing lumber'));
+ assert.ok(!choices.includes('Deck surface boards'));
+ assert.ok(!choices.includes('Deck joists & framing'));
+ assert.equal(doc.querySelectorAll('.lumber-selector img').length,0);
+ }finally{dom.window.close()}
 });
