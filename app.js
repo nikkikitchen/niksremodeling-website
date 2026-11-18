@@ -316,10 +316,9 @@ function shopGuide(page){
 }
 
 function materialWoodMenu(){
- return '<details class="material-wood-menu"><summary><strong>Wood &amp; Lumber</strong><small>Tap to shop lumber, boards, sheet goods and trim</small></summary><div class="material-wood-subcategories">'+
-  '<a href="/material-lumber.html"><strong>Lumber</strong><small>Framing, posts, decking, boards, panels, trim and shims</small></a>'+
-  '<a href="/material-lumber.html"><strong>Wood</strong><small>Same complete catalog: boards, plywood, OSB, planks, molding and shims</small></a>'+
-  '<a href="/material-lumber.html#wood-wood-trim-molding"><strong>Trim &amp; Molding</strong><small>Jump straight to the trim section of the same catalog</small></a></div></details>';
+ return '<div class="material-wood-subcategories" aria-label="Wood and lumber shopping categories">'+
+  '<a href="/material-lumber.html"><strong>Lumber</strong><small>Choose board size, length, treatment and quantity</small></a>'+
+  '<a href="/material-lumber.html#wood-wood-trim-molding"><strong>Wood &amp; Trim</strong><small>Shop molding, trim and other finish wood</small></a></div>';
 }
 function renderCategory(page){
  const p=PAGES[page],products=PRODUCTS[page]||fallbackProducts(page),imgs=PRODUCT_IMAGES[page]||PRODUCT_IMAGES.installation;
