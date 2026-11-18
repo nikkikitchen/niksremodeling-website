@@ -101,6 +101,8 @@ test('every material detail page shows a unique picture per material option',()=
  const fallbacks=JSON.parse(jsonBetween('const materialChoicePhotos=','const MATERIAL_ITEM_PICTURES=').replace(/'/g,'"'));
  const additional={'tile-stone':['Wall Tile','Decorative Stone Slabs','Stacked Stone Veneer'],'siding-exterior':['Exterior-Grade Shiplap'],'trim-molding':['Interior Shiplap'],'lumber':['Shiplap Boards']};
  for(const [slug,category] of Object.entries(pages)){
+  // Wood and Lumber use intentionally picture-free board/sheet shopping lists.
+  if(slug==='wood'||slug==='lumber')continue;
   const pictures=[...category.items,...(additional[slug]||[])].map((item,i)=>options[slug]?.[item]||fallbacks[slug]?.[i%fallbacks[slug].length]);
   assert.ok(pictures.every(Boolean),'Every '+slug+' option needs a photo');
   assert.equal(new Set(pictures).size,pictures.length,'Repeated material photos in '+slug);
