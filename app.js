@@ -1380,6 +1380,47 @@ function renderMaterialDetail(){
  document.body.innerHTML=header()+'<main><section class="category-hero" style="--hero-image:url(https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1800&q=85)"><div class="wrap"><div class="eyebrow">Materials</div><h1>'+category.title+'</h1><p>Calculate the quantities you need. Exact product specifications, availability and delivered prices are verified before purchase.</p><a class="btn light" href="/materials.html">← All Materials</a></div></section><section class="section"><div class="wrap"><h2>Shop '+category.title+'</h2><p class="lead">Choose a type below. Specific products will appear here as supplier listings are approved.</p><div class="material-detail-grid">'+cards+'</div><h2>Available Products</h2><div class="products store-card-grid"><p class="empty">Checking available products…</p></div><div class="material-detail-help"><h3>Need a specific product?</h3><p>Tell us the material, size, color and quantity you need. We can check current options.</p><a class="btn primary" href="sms:6782314377">Text Your Material List →</a></div></div></section></main>'+footer();
  updateCartCount();bindServicePickers();loadRealCatalog('materials',slug);
 }
+
+// Beyond the Roof is an optional, independent corner of the website.
+// Keep the five core shopping/checkout destinations intact and add one compact menu.
+function addBeyondRoofNavigation(){
+ const menus=[
+  {selector:'nav.nav .wrap.simple-nav',id:'beyond-roof-menu',mobile:false},
+  {selector:'nav.nav .mobile-top-nav',id:'mobile-beyond-roof-menu',mobile:true}
+ ];
+ for(const item of menus){
+  const nav=document.querySelector(item.selector);
+  if(!nav||nav.querySelector('.beyond-roof-menu'))continue;
+  const menu=document.createElement('div');
+  menu.className='nav-menu beyond-roof-menu';
+  const title=item.mobile?'<span class="btr-mobile-title">Beyond<br>the Roof</span>':'Beyond the Roof';
+  menu.innerHTML='<button class="nav-toggle" type="button" aria-label="Beyond the Roof" aria-expanded="false" aria-controls="'+item.id+'">'+title+' <span aria-hidden="true">▾</span></button>'+
+   '<div class="nav-dropdown" id="'+item.id+'">'+
+   '<a href="/beyond-the-roof.html">Explore Beyond the Roof</a>'+
+   '<a href="/beyond-the-roof.html#about">About Nik\'s</a>'+
+   '<a href="/beyond-the-roof.html#life">Life Beyond the Work</a>'+
+   '<a href="/beyond-the-roof.html#community">Community Circle</a></div>';
+  const cart=nav.querySelector(':scope > .review-link');
+  if(cart)cart.before(menu);else nav.append(menu);
+ }
+ const companyFooter=document.querySelector('.footer .footgrid > div:first-child');
+ if(companyFooter&&!companyFooter.querySelector('.btr-footer-link')){
+  const a=document.createElement('a');a.href='/beyond-the-roof.html';a.className='btr-footer-link';a.textContent='Beyond the Roof';
+  companyFooter.append(a);
+ }
+ if(!document.getElementById('btr-nav-style')){
+  const style=document.createElement('style');style.id='btr-nav-style';
+  style.textContent='nav.nav>.wrap.simple-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}'+
+   'nav.nav .wrap.simple-nav>.beyond-roof-menu>.nav-toggle{font-size:clamp(11px,1.1vw,14px)!important;line-height:1.2!important;white-space:normal!important}'+
+   '.btr-footer-link{display:block;margin-top:14px;font-weight:700}'+
+   '@media(max-width:820px){nav.nav .mobile-top-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}'+
+   'nav.nav .mobile-top-nav>.beyond-roof-menu>.nav-toggle{font-size:clamp(9px,2.6vw,11px)!important;line-height:1.1!important;white-space:normal!important;overflow:visible!important;padding:5px 0!important}'+
+   'nav.nav .mobile-top-nav .btr-mobile-title{display:inline-block;white-space:normal;text-align:center}'+
+   'nav.nav .mobile-top-nav>.beyond-roof-menu .nav-dropdown a{font-size:14px!important}}';
+  document.head.append(style);
+ }
+}
+
 function initNavMenus(){
  const cabinetMenu=document.querySelector('.nav-main[href="/cabinets.html"]')?.closest('.nav-menu')?.querySelector('.nav-dropdown');
  if(cabinetMenu&&!cabinetMenu.dataset.workOptions){cabinetMenu.dataset.workOptions='1';const heading=document.createElement('span');heading.className='nav-group-label';heading.textContent='Cabinet Work';cabinetMenu.append(heading);CABINET_WORK_OPTIONS.forEach(option=>{const link=document.createElement('a');link.textContent=option.label;link.href='/calculators.html?material=refinish&cabinetOptions='+option.key;cabinetMenu.append(link)});}
@@ -1423,7 +1464,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const menu=toggle.closest('.nav-menu');
  if(menu){menu.classList.add('open');toggle.setAttribute('aria-expanded','true');toggle.scrollIntoView({block:'nearest'});}
 });
-document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();initNavMenus();
+document.addEventListener('DOMContentLoaded',()=>{const page=document.body.dataset.page;if(PAGES[page])renderCategory(page);else if(page==='calculators')renderCalculators();else if(page==='cart')renderCart();else if(page==='project')renderProject();else if(page==='material-detail')renderMaterialDetail();else updateCartCount();renderCartReminder();addBeyondRoofNavigation();initNavMenus();
  if(['materials','material-detail','calculators','material-prices'].includes(page)){
   const script=document.createElement('script');
   script.src='/material-prices.js?v='+encodeURIComponent(retailAssetVersion);
@@ -1450,7 +1491,7 @@ function alphabetizeSiteLists() {
  document.querySelectorAll('.path-grid').forEach(parent=>reorder(parent,[...parent.querySelectorAll(':scope > .path-card')],card=>card.querySelector('.path-number').textContent.trim()));
  // Keep the primary navigation in its intended workflow order (not alphabetical).
  document.querySelectorAll('.nav-dropdown').forEach(menu=>{
-  if(menu.id==='labor-menu'||menu.id==='mobile-labor-menu')return;
+  if(menu.id==='labor-menu'||menu.id==='mobile-labor-menu'||menu.id.endsWith('beyond-roof-menu'))return;
   let group=[];const flush=()=>{reorder(menu,group);group=[]};
   [...menu.children].forEach(el=>{if(el.matches('a'))group.push(el);else flush()});flush();
  });
