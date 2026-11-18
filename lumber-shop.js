@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const groups=[
+const sourceGroups=[
 ['Framing lumber',['2×4','2×6','2×8','2×10','2×12'],['8','10','12','14','16','20'],['Standard framing','Pressure-treated (rating unverified)','Pressure-treated above-ground','Pressure-treated ground-contact']],
 ['Posts & timbers',['4×4','4×6','6×6'],['8','10','12','16'],['Pressure-treated (rating unverified)','Pressure-treated above-ground','Pressure-treated ground-contact','Untreated']],
 ['Deck surface boards',['5/4×6','2×6','2×8'],['8','10','12','14','16','20'],['Pressure-treated (rating unverified)','Pressure-treated above-ground','Pressure-treated ground-contact','Cedar','Composite']],
@@ -7,6 +7,17 @@ const groups=[
 ['Finish boards',['1×2','1×4','1×6','1×8','1×10','1×12'],['6','8','10','12','16'],['Select pine','Common pine','Primed']],
 ['Sheet goods',['15/32-in OSB','1/2-in plywood','3/4-in ACX plywood','3/4-in treated plywood'],['4×8','4×10'],['Standard','Exterior / treated']]
 ];
+const sizeMap=new Map();
+for(const [,sizes,lengths,treatments] of sourceGroups){
+ for(const dimension of sizes){
+  if(!sizeMap.has(dimension))sizeMap.set(dimension,[dimension,[],[]]);
+  const entry=sizeMap.get(dimension);
+  for(const value of lengths)if(!entry[1].includes(value))entry[1].push(value);
+  for(const value of treatments)if(!entry[2].includes(value))entry[2].push(value);
+ }
+}
+// Customers choose the material's dimensions, never its presumed construction use.
+const groups=[...sizeMap.values()].sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})).map(([dimension,lengths,treatments])=>[dimension,[dimension],lengths,treatments]);
 const reference={
 'Framing lumber|2×4|8|Standard framing':'2x4x8 Stud Lumber (Standard)',
 'Posts & timbers|4×4|8|Pressure-treated (rating unverified)':'Pressure-Treated 4x4x8 Lumber',
@@ -22,24 +33,25 @@ function boot(){
  const old=document.querySelector('.material-detail-grid');if(!old)return;
  const wrap=old.parentElement,lead=wrap.querySelector('.lead');
  if(lead)lead.textContent='Choose any wood products, set a separate quantity for each, and build one combined list. Project measurements are optional.';
- const heading=node('h2','Wood & Lumber — Build Your Material List');
+ const heading=node('h2','Wood & Lumber');
  const panel=node('section',undefined,'lumber-selector');
  const categories=node('div',undefined,'lumber-categories');
+ categories.setAttribute('aria-label','Choose lumber dimensions');
  const fields=node('div',undefined,'lumber-fields');
  function select(label){
   const l=node('label',label,'lumber-field'),s=node('select');l.append(s);fields.append(l);return s;
  }
- const size=select('Board dimensions'),length=select('Length'),treatment=select('Type / treatment');
+ const size=select('Dimensions'),length=select('Length'),treatment=select('Type / treatment');
  const qlabel=node('label','Number of pieces','lumber-field'),qty=node('input');
  qty.type='number';qty.min='1';qty.max='999';qty.step='1';qty.value='1';qlabel.append(qty);fields.append(qlabel);
  const output=node('div',undefined,'lumber-output'),description=node('h3'),cost=node('p'),notice=node('p');
- const save=node('button','Add to planning list','btn primary');save.type='button';
+ const save=node('button','Add to wood list','btn primary');save.type='button';
  const estimator=node('a','Estimate project materials','btn outline');estimator.href='/calculators.html?mode=materials&material=lumber';
  const actions=node('div',undefined,'lumber-actions');actions.append(save,estimator);
  output.append(description,cost,notice,actions);
  const listSection=node('section',undefined,'wood-list');
  const listHeading=node('h3','Your Wood & Lumber List');
- const listIntro=node('p','Add different boards one at a time. Each selection keeps its own size, treatment and quantity.');
+ const listIntro=node('p','Choose a size above, then a length, treatment and quantity. Add as many different sizes as you need.');
  const listRows=node('div');listRows.setAttribute('aria-live','polite');
  const totals=node('p');totals.className='wood-total';
  const clear=node('button','Clear wood list','btn outline');clear.type='button';
@@ -51,23 +63,22 @@ function boot(){
  let active=groups[0],items=[];
  const params=new URLSearchParams(location.search);
  const setOptions=(s,options)=>{s.replaceChildren();for(const v of options){const o=node('option',v);o.value=v;s.append(o);}};
- const identifier=()=>[active[0],size.value,length.value,treatment.value].join('|');
- const currentItem=()=>items.find(x=>x.name===reference[identifier()]);
+ const identifier=()=>[size.value,length.value,treatment.value].join('|');
+ const currentItem=()=>{const match=Object.entries(reference).find(([key])=>key.endsWith('|'+identifier()));return items.find(x=>x.name===match?.[1]);};
  function draw(){
-  description.textContent=size.value+' × '+length.value+(active[0]==='Sheet goods'?' ft sheet':' ft')+' — '+treatment.value;
-  const calcType=active[0]==='Framing lumber'||active[0]==='Deck joists & framing'?'lumber':'custom';
-  const calcProduct=active[0]==='Deck surface boards'?'Decking Boards':active[0]==='Sheet goods'?(size.value.includes('OSB')?'OSB & Sheathing':'Plywood'):active[0]==='Finish boards'?'Specialty Wood':active[0]==='Posts & timbers'?'Pressure Treated Lumber':'Framing Lumber';
+  description.textContent=size.value+' × '+length.value+(size.value.includes('plywood')||size.value.includes('OSB')?' sheet':' ft')+' — '+treatment.value;
+  const calcType='lumber';
+  const calcProduct='Wood & Lumber — '+size.value;
   estimator.href='/calculators.html?'+new URLSearchParams({mode:'materials',material:calcType,product:'Lumber — '+calcProduct}).toString();
   const item=currentItem(),n=Number(qty.value);
   cost.textContent=item?'Reference: '+currency(Number(item.price))+' each'+(Number.isSafeInteger(n)&&n>0?' · '+currency(Number(item.price)*n)+' subtotal':''):'Exact variant: quote required';
   notice.textContent=item?'Reference price only; not an approved checkout SKU.':'Choose this size to request a quote; no verified price or stock for this exact combination.';
-  save.textContent=item?'Add to planning list':'Save quote request';
+  save.textContent=item?'Add to wood list':'Save quote request';
  }
  function pick(group){
   active=group;categories.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.textContent===group[0])));
   setOptions(size,group[1]);setOptions(length,group[2]);setOptions(treatment,group[3]);
-  if(group[0]==='Deck surface boards'){size.value='5/4×6';length.value='12';treatment.value='Pressure-treated (rating unverified)';}
-  if(group[0]==='Deck joists & framing'){size.value='2×8';length.value='12';treatment.value='Pressure-treated ground-contact';}
+  if(group[0]==='2×4'){length.value='8';treatment.value='Standard framing';}
   draw();
  }
  for(const group of groups){const b=node('button',group[0]);b.type='button';b.addEventListener('click',()=>pick(group));categories.append(b);}
@@ -105,7 +116,7 @@ function boot(){
   else notice.textContent='Could not save your list in this browser.';
  });
  drawWood();
- pick(groups.find(g=>g[0]==='Deck surface boards' && /deck/i.test(params.get('type')||''))||groups[0]);
+ pick(groups.find(g=>g[0]===(params.get('size')||'2×4'))||groups.find(g=>g[0]==='2×4')||groups[0]);
  if(typeof fetch==='function')fetch('/material-price-reference.json').then(r=>{if(!r.ok)throw Error('prices unavailable');return r.json();}).then(j=>{if(j.markupAlreadyIncluded!==true)throw Error('markup status');items=j.items||[];draw();}).catch(()=>{notice.textContent='Reference prices unavailable; all selections are quote-only.';});
  else notice.textContent='Reference prices unavailable; all selections are quote-only.';
 }
