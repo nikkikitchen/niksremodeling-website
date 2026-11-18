@@ -101,6 +101,9 @@
     }).catch(error=>{count.textContent='Price guide unavailable. Please try again later.';});
     renderPlan();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);
-  else mount();
+  // This file is deferred, while app.js builds <main> on DOMContentLoaded.
+  // In 'interactive' state the app has not rendered the mount point yet.
+  // Register behind app.js rather than silently skipping the price guide.
+  if(document.readyState==='complete')mount();
+  else document.addEventListener('DOMContentLoaded',mount,{once:true});
 })();
