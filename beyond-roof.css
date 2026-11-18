@@ -1,0 +1,21 @@
+/* Beyond the Roof — human stories and independent connections */
+.btr-hero{background:linear-gradient(135deg,#073c70,#0b5aa6);color:white;padding:clamp(34px,6vw,65px) 0}
+.btr-hero h1{color:white;font-size:clamp(2.1rem,5.1vw,3.8rem);line-height:1.1;margin:8px 0 14px}
+.btr-hero p{color:#f0f6fa;max-width:790px;font-size:clamp(1.08rem,2.1vw,1.25rem);line-height:1.6;margin:0}
+.btr-wrap{max-width:1100px;margin:0 auto;padding:0 clamp(18px,4vw,32px)}
+.btr-main{padding:34px 0 70px;background:#f6f8fa;min-height:35vh}
+.btr-intro{font-size:clamp(1.07rem,2vw,1.2rem);line-height:1.75;color:#364451;max-width:850px}
+.btr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:24px 0}
+.btr-card{display:flex;flex-direction:column;gap:13px;background:#fff;padding:clamp(22px,3.6vw,32px);border:1px solid #dfe5ea;border-radius:14px;box-shadow:0 6px 20px rgba(8,31,48,.05);min-width:0}
+.btr-card h2,.btr-card h3{color:#073c70;margin:0;font-size:clamp(1.4rem,3vw,1.85rem)}
+.btr-card p{color:#354453;line-height:1.7;font-size:1.07rem;margin:0}
+.btr-section{max-width:940px;margin:20px auto;padding:clamp(22px,4vw,36px);background:#fff;border:1px solid #dfe5ea;border-radius:14px}
+.btr-section h2{color:#073c70;font-size:1.65rem;margin:0 0 12px}
+.btr-section p{font-size:1.1rem;line-height:1.75;color:#354453}
+.btr-quote{font-size:clamp(1.55rem,3.3vw,2rem)!important;font-weight:750;color:#b3262d!important}
+.btr-link{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 18px;border-radius:8px;background:#073c70;color:white!important;font-size:1.05rem;font-weight:700;text-decoration:none;text-align:center}
+.btr-link:hover,.btr-link:focus-visible{background:#0b5aa6;outline:2px solid #b3262d;outline-offset:2px}
+.btr-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.btr-note{font-size:.98rem!important;color:#5a6875!important}
+.btr-back{display:inline-block;margin-bottom:20px;font-size:1.06rem;font-weight:700}
+@media(max-width:700px){.btr-grid{grid-template-columns:1fr;gap:14px}.btr-main{padding:18px 0 56px}.btr-card,.btr-section{padding:22px}.btr-links{flex-direction:column}.btr-links>.btr-link{width:100%}}

@@ -1397,9 +1397,9 @@ function addBeyondRoofNavigation(){
   menu.innerHTML='<button class="nav-toggle" type="button" aria-label="Beyond the Roof" aria-expanded="false" aria-controls="'+item.id+'">'+title+' <span aria-hidden="true">▾</span></button>'+
    '<div class="nav-dropdown" id="'+item.id+'">'+
    '<a href="/beyond-the-roof.html">Explore Beyond the Roof</a>'+
-   '<a href="/beyond-the-roof.html#about">About Nik\'s</a>'+
-   '<a href="/beyond-the-roof.html#life">Life Beyond the Work</a>'+
-   '<a href="/beyond-the-roof.html#community">Community Circle</a></div>';
+   '<a href="/about-niks.html">About Nik\'s</a>'+
+   '<a href="/life-beyond-work.html">Life Beyond the Work</a>'+
+   '<a href="/community-circle.html">Community Circle</a><a href="/marketing-comics.html">Marketing &amp; Comics</a></div>';
   const cart=nav.querySelector(':scope > .review-link');
   if(cart)cart.before(menu);else nav.append(menu);
  }
@@ -1413,10 +1413,11 @@ function addBeyondRoofNavigation(){
   style.textContent='nav.nav>.wrap.simple-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}'+
    'nav.nav .wrap.simple-nav>.beyond-roof-menu>.nav-toggle{font-size:clamp(11px,1.1vw,14px)!important;line-height:1.2!important;white-space:normal!important}'+
    '.btr-footer-link{display:block;margin-top:14px;font-weight:700}'+
-   '@media(max-width:820px){nav.nav .mobile-top-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}'+
-   'nav.nav .mobile-top-nav>.beyond-roof-menu>.nav-toggle{font-size:clamp(9px,2.6vw,11px)!important;line-height:1.1!important;white-space:normal!important;overflow:visible!important;padding:5px 0!important}'+
+   '@media(max-width:820px){nav.nav .mobile-top-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:auto auto!important}'+
+   'nav.nav .mobile-top-nav>.beyond-roof-menu{grid-column:1/-1!important;grid-row:2!important}'+
+   'nav.nav .mobile-top-nav>.beyond-roof-menu>.nav-toggle{font-size:13px!important;line-height:1.2!important;white-space:normal!important;min-height:36px!important;max-height:36px!important;height:36px!important;background:#edf3f8!important;border-top:1px solid #dfe5ea!important}'+
    'nav.nav .mobile-top-nav .btr-mobile-title{display:inline-block;white-space:normal;text-align:center}'+
-   'nav.nav .mobile-top-nav>.beyond-roof-menu .nav-dropdown a{font-size:14px!important}}';
+   'nav.nav .mobile-top-nav>.beyond-roof-menu .nav-dropdown a{font-size:16px!important;min-height:44px!important}}';
   document.head.append(style);
  }
 }
