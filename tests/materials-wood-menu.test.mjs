@@ -8,8 +8,9 @@ test('Materials groups lumber, wood boards and trim beneath one accessible dropd
  assert.match(app,/function materialWoodMenu\(\)/);
  assert.match(app,/<details class="material-wood-menu">/);
  assert.match(app,/href="\/material-lumber\.html"/);
- assert.match(app,/href="\/material-wood\.html"/);
- assert.match(app,/href="\/material-trim-molding\.html"/);
+ assert.match(app,/<a href="\/material-lumber\.html"><strong>Wood<\/strong>/);
+ assert.match(app,/<a href="\/material-lumber\.html"><strong>Lumber<\/strong>/);
+ assert.match(app,/href="\/material-lumber\.html#wood-wood-trim-molding"/);
  assert.match(app,/p\.tabs\.filter\(x=>page!=='materials'\|\|!\['Wood','Lumber','Trim & Molding'\]\.includes\(x\)\)/);
  assert.match(materials,/material-wood-subcategories/);
  assert.match(materials,/app\.js\?v=wood-menu-20261118d/);
