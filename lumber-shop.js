@@ -18,7 +18,7 @@ const reference={
 const node=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;};
 const currency=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n);
 function boot(){
- if(!location.pathname.endsWith('/material-lumber.html'))return;
+ if(!/^\/material-lumber(?:\.html)?\/?$/.test(location.pathname))return;
  const old=document.querySelector('.material-detail-grid');if(!old)return;
  const wrap=old.parentElement,lead=wrap.querySelector('.lead');
  if(lead)lead.textContent='Choose any wood products, set a separate quantity for each, and build one combined list. Project measurements are optional.';
