@@ -27,7 +27,7 @@ function set(dom,node,value){
 }
 
 test('material lumber includes current wood catalog and publishing config',()=>{
- assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js\?v=20261118b"/);
+ assert.match(readFileSync('material-lumber.html','utf8'),/src="\/lumber-shop\.js\?v=20261118c"/);
  assert.match(readFileSync('scripts/build.mjs','utf8'),/'lumber-shop\.js'/);
 });
 test('all lumber categories, board sizes and only two grades are visible',async()=>{
@@ -36,7 +36,7 @@ test('all lumber categories, board sizes and only two grades are visible',async(
   await settle();
   const doc=dom.window.document;
   const groups=[...doc.querySelectorAll('.wood-family')];
-  assert.equal(groups.length,7);
+  assert.equal(groups.length,5);
   assert.ok(doc.querySelector('.lumber-selector'));
   assert.equal(doc.querySelectorAll('.lumber-categories button').length,0,'retired one-active-category selector');
   for(const size of ['2×4','2×6','2×8','2×10','2×12']){
@@ -49,10 +49,25 @@ test('all lumber categories, board sizes and only two grades are visible',async(
   row(doc,'Posts & timbers','4×4');
   row(doc,'Deck surface boards','5/4×6');
   row(doc,'Deck joists & framing','2×12');
-  row(doc,'Interior & finish boards','1×4');
-  row(doc,'Plywood & OSB','3/4-in ACX plywood');
+  assert.equal(doc.querySelector('[data-group="Interior & finish boards"]'),null);
+  assert.equal(doc.querySelector('[data-group="Plywood & OSB"]'),null);
   assert.equal(doc.querySelectorAll('.wood-family img').length,0,'lumber choices should not require photos');
   assert.doesNotMatch(doc.querySelector('.lumber-selector').textContent,/Calculate Materials|Stud spacing/);
+ }finally{dom.window.close();}
+});
+test('Wood separately lists finish boards and sheet goods',async()=>{
+ const dom=new JSDOM('<!doctype html><main><section><p class="lead"></p><div class="material-detail-grid"></div></section></main>',{url:'https://niksremodeling.com/material-wood.html',runScripts:'dangerously'});
+ dom.window.fetch=async()=>({ok:true,json:async()=>reference});
+ dom.window.eval(script);
+ dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+ try{
+  await settle();
+  const doc=dom.window.document;
+  assert.equal(doc.querySelectorAll('.wood-family').length,2);
+  row(doc,'Interior & finish boards','1×4');
+  row(doc,'Plywood & OSB','3/4-in ACX plywood');
+  assert.equal(doc.querySelector('[data-group="Interior framing lumber"]'),null);
+  assert.ok(doc.querySelector('.wood-list'));
  }finally{dom.window.close();}
 });
 test('quantity 24 uses exact 2x4x8 reference, other grades and lengths require quotes',async()=>{
