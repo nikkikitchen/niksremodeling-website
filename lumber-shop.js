@@ -55,6 +55,9 @@ function boot(){
  const currentItem=()=>items.find(x=>x.name===reference[identifier()]);
  function draw(){
   description.textContent=size.value+' × '+length.value+(active[0]==='Sheet goods'?' ft sheet':' ft')+' — '+treatment.value;
+  const calcType=active[0]==='Framing lumber'||active[0]==='Deck joists & framing'?'lumber':'custom';
+  const calcProduct=active[0]==='Deck surface boards'?'Decking Boards':active[0]==='Sheet goods'?(size.value.includes('OSB')?'OSB & Sheathing':'Plywood'):active[0]==='Finish boards'?'Specialty Wood':active[0]==='Posts & timbers'?'Pressure Treated Lumber':'Framing Lumber';
+  estimator.href='/calculators.html?'+new URLSearchParams({mode:'materials',material:calcType,product:'Lumber — '+calcProduct}).toString();
   const item=currentItem(),n=Number(qty.value);
   cost.textContent=item?'Reference: '+currency(Number(item.price))+' each'+(Number.isSafeInteger(n)&&n>0?' · '+currency(Number(item.price)*n)+' subtotal':''):'Exact variant: quote required';
   notice.textContent=item?'Reference price only; not an approved checkout SKU.':'Choose this size to request a quote; no verified price or stock for this exact combination.';
