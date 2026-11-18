@@ -318,7 +318,7 @@ function shopGuide(page){
 function materialWoodMenu(){
  return '<details class="material-wood-menu"><summary><strong>Wood &amp; Lumber</strong><small>Tap to shop lumber, boards, sheet goods and trim</small></summary><div class="material-wood-subcategories">'+
   '<a href="/material-lumber.html"><strong>Lumber</strong><small>2×4, 2×6, 2×8, 4×4, decking boards and posts</small></a>'+
-  '<a href="/material-wood.html"><strong>Wood Boards &amp; Sheet Goods</strong><small>1× boards, plywood and OSB panels</small></a>'+
+  '<a href="/material-lumber.html"><strong>Wood</strong><small>Boards, framing, decking, plywood and OSB — same complete catalog</small></a>'+
   '<a href="/material-trim-molding.html"><strong>Trim &amp; Molding</strong><small>Baseboard, casing, crown, chair rail and shoe molding</small></a></div></details>';
 }
 function renderCategory(page){
