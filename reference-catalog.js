@@ -32,6 +32,8 @@
     wrap.append(heading,intro);
     const controls=el('div','nr-reference-controls');
     const search=el('input');search.type='search';search.placeholder='Search type, size, thickness, length, or description';search.setAttribute('aria-label','Search reference products');
+    // Direct Supplies shortcuts show approved planning items without inventing stock.
+    if(supplies){const selected=new URLSearchParams(location.search).get('supply');if(['tile','drywall','adhesive','paint','caulk','tape','safety'].includes(selected))search.value=selected;}
     const family=el('select');family.setAttribute('aria-label','Filter by material category');
     const sort=el('select');sort.setAttribute('aria-label','Sort price guide');
     for(const [value,label] of [['name','Name A–Z'],['price-up','Price: low to high'],['price-down','Price: high to low']]){const o=el('option',null,label);o.value=value;sort.append(o);}
