@@ -94,7 +94,7 @@ test('Non-sheet materials reuse the shared calculator without inventing drywall 
   }finally{dom.window.close()}
  }
 });
-test('Every Materials tile points to the same estimator with the material already chosen',async()=>{
+test('Every Materials category offers the one-item shopping selector, not the old calculator tile grid',async()=>{
  const categories=['flooring','tile-stone','drywall','wood','lumber','trim-molding','paint-finishes','insulation','roofing','siding-exterior','doors-windows','concrete-masonry'];
  const pageFiles=categories.map(slug=>'material-'+slug+'.html');
  for(const file of pageFiles){
@@ -104,30 +104,28 @@ test('Every Materials tile points to the same estimator with the material alread
   });
   const dom=new JSDOM(html,{url:'https://niksremodeling.com/'+file,runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};}});
   try{
-   await new Promise(resolve=>setTimeout(resolve,70));
-   // Lumber uses a dimension-first selector instead of the retired generic tile grid.
-   if(file==='material-lumber.html'||file==='material-wood.html'){
+   const isLumber=file==='material-lumber.html'||file==='material-wood.html';
+   for(let attempt=0;attempt<40;attempt++){
+    if(dom.window.document.querySelector(isLumber?'.lumber-selector':'.nr-material-selector'))break;
+    await new Promise(resolve=>setTimeout(resolve,50));
+   }
+   if(isLumber){
     const selector=dom.window.document.querySelector('.lumber-selector');
-    assert.ok(selector,'Wood & Lumber shopping catalog must render');
-    assert.ok(selector.querySelectorAll('.wood-size-choice').length>=4,'selected category must show large size buttons');
+    assert.ok(selector,file+' must preserve the approved lumber shopping selector');
+    assert.ok(selector.querySelectorAll('.wood-size-choice').length>=4);
     assert.equal(selector.querySelector('.wood-category-select').options.length,12);
-    assert.ok(selector.querySelector('.wood-list'),'selections must build a list');
-    assert.equal(selector.querySelectorAll('a[href*="calculators.html"]').length,0,'shopping lumber must not send customers to the project calculator');
-    const projectsLink=selector.querySelector('.wood-project-cta a');
-    assert.ok(projectsLink,'takeoff should be reached under Projects');
-    assert.equal(new URL(projectsLink.href).pathname,'/');
+    assert.ok(selector.querySelector('.wood-list'));
+    assert.equal(selector.querySelectorAll('a[href*="calculators.html"]').length,0);
     continue;
    }
-   const links=[...dom.window.document.querySelectorAll('.material-option-card .card-actions a[href*="calculators.html"]')];
-   assert.ok(links.length>0,file+' must offer calculator links');
-   for(const link of links){
-    const url=new URL(link.href);
-    assert.equal(url.pathname,'/calculators.html',file);
-    assert.equal(url.searchParams.get('mode'),'materials',file);
-    assert.ok(url.searchParams.get('product'),file);
-    assert.ok(url.searchParams.get('material'),file);
-    assert.equal(link.textContent.trim(),'Calculate Materials',file);
-   }
+   const selector=dom.window.document.querySelector('.nr-material-selector');
+   assert.ok(selector,file+' must render the compact material selector');
+   assert.ok(selector.querySelector('select[aria-label="Choose material item"]'));
+   assert.ok(selector.querySelector('.nr-material-stepper'));
+   assert.ok(selector.querySelector('.nr-material-add'));
+   assert.ok(selector.querySelector('.nr-material-cart-line')||selector.textContent.includes('No materials selected yet'));
+   assert.equal(dom.window.document.querySelectorAll('.material-detail-grid').length,0,file+' must hide the old picture grid');
+   assert.equal(selector.querySelectorAll('a[href*="calculators.html"]').length,0,file+' must not route individual purchases through the project calculator');
   }finally{dom.window.close()}
  }
 });
