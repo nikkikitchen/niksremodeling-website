@@ -285,3 +285,37 @@ test('installation review labels unverified installed amounts as labor portions,
   assert.doesNotMatch(review,/Labor portion\s*·/,'labor-only opt-out does not imply an unverified Nik-supplied installed quote');
  }finally{dom.window.close();}
 });
+
+test('customer-supplied labor-only work never retains Nik consumable reserve, including edits',async()=>{
+ const dom=await openInstallation();
+ try{
+  const w=dom.window,d=w.document;
+  const row=d.getElementById('labor-task-door-hinge-existing');
+  const toggle=row.querySelector('.labor-customer-materials');
+  const button=row.querySelector('button');
+  assert.equal(toggle.checked,false);
+  button.click();
+  let item=w.getCart().find(x=>x.taskId==='door-hinge-existing');
+  assert.equal(item.materialsProvider,'niks');
+  assert.ok(Number.isFinite(item.internalSupplyBudget));
+  const edit=d.querySelector('.labor-review-row button');
+  assert.ok(edit,'selected labor item can be edited');
+  edit.click();
+  toggle.checked=true;
+  toggle.dispatchEvent(new w.Event('change'));
+  button.click();
+  item=w.getCart().find(x=>x.taskId==='door-hinge-existing');
+  assert.equal(item.materialsProvider,'customer');
+  assert.equal(item.internalSupplyBudget,0,'customer-supplied option excludes Nik reserve');
+  assert.equal(item.materialsPricingPending,undefined);
+  const editAgain=d.querySelector('.labor-review-row button');
+  editAgain.click();
+  toggle.checked=false;
+  toggle.dispatchEvent(new w.Event('change'));
+  button.click();
+  item=w.getCart().find(x=>x.taskId==='door-hinge-existing');
+  assert.equal(item.materialsProvider,'niks');
+  assert.equal(item.internalSupplyBudget,0+Number(item.internalSupplyBudget),'reserve remains a finite internal number');
+  assert.equal(item.materialsPricingPending,true);
+ }finally{dom.window.close();}
+});
