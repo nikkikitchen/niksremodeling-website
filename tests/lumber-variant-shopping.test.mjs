@@ -19,14 +19,14 @@ const choose=(doc,selector,v)=>{
  assert.ok(b,selector+' '+v);b.click();
 };
 test('both Wood and Lumber show the same compact catalog, not a long chart',async()=>{
- assert.match(readFileSync('material-lumber.html','utf8'),/lumber-shop\.js\?v=20261118e/);
+ assert.match(readFileSync('material-lumber.html','utf8'),/lumber-shop\.js\?v=20261119a/);
  for(const path of ['/material-lumber.html','/material-wood.html']){
   const dom=load(path);
   try{
    await tick();const d=dom.window.document;
    assert.ok(d.querySelector('.lumber-selector'));
-   assert.equal(d.querySelector('.wood-category-select').options.length,11);
-   assert.equal(d.querySelectorAll('.wood-size-choice').length,5);
+   assert.equal(d.querySelector('.wood-category-select').options.length,12);
+   assert.equal(d.querySelectorAll('.wood-size-choice').length,8);
    assert.equal(d.querySelectorAll('.wood-product-row').length,0);
    assert.equal(d.querySelector('input'),null,'no typing');
    assert.ok(d.querySelector('.wood-list'));
@@ -38,6 +38,8 @@ test('single item picker offers plus/minus and keeps added items in the real sit
  const dom=load('/material-lumber.html',[{name:'Toilet',qty:1,type:'Product',source:'supplier-retail',price:200}]);
  try{
   await tick();const d=dom.window.document;
+  const category=d.querySelector('.wood-category-select');
+  category.value='Interior framing lumber';category.dispatchEvent(new dom.window.Event('change',{bubbles:true}));
   choose(d,'.wood-size-choice','2×4');choose(d,'.wood-length-choice','8');
   d.querySelector('.wood-qty-ten').click();d.querySelector('.wood-qty-plus').click();
   assert.equal(d.querySelector('.wood-qty-value').textContent,'12');
@@ -71,4 +73,43 @@ test('one category at a time, all wood-based families accessible',async()=>{
   addOne.click();assert.equal(data(dom)[0].qty,2);
   d.querySelector('.wood-cart-remove').click();assert.equal(data(dom).length,0);
  }finally{dom.window.close()}
+});
+
+test('deck project combines posts, joists and decking in the same cart without switching categories',async()=>{
+ const dom=load('/material-lumber.html');
+ try{
+  await tick();const d=dom.window.document;
+  assert.equal(d.querySelector('.wood-category-select').value,'Deck project lumber');
+  assert.equal(d.querySelectorAll('.wood-quick-button').length,4);
+  choose(d,'.wood-size-choice','4×4');
+  assert.ok([...d.querySelectorAll('.wood-kind-choice')].some(x=>x.dataset.value==='Pressure-treated ground-contact'));
+  assert.ok(![...d.querySelectorAll('.wood-kind-choice')].some(x=>x.dataset.value==='Cedar'),'do not allow cedar for structural posts');
+  d.querySelector('.wood-qty-plus').click();d.querySelector('.wood-add').click();
+  choose(d,'.wood-size-choice','2×8');
+  d.querySelector('.wood-qty-ten').click();d.querySelector('.wood-add').click();
+  choose(d,'.wood-size-choice','5/4×6');
+  assert.ok([...d.querySelectorAll('.wood-kind-choice')].some(x=>x.dataset.value==='Cedar'));
+  assert.ok(![...d.querySelectorAll('.wood-kind-choice')].some(x=>x.dataset.value==='Untreated'));
+  d.querySelector('.wood-qty-ten').click();d.querySelector('.wood-qty-ten').click();
+  d.querySelector('.wood-qty-plus').click();d.querySelector('.wood-qty-plus').click();d.querySelector('.wood-qty-plus').click();
+  d.querySelector('.wood-add').click();
+  const cart=data(dom);
+  assert.equal(cart.length,3);
+  assert.deepEqual(cart.map(x=>x.qty),[2,11,24]);
+  assert.equal(new Set(cart.map(x=>x.woodKey)).size,3);
+  assert.ok(cart.every(x=>x.price===null&&x.quoteRequired===true),'unverified selections must not be charged');
+  assert.equal(d.querySelector('.wood-category-select').value,'Deck project lumber');
+  assert.match(d.querySelector('.wood-cart-bar').textContent,/37 items in cart/);
+  d.querySelector('.wood-quick-button[data-group="Plywood & OSB"]').click();
+  assert.equal(d.querySelector('.wood-category-select').value,'Plywood & OSB');
+  assert.equal(data(dom).length,3,'switching shortcuts must not clear the cart');
+ }finally{dom.window.close()}
+});
+
+test('deep links into trim and deck open the requested section',async()=>{
+ for(const [hash,expected] of [['#wood-wood-trim-molding','Wood trim & molding'],['#deck-lumber','Deck project lumber']]){
+  const dom=load('/material-lumber.html'+hash);
+  try{await tick();assert.equal(dom.window.document.querySelector('.wood-category-select').value,expected);}
+  finally{dom.window.close()}
+ }
 });
