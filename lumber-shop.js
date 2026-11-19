@@ -2,6 +2,9 @@
 'use strict';
 // Shop exact material choices here. Project quantity takeoffs stay in Projects.
 const groups=[
+ // A single deck order includes posts, joists and surface boards; these are shopping
+ // choices only, NOT an engineered deck design or an automatic material takeoff.
+ {name:'Deck project lumber',desc:'Posts, joists, framing and deck boards together. Pick one size, add its quantity, then choose the next without changing departments.',sizes:['4×4','6×6','2×4','2×6','2×8','2×10','2×12','5/4×6'],lengths:['8','10','12','16'],kinds:['Pressure-treated above-ground','Pressure-treated ground-contact','Untreated','Cedar'],grades:['Standard / #2','Premium / #1']},
  {name:'Interior framing lumber',desc:'Untreated dimensional lumber for interior framing.',sizes:['2×4','2×6','2×8','2×10','2×12'],lengths:['8','12','16'],kinds:['Untreated'],grades:['Standard / construction','Premium / select']},
  {name:'Pressure-treated & exterior framing',desc:'Choose the actual treatment rating required for the job.',sizes:['2×4','2×6','2×8','2×10','2×12'],lengths:['8','12','16'],kinds:['Pressure-treated above-ground','Pressure-treated ground-contact'],grades:['Standard / #2','Premium / #1']},
  {name:'Posts & timbers',desc:'Exterior posts and larger framing. Treatment rating is not interchangeable.',sizes:['4×4','4×6','6×6'],lengths:['8','12','16'],kinds:['Untreated','Pressure-treated above-ground','Pressure-treated ground-contact'],grades:['Standard / #2','Premium / #1']},
@@ -41,12 +44,15 @@ function boot(){
  };
  const root=E('section',undefined,'lumber-selector');
  root.setAttribute('aria-label','Wood and lumber shopping');
- const label=E('label','Choose a wood category','wood-category-label');
+ const quick=E('nav',undefined,'wood-quick-nav');
+ quick.setAttribute('aria-label','Quick material selections');
+ const shortcuts=[['Deck lumber','Deck project lumber'],['Framing','Interior framing lumber'],['Sheet goods','Plywood & OSB'],['Trim & boards','Wood trim & molding']];
+ const label=E('label','More wood categories','wood-category-label');
  const category=E('select',undefined,'wood-category-select');category.setAttribute('aria-label','Choose wood category');
  for(const g of groups){const opt=E('option',g.name);opt.value=g.name;category.append(opt)}
  label.append(category);
  const picker=E('section',undefined,'wood-picker');
- const intro=E('p','Choose a size, length and type. Your cart stays saved while you shop.','wood-intro');
+ const intro=E('p','Choose one size, length, treatment and quantity. Add it, then choose another size right here. All selections stay together in one cart.','wood-intro');
  const groupDesc=E('p',undefined,'wood-group-info');
  const dims=E('div',undefined,'wood-chip-grid wood-size-choices');
  const lens=E('div',undefined,'wood-chip-grid wood-length-choices');
@@ -83,9 +89,22 @@ function boot(){
  const project=E('p',undefined,'wood-project-cta');
  const projectLink=E('a','Projects calculator');projectLink.href='/#projects';
  project.append('Need to calculate the boards for a project? Use the ',projectLink,' instead.');
- root.append(E('h2','Wood & Lumber'),label,picker,basket,project,footer);
+ root.append(E('h2','Wood & Lumber'),quick,label,picker,basket,project,footer);
  const chosen={size:null,length:null,kind:null,grade:null,qty:1};
  const group=()=>groups.find(g=>g.name===category.value)||groups[0];
+ for(const [title,value] of shortcuts){
+  const button=E('button',title,'wood-quick-button');button.type='button';button.dataset.group=value;
+  button.addEventListener('click',()=>{
+   category.value=value;chosen.size=null;chosen.length=null;chosen.kind=null;chosen.grade=null;chosen.qty=1;
+   status.textContent='';draw();
+  });
+  quick.append(button);
+ }
+ const availableKinds=g=>g.name!=='Deck project lumber'?g.kinds:chosen.size==='5/4×6'?
+  ['Pressure-treated above-ground','Pressure-treated ground-contact','Cedar']:
+  ['Pressure-treated above-ground','Pressure-treated ground-contact','Untreated'];
+ const availableGrades=g=>g.name==='Deck project lumber'&&chosen.size==='5/4×6'?
+  ['Standard grade','Premium grade']:g.grades;
  const chips=(target,options,current,attr,change)=>{
   target.replaceChildren();
   for(const value of options){
@@ -100,18 +119,21 @@ function boot(){
   const g=group();
   if(!g.sizes.includes(chosen.size))chosen.size=g.sizes[0];
   if(!g.lengths.includes(chosen.length))chosen.length=g.lengths[0];
-  if(!g.kinds.includes(chosen.kind))chosen.kind=g.kinds[0];
-  if(!g.grades||!g.grades.includes(chosen.grade))chosen.grade=g.grades?.[0]||null;
+  const kindsForSize=availableKinds(g),gradesForSize=availableGrades(g);
+  if(!kindsForSize.includes(chosen.kind))chosen.kind=kindsForSize[0];
+  if(!gradesForSize||!gradesForSize.includes(chosen.grade))chosen.grade=gradesForSize?.[0]||null;
   groupDesc.textContent=g.desc;
   chips(dims,g.sizes,chosen.size,'wood-size-choice',v=>chosen.size=v);
   chips(lens,g.lengths,chosen.length,'wood-length-choice',v=>chosen.length=v);
-  chips(kinds,g.kinds,chosen.kind,'wood-kind-choice',v=>chosen.kind=v);
-  kindTitle.hidden=g.kinds.length<2;kinds.hidden=g.kinds.length<2;
-  if(g.grades){chips(grades,g.grades,chosen.grade,'wood-grade-choice',v=>chosen.grade=v);gradeTitle.hidden=false;grades.hidden=false}
+  chips(kinds,kindsForSize,chosen.kind,'wood-kind-choice',v=>chosen.kind=v);
+  kindTitle.textContent='3. Treatment / material';
+  kindTitle.hidden=kindsForSize.length<2;kinds.hidden=kindsForSize.length<2;
+  if(gradesForSize){chips(grades,gradesForSize,chosen.grade,'wood-grade-choice',v=>chosen.grade=v);gradeTitle.hidden=false;grades.hidden=false}
   else{grades.replaceChildren();gradeTitle.hidden=true;grades.hidden=true}
   lenTitle.textContent=g.unit==='sheets'?'2. Sheet size':g.unit==='packs'?'2. Package size':'2. Length';
   qtyView.textContent=String(chosen.qty);
   minus.disabled=chosen.qty<=1;plus.disabled=chosen.qty>=999;ten.disabled=chosen.qty>989;
+  for(const button of quick.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.group===g.name));
   const p=unitPrice(id(g,chosen.size,chosen.length,chosen.kind,chosen.grade));
   priceView.textContent=p===null?'Price to confirm':money(p*chosen.qty)+' planning estimate';
   priceView.append(E('small','Final supplier price and stock will be verified before payment.'));
@@ -167,10 +189,11 @@ function boot(){
   chosen.qty=1;draw();renderCart();
  });
  const selectHash=()=>{
-  const match=groups.find(g=>'#wood-'+g.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')===location.hash);
-  if(match&&category.value!==match.name){category.value=match.name;chosen.size=null;draw()}
+  const aliases={'#deck-lumber':'Deck project lumber','#wood-wood-trim-molding':'Wood trim & molding'};
+  const match=groups.find(g=>g.name===aliases[location.hash]||'#wood-'+g.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')===location.hash);
+  if(match&&category.value!==match.name){category.value=match.name;chosen.size=null;chosen.length=null;chosen.kind=null;chosen.grade=null;draw()}
  };
- const style=E('style');style.textContent=".lumber-selector{max-width:780px;margin:18px auto 32px}.wood-picker,.wood-list{margin:14px 0;padding:16px;border:1px solid #c3d6e8;border-radius:14px;background:#fff}.wood-picker h3{font-size:1rem;margin:18px 0 9px;color:#164879}.wood-category-label{display:block;font-weight:750;margin:18px 0}.wood-category-select{width:100%;min-height:55px;border:2px solid #9bb6d0;border-radius:10px;padding:12px;font:inherit;color:#153d66;background:#fff}.wood-chip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px}.wood-choice{min-height:52px;border:2px solid #c6d6e5;border-radius:10px;padding:9px;background:#f4f8fc;color:#164879;font:inherit;font-weight:700;cursor:pointer}.wood-choice.selected{background:#164879;border-color:#164879;color:#fff}.wood-choice:focus-visible,.wood-category-select:focus-visible,.wood-step-btn:focus-visible{outline:3px solid #bd2933;outline-offset:2px}.wood-group-info,.wood-intro{color:#52677b}.wood-stepper{display:flex;align-items:center;gap:10px}.wood-step-btn{height:54px;min-width:54px;border:2px solid #164879;border-radius:10px;background:white;color:#164879;font-size:1.35rem;font-weight:800}.wood-step-btn:disabled{opacity:.35}.wood-qty-value{font-size:1.5rem;min-width:60px;text-align:center;font-weight:800}.wood-price{font-size:1.08rem;font-weight:800;margin:18px 0}.wood-price small{display:block;font-size:.78rem;color:#667382;font-weight:400}.wood-add{width:100%;min-height:56px;font-size:1.1rem}.wood-status{min-height:24px;color:#237647;font-weight:700}.wood-cart-line{padding:12px 0;border-bottom:1px solid #dfe7ef;display:grid;gap:8px}.wood-cart-name{font-weight:650;overflow-wrap:anywhere}.wood-cart-counter{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.wood-cart-counter button{min-height:38px;min-width:38px;border:1px solid #aabdd1;border-radius:7px;background:white;color:#164879;font-size:1rem}.wood-cart-counter .wood-cart-remove{border:0;color:#a52c34;text-decoration:underline;font-size:.85rem}.wood-total{font-size:.92rem;color:#52677b}.wood-actions{display:flex;gap:10px;flex-wrap:wrap}.wood-cart-bar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;background:#edf5ff;border:1px solid #bfd2e5;border-radius:10px;z-index:8}.wood-cart-bar .btn{white-space:nowrap}@media(max-width:600px){.lumber-selector{padding:0 4px}.wood-picker,.wood-list{padding:12px}.wood-chip-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wood-cart-bar{bottom:0}.wood-actions>*{flex:1}}";
+ const style=E('style');style.textContent=".wood-quick-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0}.wood-quick-button{min-height:56px;padding:10px 8px;border:2px solid #b9cde0;border-radius:10px;background:#fff;color:#164879;font:inherit;font-weight:750;cursor:pointer}.wood-quick-button[aria-pressed=true]{background:#164879;color:white;border-color:#164879}.wood-quick-button:focus-visible{outline:3px solid #bd2933;outline-offset:2px}@media(max-width:600px){.wood-quick-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}" + ".lumber-selector{max-width:780px;margin:18px auto 32px}.wood-picker,.wood-list{margin:14px 0;padding:16px;border:1px solid #c3d6e8;border-radius:14px;background:#fff}.wood-picker h3{font-size:1rem;margin:18px 0 9px;color:#164879}.wood-category-label{display:block;font-weight:750;margin:18px 0}.wood-category-select{width:100%;min-height:55px;border:2px solid #9bb6d0;border-radius:10px;padding:12px;font:inherit;color:#153d66;background:#fff}.wood-chip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px}.wood-choice{min-height:52px;border:2px solid #c6d6e5;border-radius:10px;padding:9px;background:#f4f8fc;color:#164879;font:inherit;font-weight:700;cursor:pointer}.wood-choice.selected{background:#164879;border-color:#164879;color:#fff}.wood-choice:focus-visible,.wood-category-select:focus-visible,.wood-step-btn:focus-visible{outline:3px solid #bd2933;outline-offset:2px}.wood-group-info,.wood-intro{color:#52677b}.wood-stepper{display:flex;align-items:center;gap:10px}.wood-step-btn{height:54px;min-width:54px;border:2px solid #164879;border-radius:10px;background:white;color:#164879;font-size:1.35rem;font-weight:800}.wood-step-btn:disabled{opacity:.35}.wood-qty-value{font-size:1.5rem;min-width:60px;text-align:center;font-weight:800}.wood-price{font-size:1.08rem;font-weight:800;margin:18px 0}.wood-price small{display:block;font-size:.78rem;color:#667382;font-weight:400}.wood-add{width:100%;min-height:56px;font-size:1.1rem}.wood-status{min-height:24px;color:#237647;font-weight:700}.wood-cart-line{padding:12px 0;border-bottom:1px solid #dfe7ef;display:grid;gap:8px}.wood-cart-name{font-weight:650;overflow-wrap:anywhere}.wood-cart-counter{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.wood-cart-counter button{min-height:38px;min-width:38px;border:1px solid #aabdd1;border-radius:7px;background:white;color:#164879;font-size:1rem}.wood-cart-counter .wood-cart-remove{border:0;color:#a52c34;text-decoration:underline;font-size:.85rem}.wood-total{font-size:.92rem;color:#52677b}.wood-actions{display:flex;gap:10px;flex-wrap:wrap}.wood-cart-bar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;background:#edf5ff;border:1px solid #bfd2e5;border-radius:10px;z-index:8}.wood-cart-bar .btn{white-space:nowrap}@media(max-width:600px){.lumber-selector{padding:0 4px}.wood-picker,.wood-list{padding:12px}.wood-chip-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wood-cart-bar{bottom:0}.wood-actions>*{flex:1}}";
  old.replaceWith(root);parent.insertBefore(style,root);
  selectHash();draw();renderCart();
  window.addEventListener('hashchange',selectHash);
