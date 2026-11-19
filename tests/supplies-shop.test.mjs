@@ -48,7 +48,11 @@ test('Tile Supplies displays real approved items plus quote-only choices',async(
     assert.ok(options.some(x=>x.includes('Grout Float')));
     assert.ok(options.includes('Thinset tile mortar'));
     assert.ok(options.includes('Tile waterproofing membrane'));
-    assert.equal(t.document.getElementById('nr-supply-price').textContent.includes('12.83'),true);
+    const trowel=[...select.options].find(x=>x.textContent.includes('Notched Tile Trowel'));
+    assert.ok(trowel);
+    select.value=trowel.value;
+    select.dispatchEvent(new t.window.Event('change'));
+    assert.match(t.document.getElementById('nr-supply-price').textContent,/\$12\.83/);
   }finally{t.close();}
 });
 
