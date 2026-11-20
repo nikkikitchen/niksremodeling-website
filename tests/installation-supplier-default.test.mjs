@@ -290,21 +290,21 @@ test('customer-supplied labor-only work never retains Nik consumable reserve, in
  const dom=await openInstallation();
  try{
   const w=dom.window,d=w.document;
-  const row=d.getElementById('labor-task-door-hinge-existing');
+  const row=d.getElementById('labor-task-paint-accent');
   const toggle=row.querySelector('.labor-customer-materials');
   const button=row.querySelector('button');
   assert.equal(toggle.checked,false);
   button.click();
-  let item=w.getCart().find(x=>x.taskId==='door-hinge-existing');
+  let item=w.getCart().find(x=>x.taskId==='paint-accent');
   assert.equal(item.materialsProvider,'niks');
-  assert.ok(Number.isFinite(item.internalSupplyBudget));
+  assert.equal(item.internalSupplyBudget,25,'Nik-supplied painting keeps its hidden consumable reserve');
   const edit=d.querySelector('.labor-review-row button');
   assert.ok(edit,'selected labor item can be edited');
   edit.click();
   toggle.checked=true;
   toggle.dispatchEvent(new w.Event('change'));
   button.click();
-  item=w.getCart().find(x=>x.taskId==='door-hinge-existing');
+  item=w.getCart().find(x=>x.taskId==='paint-accent');
   assert.equal(item.materialsProvider,'customer');
   assert.equal(item.internalSupplyBudget,0,'customer-supplied option excludes Nik reserve');
   assert.equal(item.materialsPricingPending,undefined);
@@ -313,9 +313,9 @@ test('customer-supplied labor-only work never retains Nik consumable reserve, in
   toggle.checked=false;
   toggle.dispatchEvent(new w.Event('change'));
   button.click();
-  item=w.getCart().find(x=>x.taskId==='door-hinge-existing');
+  item=w.getCart().find(x=>x.taskId==='paint-accent');
   assert.equal(item.materialsProvider,'niks');
-  assert.equal(item.internalSupplyBudget,0+Number(item.internalSupplyBudget),'reserve remains a finite internal number');
+  assert.equal(item.internalSupplyBudget,25,'switching back restores Nik internal consumable reserve');
   assert.equal(item.materialsPricingPending,true);
  }finally{dom.window.close();}
 });
