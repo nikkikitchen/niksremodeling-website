@@ -2,12 +2,12 @@
 (() => {
   'use strict';
   const MATERIALS=[
-    ['Wood & Lumber','/material-lumber.html'],
+    ['Lumber','/material-lumber.html'],
     ['Drywall','/material-drywall.html'],
     ['Tile & Stone','/material-tile-stone.html'],
     ['Flooring','/material-flooring.html'],
     ['Paint & Finishes','/material-paint-finishes.html'],
-    ['Trim & Molding','/material-trim-molding.html'],
+    ['Wood & Trim','/material-trim-molding.html'],
     ['Insulation','/material-insulation.html'],
     ['Roofing','/material-roofing.html'],
     ['Siding & Exterior','/material-siding-exterior.html'],
@@ -230,7 +230,7 @@
       status.textContent='Added '+selected.qty+' to your cart. Choose another item or review your cart.';
       selected.qty=1;updateQty();renderCart();
     });
-    picker.append(E('h2','Choose '+document.querySelector('.category-hero h1')?.textContent?.trim()),quick,choose,panel,basket,E('h3','Browse other materials'),nav,actions);
+    picker.append(E('h2','Choose '+document.querySelector('.category-hero h1')?.textContent?.trim()),quick,choose,panel,basket,actions);
     old.replaceWith(picker);
     // The old template also renders a second product gallery under the picker.
     // Do not expose duplicate, mismatched photo cards next to a single text-first selector.
