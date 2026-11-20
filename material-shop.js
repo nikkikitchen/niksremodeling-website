@@ -226,6 +226,8 @@
       button.addEventListener('click',()=>{choose.value=title;drawOptions();});
       quick.append(button);
     });
+    const requestedType=new URLSearchParams(location.search).get('type');
+    if(slug==='flooring'&&requestedType&&titles.includes(requestedType))choose.value=requestedType;
     if(slug==='trim-molding'&&new URLSearchParams(location.search).get('item')==='shiplap'){
       choose.value='Interior Shiplap';drawOptions();
     }
