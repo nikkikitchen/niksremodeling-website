@@ -14,6 +14,19 @@
     ['Doors & Windows','/material-doors-windows.html'],
     ['Concrete & Masonry','/material-concrete-masonry.html']
   ];
+  const CATEGORY_HINTS={
+    'Lumber':'Boards, posts, plywood, OSB and sheet goods',
+    'Drywall':'Choose sheet thickness and sheet size',
+    'Tile & Stone':'Wall, floor and backsplash tile',
+    'Flooring':'Vinyl plank, hardwood, laminate and underlayment',
+    'Paint & Finishes':'Paint, primer, stains and coatings',
+    'Wood & Trim':'Shiplap, baseboard, crown and casing',
+    'Insulation':'Batts and rigid foam boards',
+    'Roofing':'Shingles and roofing components',
+    'Siding & Exterior':'Siding, panels and exterior materials',
+    'Doors & Windows':'Interior doors, exterior doors and windows',
+    'Concrete & Masonry':'Concrete mix, mortar and masonry products'
+  };
   const OPTIONS={
     'Drywall Panels':{size:['1/4 in','1/2 in','5/8 in'],format:['4×8 ft','4×12 ft'],unit:'sheets'},
     'Moisture Resistant Board':{size:['1/2 in','5/8 in'],format:['4×8 ft','4×12 ft'],unit:'sheets'},
@@ -64,10 +77,10 @@
   const readCart=()=>{try{if(typeof window.getCart==='function')return window.getCart();const c=JSON.parse(localStorage.getItem('nr-cart')||'[]');return Array.isArray(c)?c:[]}catch{return[];}};
   const saveCart=cart=>{try{if(typeof window.saveCart==='function')window.saveCart(cart);else {localStorage.setItem('nr-cart',JSON.stringify(cart));if(typeof window.updateCartCount==='function')window.updateCartCount();}return true;}catch{return false;}};
   const STYLE=String.raw`
-    .nr-material-menu{width:min(1160px,94vw);margin:20px auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .nr-material-menu a{min-height:66px;padding:16px;border:1px solid #c3d6e8;border-radius:10px;background:white;color:#164879;font-weight:750;text-decoration:none;display:flex;align-items:center}
+    .nr-material-menu{width:min(1080px,100%);margin:20px auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .nr-material-menu a{min-height:84px;padding:16px;border:1px solid #c3d6e8;border-radius:10px;background:white;color:#164879;font-weight:750;text-decoration:none;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px}.nr-material-menu a small{color:#4b6177;font-weight:400;line-height:1.4}.nr-material-menu a:focus-visible{outline:3px solid #246cbb;outline-offset:2px}
     .nr-material-menu a:hover,.nr-material-menu a:focus-visible{background:#eef5fe;border-color:#195b96}
-    .nr-material-selector{max-width:820px;margin:10px auto 36px}
+    .nr-material-selector{max-width:820px;margin:10px auto 36px}.nr-material-more{margin:24px auto;max-width:820px}.nr-material-more summary{cursor:pointer;padding:13px;border:1px solid #c3d6e8;border-radius:9px;color:#164879;font-weight:700}
     .nr-material-quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:15px 0}
     .nr-material-quick button,.nr-material-option{min-height:50px;padding:10px;border:2px solid #c3d6e8;border-radius:10px;background:#f4f8fc;color:#164879;font:inherit;font-weight:700;cursor:pointer}
     .nr-material-quick button[aria-pressed=true],.nr-material-option[aria-pressed=true]{background:#164879;color:white;border-color:#164879}
@@ -91,7 +104,7 @@
     body[data-page="materials"] .category-hero .hero-points{display:none}
     body[data-page="material-detail"] .material-detail-help{margin-top:18px}
     body[data-page="materials"] #catalog-products .pic,body[data-page="material-detail"] .products .pic{display:none!important}
-    @media(max-width:700px){.nr-material-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.nr-material-quick{grid-template-columns:repeat(2,minmax(0,1fr))}.nr-material-panel{padding:13px}.nr-material-chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:700px){.nr-material-menu{grid-template-columns:1fr}.nr-material-quick{grid-template-columns:repeat(2,minmax(0,1fr))}.nr-material-panel{padding:13px}.nr-material-chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:420px){.nr-material-menu{grid-template-columns:1fr}.nr-material-bottom{flex-wrap:wrap}.nr-material-bottom .btn{flex:1}}
   `;
   function boot(){
@@ -106,11 +119,11 @@
       const section=E('section',undefined,'section');
       const wrap=E('div',undefined,'wrap');
       const title=E('h1','Shop Building Materials');
-      const description=E('p','Choose a material category, select the item and its exact size or type, then enter how many you need. No extra project calculator.','lead');
+      const description=E('p','Choose a category, pick an item and its size, then select how many you want. Add more items without a calculator.','lead');
       const nav=E('nav',undefined,'nr-material-menu');
       nav.setAttribute('aria-label','Building material categories');
       for(const [name,href] of MATERIALS){
-        const a=E('a',name);a.href=href;nav.append(a);
+        const a=E('a');a.href=href;a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);
       }
       const help=E('p','Shopping for installation supplies instead? ');
       const supplyLink=E('a','Shop Supplies');supplyLink.href='/supplies.html';help.append(supplyLink);
@@ -152,9 +165,9 @@
     const actions=E('div',undefined,'nr-material-bottom');const count=E('strong','0 items in cart');
     const review=E('a','Review Cart','btn primary');review.href='/project-cart.html';actions.append(count,review);
     const nav=E('nav',undefined,'nr-material-menu');
-    nav.style.gridTemplateColumns='repeat(auto-fit,minmax(145px,1fr))';
     nav.setAttribute('aria-label','Other material categories');
-    MATERIALS.filter(x=>!location.pathname.endsWith(x[1])).forEach(([name,href])=>{const a=E('a',name);a.href=href;nav.append(a);});
+    MATERIALS.filter(x=>!location.pathname.endsWith(x[1])).forEach(([name,href])=>{const a=E('a');a.href=href;a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);});
+    const more=E('details',undefined,'nr-material-more');more.append(E('summary','Shop another materials category'),nav);
     const selected={qty:1,specs:{}};
     const current=()=>OPTIONS[choose.value]||{};
     const key=()=>[slug,choose.value,...Object.keys(selected.specs).sort().map(k=>k+'='+selected.specs[k])].join('|');
@@ -230,8 +243,11 @@
       status.textContent='Added '+selected.qty+' to your cart. Choose another item or review your cart.';
       selected.qty=1;updateQty();renderCart();
     });
-    picker.append(E('h2','Choose '+document.querySelector('.category-hero h1')?.textContent?.trim()),quick,choose,panel,basket,actions);
+    picker.append(E('p',undefined,'calc-note'));
+    picker.firstChild.append(E('a','← All Materials'));picker.firstChild.firstChild.href='/materials.html';
+    picker.append(E('h2','Choose '+(document.querySelector('.category-hero h1')?.textContent?.trim()||'a material')),quick,choose,panel,basket,actions);
     old.replaceWith(picker);
+    picker.after(more);
     // The old template also renders a second product gallery under the picker.
     // Do not expose duplicate, mismatched photo cards next to a single text-first selector.
     const section=picker.closest('.wrap');
