@@ -203,22 +203,11 @@
       document.body.innerHTML=header()+'<main class="wrap section"><a href="/materials.html">← All Materials</a><h1>Material Price References</h1><p>Planning prices for materials, not live supplier listings.</p><div id="material-reference-list"></div></main>'+footer();
       document.getElementById('material-reference-list').append(referenceSection(reference.items,true));
       updateCartCount();initNavMenus();
-    }else if(page==='materials'){
-      const main=document.querySelector('main');
-      if(main){
-        const section=document.createElement('section');section.className='wrap section';
-        section.innerHTML='<h2>Material Price References</h2><p>See approved material price allowances, with units and sizes, before planning your project.</p><p><a class="btn primary" href="/material-price-reference.html">View all '+reference.items.length+' material prices</a></p>';
-        main.append(section);
-      }
-    }else if(page==='material-detail'){
-      const slug=document.body.dataset.material;
-      const matched=(groups[slug]||[]).map(id=>byId.get(id)).filter(Boolean);
-      const main=document.querySelector('main');
-      if(main&&matched.length){
-        const section=document.createElement('div');section.className='wrap';
-        section.append(referenceSection(matched));
-        main.append(section);
-      }
+    }else if(page==='materials'||page==='material-detail'){
+      // Materials and category detail pages have their own single-item storefront.
+      // Price reference tables belong only on the dedicated price-reference page;
+      // appending them below the selectors duplicated the shopping interface.
+      return;
     }else if(page==='calculators'&&typeof window.calcMaterial==='function'){
       // An estimate can be saved before this reference asset finishes loading.
       // Fill only missing material prices and rerender the existing quote once.
