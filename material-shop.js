@@ -119,7 +119,7 @@
       const section=E('section',undefined,'section');
       const wrap=E('div',undefined,'wrap');
       const title=E('h1','Shop Building Materials');
-      const description=E('p','Choose a category, pick an item and its size, then select how many you want. Add more items without a calculator.','lead');
+      const description=E('p','Choose a material category, pick an item and its size, then select how many you want. Add more items without a calculator.','lead');
       const nav=E('nav',undefined,'nr-material-menu');
       nav.setAttribute('aria-label','Building material categories');
       for(const [name,href] of MATERIALS){
