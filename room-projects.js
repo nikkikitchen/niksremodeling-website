@@ -406,6 +406,25 @@ window.renderProjectPackageOptions=function(id,project){
       standard.work=accentStandard.work.slice();
       Object.assign(standard,window.NIK_CALCULATE_PACKAGE_BASELINE(accentStandard));
       standard.priceStatus=accentStandard.priceStatus;
+    const deluxe=packs.find(p=>p.id==='premium');
+    if(deluxe){
+      // Lowest fully scoped Deluxe option is decorative wood-slat paneling;
+      // natural stacked stone, tile and specialty materials cost more.
+      // Panel basis: 64 sq ft finished wall + ~12.5% allowance at $6.46/sq ft
+      // retail, marked up 35% ($8.72/sq ft); verify product availability.
+      const accentDeluxe={
+        scenario:'One sound, flat 8 ft x 8 ft interior feature wall (64 sq ft) finished with entry-level decorative wood-slat panels. Includes approximately 72 sq ft purchased panel coverage, fitting and trimming, adhesive/fasteners, protection and cleanup. Natural stacked stone, tile, specialty panels, electrical changes, substrate repairs or larger walls cost extra.',
+        work:['Install decorative wood-slat panel finish on one sound accent wall up to 8 x 8 ft','Include panel cutting, ordinary adhesive/fasteners, protection and cleanup','Stone, tile or other premium finishes available as priced upgrades'],
+        labor:[{name:'Fit and install decorative wall panels, trim edges and clean up',quantity:9,unitPrice:75}],
+        materials:[{name:'Entry-level decorative wood-slat panels, approx. 72 sq ft, retail $6.46/sq ft plus 35% markup',quantity:72,unitPrice:8.72}],
+        consumables:[{name:'Panel adhesive',quantity:3,unitPrice:20},{name:'Fasteners and finish trim allowance',quantity:1,unitPrice:30},{name:'Protection, blades and cleanup supplies',quantity:1,unitPrice:35}],
+        laborDiscountPercent:7,projectFeePercent:10,priceStatus:'research-provisional'
+      };
+      deluxe.work=accentDeluxe.work.slice();
+      deluxe.intro='Full decorative wood-slat feature wall; stacked stone and specialty finishes available as upgrades.';
+      Object.assign(deluxe,window.NIK_CALCULATE_PACKAGE_BASELINE(accentDeluxe));
+      deluxe.priceStatus=accentDeluxe.priceStatus;
+    }
     }
   }
   // Bathroom and Kitchen formerly used fixed allowances, not costed scopes.
