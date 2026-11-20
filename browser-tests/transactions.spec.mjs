@@ -6,7 +6,7 @@ test.beforeEach(async({page})=>{
 });
 test('homepage to shopping cart verifies final total and sends stable checkout identity',async({page})=>{
  let request,quotes=0;
- await page.goto('/');const menu=page.locator('button[aria-controls$="shopping-menu"]:visible').first();const id=await menu.getAttribute('aria-controls');await menu.click();await page.locator('#'+id).getByRole('button',{name:/^Appliances/}).click();await page.locator('#'+id+' a[href*="category=Refrigerators"]').first().click();
+ await page.goto('/');const menu=page.locator('button[aria-controls$="shopping-menu"]:visible').first();const id=await menu.getAttribute('aria-controls');await menu.click();await page.locator('#'+id+' a[href="/appliances.html"]').first().click();
  await expect(page).toHaveURL(/appliances.html/);
  await page.evaluate(item=>localStorage.setItem('nr-cart',JSON.stringify([item])),product);
  await page.goto('/project-cart.html');
