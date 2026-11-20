@@ -277,7 +277,7 @@
     }
     picker.append(E('h2','Choose '+(document.querySelector('.category-hero h1')?.textContent?.trim()||'a material')),quick,choose,panel,basket,actions);
     old.replaceWith(picker);
-    picker.after(more);
+    if(page!=='materials')picker.after(more);
     // The old template also renders a second product gallery under the picker.
     // Do not expose duplicate, mismatched photo cards next to a single text-first selector.
     const section=picker.closest('.wrap');
