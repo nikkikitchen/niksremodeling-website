@@ -1365,7 +1365,7 @@ function loadRealCatalog(department,material,type){
 }
 
 function renderMaterialDetail(){
- const slug=document.body.dataset.material,category=MATERIAL_DETAIL_PAGES[slug];if(slug==='flooring'&&new URLSearchParams(location.search).has('type')){renderFlooringSamples(new URLSearchParams(location.search).get('type'));return}
+ const slug=document.body.dataset.material,category=MATERIAL_DETAIL_PAGES[slug];// Flooring selections now use the same material selector as every other category.
  if(!category){location.replace('/materials.html');return}
  document.title=category.title+" Materials | Nik's Remodeling";
  if(slug==='wood'||slug==='lumber'){
@@ -1412,9 +1412,11 @@ function renderMaterialDetail(){
   if(slug==='concrete-masonry')return item==='Concrete Mix'?'concrete':'custom';
   return ['flooring','tile'].includes(calcKind)?calcKind:'custom';
  };
- const cards=['lumber','wood'].includes(slug)?'':materialChoices.map((item,i)=>{const itemKind=materialKindForItem(item);const name=category.title+' — '+item;const photo=(photos[slug][i]||photos[slug][0]);const img=MATERIAL_ITEM_PICTURES[slug]?.[item]||cardImages[i%cardImages.length];if(slug==='flooring'&&FLOORING_PRODUCT_TYPES.has(item))return '<article class="card material-option-card flooring-choice-card"><div class="pic"><img src="'+img+'" alt="Illustrative photo for '+item+'" loading="lazy"></div><div class="body"><h3>'+item+'</h3><a class="btn primary" href="/material-flooring.html?type='+encodeURIComponent(item)+'">Choose '+item+'</a></div></article>';return '<article class="card material-option-card" data-calc-kind="'+(itemKind||'')+'"><div class="pic"><img src="'+img+'" alt="Illustrative photo for '+item+'" loading="lazy"></div><div class="body"><h3>'+item+'</h3><p>Use the same material estimator for this item.</p><div class="card-actions"><a class="btn primary" href="/calculators.html?mode=materials&product='+encodeURIComponent(name)+(itemKind?'&material='+itemKind:'')+'">Calculate Materials</a></div>'+servicePicker(name,['Installation','Removal','Prep'])+'</div></article>'}).join('');
- document.body.innerHTML=header()+'<main><section class="category-hero" style="--hero-image:url(https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1800&q=85)"><div class="wrap"><div class="eyebrow">Materials</div><h1>'+category.title+'</h1><p>Calculate the quantities you need. Exact product specifications, availability and delivered prices are verified before purchase.</p><a class="btn light" href="/materials.html">← All Materials</a></div></section><section class="section"><div class="wrap"><h2>Shop '+category.title+'</h2><p class="lead">Choose a type below. Specific products will appear here as supplier listings are approved.</p><div class="material-detail-grid">'+cards+'</div>'+(['lumber','wood'].includes(slug)?'':'<h2>Available Products</h2><div class="products store-card-grid"><p class="empty">Checking available products…</p></div>')+'<div class="material-detail-help"><h3>Need a specific product?</h3><p>Tell us the material, size, color and quantity you need. We can check current options.</p><a class="btn primary" href="sms:6782314377">Text Your Material List →</a></div></div></section></main>'+footer();
- updateCartCount();bindServicePickers();if(!['lumber','wood'].includes(slug))loadRealCatalog('materials',slug);
+ // Material names are data for the shared text-first picker, not legacy cards or calculator links.
+ // Keep a no-photo fallback if the picker script fails to initialize.
+ const cards=materialChoices.map(item=>'<article class="material-option-card"><h3>'+item+'</h3></article>').join('');
+ document.body.innerHTML=header()+'<main><section class="category-hero"><div class="wrap"><div class="eyebrow">Shop Materials</div><h1>'+category.title+'</h1><p>Choose the material, size or type, and quantity. Add each selection to the same cart.</p><a class="btn light" href="/materials.html">← All Materials</a></div></section><section class="section"><div class="wrap"><p class="lead">Choose one item and its options, then add the quantity you need.</p><div class="material-detail-grid" aria-label="Material items">'+cards+'</div><div class="material-detail-help"><h3>Need a specific product?</h3><p>Tell us the material, size, color and quantity you need. We can check current options.</p><a class="btn primary" href="sms:6782314377">Text Your Material List</a></div></div></section></main>'+footer();
+ updateCartCount();
 }
 
 // Beyond the Roof is an optional, independent corner of the website.
