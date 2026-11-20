@@ -131,7 +131,7 @@ button.addEventListener('click',()=>openShoppingBranch(branch,submenu.hidden));
     document.querySelectorAll('#shopping-menu, #mobile-shopping-menu').forEach(menu=>{
       if(menu.dataset.unifiedShopping==='simple-shopping-v3')return;
       menu.replaceChildren();
-      const entries=[['All Shopping','/shopping.html'],...links];
+      const entries=[['All Shopping','/shopping.html'],...links.filter(([,url])=>/^\/(appliances|bathroom|cabinets|furniture|materials|products|supplies|other)\.html$/.test(url))];
       for(const [label,url] of entries){
         const anchor=document.createElement('a');
         anchor.href=url;anchor.textContent=label;
