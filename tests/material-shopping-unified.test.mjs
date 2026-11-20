@@ -54,11 +54,14 @@ test('Shopping drywall uses the same calculator engine with work already selecte
  dom.window.close();
 });
 
-test('Material detail cards use one unified Calculate Materials path',()=>{
+test('Material detail pages render selector data, not legacy picture tiles or calculator links',()=>{
  const source=readFileSync('app.js','utf8');
- assert.match(source,/calculators\.html\?mode=materials&product=/);
- assert.match(source,/>Calculate Materials<\/a>/);
- assert.doesNotMatch(source,/>Plan Installation<\/a>/);
+ const detail=source.slice(source.indexOf('function renderMaterialDetail(){'),source.indexOf('// Beyond the Roof'));
+ assert.match(detail,/material-detail-grid/);
+ assert.match(detail,/material-option-card/);
+ assert.doesNotMatch(detail,/>Calculate Materials<\/a>/);
+ assert.doesNotMatch(detail,/class="pic"/);
+ assert.doesNotMatch(detail,/loadRealCatalog\('materials',slug\)/);
 });
 
 test('Non-sheet materials reuse the shared calculator without inventing drywall sheet or stud counts',async()=>{
