@@ -14,6 +14,21 @@
     ['Doors & Windows','/material-doors-windows.html'],
     ['Concrete & Masonry','/material-concrete-masonry.html']
   ];
+  // Non-lumber material selections stay on the Materials page, not photo galleries.
+  const CATEGORY_ITEMS={
+    'drywall':['Drywall Panels','Moisture Resistant Board','Joint Compound','Tape & Corner Bead'],
+    'tile-stone':['Ceramic Tile','Porcelain Tile','Natural Stone','Mosaic Tile','Backsplash Tile','Wall Tile','Floor Tile','Grout & Setting Materials'],
+    'flooring':['Luxury Vinyl Plank (LVP)','Hardwood','Laminate','Linoleum','Carpet','Underlayment'],
+    'paint-finishes':['Interior Paint','Exterior Paint','Primer','Stains','Sealers','Specialty Coatings','Wallpaper'],
+    'trim-molding':['Interior Shiplap','Baseboards','Crown Molding','Door & Window Casing','Quarter Round','Decorative Trim'],
+    'insulation':['Batt Insulation','Rigid Foam'],
+    'roofing':['Asphalt Shingles','Metal Roofing'],
+    'siding-exterior':['Vinyl Siding','Fiber Cement'],
+    'doors-windows':['Interior Doors','Exterior Doors','Windows'],
+    'concrete-masonry':['Concrete Mix','Mortar']
+  };
+  const slugForHref=href=>href.match(/^\\/material-([a-z-]+)\\.html$/)?.[1];
+  const shoppingHref=href=>href==='/material-lumber.html'?href:'/materials.html?category='+encodeURIComponent(slugForHref(href));
   const CATEGORY_HINTS={
     'Lumber':'Boards, posts, plywood, OSB and sheet goods',
     'Drywall':'Choose sheet thickness and sheet size',
@@ -111,6 +126,7 @@
     const page=document.body.dataset.page,slug=document.body.dataset.material;
     if(page!=='materials'&&page!=='material-detail')return;
     if(!document.getElementById('nr-material-style')){const style=E('style');style.id='nr-material-style';style.textContent=STYLE;document.head.append(style);}
+    let activeSlug=slug;
     if(page==='materials'){
       // Render ONE shopping interface. The legacy template creates extra photo tiles,
       // an unrelated product catalog and a calculator below the category list.
@@ -122,21 +138,33 @@
       const description=E('p','Choose a material category, pick an item and its size, then select how many you want. Add more items without a calculator.','lead');
       const nav=E('nav',undefined,'nr-material-menu');
       nav.setAttribute('aria-label','Building material categories');
+      const requested=new URLSearchParams(location.search).get('category');
+      activeSlug=Object.prototype.hasOwnProperty.call(CATEGORY_ITEMS,requested)?requested:'drywall';
       for(const [name,href] of MATERIALS){
-        const a=E('a');a.href=href;a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);
+        const a=E('a');a.href=shoppingHref(href);
+        a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));
+        if(slugForHref(href)===activeSlug)a.setAttribute('aria-current','page');
+        nav.append(a);
       }
       const help=E('p','Shopping for installation supplies instead? ');
       const supplyLink=E('a','Shop Supplies');supplyLink.href='/supplies.html';help.append(supplyLink);
+      const pickerHost=E('div',undefined,'material-detail-grid');
+      for(const itemName of CATEGORY_ITEMS[activeSlug]){
+        const card=E('div',undefined,'material-option-card');
+        card.append(E('h3',itemName));pickerHost.append(card);
+      }
+      const heading=E('h2',MATERIALS.find(([,href])=>slugForHref(href)===activeSlug)?.[0]||'Materials');
+      const itemSection=E('div',undefined,'wrap');
+      itemSection.append(heading,pickerHost);
       wrap.append(title,description,nav,help);
-      section.append(wrap);
+      section.append(wrap,itemSection);
       main.replaceChildren(section);
       document.title='Building Materials | Nik\'s Remodeling';
-      return;
     }
-    if(slug==='wood'||slug==='lumber')return; // already has the approved lumber selector
+    if(activeSlug==='wood'||activeSlug==='lumber')return; // approved lumber selector
     const old=document.querySelector('.material-detail-grid');if(!old)return;
     const titles=[...old.querySelectorAll('.material-option-card h3')].map(x=>x.textContent.trim());
-    if(slug==='trim-molding'){
+    if(activeSlug==='trim-molding'){
       const preferred=['Interior Shiplap','Baseboards','Crown Molding','Door & Window Casing'];
       titles.sort((a,b)=>{
         const ai=preferred.indexOf(a),bi=preferred.indexOf(b);
@@ -166,11 +194,11 @@
     const review=E('a','Review Cart','btn primary');review.href='/project-cart.html';actions.append(count,review);
     const nav=E('nav',undefined,'nr-material-menu');
     nav.setAttribute('aria-label','Other material categories');
-    MATERIALS.filter(x=>!location.pathname.endsWith(x[1])).forEach(([name,href])=>{const a=E('a');a.href=href;a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);});
+    MATERIALS.filter(x=>slugForHref(x[1])!==activeSlug).forEach(([name,href])=>{const a=E('a');a.href=shoppingHref(href);a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);});
     const more=E('details',undefined,'nr-material-more');more.append(E('summary','Shop another materials category'),nav);
     const selected={qty:1,specs:{}};
     const current=()=>OPTIONS[choose.value]||{};
-    const key=()=>[slug,choose.value,...Object.keys(selected.specs).sort().map(k=>k+'='+selected.specs[k])].join('|');
+    const key=()=>[activeSlug,choose.value,...Object.keys(selected.specs).sort().map(k=>k+'='+selected.specs[k])].join('|');
     const label=()=>{
       const s=Object.values(selected.specs).filter(x=>x&&x!=='To confirm');
       return choose.value+(s.length?' — '+s.join(' — '):'');
@@ -195,7 +223,7 @@
         specHost.append(chips);
       }
       selected.qty=1;updateQty();
-      const unit=conf.unit||UNIT_BY_CATEGORY[slug]||'items';
+      const unit=conf.unit||UNIT_BY_CATEGORY[activeSlug]||'items';
       qtyHeading.textContent='Quantity ('+unit+')';
       add.textContent='Add to Cart';status.textContent='';
       quick.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.title===choose.value)));
@@ -205,7 +233,7 @@
       add.textContent='Add '+selected.qty+' to Cart';
     }
     function renderCart(){
-      const cart=readCart(),chosen=cart.filter(x=>x.source==='material-selector-reference'&&x.materialCategory===slug);
+      const cart=readCart(),chosen=cart.filter(x=>x.source==='material-selector-reference'&&x.materialCategory===activeSlug);
       lines.replaceChildren();
       if(!chosen.length)lines.append(E('p','No materials selected yet. Choose your first item above.','calc-note'));
       for(const entry of chosen){
@@ -226,7 +254,7 @@
       button.addEventListener('click',()=>{choose.value=title;drawOptions();});
       quick.append(button);
     });
-    if(slug==='trim-molding'&&new URLSearchParams(location.search).get('item')==='shiplap'){
+    if(activeSlug==='trim-molding'&&new URLSearchParams(location.search).get('item')==='shiplap'){
       choose.value='Interior Shiplap';drawOptions();
     }
     choose.addEventListener('change',drawOptions);
@@ -238,13 +266,15 @@
       const cart=readCart(),itemKey=key(),existing=cart.find(x=>x.source==='material-selector-reference'&&x.materialKey===itemKey);
       if(existing&&Number(existing.qty)+selected.qty>999){status.textContent='Maximum 999 units of this selection.';return;}
       if(existing)existing.qty=Number(existing.qty)+selected.qty;
-      else cart.push({source:'material-selector-reference',materialCategory:slug,materialKey:itemKey,type:'Material estimate',name:label(),qty:selected.qty,unit:current().unit||UNIT_BY_CATEGORY[slug]||'items',price:null,pricingPending:true,quoteRequired:true,shippingAndTaxNotIncluded:true});
+      else cart.push({source:'material-selector-reference',materialCategory:activeSlug,materialKey:itemKey,type:'Material estimate',name:label(),qty:selected.qty,unit:current().unit||UNIT_BY_CATEGORY[activeSlug]||'items',price:null,pricingPending:true,quoteRequired:true,shippingAndTaxNotIncluded:true});
       if(!saveCart(cart)){status.textContent='Could not save to cart. Please try again.';return;}
       status.textContent='Added '+selected.qty+' to your cart. Choose another item or review your cart.';
       selected.qty=1;updateQty();renderCart();
     });
-    picker.append(E('p',undefined,'calc-note'));
-    picker.firstChild.append(E('a','← All Materials'));picker.firstChild.firstChild.href='/materials.html';
+    if(page!=='materials'){
+      picker.append(E('p',undefined,'calc-note'));
+      picker.firstChild.append(E('a','← All Materials'));picker.firstChild.firstChild.href='/materials.html';
+    }
     picker.append(E('h2','Choose '+(document.querySelector('.category-hero h1')?.textContent?.trim()||'a material')),quick,choose,panel,basket,actions);
     old.replaceWith(picker);
     picker.after(more);
