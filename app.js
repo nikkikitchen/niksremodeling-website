@@ -321,6 +321,27 @@ function materialWoodMenu(){
   '<a href="/material-lumber.html#wood-wood-trim-molding"><strong>Wood &amp; Trim</strong><small>Shop molding, trim and other finish wood</small></a></div>';
 }
 function renderCategory(page){
+ // Materials storefront is a single, direct category directory. Never construct
+ // the legacy supplier catalog or calculator and remove them after load.
+ if(page==='materials'){
+  const categories=[
+   ['Lumber','/material-lumber.html'],
+   ['Wood & Trim','/material-trim-molding.html'],
+   ['Drywall','/material-drywall.html'],
+   ['Tile & Stone','/material-tile-stone.html'],
+   ['Flooring','/material-flooring.html'],
+   ['Paint & Finishes','/material-paint-finishes.html'],
+   ['Insulation','/material-insulation.html'],
+   ['Roofing','/material-roofing.html'],
+   ['Siding & Exterior','/material-siding-exterior.html'],
+   ['Doors & Windows','/material-doors-windows.html'],
+   ['Concrete & Masonry','/material-concrete-masonry.html']
+  ];
+  const items=categories.map(([label,url])=>'<a class="shop-chip" href="'+url+'">'+label+'</a>').join('');
+  document.body.innerHTML=header()+'<main id="main-content"><section class="section"><div class="wrap"><h1>Shop Building Materials</h1><p class="lead">Choose a category, then select the type, size and quantity you need. Materials and supplies are separate.</p><nav class="nr-material-menu" aria-label="Building material categories" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">'+items+'</nav><p style="margin-top:22px">Looking for fasteners, adhesives or other installation supplies? <a href="/supplies.html">Shop Supplies</a>.</p></div></section></main>'+footer();
+  updateCartCount();
+  return;
+ }
  const p=PAGES[page],products=PRODUCTS[page]||fallbackProducts(page),imgs=PRODUCT_IMAGES[page]||PRODUCT_IMAGES.installation;
  const productId=new URLSearchParams(location.search).get('product');
  if(page!=='furniture'&&Object.hasOwn(PRODUCTS,page)&&/^[\w-]{8,64}$/.test(productId||'')){
