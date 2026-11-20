@@ -264,6 +264,6 @@
     if(leadOld)leadOld.textContent='Simple shopping by material type and quantity. No project calculator required.';
     renderCart();drawOptions();
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
-  else boot();
+  if(document.readyState==='complete')boot();
+  else document.addEventListener('DOMContentLoaded',boot,{once:true});
 })();
