@@ -10,7 +10,10 @@ async function open(){
  const script=text=>{const node=w.document.createElement('script');node.textContent=text;w.document.body.append(node);};
  script(readFileSync('app.js','utf8'));
  w.eval('document.body.innerHTML=header()');
- script(readFileSync('shopping-flow.js','utf8').replaceAll(/import\([^)]*\)/g,'Promise.resolve({})'));
+ script(readFileSync('shopping-flow.js','utf8')
+   .replaceAll("import('/store-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve({})")
+   .replaceAll("import('/retail-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve({})")
+   .replaceAll("import('/bathroom-catalog.js?v='+encodeURIComponent(availabilityVersion))","Promise.resolve({})"));
  await new Promise(resolve=>setTimeout(resolve,30));
  return dom;
 }
