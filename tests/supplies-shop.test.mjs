@@ -33,7 +33,7 @@ test('Supplies uses compact text categories and does not render image tiles',asy
     assert.equal(t.document.querySelectorAll('.nr-supply-tab').length,8);
     assert.equal(t.document.querySelectorAll('img,.picture-category-tabs,.store-card-grid').length,0);
     assert.ok(t.document.querySelector('a[href="/materials.html"]'));
-    assert.ok(t.document.querySelector('a[href="/tools.html"]'));
+    assert.ok(t.document.querySelector('a[href="/products.html"]'));
     assert.equal(t.document.querySelectorAll('script[src*="real-products"]').length,0);
   }finally{t.close();}
 });
