@@ -205,6 +205,15 @@
     });
     picker.append(E('h2','Choose '+document.querySelector('.category-hero h1')?.textContent?.trim()),quick,choose,panel,basket,E('h3','Browse other materials'),nav,actions);
     old.replaceWith(picker);
+    // The old template also renders a second product gallery under the picker.
+    // Do not expose duplicate, mismatched photo cards next to a single text-first selector.
+    const section=picker.closest('.wrap');
+    if(section){
+      section.querySelectorAll('.products.store-card-grid').forEach(gallery=>gallery.remove());
+      for(const heading of section.querySelectorAll('h2')){
+        if(heading!==picker.querySelector('h2')&&heading.textContent.trim()==='Available Products')heading.remove();
+      }
+    }
     const leadOld=picker.closest('.wrap')?.querySelector('p.lead');
     if(leadOld)leadOld.textContent='Simple shopping by material type and quantity. No project calculator required.';
     renderCart();drawOptions();
