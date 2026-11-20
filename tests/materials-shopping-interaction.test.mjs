@@ -53,3 +53,17 @@ test('Drywall shopping keeps distinct sizes and consolidates repeat quantities w
   assert.equal(cart.length,2);
  }finally{dom.window.close();}
 });
+
+test('Other-material navigation excludes the current category on both clean and HTML URLs',()=>{
+ for(const path of ['/material-drywall','/material-drywall.html']){
+  const dom=setup(path,'<div class="wrap"><div class="material-detail-grid"><article class="material-option-card"><h3>Drywall Panels</h3></article></div></div>');
+  try{
+   const d=dom.window.document;
+   assert.ok(d.querySelector('.nr-material-selector'),path);
+   const hrefs=[...d.querySelectorAll('.nr-material-more .nr-material-menu a')].map(a=>a.getAttribute('href'));
+   assert.equal(hrefs.length,10,path);
+   assert.equal(hrefs.includes('/material-drywall.html'),false,path);
+   assert.ok(hrefs.includes('/material-flooring.html'),path);
+  }finally{dom.window.close();}
+ }
+});
