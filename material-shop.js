@@ -98,10 +98,26 @@
     if(page!=='materials'&&page!=='material-detail')return;
     if(!document.getElementById('nr-material-style')){const style=E('style');style.id='nr-material-style';style.textContent=STYLE;document.head.append(style);}
     if(page==='materials'){
-      const old=document.querySelector('.picture-category-tabs');if(!old)return;
-      const nav=E('nav',undefined,'nr-material-menu');nav.setAttribute('aria-label','Building material categories');
-      for(const [name,href] of MATERIALS){const a=E('a',name);a.href=href;nav.append(a);}
-      old.replaceWith(nav);return;
+      // Render ONE shopping interface. The legacy template creates extra photo tiles,
+      // an unrelated product catalog and a calculator below the category list.
+      // Replacing only its tabs left the old sections visible at the bottom.
+      const main=document.querySelector('main');if(!main)return;
+      const section=E('section',undefined,'section');
+      const wrap=E('div',undefined,'wrap');
+      const title=E('h1','Shop Building Materials');
+      const description=E('p','Choose a material category, select the item and its exact size or type, then enter how many you need. No extra project calculator.','lead');
+      const nav=E('nav',undefined,'nr-material-menu');
+      nav.setAttribute('aria-label','Building material categories');
+      for(const [name,href] of MATERIALS){
+        const a=E('a',name);a.href=href;nav.append(a);
+      }
+      const help=E('p','Shopping for installation supplies instead? ');
+      const supplyLink=E('a','Shop Supplies');supplyLink.href='/supplies.html';help.append(supplyLink);
+      wrap.append(title,description,nav,help);
+      section.append(wrap);
+      main.replaceChildren(section);
+      document.title='Building Materials | Nik\'s Remodeling';
+      return;
     }
     if(slug==='wood'||slug==='lumber')return; // already has the approved lumber selector
     const old=document.querySelector('.material-detail-grid');if(!old)return;
