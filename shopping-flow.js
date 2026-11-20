@@ -14,7 +14,7 @@
   window.searchProjects=function(e){e.preventDefault();const term=e.target.querySelector('input').value.trim().toLowerCase(),grid=document.getElementById('projects');if(!grid){location.href='/?search='+encodeURIComponent(term)+'#projects';return false;}grid.querySelectorAll('.tile').forEach(t=>t.hidden=!t.textContent.toLowerCase().includes(term));grid.scrollIntoView({behavior:'smooth'});return false;};
   function connect(){
  document.querySelectorAll('.photo-source').forEach(el=>el.remove());
- if(document.querySelector('main')&&!['calculators','project'].includes(document.body.dataset.page)&&!['/','/index.html'].includes(location.pathname)&&!document.getElementById('page-back-button')){const row=document.createElement('div');row.className='wrap';row.style.cssText='padding:20px 0';const back=document.createElement('button');back.id='page-back-button';back.type='button';back.className='btn outline';back.textContent='Back';back.onclick=()=>{if(history.length>1)history.back();else location.href='/#projects';};row.append(back);document.querySelector('main').append(row);}
+ // Do not append an unrelated Back panel beneath every shopping page.
  if(window.parent!==window)document.querySelectorAll('a[href="/project-cart.html"]').forEach(a=>a.target='_top');
  document.querySelectorAll('a[href="/calculators.html"]').forEach(a=>{a.href='/#projects';a.textContent='Projects';});
 /* Search forms submit to /product-search.html; do not hijack them. */}
@@ -125,30 +125,20 @@ button.addEventListener('click',()=>openShoppingBranch(branch,submenu.hidden));
           else if(event.target===button&&['ArrowRight','ArrowDown'].includes(event.key)){event.preventDefault();openShoppingBranch(branch,true);submenu.querySelector('a')?.focus();}
         });
   }
+  // One level only: top-level shopping links lead to complete category pages.
+  // Nested flyouts duplicated the catalog and frequently opened the wrong destination.
   function syncShoppingMenu(){
     document.querySelectorAll('#shopping-menu, #mobile-shopping-menu').forEach(menu=>{
-      const state='nested-shopping-no-dots-v1-'+Boolean(Object.keys(furnitureCategories).length);
-      if(menu.dataset.unifiedShopping===state)return;
-      bindShoppingHover(menu);
+      if(menu.dataset.unifiedShopping==='simple-shopping-v3')return;
       menu.replaceChildren();
-      const ordered=links.slice().sort((a,b)=>a[0].startsWith('Other')?1:b[0].startsWith('Other')?-1:a[0].localeCompare(b[0]));
-      for(const [label,url] of ordered){
-        const children=submenuLinks(url).sort((a,b)=>a[0].localeCompare(b[0]));
-        const branch=document.createElement('div');branch.className='shopping-branch';
-        const button=document.createElement('button');button.type='button';button.className='shopping-category-toggle';
-        button.append(document.createTextNode(label));const arrow=document.createElement('span');arrow.className='shopping-submenu-arrow';arrow.textContent='›';arrow.setAttribute('aria-hidden','true');button.append(arrow);
-        const submenu=document.createElement('nav');submenu.className='shopping-submenu';submenu.id=menu.id+'-'+(departmentByPath[url]||url.replace(/[^a-z0-9]+/gi,'-'));submenu.hidden=true;submenu.setAttribute('aria-label',label+' categories');
-        button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',submenu.id);
-        const department=departmentByPath[url];
-        for(const [name,href] of children){
-          const link=document.createElement('a');link.textContent=name;link.href=href;
-          submenu.append(link);
-        }
-        if(!children.length){const link=document.createElement('a');link.textContent=label;link.href=url;submenu.append(link);}
-        branch.append(button,submenu);menu.append(branch);
-        bindCategoryBranch(branch);
+      const entries=[['All Shopping','/shopping.html'],...links];
+      for(const [label,url] of entries){
+        const anchor=document.createElement('a');
+        anchor.href=url;anchor.textContent=label;
+        if(url===location.pathname||url.replace('.html','')===location.pathname)anchor.setAttribute('aria-current','page');
+        menu.append(anchor);
       }
-      menu.dataset.unifiedShopping=state;
+      menu.dataset.unifiedShopping='simple-shopping-v3';
     });
   }
   // Menu groups link to existing expandable labor sections; installation.html
