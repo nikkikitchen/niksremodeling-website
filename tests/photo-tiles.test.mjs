@@ -26,10 +26,12 @@ test('all shopping guides use distinct approved pictures',()=>{
   }
  }
 });
-test('materials use image tiles rather than text-only category tabs',()=>{
- assert.ok(app.includes('picture-category-tabs'));
- assert.ok(app.includes("shopPictureTile('materials',x"));
- assert.ok(app.includes('photo-guide-grid'));
+test('materials landing uses direct text links rather than rendering photo tiles',()=>{
+ const part=app.slice(app.indexOf('function renderCategory(page){'),app.indexOf('const p=PAGES[page]'));
+ assert.match(part,/if\(page==='materials'\)/);
+ assert.match(part,/Shop Building Materials/);
+ assert.match(part,/nr-material-menu/);
+ assert.doesNotMatch(part,/shopPictureTile/);
 });
 test('photo navigation changes do not alter approved labor amounts',()=>{
  for(const [id,labor] of [['toilet-install',175],['vanity-install',300],['tub-replace',1600]]){
