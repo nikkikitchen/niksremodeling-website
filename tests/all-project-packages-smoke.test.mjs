@@ -64,7 +64,7 @@ test('Accent Walls uses matching visible tier names and keeps existing package l
   assert.ok(cards[0].querySelector('.pkg-pricing')?.textContent.includes('Preliminary estimate'));
   assert.match(cards[1].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$835/);
   assert.match(cards[1].textContent,/sponge-painted faux-stone/);
-  assert.match(cards[2].querySelector('.pkg-pricing')?.textContent||'',/Starting at \\$1,525/);
+  assert.match(cards[2].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$1,525/);
   cards[1].querySelector('.pkg-add').click();
   assert.match(dom.window.document.querySelector('#pkg-measure-form').textContent,/Wall length/);
   assert.match(dom.window.document.body.textContent,/Standard/);
