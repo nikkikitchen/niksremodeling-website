@@ -27,7 +27,7 @@
     'doors-windows':['Interior Doors','Exterior Doors','Windows'],
     'concrete-masonry':['Concrete Mix','Mortar']
   };
-  const slugForHref=href=>href.match(/^\\/material-([a-z-]+)\\.html$/)?.[1];
+  const slugForHref=href=>href.startsWith('/material-')&&href.endsWith('.html')?href.slice(10,-5):null;
   const shoppingHref=href=>href==='/material-lumber.html'?href:'/materials.html?category='+encodeURIComponent(slugForHref(href));
   const CATEGORY_HINTS={
     'Lumber':'Boards, posts, plywood, OSB and sheet goods',
