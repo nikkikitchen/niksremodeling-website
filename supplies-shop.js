@@ -21,9 +21,9 @@
   const money=x=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(x);
   const STYLE=[
     '.nr-supplies-layout{max-width:1100px;margin:0 auto}',
-    '.nr-supply-categories{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 22px}',
-    '.nr-supply-tab{min-height:62px;padding:10px 12px;text-align:left;border:2px solid #c3d6e8;border-radius:10px;background:#f4f8fc;color:#164879;font:inherit;font-weight:700;cursor:pointer}',
-    '.nr-supply-tab[aria-pressed=true]{background:#164879;color:#fff;border-color:#164879}',
+    '.nr-supply-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0 22px}',
+    '.nr-supply-tab{min-height:74px;padding:14px 16px;text-align:left;border:2px solid #c3d6e8;border-radius:10px;background:#fff;color:#164879;font:inherit;font-weight:700;cursor:pointer}',
+    '.nr-supply-tab[aria-pressed=true]{background:#164879;color:#fff;border-color:#164879}.nr-supply-tab small{display:block;font-weight:400;margin-top:5px;line-height:1.3;color:#45647d}.nr-supply-tab[aria-pressed=true] small{color:#eef5fc}',
     '.nr-supply-tab:focus-visible,.nr-supply-picker button:focus-visible,.nr-supply-picker select:focus-visible,.nr-supply-picker input:focus-visible{outline:3px solid #246cbb;outline-offset:2px}',
     '.nr-supply-picker{max-width:820px;margin:12px auto 34px}',
     '.nr-supply-panel{border:1px solid #c3d6e8;border-radius:14px;background:#fff;padding:18px;margin:14px 0}',
@@ -40,7 +40,7 @@
     '.nr-supply-bottom{position:sticky;bottom:0;z-index:8;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px;background:#eef5fc;border:1px solid #c3d6e8;border-radius:10px}',
     '.nr-supply-bottom .btn{white-space:nowrap}',
     '.nr-supply-muted{color:#455e72;font-size:.95rem}',
-    '@media(max-width:750px){.nr-supply-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.nr-supply-panel{padding:13px}}',
+    '@media(max-width:750px){.nr-supply-categories{grid-template-columns:1fr}.nr-supply-panel{padding:13px}}',
     '@media(max-width:420px){.nr-supply-bottom{flex-wrap:wrap}.nr-supply-bottom .btn{flex:1;text-align:center}}'
   ].join('');
   const getCart=()=>{try{
@@ -59,7 +59,7 @@
       '<main class="wrap section nr-supplies-layout">'+
       '<p><a href="/shopping.html">← Shopping</a></p>'+
       '<h1>Supplies</h1>'+
-      '<p class="lead">Easy to find. Easy to choose. Easy to buy. Pick one supply at a time, select the quantity, and keep shopping.</p>'+
+      '<p class="lead">Choose the kind of supply, pick an item and quantity, then keep shopping. Unverified items are saved for a quote, not immediate checkout.</p>'+
       '<section class="nr-supply-picker" aria-label="Supplies shopping picker">'+
       '<h2>What kind of supplies do you need?</h2>'+
       '<nav class="nr-supply-categories" aria-label="Supply categories"></nav>'+
@@ -68,7 +68,7 @@
       '<label for="nr-supply-search"><strong>Find a supply</strong></label>'+
       '<input id="nr-supply-search" class="nr-supply-search" type="search" placeholder="Search tape, tile spacers, grout, caulk…" autocomplete="off">'+
       '<h3>Choose an item</h3><select id="nr-supply-item" aria-label="Choose a supply item"></select>'+
-      '<label for="nr-supply-variation"><h3>Different size or variation? (Optional)</h3></label>'+
+      '<label for="nr-supply-variation"><h3>Specific size or variation (if needed)</h3></label>'+
       '<input id="nr-supply-variation" type="text" maxlength="120" placeholder="Leave blank for the listed item">'+
       '<h3>Quantity</h3><div class="nr-supply-stepper">'+
       '<button type="button" id="nr-supply-minus" aria-label="Decrease quantity">−</button>'+
@@ -156,7 +156,7 @@
       cartCount.textContent=count+' item'+(count===1?'':'s')+' in cart';
     }
     for(const group of CATEGORIES){
-      const button=E('button',group.label,'nr-supply-tab');button.type='button';button.dataset.id=group.id;
+      const button=E('button',undefined,'nr-supply-tab');button.append(E('strong',group.label),E('small',group.hint));button.type='button';button.dataset.id=group.id;
       button.addEventListener('click',()=>{category=group;drawCategory();});
       nav.append(button);
     }
