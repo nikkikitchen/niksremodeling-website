@@ -7,8 +7,8 @@ test('Materials uses one consolidated text-first selector and includes wood, tri
  const shop=readFileSync('material-shop.js','utf8');
  assert.match(page,/data-page="materials"/);
  assert.match(page,/material-shop\.js\?v=/);
- assert.match(shop,/\['Wood & Lumber','\/material-lumber\.html'\]/);
- assert.match(shop,/\['Trim & Molding','\/material-trim-molding\.html'\]/);
+ assert.match(shop,/\['Lumber','\/material-lumber\.html'\]/);
+ assert.match(shop,/\['Wood & Trim','\/material-trim-molding\.html'\]/);
  assert.match(shop,/main\.replaceChildren\(section\)/);
  assert.match(shop,/Choose a material category/);
  assert.doesNotMatch(page,/photo-category-tile/);
