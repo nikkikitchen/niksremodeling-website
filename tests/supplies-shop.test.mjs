@@ -25,7 +25,7 @@ async function mount(path='/supplies.html'){
   for(let i=0;i<5;i++)await Promise.resolve();
   return {window,document:window.document,close:()=>window.close()};
 }
-const click=(document,label)=>[...document.querySelectorAll('.nr-supply-tab')].find(x=>x.textContent===label)?.click();
+const click=(document,label)=>[...document.querySelectorAll('.nr-supply-tab')].find(x=>x.querySelector('strong')?.textContent===label)?.click();
 
 test('Supplies uses compact text categories and does not render image tiles',async()=>{
   const t=await mount();
