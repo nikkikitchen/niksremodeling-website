@@ -15,11 +15,27 @@ test('Materials landing renders one text-only full page with accessible direct c
  try{
   const d=dom.window.document;
   assert.equal(d.querySelector('main h1')?.textContent,'Shop Building Materials');
-  assert.equal(d.querySelectorAll('main .nr-material-menu a').length,11);
+  assert.equal(d.querySelectorAll('main nav[aria-label="Building material categories"] a').length,11);
+  assert.equal(d.querySelector('main .nr-material-selector select')?.value,'Drywall Panels');
+  assert.equal(d.querySelector('main a[href="/materials.html?category=tile-stone"]')?.textContent.includes('Tile & Stone'),true);
   assert.equal(d.querySelector('main a[href="/material-lumber.html"]')?.textContent.includes('Lumber'),true);
   assert.ok(d.querySelector('main a[href="/supplies.html"]'));
   assert.equal(d.querySelector('.legacy'),null);
+  assert.equal(d.querySelector('.material-detail-grid'),null);
   assert.equal(d.querySelector('main img'),null);
+ }finally{dom.window.close();}
+});
+test('Material categories open a same-page, no-photo item and quantity selector',()=>{
+ const dom=setup('/materials.html?category=tile-stone','<div class="old-photos"><img src="/tile.jpg"></div>');
+ try{
+  const d=dom.window.document;
+  assert.equal(d.querySelector('.old-photos'),null);
+  assert.equal(d.querySelector('.nr-material-selector select')?.value,'Ceramic Tile');
+  assert.ok([...d.querySelectorAll('.nr-material-selector option')].some(x=>x.value==='Backsplash Tile'));
+  assert.equal(d.querySelector('nav[aria-label="Building material categories"] a[href="/materials.html?category=flooring"]')!==null,true);
+  const a=d.querySelector('nav[aria-label="Building material categories"] a[href="/material-lumber.html"]');
+  assert.ok(a); // Lumber is the one dedicated, picture-free size selector.
+  assert.equal(d.querySelectorAll('main img').length,0);
  }finally{dom.window.close();}
 });
 test('Drywall shopping keeps distinct sizes and consolidates repeat quantities without prices',()=>{
