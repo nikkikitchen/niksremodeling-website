@@ -42,10 +42,15 @@ for (const file of integrityPages) {
 }
 for (const file of browserScripts) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'pipe'});
 const shoppingSource=readFileSync(new URL('../shopping.html',import.meta.url),'utf8');
+// The owner-approved shopping redesign uses accessible text category links,
+// not the legacy eight mismatched picture tiles.
+const shoppingDepartments=['/appliances.html','/bathroom.html','/cabinets.html',
+  '/furniture.html','/materials.html','/products.html','/supplies.html','/other.html'];
 if (shoppingSource.includes('http-equiv="refresh"') ||
-    (shoppingSource.match(/class="photo-category-tile"/g)||[]).length !== 8 ||
-    shoppingSource.includes('/project.html?project=custom'))
-  throw Error('Shopping must have eight product-only picture cards, with no custom project category.');
+    shoppingSource.includes('class="photo-category-tile"') ||
+    shoppingSource.includes('/project.html?project=custom') ||
+    !shoppingDepartments.every(link=>shoppingSource.includes('href="'+link+'"')))
+  throw Error('Shopping must show eight accessible product-only category links without legacy picture tiles.');
 // Ensure accent-wall packages remain reachable from room projects on every screen.
 const roomSource=readFileSync(new URL('../room-projects.js',import.meta.url),'utf8');
 if(!roomSource.includes('Explore Accent Wall Projects') ||
