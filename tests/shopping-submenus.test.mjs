@@ -28,8 +28,8 @@ test('Shopping has one simple, consistent set of destinations on desktop and mob
    ['Cabinets','/cabinets.html'],
    ['Furniture & Accessories','/furniture.html'],
    ['Materials','/materials.html'],
-   ['Tools','/products.html'],
    ['Supplies','/supplies.html'],
+   ['Tools','/products.html'],
    ['Other','/other.html']
   ];
   for(const id of ['shopping-menu','mobile-shopping-menu']){
