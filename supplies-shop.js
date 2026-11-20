@@ -54,7 +54,7 @@
     return true;
   }catch{return false;}};
   function mount(){
-    if(document.body.dataset.page!=='shopping-home'||location.pathname!=='/supplies.html')return;
+    if(document.body.dataset.page!=='shopping-home'||!/^\/supplies(?:\.html)?\/?$/.test(location.pathname))return;
     document.body.innerHTML=window.header()+
       '<main class="wrap section nr-supplies-layout">'+
       '<p><a href="/shopping.html">← Shopping</a></p>'+
@@ -84,7 +84,7 @@
       '<section class="nr-supply-panel" aria-label="Supplies in your cart"><h2>Your supply selections</h2><div id="nr-supply-lines"></div></section>'+
       '<div class="nr-supply-bottom"><strong id="nr-supply-cart-count">0 items in cart</strong>'+
       '<a href="/project-cart.html" class="btn primary">Review Cart</a></div>'+
-      '<p class="nr-supply-muted">Looking for boards, drywall sheets, paint, or tile instead? <a href="/materials.html">Go to Materials</a>. For equipment and reusable power tools, visit <a href="/tools.html">Tools</a>.</p>'+
+      '<p class="nr-supply-muted">Looking for boards, drywall sheets, paint, or tile instead? <a href="/materials.html">Go to Materials</a>. For equipment and reusable power tools, visit <a href="/products.html">Tools</a>.</p>'+
       '</section></main>'+window.footer();
     document.head.append(E('style',STYLE));
     if(typeof window.updateCartCount==='function')window.updateCartCount();
