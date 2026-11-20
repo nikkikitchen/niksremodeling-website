@@ -133,7 +133,8 @@ test('vanity with faucet allowance includes a reviewed 35 percent markup plannin
  const app=readFileSync('app.js','utf8');
  assert.match(app,/'vanity-install':\{fixture:249/);
  assert.match(app,/this is not a confirmed product price/i);
- assert.match(readFileSync('scripts/service-pricing-check.cjs','utf8'),/'vanity-install':549/);
+ assert.match(app,/Preliminary \$249 fixture allowance/,'fixture allowance must be clearly labeled preliminary');
+ assert.match(app,/freight, applicable tax/,'freight and tax must not be implied included');
 });
 
 
