@@ -166,7 +166,8 @@
     const review=E('a','Review Cart','btn primary');review.href='/project-cart.html';actions.append(count,review);
     const nav=E('nav',undefined,'nr-material-menu');
     nav.setAttribute('aria-label','Other material categories');
-    MATERIALS.filter(x=>!location.pathname.endsWith(x[1])).forEach(([name,href])=>{const a=E('a');a.href=href;a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);});
+    const currentMaterialPath=location.pathname.replace(/\.html$/,'').replace(/\/$/,'');
+    MATERIALS.filter(([,href])=>href.replace(/\.html$/,'')!==currentMaterialPath).forEach(([name,href])=>{const a=E('a');a.href=href;a.append(E('strong',name),E('small',CATEGORY_HINTS[name]||''));nav.append(a);});
     const more=E('details',undefined,'nr-material-more');more.append(E('summary','Shop another materials category'),nav);
     const selected={qty:1,specs:{}};
     const current=()=>OPTIONS[choose.value]||{};
