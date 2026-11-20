@@ -40,6 +40,7 @@
     'Sealers':{size:['1 quart','1 gallon','5 gallons'],unit:'containers'},
     'Specialty Coatings':{size:['1 quart','1 gallon'],unit:'containers'},
     'Wallpaper':{size:['Single roll','Double roll'],unit:'rolls'},
+    'Interior Shiplap':{size:['1×6 shiplap','5.25-in nickel-gap','1×6 tongue-and-groove'],format:['8 ft','12 ft','16 ft'],finish:['Pine','Primed pine','Cedar'],unit:'boards'},
     'Baseboards':{size:['3-1/4 in','5-1/4 in'],format:['8 ft','12 ft','16 ft'],finish:['Primed MDF','Primed pine','Unfinished pine'],unit:'pieces'},
     'Crown Molding':{size:['3-5/8 in','4-5/8 in','5-1/4 in'],format:['8 ft','12 ft','16 ft'],unit:'pieces'},
     'Door & Window Casing':{size:['2-1/4 in','3-1/4 in'],format:['8 ft','12 ft','16 ft'],unit:'pieces'},
@@ -122,6 +123,13 @@
     if(slug==='wood'||slug==='lumber')return; // already has the approved lumber selector
     const old=document.querySelector('.material-detail-grid');if(!old)return;
     const titles=[...old.querySelectorAll('.material-option-card h3')].map(x=>x.textContent.trim());
+    if(slug==='trim-molding'){
+      const preferred=['Interior Shiplap','Baseboards','Crown Molding','Door & Window Casing'];
+      titles.sort((a,b)=>{
+        const ai=preferred.indexOf(a),bi=preferred.indexOf(b);
+        return (ai<0?99:ai)-(bi<0?99:bi);
+      });
+    }
     if(!titles.length)return;
     const picker=E('section',undefined,'nr-material-selector');picker.setAttribute('aria-label','Choose materials by item');
     const quick=E('div',undefined,'nr-material-quick');
@@ -205,6 +213,9 @@
       button.addEventListener('click',()=>{choose.value=title;drawOptions();});
       quick.append(button);
     });
+    if(slug==='trim-molding'&&new URLSearchParams(location.search).get('item')==='shiplap'){
+      choose.value='Interior Shiplap';drawOptions();
+    }
     choose.addEventListener('change',drawOptions);
     minus.addEventListener('click',()=>{selected.qty=Math.max(1,selected.qty-1);updateQty();});
     plus.addEventListener('click',()=>{selected.qty=Math.min(999,selected.qty+1);updateQty();});
