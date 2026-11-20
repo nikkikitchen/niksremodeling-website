@@ -26,6 +26,31 @@ for(const required of ['bathroom-catalog.js','retail-catalog.js','store-catalog.
  if(!files.includes(required))throw Error('Missing published Shopping catalog module: '+required);
 }
 const browserScripts = integrityPages.filter(file=>file.endsWith('.js'));
+// All three selectors run directly in customer browsers. Check them before
+// building dist, not only when a separate post-build audit is invoked.
+for(const script of ['material-shop.js','supplies-shop.js','lumber-shop.js']){
+ if(!files.includes(script))throw Error('Missing Shopping selector script: '+script);
+ execFileSync(process.execPath,['--check',script],{cwd:root,stdio:'pipe'});
+}
+// Keep every Materials detail route and Supplies wired to its intended
+// text-first shopping script; otherwise a stale or missing script can leave
+// customers staring at a noninteractive fallback.
+const shoppingPageScripts={
+ 'materials.html':'material-shop.js',
+ 'supplies.html':'supplies-shop.js',
+ 'material-lumber.html':'lumber-shop.js',
+ 'material-wood.html':'lumber-shop.js',
+ ...Object.fromEntries([
+ 'drywall','tile-stone','flooring','trim-molding','paint-finishes',
+ 'insulation','roofing','siding-exterior','doors-windows','concrete-masonry'
+ ].map(slug=>['material-'+slug+'.html','material-shop.js']))
+};
+for(const [page,script] of Object.entries(shoppingPageScripts)){
+ if(!files.includes(page))throw Error('Missing Shopping page from build: '+page);
+ const html=readFileSync(new URL('../'+page,import.meta.url),'utf8');
+ if(!html.includes('src="/'+script+'?'))
+  throw Error('Shopping page missing its selector: '+page+' → '+script);
+}
 const availablePages = new Set(files.filter(file=>file.endsWith('.html')));
 let testedPhotos=0,testedLinks=0;
 for (const file of integrityPages) {
