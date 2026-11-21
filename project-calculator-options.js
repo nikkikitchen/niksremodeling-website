@@ -57,7 +57,9 @@
     const materials = materialsChoice.querySelector('input');
     const delivery = deliveryChoice.querySelector('input');
     const params = new URLSearchParams(location.search);
-    materials.checked = params.has('material') || params.has('product');
+    // Default to Nik supplying materials even when the calculator opens without a material link.
+    // The customer-supplied checkbox, when selected, takes precedence.
+    materials.checked = !['1','true','yes'].includes((params.get('customerSupplies')||'').toLowerCase());
     const deliveryDetails = document.createElement('fieldset');
     deliveryDetails.className = 'delivery-choices project-options';
     const deliveryLegend = document.createElement('legend');
@@ -626,7 +628,7 @@
       }else if(types.value==='bathroom'){
         if(!productPlans.length){error.hidden=false;error.textContent='Choose bathroom work.';return;}
         const own=!!document.getElementById('customer-provides-materials')?.checked;
-        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:p.quoteRequired?null:window.bathroomPackageTotal(p,own)*x.quantity,flatService:!!p.flatService,quoteRequired:!!p.quoteRequired,fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture,internalSupplyBudget:p.internalSupplyBudget||0}}});
+        const labor=productPlans.map(x=>{const p=window.bathroomPackageByLabel(x.name);return {service:'Bathroom work',scope:p.label+(itemSelections[x.name]?' — '+itemSelections[x.name]:''),quantity:x.quantity,unit:'each',price:p.quoteRequired||(p.materialsPricingPending&&!own)?null:window.bathroomPackageTotal(p,own)*x.quantity,flatService:!!p.flatService,quoteRequired:!!p.quoteRequired||(!!p.materialsPricingPending&&!own),fixedPackage:true,packageId:p.id,packageNote:p.note,internalCosts:{labor:p.labor,supplies:p.supplies,fixture:own?0:p.fixture,internalSupplyBudget:p.internalSupplyBudget||0}}});
         materialEstimates.push({type:'bathroom',title:'Bathroom work',result:productPlans.map(x=>x.name+(itemSelections[x.name]?' — '+itemSelections[x.name]:'')+' × '+x.quantity).join(' · '),detail:(own?'Customer supplies fixtures.':'Fixture amounts are planning allowances, not verified product prices or stock. Final fixture selection and pricing are confirmed before ordering.')+' Final model, site conditions, tax and delivery confirmed with quote.',measurements:{},labor,projectOptions:selectedProjectOptions().filter(x=>['Delivery','Debris Removal'].includes(x)),deliveryTypes:selectedDeliveryTypes()});productPlans=[];
       }else if(types.value==='refinish'){
         try{materialEstimates.push(cabinetRefinishingEstimate());}catch(e){error.hidden=false;error.textContent=e.message;return;}
@@ -756,6 +758,7 @@
       const own=document.getElementById('customer-provides-materials');if(own)own.checked=false;
       editingId=null;history.replaceState(null,'',location.pathname);
       panel.querySelectorAll('input[type="checkbox"]').forEach(el=>{el.checked=false;el.indeterminate=false});
+      panel.querySelector('[name="project-option"][value="Materials"]').checked=true;
       document.getElementById('material-name').value='';
       document.getElementById('misc-hours').value='';
       cabinetFields.querySelectorAll('input[type=number]').forEach(input=>input.value='0');
