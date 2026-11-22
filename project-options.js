@@ -489,10 +489,10 @@
         p.priceStatus=scope.priceStatus;
       }
       if(p.id==='premium'){
-        // New structural ramps must not be advertised at a price that omits
-        // supports, landings/transition work or site-specific safety needs.
-        p.startingAt=null;
-        p.priceStatus='quote-required';
+        // Existing owner-approved allowance for a straight run with suitable landings.
+        p.startingAt=3915;
+        p.priceStatus='research-provisional';
+
       }
       return p;
     })

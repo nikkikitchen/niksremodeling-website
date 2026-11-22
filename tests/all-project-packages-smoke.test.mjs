@@ -43,7 +43,7 @@ test('Every scoped project has four usable picture packages and an active measur
    }
    assert.match(cards.at(-1).querySelector('.pkg-pricing').textContent,/Individually quoted/);
    assert.ok(cards.every(c=>c.querySelector('img')?.getAttribute('src')),id+' needs pictures');
-   assert.ok(cards.slice(0,3).every(c=>/Starting at|Project quote required/.test(c.querySelector('.pkg-pricing')?.textContent||'')),id+' needs honest pricing');
+   assert.ok(cards.slice(0,3).every(c=>/Starting at \$[1-9][\d,]*/.test(c.querySelector('.pkg-pricing')?.textContent||'')),id+' needs honest pricing');
    assert.ok(cards.at(-1).querySelector('a[href*="roomMode=individual"]'),id+' must offer Custom');
    assert.ok(!doc.querySelector('main').textContent.includes('Choose a package below'),id+' has duplicate directions');
    const basic=doc.querySelector('.pkg-add[data-package="basic"]');

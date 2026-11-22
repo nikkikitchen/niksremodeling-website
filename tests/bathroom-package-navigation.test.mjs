@@ -17,8 +17,8 @@ async function load(id,query=''){
 
 for(const {id,tiers,prices} of [
  {id:'bathrooms',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$875','$1,325','$1,990']},
- {id:'kitchen-pantry',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$1,285','$3,880','Project quote required']},
- {id:'accessibility',tiers:['Basic','Standard','Premium','Custom'],prices:['Project quote required']}
+ {id:'kitchen-pantry',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$1,285','$3,880','$5,695']},
+ {id:'accessibility',tiers:['Basic','Standard','Premium','Custom'],prices:['$3,915']}
 ]){
  test(id+' uses the same compact package cards without duplicate instructions',async()=>{
   const dom=await load(id);
@@ -36,7 +36,7 @@ for(const {id,tiers,prices} of [
      assert.match(cards[0].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$[\d,]+/);
      assert.match(cards[1].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$855/);
      assert.match(cards[1].textContent,/Preliminary estimate/);
-     assert.match(cards[2].querySelector('.pkg-pricing')?.textContent||'',/Project quote required/);
+     assert.match(cards[2].querySelector('.pkg-pricing')?.textContent||'',/Starting at \$3,915/);
      assert.match(cards[3].textContent,/Choose only the jobs and materials you need/);
    }
    assert.ok(!doc.querySelector('main').textContent.includes('Choose a package below'));

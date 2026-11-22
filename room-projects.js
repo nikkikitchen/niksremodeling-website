@@ -326,6 +326,48 @@ window.NIK_CALCULATE_PACKAGE_BASELINE=function(spec){
       laborDiscount:discount/100,laborAfterDiscount:laborNet/100,
       projectFees:fees/100,startingAt:startingCents/100}};
 };
+// Additional starting scopes. Each row is a tier increment: labor hours,
+// estimated retail material budget, and retail consumables budget.
+// Existing itemized tiers take precedence and supply the preceding scope.
+const packageIncrements = {
+  'kitchen-pantry': {deluxe:['Add two 30-inch stock base cabinets and a 5-foot laminate worktop on an open wall',8,750,55]},
+  attic:{deluxe:['Add 24 square feet of storage decking and one 6-foot storage shelf on suitable existing supports',5,160,25]},
+  basement:{standard:['Frame and finish one 8-foot nonbearing wall section',16,230,45],deluxe:['Install 120 square feet of click-lock flooring and one storage shelf',12,425,45]},
+  'closets-storage':{deluxe:['Fit one 24-inch organizer tower and up to 30 square feet of flooring',8,275,35]},
+  garage:{deluxe:['Install one stock storage cabinet and coat a second 120-square-foot prepared floor area',9,360,45]},
+  'laundry-utility':{standard:['Fit one 30-inch base cabinet and folding counter',5,325,30],deluxe:['Install 80 square feet of resilient flooring and replace one compatible vent grille',8,295,35]},
+  'adult-room':{standard:['Install a 64-square-foot decorative panel accent',8,440,45],deluxe:['Fit one display cabinet, one compatible light and 100 square feet of click flooring',14,690,55]},
+  'kids-room':{standard:['Install 120 square feet of resilient flooring',10,410,40],deluxe:['Paint one simple themed accent wall and assemble one study desk',8,210,35]},
+  'home-theater':{basic:['Mount one customer-owned screen on sound backing, cover 12 feet of cable and replace one light',5,160,25],standard:['Fit six acoustic panels',4,210,25],deluxe:['Fit one media console, two theater seats and one plug-in accent light',8,810,40]},
+  'entry-mudroom':{standard:['Fit one 4-foot cubby unit',6,225,30],deluxe:['Install 48 square feet of entry flooring and one compatible light',7,225,30]},
+  'home-office':{standard:['Fit a 4-foot desk top and a stock base cabinet',6,340,30],deluxe:['Install 100 square feet of click flooring, paint one accent wall and fit one task light',13,475,50]},
+  'music-creative-studio':{standard:['Mount six acoustic panels',4,210,25],deluxe:['Build one 4-foot workstation and install one compatible light',7,275,30]},
+  'fitness-wellness':{basic:['Fit 64 square feet of rubber floor, mount one mirror and storage rack, refresh one wall and light',9,420,45],standard:['Build one 4-foot equipment storage unit',5,200,25],deluxe:['Extend flooring by 64 square feet, finish a second wall and assess ventilation',7,255,30]},
+  'games-hobbies':{standard:['Fit one 4-foot game worktop',5,200,30],deluxe:['Install one display cabinet and 100 square feet of click flooring',12,530,40]},
+  'pet-room':{standard:['Fit one stock indoor kennel and two shelves',6,270,30],deluxe:['Fit 64 square feet of resilient flooring, a 4-foot splash panel and assess wash connections',8,285,35]},
+  'snack-beverage':{basic:['Install two shelves, a 3-foot prep top and one plug-in task light',5,210,25],standard:['Add one base cabinet and 3-foot counter',5,300,25],deluxe:['Add a second cabinet, one task light and assess existing sink connections',5,280,30]},
+  'vault-safe-room':{basic:['Install one lockable storage cabinet and review existing mountings and door',4,270,25],standard:['Add one anchored storage unit and assess the room for reinforcement',5,290,30],deluxe:['Add a second locking cabinet and prepare a door and ventilation plan; structural work quoted separately',6,325,30]},
+  murals:{standard:['Design and lay out a three-color motif on the prepared wall',5,65,25],deluxe:['Detail and clear-coat up to 96 square feet of mural',9,115,35]},
+  wallpaper:{basic:['Prepare and hang one standard double roll on a sound wall',4,90,20],standard:['Match and hang two additional double rolls',5,180,30],deluxe:['Detail one return and hang two additional patterned double rolls',6,240,35]},
+  arches:{standard:['Add one decorative trim surround to the arch',5,100,25],deluxe:['Fit and finish two decorative pilasters',8,230,35]},
+  fireplaces:{basic:['Prep and paint one existing decorative mantel outside the heat zone',4,65,20],standard:['Fit one replacement decorative mantel shelf',5,195,30],deluxe:['Tile 16 square feet of suitable surround and assess existing appliance clearances',9,180,40]},
+  stairs:{basic:['Touch up four treads and 8 feet of trim and refasten one existing handrail',5,85,25],standard:['Replace four compatible tread caps',6,200,30],deluxe:['Replace one 8-foot handrail and stain the four tread caps',6,175,30]},
+  'decks-railings':{basic:['Replace two 8-foot deck boards, tighten one existing railing section and spot finish',4,85,25],standard:['Replace six additional 8-foot deck boards',6,170,30],deluxe:['Replace two stair treads and one 6-foot rail section on sound framing',8,240,40]},
+  'exterior-improvements':{basic:['Caulk and paint up to 16 feet of sound trim',4,65,20],standard:['Replace and finish 24 feet of exterior trim',6,120,30],deluxe:['Replace one stock exterior door in a sound matching opening and weather seal',8,425,50]},
+  'backyard-retreat':{basic:['Fit one freestanding bench and one 6-foot privacy panel',6,310,30],standard:['Add one freestanding shade arbor kit',8,450,40],deluxe:['Extend the screen by 6 feet and fit four solar path lights',6,210,30]},
+  'outdoor-kitchen':{basic:['Assemble one entry-level freestanding grill and weather-rated prep cart',5,470,25],standard:['Add one outdoor cabinet and 3-foot weather-rated counter',7,520,40],deluxe:['Add a second cabinet and prep surface, lay out cooking zone and assess utility locations',8,590,45]},
+  'mechanic-shop':{standard:['Prep and coat 120 square feet of sound floor',7,165,35],deluxe:['Fit two stock tool cabinets and assess ventilation',6,420,30]},
+  'car-wash':{basic:['Fit one hose reel and two detailing shelves and lay out one wash station',4,180,20],standard:['Prepare a wash-bay surface plan and add a wash cart',4,175,20],deluxe:['Fit one pressure washer and compatible work light and assess drainage',6,350,30]},
+  'recycling-scrap':{basic:['Assemble a covered three-bin sorting rack',5,210,25],standard:['Extend the sorting shelter with one 4-foot covered bay',7,260,35],deluxe:['Install 32 square feet of paver pad and a second storage rack',9,305,40]},
+  pools:{basic:['Assemble one poolside storage box and review existing access',3,175,20],standard:['Add one deck bench and plan step or deck improvements',5,190,25],deluxe:['Fit one 6-foot rail section on suitable backing and 24 square feet of walkway',9,310,40]},
+  'bus-stop':{basic:['Assemble one covered outdoor bench on a suitable existing pad',8,575,45],standard:['Extend shelter weather protection with one side panel and 24 square feet of path',8,265,40],deluxe:['Extend the path by 32 square feet, review approach and plan lighting',7,215,35]},
+  mailboxes:{basic:['Install one standard mailbox, post and address numbers',3,90,20],standard:['Upgrade to one locking parcel box on a compatible post',2,145,15],deluxe:['Add a second delivery compartment and plan a masonry base',4,180,25]},
+  'outdoor-sound':{basic:['Mount two weather-rated speakers and plan one cable route',4,180,25],standard:['Fit one compatible amplifier and route up to 25 feet of speaker cable',4,215,25],deluxe:['Fit two additional speakers and a weather-protected control enclosure',6,290,35]},
+  'garden-greenhouse':{basic:['Build one 4-by-4-foot raised bed and one 4-foot potting bench',7,205,30],standard:['Assemble one 6-by-4-foot greenhouse kit',9,425,40],deluxe:['Add 32 square feet of path and one sheltered storage unit and plan water access',7,295,35]},
+  playground:{basic:['Assemble one entry-level freestanding playset on a suitable site and check clearances',8,510,40],standard:['Fit 100 square feet of play surfacing and borders',8,390,45],deluxe:['Add a freestanding shade canopy, one bench and a storage box',7,380,35]},
+  'patios-concrete':{standard:['Finish a second 120-square-foot section of sound concrete',7,160,35],deluxe:['Add 24 feet of edging and four solar path lights',6,180,25]},
+  'porches-entryways':{basic:['Refinish four existing steps and 12 feet of rail and trim',6,95,25],standard:['Replace four tread caps and a 6-foot rail on sound supports',8,210,35],deluxe:['Wrap two existing posts, refinish 48 square feet of entry surface and fit one compatible light',9,235,40]}
+};
 window.renderProjectPackageOptions=function(id,project){
   const scopes=window.PROJECT_PACKAGE_CHOICES?.[id];
   if((!scopes&&!window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])||new URLSearchParams(location.search).get('roomMode')==='individual')return false;
@@ -438,11 +480,7 @@ window.renderProjectPackageOptions=function(id,project){
       Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
       choice.priceStatus=spec.priceStatus;
     }
-    // Kitchen Deluxe cabinet/countertop purchase costs are not approved; no invented fixed-price quote.
-    if(id==='kitchen-pantry'){
-      const deluxe=packs.find(p=>p.id==='deluxe');
-      if(deluxe){deluxe.startingAt=null;deluxe.depositEstimate=null;deluxe.laborEstimate=null;deluxe.overheadAllowance=null;deluxe.priceBasis=null;deluxe.priceStatus='quote-required';}
-    }
+
   }
   // Price only a defined and fully costed baseline; do not hide unpriced work.
   for(const choice of packs){
@@ -452,6 +490,25 @@ window.renderProjectPackageOptions=function(id,project){
       Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
       choice.priceStatus=spec.priceStatus||'owner-reference';
     }
+  }
+  for(const [index,choice] of packs.entries()){
+    const increment=packageIncrements[id]?.[choice.id];
+    if(choice.startingAt || !increment)continue;
+    const [work,hours,materialBudget,supplyBudget]=increment;
+    const previous=packs[index-1];
+    const basis=previous?.priceBasis;
+    const markup=retail=>Math.round(retail*135)/100;
+    const spec={
+      scenario:[basis?.scenario,work].filter(Boolean).join(' '),
+      labor:[...(basis?.labor||[]),{name:work,quantity:hours,unitPrice:75}],
+      materials:[...(basis?.materials||[]),{name:work+' — standard material allowance',quantity:1,unitPrice:markup(materialBudget)}],
+      consumables:[...(basis?.consumables||[]),{name:'Installation and cleanup supplies',quantity:1,unitPrice:markup(supplyBudget)}],
+      laborDiscountPercent:7,projectFeePercent:10
+    };
+    choice.work=previous?['Includes the '+previous.name+' starting scope',work]:[work];
+    choice.intro=spec.scenario;
+    Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
+    choice.priceStatus='research-provisional';
   }
   const selected=packs.find(p=>p.id===(params.get('roomPackage')||params.get('bathPackage')||params.get('kitchenPackage')||params.get('accessibilityPackage'))&&p.id!=='custom');
   if(params.get('quote')==='1'&&selected){window.beginPackageQuote(id,project.title,selected,'room-project-package');return true;}
