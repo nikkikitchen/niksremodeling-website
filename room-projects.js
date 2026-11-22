@@ -326,48 +326,297 @@ window.NIK_CALCULATE_PACKAGE_BASELINE=function(spec){
       laborDiscount:discount/100,laborAfterDiscount:laborNet/100,
       projectFees:fees/100,startingAt:startingCents/100}};
 };
-// Additional starting scopes. Each row is a tier increment: labor hours,
-// estimated retail material budget, and retail consumables budget.
-// Existing itemized tiers take precedence and supply the preceding scope.
-const packageIncrements = {
-  'kitchen-pantry': {deluxe:['Add two 30-inch stock base cabinets and a 5-foot laminate worktop on an open wall',8,750,55]},
-  attic:{deluxe:['Add 24 square feet of storage decking and one 6-foot storage shelf on suitable existing supports',5,160,25]},
-  basement:{standard:['Frame and finish one 8-foot nonbearing wall section',16,230,45],deluxe:['Install 120 square feet of click-lock flooring and one storage shelf',12,425,45]},
-  'closets-storage':{deluxe:['Fit one 24-inch organizer tower and up to 30 square feet of flooring',8,275,35]},
-  garage:{deluxe:['Install one stock storage cabinet and coat a second 120-square-foot prepared floor area',9,360,45]},
-  'laundry-utility':{standard:['Fit one 30-inch base cabinet and folding counter',5,325,30],deluxe:['Install 80 square feet of resilient flooring and replace one compatible vent grille',8,295,35]},
-  'adult-room':{standard:['Install a 64-square-foot decorative panel accent',8,440,45],deluxe:['Fit one display cabinet, one compatible light and 100 square feet of click flooring',14,690,55]},
-  'kids-room':{standard:['Install 120 square feet of resilient flooring',10,410,40],deluxe:['Paint one simple themed accent wall and assemble one study desk',8,210,35]},
-  'home-theater':{basic:['Mount one customer-owned screen on sound backing, cover 12 feet of cable and replace one light',5,160,25],standard:['Fit six acoustic panels',4,210,25],deluxe:['Fit one media console, two theater seats and one plug-in accent light',8,810,40]},
-  'entry-mudroom':{standard:['Fit one 4-foot cubby unit',6,225,30],deluxe:['Install 48 square feet of entry flooring and one compatible light',7,225,30]},
-  'home-office':{standard:['Fit a 4-foot desk top and a stock base cabinet',6,340,30],deluxe:['Install 100 square feet of click flooring, paint one accent wall and fit one task light',13,475,50]},
-  'music-creative-studio':{standard:['Mount six acoustic panels',4,210,25],deluxe:['Build one 4-foot workstation and install one compatible light',7,275,30]},
-  'fitness-wellness':{basic:['Fit 64 square feet of rubber floor, mount one mirror and storage rack, refresh one wall and light',9,420,45],standard:['Build one 4-foot equipment storage unit',5,200,25],deluxe:['Extend flooring by 64 square feet, finish a second wall and assess ventilation',7,255,30]},
-  'games-hobbies':{standard:['Fit one 4-foot game worktop',5,200,30],deluxe:['Install one display cabinet and 100 square feet of click flooring',12,530,40]},
-  'pet-room':{standard:['Fit one stock indoor kennel and two shelves',6,270,30],deluxe:['Fit 64 square feet of resilient flooring, a 4-foot splash panel and assess wash connections',8,285,35]},
-  'snack-beverage':{basic:['Install two shelves, a 3-foot prep top and one plug-in task light',5,210,25],standard:['Add one base cabinet and 3-foot counter',5,300,25],deluxe:['Add a second cabinet, one task light and assess existing sink connections',5,280,30]},
-  'vault-safe-room':{basic:['Install one lockable storage cabinet and review existing mountings and door',4,270,25],standard:['Add one anchored storage unit and assess the room for reinforcement',5,290,30],deluxe:['Add a second locking cabinet and prepare a door and ventilation plan; structural work quoted separately',6,325,30]},
-  murals:{standard:['Design and lay out a three-color motif on the prepared wall',5,65,25],deluxe:['Detail and clear-coat up to 96 square feet of mural',9,115,35]},
-  wallpaper:{basic:['Prepare and hang one standard double roll on a sound wall',4,90,20],standard:['Match and hang two additional double rolls',5,180,30],deluxe:['Detail one return and hang two additional patterned double rolls',6,240,35]},
-  arches:{standard:['Add one decorative trim surround to the arch',5,100,25],deluxe:['Fit and finish two decorative pilasters',8,230,35]},
-  fireplaces:{basic:['Prep and paint one existing decorative mantel outside the heat zone',4,65,20],standard:['Fit one replacement decorative mantel shelf',5,195,30],deluxe:['Tile 16 square feet of suitable surround and assess existing appliance clearances',9,180,40]},
-  stairs:{basic:['Touch up four treads and 8 feet of trim and refasten one existing handrail',5,85,25],standard:['Replace four compatible tread caps',6,200,30],deluxe:['Replace one 8-foot handrail and stain the four tread caps',6,175,30]},
-  'decks-railings':{basic:['Replace two 8-foot deck boards, tighten one existing railing section and spot finish',4,85,25],standard:['Replace six additional 8-foot deck boards',6,170,30],deluxe:['Replace two stair treads and one 6-foot rail section on sound framing',8,240,40]},
-  'exterior-improvements':{basic:['Caulk and paint up to 16 feet of sound trim',4,65,20],standard:['Replace and finish 24 feet of exterior trim',6,120,30],deluxe:['Replace one stock exterior door in a sound matching opening and weather seal',8,425,50]},
-  'backyard-retreat':{basic:['Fit one freestanding bench and one 6-foot privacy panel',6,310,30],standard:['Add one freestanding shade arbor kit',8,450,40],deluxe:['Extend the screen by 6 feet and fit four solar path lights',6,210,30]},
-  'outdoor-kitchen':{basic:['Assemble one entry-level freestanding grill and weather-rated prep cart',5,470,25],standard:['Add one outdoor cabinet and 3-foot weather-rated counter',7,520,40],deluxe:['Add a second cabinet and prep surface, lay out cooking zone and assess utility locations',8,590,45]},
-  'mechanic-shop':{standard:['Prep and coat 120 square feet of sound floor',7,165,35],deluxe:['Fit two stock tool cabinets and assess ventilation',6,420,30]},
-  'car-wash':{basic:['Fit one hose reel and two detailing shelves and lay out one wash station',4,180,20],standard:['Prepare a wash-bay surface plan and add a wash cart',4,175,20],deluxe:['Fit one pressure washer and compatible work light and assess drainage',6,350,30]},
-  'recycling-scrap':{basic:['Assemble a covered three-bin sorting rack',5,210,25],standard:['Extend the sorting shelter with one 4-foot covered bay',7,260,35],deluxe:['Install 32 square feet of paver pad and a second storage rack',9,305,40]},
-  pools:{basic:['Assemble one poolside storage box and review existing access',3,175,20],standard:['Add one deck bench and plan step or deck improvements',5,190,25],deluxe:['Fit one 6-foot rail section on suitable backing and 24 square feet of walkway',9,310,40]},
-  'bus-stop':{basic:['Assemble one covered outdoor bench on a suitable existing pad',8,575,45],standard:['Extend shelter weather protection with one side panel and 24 square feet of path',8,265,40],deluxe:['Extend the path by 32 square feet, review approach and plan lighting',7,215,35]},
-  mailboxes:{basic:['Install one standard mailbox, post and address numbers',3,90,20],standard:['Upgrade to one locking parcel box on a compatible post',2,145,15],deluxe:['Add a second delivery compartment and plan a masonry base',4,180,25]},
-  'outdoor-sound':{basic:['Mount two weather-rated speakers and plan one cable route',4,180,25],standard:['Fit one compatible amplifier and route up to 25 feet of speaker cable',4,215,25],deluxe:['Fit two additional speakers and a weather-protected control enclosure',6,290,35]},
-  'garden-greenhouse':{basic:['Build one 4-by-4-foot raised bed and one 4-foot potting bench',7,205,30],standard:['Assemble one 6-by-4-foot greenhouse kit',9,425,40],deluxe:['Add 32 square feet of path and one sheltered storage unit and plan water access',7,295,35]},
-  playground:{basic:['Assemble one entry-level freestanding playset on a suitable site and check clearances',8,510,40],standard:['Fit 100 square feet of play surfacing and borders',8,390,45],deluxe:['Add a freestanding shade canopy, one bench and a storage box',7,380,35]},
-  'patios-concrete':{standard:['Finish a second 120-square-foot section of sound concrete',7,160,35],deluxe:['Add 24 feet of edging and four solar path lights',6,180,25]},
-  'porches-entryways':{basic:['Refinish four existing steps and 12 feet of rail and trim',6,95,25],standard:['Replace four tread caps and a 6-foot rail on sound supports',8,210,35],deluxe:['Wrap two existing posts, refinish 48 square feet of entry surface and fit one compatible light',9,235,40]}
+// Retail references checked November 22, 2026. Local stock and delivery vary.
+// Catalog unit prices already include markup. Retail comparisons receive it once.
+const packageComponents = {
+  "retail4": {"name": "Hampton Bay 30-inch satin white base cabinet KB30-SW", "retail": 258, "source": "https://www.homedepot.com/p/100545475"},
+  "retail56": {"name": "6-foot Winter Carnival laminate counter kit 12337KT06N1874", "retail": 183.4, "source": "https://www.homedepot.com/b/Kitchen-Countertops-Laminate-Countertops/Winter-Carnival/6-ft/Straight/N-5yc1vZc3bgZ1z0trzoZ1z1c3lmZ1z1pijg"},
+  "retail45": {"name": "Hampton Bay KAS2435-SW satin white end panel", "retail": 52.98, "source": "https://www.homedepot.com/p/202266825?MERCH=REC-_-brand_based_collection-_-205437718-_-3-_-n%2Fa-_-n%2Fa-_-n%2Fa-_-n%2Fa-_-n%2Fa"},
+  "retail66": {"name": "Hampton Bay satin white toe kick KATK-SW", "retail": 40.98, "source": "https://www.homedepot.com/b/Kitchen-Kitchen-Cabinets-Kitchen-Cabinet-Toe-Kicks/Hampton-Bay/White/N-5yc1vZcifbZp4Z1z0vm5f"},
+  "material51": {"name": "Cabinet Knob (Classic Satin Nickel, 10-pack)", "unitPrice": 35.1, "source": "material-price-reference.json#51"},
+  "retail67": {"name": "GRK 96070 cabinet screws, 50-pack", "retail": 11.31, "source": "https://www.homedepot.com/p/204837642"},
+  "retail84": {"name": "Kreg SML-C125-100 joining screws", "retail": 9.97, "source": "https://www.homedepot.com/b/Hardware/Kreg/1-1-4-in/N-5yc1vZc21mZ3bmZ1z0sg0u"},
+  "retail55": {"name": "Nelson 12-inch shims, 42-piece bundle", "retail": 6.64, "source": "https://www.homedepot.com/b/Lumber-Composites-Shims/N-5yc1vZbqjt?emt=popcats-hp-shims-04042026"},
+  "material43": {"name": "Caulk (10.1 oz Silicone Tub & Tile)", "unitPrice": 10.12, "source": "material-price-reference.json#43"},
+  "material32": {"name": "Construction Adhesive (10 oz Tube)", "unitPrice": 8.78, "source": "material-price-reference.json#32"},
+  "material4": {"name": "4x8 Sheet of 3/4-in ACX Plywood", "unitPrice": 70.2, "source": "material-price-reference.json#4"},
+  "material63": {"name": "White Laminated Shelf (12 in x 72 in)", "unitPrice": 21.57, "source": "material-price-reference.json#63"},
+  "material64": {"name": "11.5-in Heavy-Duty Steel Shelf Bracket (white)", "unitPrice": 8.75, "source": "material-price-reference.json#64"},
+  "material35": {"name": "Deck Screws (#8 x 2-1/2-in, 5-lb box)", "unitPrice": 48.6, "source": "material-price-reference.json#35"},
+  "material1": {"name": "2x4x8 Stud Lumber (Standard)", "unitPrice": 5.6, "source": "material-price-reference.json#1"},
+  "material2": {"name": "4x8 Sheet of 1/2-in Drywall", "unitPrice": 21.94, "source": "material-price-reference.json#2"},
+  "material33": {"name": "All-Purpose Drywall Joint Compound (5-Gallon)", "unitPrice": 28.35, "source": "material-price-reference.json#33"},
+  "material34": {"name": "Drywall Tape (Paper, 250 ft)", "unitPrice": 6.75, "source": "material-price-reference.json#34"},
+  "material53": {"name": "PVA Drywall Primer (1 Gallon)", "unitPrice": 21.57, "source": "material-price-reference.json#53"},
+  "material6": {"name": "1-Gallon Interior Flat Latex Paint", "unitPrice": 48.6, "source": "material-price-reference.json#6"},
+  "supply17": {"name": "Drywall Sanding Sponge (Medium/Fine, 3-pack)", "unitPrice": 10.12, "source": "data/approved-supply-prices.json#17"},
+  "material12": {"name": "Vinyl Plank Flooring", "unitPrice": 3.78, "source": "material-price-reference.json#12"},
+  "material38": {"name": "Quarter Round Molding (3/4-in x 8-ft Pine)", "unitPrice": 10.46, "source": "material-price-reference.json#38"},
+  "supply22": {"name": "Utility Knife Replacement Blades (50-pack)", "unitPrice": 17.55, "source": "data/approved-supply-prices.json#22"},
+  "retail58": {"name": "ClosetMaid Selectives 25-inch tower", "retail": 63.78, "source": "https://www.homedepot.com/p/100597847?MERCH=REC-_-irgaccessories-_-332471541-_-14-_-n%2Fa-_-n%2Fa-_-n%2Fa-_-n%2Fa-_-n%2Fa"},
+  "retail10": {"name": "Lockable steel storage cabinet with four shelves", "retail": 135.99, "source": "https://www.homedepot.com/p/700255472"},
+  "material55": {"name": "Concrete Floor Paint (1 Gallon)", "unitPrice": 86.37, "source": "material-price-reference.json#55"},
+  "supply2": {"name": "9-in Paint Roller Sleeves (3/8-in Nap, 3-pack)", "unitPrice": 18.9, "source": "data/approved-supply-prices.json#2"},
+  "supply5": {"name": "Paint Tray Liners (10-pack)", "unitPrice": 12.83, "source": "data/approved-supply-prices.json#5"},
+  "material44": {"name": "Painters Tape (1.88-in x 60 yds)", "unitPrice": 11.48, "source": "material-price-reference.json#44"},
+  "retail60": {"name": "Everbilt 4 × 12-inch floor register", "retail": 15.98, "source": "https://www.homedepot.com/b/Heating-Venting-Cooling-HVAC-Supplies-Registers-Grilles/White/Floor/4-in/N-5yc1vZc4ncZ1z117t4Z1z1v57xZ1z1xa2b"},
+  "retail80": {"name": "Primed nickel-gap 4 × 8-foot panel WSP5548", "retail": 37.48, "source": "https://www.homedepot.com/b/Moulding-Millwork-Wall-Paneling-Decorative-Wall-Paneling/Paneling/Shiplap/Paintable/N-5yc1vZbqpjZ1z19wf0Z1z1a0gsZ1z1v7qg"},
+  "material69": {"name": "5/6-in LED Recessed Retrofit Light (existing can; HALO RL56)", "unitPrice": 29.66, "source": "material-price-reference.json#69"},
+  "retail5": {"name": "AFI 48-inch writing desk", "retail": 179.37, "source": "https://www.homedepot.com/p/311100004?MERCH=REC-_-PLP_Browse_Mobile-_-NA-_-%7B%7BproductId%7D%7D-_-N"},
+  "retail78": {"name": "Commercial Electric XD2616-L TV mount", "retail": 79.98, "source": "https://www.homedepot.com/b/Electronics-TV-Home-Theater-TV-Mounts/Commercial-Electric/N-5yc1vZc653Zdn"},
+  "retail79": {"name": "Legrand CordMate II surface cover, 12-foot kit", "retail": 31.87, "source": "https://www.homedepot.com/p/202264878?MERCH=REC-_-pipsem-_-100038290-_-202264878-_-N"},
+  "retail0": {"name": "Polyester acoustic panels, six-pack 99SA10A120", "retail": 305.66, "source": "https://www.homedepot.com/p/700449520"},
+  "supply11": {"name": "Spray Adhesive (13.5 oz Can)", "unitPrice": 18.23, "source": "data/approved-supply-prices.json#11"},
+  "retail2": {"name": "Benjara Ruthe media console BM338407", "retail": 519.36, "source": "https://www.homedepot.com/b/Furniture-Living-Room-Furniture-TV-Stands/TV-Stand-Media-Console/N-5yc1vZcfctZ1z1uh87"},
+  "retail1": {"name": "LACOO single theater recliner", "retail": 175.36, "source": "https://www.homedepot.com/p/320226145"},
+  "retail92": {"name": "18-inch plug-in LED bar UCL18/3K/HD", "retail": 14.97, "source": "https://www.homedepot.com/b/Lighting-Ambient-Lighting-Under-Cabinet-Lighting-Under-Cabinet-Bar-Lights/Expandable/Plug-In-Wall/18-in/N-5yc1vZ2fkpczxZ1z1vem3Z1z25vhqZ1z25x3f"},
+  "supply46": {"name": "Contractor Cleanup Wipes (90-count)", "unitPrice": 21.6, "source": "data/approved-supply-prices.json#46"},
+  "material39": {"name": "1x4x8 Select Pine Board", "unitPrice": 19.58, "source": "material-price-reference.json#39"},
+  "supply10": {"name": "Wood Glue (16 oz Bottle)", "unitPrice": 12.15, "source": "data/approved-supply-prices.json#10"},
+  "supply12": {"name": "Polyurethane Wood Finish (1-Quart Clear Satin)", "unitPrice": 25.65, "source": "data/approved-supply-prices.json#12"},
+  "material59": {"name": "4-ft LED Utility Strip Light (existing compatible connection)", "unitPrice": 53.96, "source": "material-price-reference.json#59"},
+  "retail49": {"name": "Rubber-Cal 48-square-foot rubber gym-floor roll", "retail": 214.24, "source": "https://www.homedepot.com/b/Flooring-Gym-Flooring-Gym-Floor-Rolls/Rubber-Cal/48/Water-Resistant/N-5yc1vZbbpjZhlyZ1z0xwtuZ1z1bmb3"},
+  "retail8": {"name": "Fab Glass 36 × 60-inch safety-backed gym mirror", "retail": 325.07, "source": "https://www.homedepot.com/p/318300527?locale=en-US&source=shoppingads"},
+  "retail9": {"name": "BORA four-level wall rack", "retail": 53.99, "source": "https://www.homedepot.com/p/321470540"},
+  "retail6": {"name": "VEIKOUS corner indoor kennel with two bowls", "retail": 204, "source": "https://www.homedepot.com/p/332286899"},
+  "retail71": {"name": "Lynzavix PVC backsplash, 7-square-foot pack", "retail": 55.36, "source": "https://www.homedepot.com/b/Home-Decor-Wall-Decor-Peel-and-Stick-Backsplash/4x8/400-in/N-5yc1vZckspZ1z1191hZ1z1vn71"},
+  "retail112": {"name": "Varathane water-based clear finish, quart", "retail": 24.98, "source": "https://www.homedepot.com/p/100193658"},
+  "retail59": {"name": "Brewster ASC93997 prepasted double roll, 56.4 sq. ft.", "retail": 28.98, "source": "https://www.homedepot.com/b/Home-Decor-Wallpaper/Brewster/Double-Roll/N-5yc1vZbc0qZ7fhZ1z1dtmn"},
+  "material54": {"name": "Interior Bonding Primer (1 Gallon)", "unitPrice": 47.22, "source": "material-price-reference.json#54"},
+  "material67": {"name": "Primed MDF 1x2 Trim Board (8 ft)", "unitPrice": 8.07, "source": "material-price-reference.json#67"},
+  "material45": {"name": "Sandpaper Sheets (Assorted Grit, 5-pack)", "unitPrice": 8.1, "source": "material-price-reference.json#45"},
+  "retail12": {"name": "SKONYON 60-inch mantel shelf", "retail": 150.99, "source": "https://www.homedepot.com/p/700173028"},
+  "material13": {"name": "Porcelain Ceramic Tile", "unitPrice": 3.38, "source": "material-price-reference.json#13"},
+  "material36": {"name": "Grout (25-lb Bag)", "unitPrice": 30.38, "source": "material-price-reference.json#36"},
+  "material37": {"name": "Tile Thinset Mortar (50-lb Bag)", "unitPrice": 33.75, "source": "material-price-reference.json#37"},
+  "supply20": {"name": "Tile Spacers (1/8-in, 500-pack)", "unitPrice": 9.45, "source": "data/approved-supply-prices.json#20"},
+  "retail82": {"name": "LUKVIZO handrail brackets, three-pack", "retail": 68.52, "source": "https://www.homedepot.com/p/700409323"},
+  "retail47": {"name": "Varathane Classic espresso stain, quart", "retail": 13.98, "source": "https://www.homedepot.com/p/305501997?locale=en-US&source=shoppingads"},
+  "retail70": {"name": "Stairtek unfinished 42-inch oak retread XBTRO1142", "retail": 46.94, "source": "https://www.homedepot.com/b/Moulding-Millwork-Stairs-Railings-Stair-Treads/Unfinished/42-in/Retread/N-5yc1vZbcrqZ1z0wimyZ1z1t4zuZ1z1vpk5"},
+  "retail14": {"name": "8-foot pine wall handrail 74522FSA05", "retail": 336.66, "source": "https://www.homedepot.com/b/Moulding-Millwork-Stairs-Railings-Stair-Railings-Handrails/Wood/8-ft/N-5yc1vZ2fkpaacZ1z0vir2Z1z11605"},
+  "material41": {"name": "Pressure-Treated 5/4x6x12 Decking Board", "unitPrice": 22.28, "source": "material-price-reference.json#41"},
+  "retail88": {"name": "BEHR semi-transparent exterior stain application kit", "retail": 102.38, "source": "https://www.homedepot.com/b/Paint-Exterior-Wood-Coatings-Exterior-Wood-Stains/1-Gallon/Semi-Transparent/N-5yc1vZbbbmZ1z10m0lZ1z1dquo"},
+  "retail115": {"name": "ProWood 4-foot treated exterior step tread", "retail": 22.66, "source": "https://www.homedepot.com/p/335169385?emt=ppq_vfpd"},
+  "retail30": {"name": "6-foot pressure-treated rail and connector kit", "retail": 103.96, "source": "https://www.homedepot.com/b/Lumber-Composites-Decking/Rail-Kit/N-5yc1vZbqmgZ1z1v718"},
+  "material40": {"name": "Pressure-Treated 4x4x8 Lumber", "unitPrice": 18.23, "source": "material-price-reference.json#40"},
+  "retail63": {"name": "BEHR exterior satin white paint, gallon", "retail": 49.98, "source": "https://www.homedepot.com/p/205255705"},
+  "retail101": {"name": "GE window and door sealant 2811092", "retail": 10.98, "source": "https://www.homedepot.com/b/Paint-Paint-Supplies-Caulk-Sealants-Caulk/Clear/N-5yc1vZcibhZ1z13hoz"},
+  "retail100": {"name": "Veranda 8-foot cellular PVC exterior trim board H190WWS2", "retail": 48.98, "source": "https://www.homedepot.com/b/Lumber-Composites-Boards-Planks-PVC-Boards/Veranda/Vinyl/N-5yc1vZchzpZ1koZ1z0vb2m"},
+  "material16": {"name": "Exterior Steel Entry Door (Prehung)", "unitPrice": 418.5, "source": "material-price-reference.json#16"},
+  "material52": {"name": "Deadbolt & Entry Lockset Combo Pack", "unitPrice": 60.75, "source": "material-price-reference.json#52"},
+  "retail111": {"name": "Window and door installation kit with flashing, foam, shims and sealant", "retail": 48.1, "source": "https://www.homedepot.com/p/sets/Window-and-Door-Sealing-and-Installation-Kit-with-Flashing-Tape-Spray-Foam-Shims-and-White-Sealant-45-Piece/344238581"},
+  "retail110": {"name": "Simpson connector screw pack SD9112R100", "retail": 16.65, "source": "https://www.homedepot.com/b/Hardware-Fasteners-Screws/Simpson-Strong-Tie/100/1-1-2-in/N-5yc1vZc2b0Z615Z1z0sg18Z1z1415q"},
+  "retail15": {"name": "Arcadia BE02 outdoor bench", "retail": 134.99, "source": "https://www.homedepot.com/b/Outdoors-Patio-Furniture-Patio-Chairs-Outdoor-Benches/Bench/Resin/N-5yc1vZc1xuZ1z0tljiZ1z1dwa2"},
+  "retail48": {"name": "72-inch freestanding outdoor privacy screen SA1059B1782", "retail": 206.64, "source": "https://www.homedepot.com/p/700451287"},
+  "retail17": {"name": "Karl home garden arbor 546427546276", "retail": 123, "source": "https://www.homedepot.com/p/324303420"},
+  "material5": {"name": "60-lb Bag of Concrete Mix", "unitPrice": 7.76, "source": "material-price-reference.json#5"},
+  "retail18": {"name": "Monteaux Bel Air solar lights, four-pack", "retail": 74.97, "source": "https://www.homedepot.com/p/325843272"},
+  "retail19": {"name": "Nexgrill 720-0925PG freestanding grill", "retail": 249, "source": "https://www.homedepot.com/b/Outdoors-Outdoor-Cooking-Grills-Gas-Grills-Propane-Grills/Free-Delivery-Today/Freestanding-Cart-Style/4-Burners/N-5yc1vZc5t2Zbwo6rZ1z0ls3qZ1z0m3wv"},
+  "retail20": {"name": "NUUK 31-inch prep cart", "retail": 165.6, "source": "https://www.homedepot.com/p/338783382"},
+  "retail21": {"name": "Milan teak outdoor base cabinet with counter K2118WM", "retail": 1159.84, "source": "https://www.homedepot.com/b/Outdoors-Outdoor-Cooking-Outdoor-Kitchens-Outdoor-Kitchen-Storage-Outdoor-Kitchen-Cabinets/Outdoor-Base-Cabinet/With-Countertop/N-5yc1vZcjflZ1z1y1lnZ1z1y1pe"},
+  "retail22": {"name": "Liberty Garden wall hose holder 691-B", "retail": 11.98, "source": "https://www.homedepot.com/b/Outdoors-Garden-Center-Watering-Irrigation-Watering-Essentials-Hose-Reels/Steel/Wall-mount/N-5yc1vZbx7eZ1z0v4peZ1z0zx2o"},
+  "retail23": {"name": "MIRTAVO three-tier detailing cart BW4XGSPA", "retail": 365.38, "source": "https://www.homedepot.com/p/700531830"},
+  "retail54": {"name": "RYOBI RY141803 corded pressure washer", "retail": 79, "source": "https://www.homedepot.com/b/Outdoors-Outdoor-Power-Equipment-Pressure-Washers-Electric-Pressure-Washers-Corded-Electric-Pressure-Washers/RYOBI/Anytime/1800-PSI/N-5yc1vZ2fkpdtaZm5dZbwo6oZ1z1cane"},
+  "retail25": {"name": "PowerSmith PWLS020H work light", "retail": 17.99, "source": "https://www.homedepot.com/b/Lighting-Commercial-Lighting-Work-Lights/Outdoor/Plug-In/20-W/N-5yc1vZcgduZ1z17lkrZ1z1c6m1Z1z206m6"},
+  "retail26": {"name": "Rubbermaid BRUTE 32-gallon bin with lid", "retail": 40.97, "source": "https://www.homedepot.com/b/Cleaning-Trash-Recycling-Trash-Cans/32-Gallon/With-Lid/N-5yc1vZcb2gZ1z0plydZ1z21lxh"},
+  "retail86": {"name": "Suntuf corrugated clear roof panel, 8 feet", "retail": 33.93, "source": "https://www.homedepot.com/p/100021329?irgwc=1"},
+  "retail105": {"name": "8-foot ground-contact 2 × 6 southern pine 2311255", "retail": 9.68, "source": "https://www.homedepot.com/b/Lumber-Composites/Pressure-Treated/2-in-x-6-in/8-ft/N-5yc1vZbqpgZ1z0n5miZ1z1c7mhZ1z1rkql"},
+  "retail87": {"name": "Woodtite EPDM roof fasteners, 50-pack", "retail": 6.98, "source": "https://www.homedepot.com/b/Building-Materials-Roofing-Roofing-Tools/50/Roof-Fastener/N-5yc1vZc938Z1z0lpb2Z1z0wuv5"},
+  "retail52": {"name": "12-inch square concrete step stone 71200", "retail": 1.87, "source": "https://www.homedepot.com/b/Outdoors-Garden-Center-Landscaping-Supplies-Hardscapes-Stepping-Stones/Pewter/1200-in/Patio/N-5yc1vZciauZ1z0vm5kZ1z174sxZ1z1waim"},
+  "retail94": {"name": "Pavestone base, half cubic foot, 98001", "retail": 6.47, "source": "https://www.homedepot.com/b/Outdoors-Garden-Center-Landscaping-Supplies-Hardscapes/Paver-Base/N-5yc1vZci6gZ1z0rv0q"},
+  "retail104": {"name": "Barrier paver edging and spikes BAR02S, two 6-foot 8-inch strips", "retail": 20.2, "source": "https://www.homedepot.com/b/Outdoors/Barrier/N-5yc1vZbx82Z691"},
+  "retail103": {"name": "Quikrete all-purpose sand, 50-pound bag 115251", "retail": 29.89, "source": "https://www.homedepot.com/p/100318450?fp=ggl&g_store=4110&locale=en-US&source=shoppingads"},
+  "retail29": {"name": "75-gallon deck box X-W465P187472", "retail": 88.7, "source": "https://www.homedepot.com/b/Storage-Organization-Outdoor-Storage-Patio-Storage-Deck-Boxes/4400-in/N-5yc1vZbtz1Z1z11sx9"},
+  "retail32": {"name": "Architectural Mailboxes E11KITBAM mailbox/post kit", "retail": 57.97, "source": "https://www.homedepot.com/b/Hardware-Mailboxes-Residential-Mailboxes-Mailboxes-With-Post/Outgoing-Mail-Indicator/Post-Mount/N-5yc1vZc8g2Z1z0le9kZ1z1aqoh"},
+  "retail46": {"name": "Reflective address plaque 31035", "retail": 26.47, "source": "https://www.homedepot.com/b/Hardware-Mailboxes-Address-Signs/Letters-Numbers/N-5yc1vZcfzyZ1z0le9j"},
+  "retail33": {"name": "Oasis Classic locking parcel mailbox", "retail": 99.91, "source": "https://www.homedepot.com/p/100556885"},
+  "retail74": {"name": "Polk Atrium 4 outdoor speaker pair with brackets", "retail": 199, "source": "https://www.polkaudio.com/product/outdoor-speakers/atrium-4/112577.html"},
+  "retail35": {"name": "Pyle HDPCAU46BA indoor amplifier", "retail": 56.99, "source": "https://www.homedepot.com/b/Electronics-Home-Audio-Receivers-Amplifiers/Bluetooth/N-5yc1vZc64uZ1z0sfgh"},
+  "retail69": {"name": "Syston direct-burial 16/2 speaker cable, 50 feet", "retail": 27.99, "source": "https://www.homedepot.com/b/Electrical-Wire-Low-Voltage-Wires-Speaker-Wires/Direct-Burial/50-ft/Pre-Cut-Length/N-5yc1vZc59pZ1z0ulq4Z1z1b732Z1z1uhyt"},
+  "supply51": {"name": "Electrical Tape (Black Vinyl, 3-pack)", "unitPrice": 8.1, "source": "data/approved-supply-prices.json#51"},
+  "retail36": {"name": "VEVOR NEMA 4X control enclosure", "retail": 122.31, "source": "https://www.homedepot.com/b/Electrical-Electrical-Boxes-Conduit-Fittings-Weatherproof-Boxes/0/1/N-5yc1vZca29Z1z0zyyjZ1z141j4"},
+  "retail89": {"name": "Greenes Fence 4 × 4-foot raised bed RC4T12B", "retail": 93.79, "source": "https://www.homedepot.com/b/Outdoors-Garden-Center-Raised-Garden-Beds-Raised-Planter-Boxes/4-ft-x-4-ft/Cedar/Modular/N-5yc1vZ2fkpa3vZ1z0uhj8Z1z1sv3wZ1z1xyel"},
+  "retail90": {"name": "Outdoor Living Today 4-foot cedar potting bench", "retail": 481.43, "source": "https://www.homedepot.com/p/202071805?emt=ppr_vfpd"},
+  "retail38": {"name": "Sizzim 6 × 4-foot greenhouse kit", "retail": 165, "source": "https://www.homedepot.com/b/Outdoors-Garden-Center-Greenhouses-Greenhouse-Kits/6x4/6/N-5yc1vZ2fkomkgZ1z0ksqrZ1z1ti8b"},
+  "retail43": {"name": "Outdoor fir storage cabinet FF-SC025-L", "retail": 189.99, "source": "https://www.homedepot.com/b/Storage-Organization-Outdoor-Storage-Patio-Storage-Outdoor-Storage-Cabinets/40-in/N-5yc1vZci7bZ1z11z7r"},
+  "retail75": {"name": "Siavonce A-frame swing kit with two seats and glider", "retail": 152, "source": "https://www.homedepot.com/p/341976738"},
+  "retail62": {"name": "Rubber-Cal Eco-Safety 10.56-square-foot tile case", "retail": 127.08, "source": "https://www.homedepot.com/p/314526349?MERCH=REC-_-fbr-_-314526349-_-0-_-n%2Fa-_-n%2Fa-_-n%2Fa-_-n%2Fa-_-n%2Fa"},
+  "retail83": {"name": "Frame It All playground border, 16-foot kit", "retail": 82.42, "source": "https://www.homedepot.com/p/306351430"},
+  "retail42": {"name": "Everbilt 10 × 10-foot pop-up shade canopy", "retail": 139, "source": "https://www.homedepot.com/p/335887514"}
 };
+const packageIncrements = {
+  "kitchen-pantry": {
+    "deluxe": {"work": "Add two factory-finished 30-inch base cabinets on one open wall, two finished end panels, a toe kick and a straight 5-foot laminate worktop. Existing layout, no sink cutout or utility relocation.", "hours": 8, "materials": {"retail4": 2, "retail56": 1, "retail45": 2, "retail66": 1, "material51": 1}, "consumables": {"retail67": 1, "retail84": 1, "retail55": 1, "material43": 1, "material32": 1}}
+  },
+  "attic": {
+    "deluxe": {"work": "Add 24 square feet of storage decking and one 6-foot storage shelf on suitable existing supports", "hours": 5, "materials": {"material4": 1, "material63": 1, "material64": 3}, "consumables": {"material35": 1}}
+  },
+  "basement": {
+    "standard": {"work": "Frame and finish one 8-foot nonbearing wall section", "hours": 16, "materials": {"material1": 12, "material2": 5, "material33": 1, "material34": 1, "material53": 1, "material6": 1}, "consumables": {"material35": 1, "supply17": 1}},
+    "deluxe": {"work": "Install 120 square feet of click-lock flooring and one storage shelf", "hours": 12, "materials": {"material12": 138, "material38": 6, "material63": 1, "material64": 3}, "consumables": {"material32": 1, "supply22": 1}}
+  },
+  "closets-storage": {
+    "deluxe": {"work": "Fit one 25-inch closet organizer tower and up to 30 square feet of click flooring on a sound, level floor", "hours": 8, "materials": {"retail58": 1, "material12": 35, "material38": 3}, "consumables": {"retail67": 1, "supply22": 1}}
+  },
+  "garage": {
+    "deluxe": {"work": "Install one stock storage cabinet and coat a second 120-square-foot prepared floor area", "hours": 9, "materials": {"retail10": 1, "material55": 1}, "consumables": {"supply2": 1, "supply5": 1, "material44": 1}}
+  },
+  "laundry-utility": {
+    "standard": {"work": "Fit one 30-inch base cabinet and folding counter", "hours": 5, "materials": {"retail4": 1, "retail56": 1, "retail45": 2, "retail66": 1}, "consumables": {"retail67": 1, "retail55": 1, "material43": 1}},
+    "deluxe": {"work": "Install 80 square feet of resilient flooring and replace one compatible vent grille", "hours": 8, "materials": {"material12": 92, "material38": 5, "retail60": 1}, "consumables": {"material32": 1, "supply22": 1}}
+  },
+  "adult-room": {
+    "standard": {"work": "Install and paint up to 64 square feet of primed nickel-gap decorative panels", "hours": 8, "materials": {"retail80": 3, "material6": 1}, "consumables": {"material32": 3, "material44": 1}},
+    "deluxe": {"work": "Fit one display cabinet, one compatible light and 100 square feet of click flooring", "hours": 14, "materials": {"retail10": 1, "material69": 1, "material12": 115, "material38": 6}, "consumables": {"retail67": 1, "supply22": 1}}
+  },
+  "kids-room": {
+    "standard": {"work": "Install 120 square feet of resilient flooring", "hours": 10, "materials": {"material12": 138, "material38": 7}, "consumables": {"material32": 1, "supply22": 1}},
+    "deluxe": {"work": "Paint one simple themed accent wall and assemble one study desk", "hours": 8, "materials": {"material6": 2, "retail5": 1}, "consumables": {"material44": 1, "supply2": 1, "supply5": 1}}
+  },
+  "home-theater": {
+    "basic": {"work": "Mount one customer-owned screen on sound backing, cover 12 feet of cable and replace one light", "hours": 5, "materials": {"retail78": 1, "retail79": 1, "material69": 1}, "consumables": {"retail67": 1}},
+    "standard": {"work": "Fit six acoustic panels", "hours": 4, "materials": {"retail0": 1}, "consumables": {"supply11": 2}},
+    "deluxe": {"work": "Fit one media console, two theater seats and one plug-in accent light", "hours": 8, "materials": {"retail2": 1, "retail1": 2, "retail92": 1}, "consumables": {"supply46": 1}}
+  },
+  "entry-mudroom": {
+    "standard": {"work": "Fit one 4-foot cubby unit", "hours": 6, "materials": {"material4": 2, "material39": 2}, "consumables": {"retail84": 1, "supply10": 1}},
+    "deluxe": {"work": "Install 48 square feet of entry flooring and one compatible light", "hours": 7, "materials": {"material12": 56, "material38": 4, "material69": 1}, "consumables": {"material32": 1, "supply22": 1}}
+  },
+  "home-office": {
+    "standard": {"work": "Fit a 4-foot finished plywood desktop and one stock 30-inch base cabinet", "hours": 6, "materials": {"retail4": 1, "material4": 1, "material39": 2, "retail45": 2, "retail66": 1}, "consumables": {"retail67": 1, "retail55": 1, "supply12": 1}},
+    "deluxe": {"work": "Install 100 square feet of click flooring, paint one accent wall and fit one task light", "hours": 13, "materials": {"material12": 115, "material38": 6, "material6": 1, "retail92": 1}, "consumables": {"material44": 1, "supply2": 1, "supply22": 1}}
+  },
+  "music-creative-studio": {
+    "standard": {"work": "Mount six acoustic panels", "hours": 4, "materials": {"retail0": 1}, "consumables": {"supply11": 2}},
+    "deluxe": {"work": "Build one 4-foot workstation and install one compatible light", "hours": 7, "materials": {"material4": 1, "material1": 5, "material59": 1}, "consumables": {"retail84": 1, "supply12": 1}}
+  },
+  "fitness-wellness": {
+    "basic": {"work": "Fit 64 square feet of rubber floor, mount one mirror and storage rack, refresh one wall and light", "hours": 9, "materials": {"retail49": 2, "retail8": 1, "retail9": 1, "material6": 1, "material69": 1}, "consumables": {"retail67": 1, "material44": 1, "supply2": 1}},
+    "standard": {"work": "Build one 4-foot equipment storage unit", "hours": 5, "materials": {"material4": 1, "material1": 5}, "consumables": {"retail84": 1, "supply12": 1}},
+    "deluxe": {"work": "Extend flooring by 64 square feet, finish a second wall and assess ventilation", "hours": 7, "materials": {"retail49": 2, "material6": 1}, "consumables": {"material44": 1, "supply2": 1}}
+  },
+  "games-hobbies": {
+    "standard": {"work": "Fit one 4-foot game worktop", "hours": 5, "materials": {"material4": 1, "material1": 5}, "consumables": {"retail84": 1, "supply12": 1}},
+    "deluxe": {"work": "Install one display cabinet and 100 square feet of click flooring", "hours": 12, "materials": {"retail10": 1, "material12": 115, "material38": 6}, "consumables": {"retail67": 1, "supply22": 1}}
+  },
+  "pet-room": {
+    "standard": {"work": "Fit one stock indoor kennel and two shelves", "hours": 6, "materials": {"retail6": 1, "material63": 2, "material64": 6}, "consumables": {"retail67": 1}},
+    "deluxe": {"work": "Fit 64 square feet of resilient flooring, a 4-foot splash panel and assess wash connections", "hours": 8, "materials": {"material12": 74, "material38": 5, "retail71": 2}, "consumables": {"material43": 1, "supply22": 1}}
+  },
+  "snack-beverage": {
+    "basic": {"work": "Install two 6-foot shelves, a 3-foot finished prep surface and one plug-in task light", "hours": 5, "materials": {"material63": 2, "material64": 6, "material4": 1, "material1": 3, "retail92": 1}, "consumables": {"retail67": 1, "supply12": 1}},
+    "standard": {"work": "Add one base cabinet and 3-foot counter", "hours": 5, "materials": {"retail4": 1, "retail56": 1, "retail66": 1, "retail45": 2}, "consumables": {"retail67": 1, "retail55": 1, "material43": 1}},
+    "deluxe": {"work": "Add a second cabinet, one task light and assess existing sink connections", "hours": 5, "materials": {"retail4": 1, "retail92": 1, "retail45": 1, "retail66": 1}, "consumables": {"retail67": 1, "retail55": 1}}
+  },
+  "vault-safe-room": {
+    "basic": {"work": "Install one lockable storage cabinet and review existing mountings and door", "hours": 4, "materials": {"retail10": 1}, "consumables": {"retail67": 1}},
+    "standard": {"work": "Add one anchored storage unit and assess the room for reinforcement", "hours": 5, "materials": {"retail10": 1}, "consumables": {"retail67": 1}},
+    "deluxe": {"work": "Add a second locking cabinet and prepare a door and ventilation plan; structural work quoted separately", "hours": 6, "materials": {"retail10": 1}, "consumables": {"retail67": 1}}
+  },
+  "murals": {
+    "standard": {"work": "Design and lay out a three-color motif on the prepared wall", "hours": 5, "materials": {"material6": 3}, "consumables": {"material44": 1, "supply2": 1, "supply5": 1}},
+    "deluxe": {"work": "Detail and clear-coat up to 96 square feet of mural", "hours": 9, "materials": {"retail112": 1}, "consumables": {"material44": 1, "supply2": 1, "supply5": 1}}
+  },
+  "wallpaper": {
+    "basic": {"work": "Prepare and hang one standard double roll on a sound wall", "hours": 4, "materials": {"retail59": 1, "material54": 1}, "consumables": {"supply22": 1, "supply17": 1}},
+    "standard": {"work": "Match and hang two additional standard double rolls, up to 112 square feet before pattern loss", "hours": 5, "materials": {"retail59": 2}, "consumables": {"supply22": 1}},
+    "deluxe": {"work": "Detail one return and hang two additional matching double rolls, up to 112 square feet before pattern loss", "hours": 6, "materials": {"retail59": 2}, "consumables": {"supply22": 1, "material54": 1}}
+  },
+  "arches": {
+    "standard": {"work": "Add one decorative trim surround to the arch", "hours": 5, "materials": {"material67": 4}, "consumables": {"material32": 1, "supply10": 1, "material45": 1}},
+    "deluxe": {"work": "Fit and finish two decorative pilasters", "hours": 8, "materials": {"material67": 8, "material39": 4, "material6": 1}, "consumables": {"material32": 1, "supply10": 1, "material45": 1}}
+  },
+  "fireplaces": {
+    "basic": {"work": "Prep and paint one existing decorative mantel outside the heat zone", "hours": 4, "materials": {"material54": 1, "material6": 1}, "consumables": {"material44": 1, "material45": 1, "supply2": 1}},
+    "standard": {"work": "Fit one replacement decorative mantel shelf", "hours": 5, "materials": {"retail12": 1}, "consumables": {"retail67": 1}},
+    "deluxe": {"work": "Tile 16 square feet of suitable surround and assess existing appliance clearances", "hours": 9, "materials": {"material13": 19}, "consumables": {"material36": 1, "material37": 1, "supply20": 1}}
+  },
+  "stairs": {
+    "basic": {"work": "Touch up four treads and 8 feet of trim and refasten one existing handrail", "hours": 5, "materials": {"material39": 1, "retail82": 1, "retail47": 1, "supply12": 1}, "consumables": {"material45": 1, "material44": 1}},
+    "standard": {"work": "Replace four compatible tread caps", "hours": 6, "materials": {"retail70": 4}, "consumables": {"material32": 2}},
+    "deluxe": {"work": "Fit one 8-foot handrail and stain and clear-finish the four oak tread caps", "hours": 6, "materials": {"retail14": 1, "retail47": 1, "supply12": 1}, "consumables": {"material45": 1, "material44": 1}}
+  },
+  "decks-railings": {
+    "basic": {"work": "Replace two 8-foot deck boards, tighten one existing railing section and spot finish", "hours": 4, "materials": {"material41": 2, "retail88": 1}, "consumables": {"material35": 1}},
+    "standard": {"work": "Replace six additional 8-foot deck boards", "hours": 6, "materials": {"material41": 6}, "consumables": {"material35": 1}},
+    "deluxe": {"work": "Replace two stair treads and one 6-foot rail section on sound framing", "hours": 8, "materials": {"retail115": 2, "retail30": 1, "material40": 2}, "consumables": {"material35": 1}}
+  },
+  "exterior-improvements": {
+    "basic": {"work": "Caulk and paint up to 16 feet of sound trim", "hours": 4, "materials": {"retail63": 1, "retail101": 1}, "consumables": {"material45": 1, "material44": 1, "supply2": 1}},
+    "standard": {"work": "Replace and finish 24 feet of exterior trim", "hours": 6, "materials": {"retail100": 3, "retail63": 1}, "consumables": {"material35": 1, "material45": 1}},
+    "deluxe": {"work": "Replace one stock exterior door in a sound matching opening and weather seal", "hours": 8, "materials": {"material16": 1, "material52": 1, "retail63": 1}, "consumables": {"retail111": 1, "retail110": 1}}
+  },
+  "backyard-retreat": {
+    "basic": {"work": "Fit one freestanding bench and one 6-foot privacy panel", "hours": 6, "materials": {"retail15": 1, "retail48": 1}, "consumables": {"supply46": 1}},
+    "standard": {"work": "Add one freestanding shade arbor kit", "hours": 8, "materials": {"retail17": 1}, "consumables": {"material5": 2, "material35": 1}},
+    "deluxe": {"work": "Extend the screen by 6 feet and fit four solar path lights", "hours": 6, "materials": {"retail48": 1, "retail18": 1}, "consumables": {"supply46": 1}}
+  },
+  "outdoor-kitchen": {
+    "basic": {"work": "Assemble one entry-level freestanding grill and weather-rated prep cart", "hours": 5, "materials": {"retail19": 1, "retail20": 1}, "consumables": {"supply46": 1}},
+    "standard": {"work": "Add one 47-inch outdoor base cabinet with a weather-rated worktop", "hours": 7, "materials": {"retail21": 1}, "consumables": {"supply46": 1}},
+    "deluxe": {"work": "Add a second cabinet and prep surface, lay out cooking zone and assess utility locations", "hours": 8, "materials": {"retail21": 1}, "consumables": {"supply46": 1}}
+  },
+  "mechanic-shop": {
+    "standard": {"work": "Prep and coat 120 square feet of sound floor", "hours": 7, "materials": {"material55": 1}, "consumables": {"material45": 1, "supply2": 1, "supply5": 1}},
+    "deluxe": {"work": "Fit two stock tool cabinets and assess ventilation", "hours": 6, "materials": {"retail10": 2}, "consumables": {"retail67": 1}}
+  },
+  "car-wash": {
+    "basic": {"work": "Fit one hose reel and two detailing shelves and lay out one wash station", "hours": 4, "materials": {"retail22": 1, "material63": 2, "material64": 6}, "consumables": {"retail67": 1}},
+    "standard": {"work": "Prepare a wash-bay surface plan and add a wash cart", "hours": 4, "materials": {"retail23": 1}, "consumables": {"supply46": 1}},
+    "deluxe": {"work": "Fit one pressure washer and compatible work light and assess drainage", "hours": 6, "materials": {"retail54": 1, "retail25": 1}, "consumables": {"supply46": 1}}
+  },
+  "recycling-scrap": {
+    "basic": {"work": "Assemble a covered three-bin sorting rack", "hours": 5, "materials": {"retail26": 3, "material40": 4, "material41": 5, "retail86": 2, "retail105": 3}, "consumables": {"material35": 1, "retail87": 1}},
+    "standard": {"work": "Extend the sorting shelter with one 4-foot covered bay", "hours": 7, "materials": {"material40": 4, "material41": 5, "retail86": 2, "retail105": 3}, "consumables": {"material35": 1, "retail87": 1}},
+    "deluxe": {"work": "Install 32 square feet of paver pad and a second storage rack", "hours": 9, "materials": {"retail52": 37, "retail94": 22, "material4": 1, "material1": 5, "retail104": 3, "retail103": 6}, "consumables": {"material35": 1}}
+  },
+  "pools": {
+    "basic": {"work": "Assemble one poolside storage box and review existing access", "hours": 3, "materials": {"retail29": 1}, "consumables": {"supply46": 1}},
+    "standard": {"work": "Add one deck bench and plan step or deck improvements", "hours": 5, "materials": {"retail15": 1}, "consumables": {"supply46": 1}},
+    "deluxe": {"work": "Fit one 6-foot rail section on suitable backing and 24 square feet of walkway", "hours": 9, "materials": {"retail30": 1, "material40": 2, "retail52": 28, "retail94": 17, "retail104": 3, "retail103": 6}, "consumables": {"material35": 1}}
+  },
+  "bus-stop": {
+    "basic": {"work": "Install one bench with a simple overhead weather cover on a suitable private waiting area; public right-of-way work requires a separate design", "hours": 8, "materials": {"retail15": 1, "material40": 4, "material41": 8, "retail86": 3, "retail105": 5, "material5": 6}, "consumables": {"retail87": 1, "material35": 1}},
+    "standard": {"work": "Extend shelter weather protection with one side panel and 24 square feet of path", "hours": 8, "materials": {"material41": 5, "retail52": 28, "retail94": 17, "retail104": 3, "retail103": 6}, "consumables": {"material35": 1}},
+    "deluxe": {"work": "Extend the path by 32 square feet, review approach and plan lighting", "hours": 7, "materials": {"retail52": 37, "retail94": 22, "retail104": 3, "retail103": 6}, "consumables": {"supply46": 1}}
+  },
+  "mailboxes": {
+    "basic": {"work": "Install one standard mailbox, post and address numbers", "hours": 3, "materials": {"retail32": 1, "retail46": 1, "material40": 1, "material5": 1}, "consumables": {"material35": 1}},
+    "standard": {"work": "Install one locking parcel mailbox on a compatible new post with address numbers", "hours": 4, "standalone": true, "materials": {"retail33": 1, "retail46": 1, "material40": 1, "material5": 1}, "consumables": {"material35": 1}},
+    "deluxe": {"work": "Add a second delivery compartment and plan a masonry base", "hours": 4, "materials": {"retail33": 1, "material40": 1, "material5": 1}, "consumables": {"material35": 1}}
+  },
+  "outdoor-sound": {
+    "basic": {"work": "Mount two weather-rated speakers and plan one cable route", "hours": 4, "materials": {"retail74": 1}, "consumables": {"retail67": 1}},
+    "standard": {"work": "Fit one compatible amplifier and route up to 25 feet of speaker cable", "hours": 4, "materials": {"retail35": 1, "retail69": 1}, "consumables": {"supply51": 1}},
+    "deluxe": {"work": "Fit two additional speakers and a weather-protected control enclosure", "hours": 6, "materials": {"retail74": 1, "retail36": 1, "retail69": 1}, "consumables": {"retail67": 1, "supply51": 1}}
+  },
+  "garden-greenhouse": {
+    "basic": {"work": "Build one 4-by-4-foot raised bed and one 4-foot potting bench", "hours": 7, "materials": {"retail89": 1, "retail90": 1}, "consumables": {"supply46": 1}},
+    "standard": {"work": "Assemble one 6-by-4-foot greenhouse kit", "hours": 9, "materials": {"retail38": 1}, "consumables": {"material5": 4, "material35": 1}},
+    "deluxe": {"work": "Add 32 square feet of path and one sheltered storage unit and plan water access", "hours": 7, "materials": {"retail52": 37, "retail94": 22, "retail43": 1, "retail104": 3, "retail103": 6}, "consumables": {"material35": 1}}
+  },
+  "playground": {
+    "basic": {"work": "Assemble one entry-level freestanding playset on a suitable site and check clearances", "hours": 8, "materials": {"retail75": 1}, "consumables": {"material5": 4}},
+    "standard": {"work": "Add up to 100 square feet of interlocking playground surfacing and borders on a prepared suitable base; actual coverage and fall rating must match the selected playset", "hours": 8, "materials": {"retail62": 11, "retail83": 3}, "consumables": {"supply22": 1}},
+    "deluxe": {"work": "Add a freestanding shade canopy, one bench and a storage box", "hours": 7, "materials": {"retail42": 1, "retail15": 1, "retail29": 1}, "consumables": {"supply46": 1}}
+  },
+  "patios-concrete": {
+    "standard": {"work": "Finish a second 120-square-foot section of sound concrete", "hours": 7, "materials": {"material55": 1}, "consumables": {"material45": 1, "supply2": 1, "supply5": 1}},
+    "deluxe": {"work": "Add 24 feet of edging and four solar path lights", "hours": 6, "materials": {"retail104": 2, "retail18": 1}, "consumables": {"supply46": 1}}
+  },
+  "porches-entryways": {
+    "basic": {"work": "Refinish four existing steps and 12 feet of rail and trim", "hours": 6, "materials": {"retail88": 1}, "consumables": {"material45": 1, "material44": 1}},
+    "standard": {"work": "Replace four 4-foot exterior treads and one 6-foot rail section on sound supports", "hours": 8, "materials": {"retail115": 4, "retail30": 1}, "consumables": {"material32": 1, "material35": 1}},
+    "deluxe": {"work": "Wrap two existing posts, refinish 48 square feet of entry surface and fit one compatible light", "hours": 9, "materials": {"retail100": 8, "retail88": 1, "retail25": 1}, "consumables": {"material35": 1, "material45": 1}}
+  }
+};
+function packageCostLines(quantities){
+  return Object.entries(quantities).map(([key,quantity])=>{
+    const item=packageComponents[key];
+    const unitPrice=item.unitPrice ?? Math.round(item.retail*135)/100;
+    return {name:item.name,quantity,unitPrice,source:item.source};
+  });
+}
 window.renderProjectPackageOptions=function(id,project){
   const scopes=window.PROJECT_PACKAGE_CHOICES?.[id];
   if((!scopes&&!window.NIK_ROOM_PACKAGE_OVERRIDES?.[id])||new URLSearchParams(location.search).get('roomMode')==='individual')return false;
@@ -494,19 +743,22 @@ window.renderProjectPackageOptions=function(id,project){
   for(const [index,choice] of packs.entries()){
     const increment=packageIncrements[id]?.[choice.id];
     if(choice.startingAt || !increment)continue;
-    const [work,hours,materialBudget,supplyBudget]=increment;
-    const previous=packs[index-1];
+    const {work,hours}=increment;
+    const previous=increment.standalone?null:packs[index-1];
     const basis=previous?.priceBasis;
-    const markup=retail=>Math.round(retail*135)/100;
+    const labor=id==='kitchen-pantry' && choice.id==='deluxe'
+      ? [{name:'Install and level two stock base cabinets',quantity:2,unitPrice:150},
+         {name:'Measure, cut and fit worktop, end panels and toe kick; finish and clean up (estimated hours)',quantity:4,unitPrice:75}]
+      : [{name:work+' (estimated labor hours)',quantity:hours,unitPrice:75}];
     const spec={
       scenario:[basis?.scenario,work].filter(Boolean).join(' '),
-      labor:[...(basis?.labor||[]),{name:work,quantity:hours,unitPrice:75}],
-      materials:[...(basis?.materials||[]),{name:work+' — standard material allowance',quantity:1,unitPrice:markup(materialBudget)}],
-      consumables:[...(basis?.consumables||[]),{name:'Installation and cleanup supplies',quantity:1,unitPrice:markup(supplyBudget)}],
+      labor:[...(basis?.labor||[]),...labor],
+      materials:[...(basis?.materials||[]),...packageCostLines(increment.materials)],
+      consumables:[...(basis?.consumables||[]),...packageCostLines(increment.consumables)],
       laborDiscountPercent:7,projectFeePercent:10
     };
-    choice.work=previous?['Includes the '+previous.name+' starting scope',work]:[work];
-    choice.intro=spec.scenario;
+    choice.work=previous?[...previous.work,work]:[work];
+    choice.intro=previous?'Includes the '+previous.name+' starting scope. '+work:work;
     Object.assign(choice,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
     choice.priceStatus='research-provisional';
   }

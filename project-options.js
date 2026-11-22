@@ -490,6 +490,7 @@
       }
       if(p.id==='premium'){
         // Existing owner-approved allowance for a straight run with suitable landings.
+        p.intro='Provisional allowance for one straight ramp up to 12 feet on a suitable site with existing level landings. Supports, handrails and transitions are included. Final scope and material quantities require site measurements.';
         p.startingAt=3915;
         p.priceStatus='research-provisional';
 

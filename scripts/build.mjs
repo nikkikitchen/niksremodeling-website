@@ -261,6 +261,14 @@ if(!paintReference||!(paintReference.price>0))throw Error('Approved interior fla
  content=content.replace(/extraPaintGallons\*48\.60/g,'extraPaintGallons*'+String(paintReference.price));
  content=content.replace(/extraPrimerGallons\*47\.22/g,'extraPrimerGallons*'+String(approvedMaterialPrices.find(x=>x.name==='Interior Bonding Primer (1 Gallon)')?.price??47.22));
  content=content.replace("gallons × $50 = ","gallons × $"+String(paintReference.price.toFixed(2))+" = ");
+ // Refresh itemized package references whenever the owner updates either catalog.
+ content=content.replace(/"(material|supply)(\d+)": (\{[^\n]*\})/g, (line,kind,id,json)=>{
+   const entry=JSON.parse(json);
+   const catalog=kind==='material'?approvedMaterialPrices:approvedSupplyPrices;
+   const current=catalog.find(item=>item.id===Number(id));
+   if(!current || current.name!==entry.name)throw Error('Unknown package cost reference: '+kind+id);
+   return '"'+kind+id+'": '+JSON.stringify({...entry,unitPrice:current.price});
+ });
  writeFileSync(target,content);
  hashes['room-projects.js']=createHash('sha256').update(content).digest('hex');
 }

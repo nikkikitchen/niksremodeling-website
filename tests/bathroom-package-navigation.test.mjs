@@ -17,7 +17,7 @@ async function load(id,query=''){
 
 for(const {id,tiers,prices} of [
  {id:'bathrooms',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$875','$1,325','$1,990']},
- {id:'kitchen-pantry',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$1,285','$3,880','$5,695']},
+ {id:'kitchen-pantry',tiers:['Basic','Standard','Deluxe','Custom'],prices:['$1,285','$3,880','$5,855']},
  {id:'accessibility',tiers:['Basic','Standard','Premium','Custom'],prices:['$3,915']}
 ]){
  test(id+' uses the same compact package cards without duplicate instructions',async()=>{

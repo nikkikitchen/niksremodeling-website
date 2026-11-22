@@ -16,7 +16,7 @@ async function load(params=''){
 }
 
 test('Kitchen packages use the shared photo cards and preserve their prices',async()=>{
- for(const [tier,price] of [['basic','1,285'],['standard','3,880'],['deluxe','5,695']]){
+ for(const [tier,price] of [['basic','1,285'],['standard','3,880'],['deluxe','5,855']]){
   const dom=await load('&roomPackage='+tier);
   try{
    const doc=dom.window.document;
@@ -37,5 +37,22 @@ test('Kitchen Custom opens the same detailed work estimator',async()=>{
  try{
   assert.ok(dom.window.document.querySelector('#project-work-grid'),'Custom Kitchen work choices missing');
   assert.equal(dom.window.document.querySelectorAll('.pkg-choice').length,0);
+ }finally{dom.window.close();}
+});
+
+test('Deluxe Kitchen carries its named cabinet and counter quantities into the quote',async()=>{
+ const dom=await load();
+ try{
+  let choice;
+  dom.window.beginPackageQuote=(_id,_title,selected)=>{choice=selected;};
+  dom.window.document.querySelector('.pkg-add[data-package="deluxe"]').click();
+  const b=choice.priceBasis;
+  const cabinets=b.materials.find(item=>item.name.includes('KB30-SW'));
+  assert.equal(cabinets.quantity,2);
+  assert.equal(cabinets.unitPrice,348.30);
+  assert.match(cabinets.source,/homedepot\.com/);
+  assert.equal(b.materials.find(item=>item.name.includes('12337KT06N1874')).quantity,1);
+  assert.equal(b.labor.find(item=>item.name.includes('Install and level two stock')).unitPrice,150);
+  assert.equal(Math.round(100*(b.materialsTotal+b.suppliesTotal+b.laborAfterDiscount+b.projectFees)),choice.startingAt*100);
  }finally{dom.window.close();}
 });
