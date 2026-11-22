@@ -149,7 +149,7 @@ const projectSource=readFileSync(new URL('../project-options.js',import.meta.url
 const accessibilityStart=projectSource.indexOf('    accessibility:[',projectSource.indexOf('window.NIK_ROOM_PACKAGE_OVERRIDES='));
 const accessibilityEnd=projectSource.indexOf('  };',accessibilityStart);
 const accessibilityGallery=projectSource.slice(accessibilityStart,accessibilityEnd);
-for(const title of ["name:'Basic'","name:'Standard'","name:'Premium'","name:'Custom'"]){
+for(const title of ["name:'Basic'","name:'Standard'","name:'Deluxe'","name:'Custom'"]){
  if(!accessibilityGallery.includes(title))throw Error('Accessibility package title missing: '+title);
 }
 for(const oldTitle of ["name:'Basic Ramp Repair'","name:'Standard Ramp'","name:'Premium Turning Ramp'","name:'Basic Safety'","name:'Premium Accessibility'"]){

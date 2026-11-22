@@ -318,3 +318,19 @@ test('legacy project starting prices do not turn missing labor and fees into zer
   assert.equal(dom.window.document.getElementById('cart-pay-button').disabled,true);
  }finally{dom.window.close();}
 });
+
+test('Accessibility Deluxe carries the switchback scope and its cost basis into the cart', async()=>{
+ const dom=await load('project.html','?project=accessibility&roomPackage=premium&quote=1');
+ try{
+  const {document:d,Event,localStorage}=dom.window;
+  d.querySelector('#pkg-measure-form').dispatchEvent(new Event('submit',{cancelable:true}));
+  d.querySelector('#pkg-confirm-add').click();
+  const [item]=JSON.parse(localStorage.getItem('nr-cart'));
+  assert.equal(item.measurements.rampLength,24);
+  assert.equal(item.measurements.turnaroundLandings,1);
+  assert.equal(item.startingAt,item.priceBasis.startingAt);
+  assert.equal(item.priceBasis.laborBeforeDiscount,3600);
+  assert.equal(item.inPersonQuoteRequired,true);
+  assert.match(item.description,/Two 12-foot ramp runs/);
+ }finally{dom.window.close();}
+});

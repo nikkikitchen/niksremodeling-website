@@ -446,14 +446,14 @@
         'Up to two hours of minor repairs to an existing sound ramp',
         'Include up to two replacement deck boards, fasteners, supplies and cleanup'
       ]},
-      {id:'premium',name:'Premium',intro:'Build one straight access ramp up to 12 feet.',work:[
-        'Build one simple straight access ramp up to 12 feet of sloped run',
-        'Include proper supports, decking, handrails, edge protection and safe transitions',
-        'No intermediate or turning landings; longer ramps and landings are Custom',
-        'Confirm safe slope, entry conditions and structural details before final price'
+      {id:'premium',name:'Deluxe',intro:'A treated-wood switchback ramp with one turnaround landing.',work:[
+        'Two 12-foot runs, each about 4 feet wide, with one new level turnaround deck spanning both runs (approximately 8 by 5 feet)',
+        'Includes treated decking and framing, footings, guards, graspable handrails, edge protection, transitions and cleanup',
+        'Starting layout assumes ordinary accessible ground and suitable existing level areas at the entry and exit',
+        'Rise, clear turning space, door swing and footing conditions are verified on site before a final quote'
       ]},
-      {id:'custom',name:'Custom',intro:'Ramps with turns or landings, multi-bar bathrooms and other custom accessibility work.',work:[
-        'Longer ramps, turning sections, switchbacks and landings',
+      {id:'custom',name:'Custom',intro:'Larger ramps, additional landings and other tailored accessibility work.',work:[
+        'Longer runs, additional turns or landings, and site-specific structural work',
         'Multiple grab bars, doorway or threshold improvements and accessible bathrooms',
         'Choose only the required jobs; finalize structural details and pricing on site'
       ]}
@@ -489,9 +489,38 @@
         p.priceStatus=scope.priceStatus;
       }
       if(p.id==='premium'){
-        // Existing owner-approved allowance for a straight run with suitable landings.
-        p.intro='Provisional allowance for one straight ramp up to 12 feet on a suitable site with existing level landings. Supports, handrails and transitions are included. Final scope and material quantities require site measurements.';
-        p.startingAt=3915;
+        // Purchasing allowances for a site estimate, not a framing or footing design.
+        // Decking cut budget: 31 twelve-foot boards for the runs, plus 16 for
+        // full-width platform cuts. Other quantities include spares and blocking.
+        const catalog=(name,quantity,unitPrice)=>({name,quantity,unitPrice,source:'material-price-reference.json'});
+        const retail=(name,quantity,retailPrice,source)=>({name,quantity,unitPrice:Math.round(retailPrice*135)/100,source});
+        const rails='https://www.homedepot.com/b/Lumber-Composites-Decking-Deck-Railings-Deck-Railing-Systems/Pegatha/Rail/N-5yc1vZc5pxZ5avZ1z1a3n5';
+        const scope={
+          scenario:p.work.join('. '),...common,
+          labor:[
+            {name:'Layout and footing work, estimated person-hours',quantity:12,unitPrice:75},
+            {name:'Frame both runs and landing, estimated person-hours',quantity:16,unitPrice:75},
+            {name:'Fit decking, rails, transitions and clean up, estimated person-hours',quantity:20,unitPrice:75}
+          ],
+          materials:[
+            catalog('Pressure-Treated 5/4x6x12 Decking Board',47,22.28),
+            retail('Treated 2x8x12 framing lumber, model 107523',22,19.68,'https://www.homedepot.com/b/Lumber-Composites-Pressure-Treated-Lumber/2-in-x-8-in/Southern-Pine/N-5yc1vZc3srZ1z0n4w4Z1z1rl2s'),
+            catalog('Pressure-Treated 4x4x8 Lumber',16,18.23),
+            retail('Treated 2x4x12 guard and edge framing, 253920',18,10.08,'https://www.homedepot.com/b/Lumber-Composites-Decking/Pressure-Treated/12-ft/2-in-x-4-in/N-5yc1vZbqmgZ1z0n4weZ1z0n5miZ1z1rkyw'),
+            retail('Treated square balusters, 16-pack, 186711',11,39.69,'https://www.homedepot.com/b/Lumber-Composites-Decking-Deck-Railings-Balusters-Spindles/36-in-x-2-in/Pressure-Treated/N-5yc1vZc5q0Z1z0n5miZ1z1a40w'),
+            catalog('60-lb Bag of Concrete Mix',40,7.76),
+            retail('8-foot secondary handrail 40001203',9,78.93,rails),
+            retail('Handrail line bracket 40000003',22,16.24,rails),
+            retail('Handrail connector 40000403',8,11,rails),
+            retail('Handrail return bracket 40000203',4,25.52,rails),
+            retail('Turn elbow H-40001001',4,22.01,rails),
+            retail('Simpson ABA44Z post base',16,14.98,'https://www.homedepot.com/b/Building-Materials-Building-Hardware-Post-Brackets-Post-Bases/Simpson-Strong-Tie/Standoff-Post-Base/16/N-5yc1vZc8hsZ615Z1z10rahZ1z1ap4i'),
+            retail('Simpson connector screw pack SD9112R100',4,16.65,'https://www.homedepot.com/b/Hardware-Fasteners-Screws/Simpson-Strong-Tie/100/1-1-2-in/N-5yc1vZc2b0Z615Z1z0sg18Z1z1415q'),
+            retail('Galvanized anchor 10-pack 12021',2,29.98,'https://www.homedepot.com/b/Hardware-Fasteners-Anchors-Masonry-Anchors-Wedge-Anchors/1-2/55/Concrete/N-5yc1vZ2fkpeb5Z1z0vrkxZ1z1aztdZ1z1r7oi')
+          ],
+          consumables:[catalog('Deck Screws (#8 x 2-1/2-in, 5-lb box)',3,48.60)]
+        };
+        Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(scope));
         p.priceStatus='research-provisional';
 
       }
@@ -550,128 +579,9 @@
     // Bathroom and Kitchen use one shared package card and measured-quote renderer.
     // The obsolete special package galleries were removed to prevent stale prices.
 
-    // Accessibility starting prices are for a fully specified minimum scope.
-    // 18-in Moen grab bar ($23.35) and Kwikset Balboa passage lever ($21.47)
-    // sourced from Home Depot, 2026-11-06; apply owner's 35% material markup
-    // once. Standard lever exchange: one approved $75 hourly labor allowance.
-    // Structural changes, additional anchoring, thresholds, ramps and rail
-    // reconstruction are excluded from the advertised starting scenario.
-    const accessibilityBaselines={
-      basic:{
-        scenario:'Install two 18-inch peened stainless grab bars into confirmed solid structural backing, plus up to one hour of minor nonstructural maintenance on an existing accessible ramp. Allowance includes one replacement treated deck board and standard fasteners if needed; only work safely completed within one hour. No structural ramp repairs, rail rebuild, major board replacement, new ramp, or threshold alterations.',
-        labor:[
-          {name:'Install grab bars in sound existing backing',quantity:2,unitPrice:250},
-          {name:'Minor nonstructural existing-ramp maintenance, up to one hour',quantity:1,unitPrice:75}
-        ],
-        materials:[
-          {name:'Moen 18-inch stainless grab bar allowance',quantity:2,unitPrice:31.52},
-          {name:'Pressure-Treated 5/4x6x12 Decking Board',quantity:1,unitPrice:22.28},
-          {name:'Deck Screws (#8 x 2-1/2-in, 5-lb box)',quantity:1,unitPrice:48.60}
-        ],
-        consumables:[{name:'Silicone tub-and-tile sealant, 10.1 oz',quantity:1,unitPrice:10.12}],
-        laborDiscountPercent:5,projectFeePercent:10
-      },
-      premium:{
-        scenario:'Three 18-inch grab bars installed in confirmed structural backing, one hour of accessibility/ramp planning, plus one straight-run ramp up to 12 feet of sloped run, whose complete materials and installation costs must be calculated before advertising a starting price. Ramp handrails and safe top/bottom transitions are part of the ramp scope. Existing suitable, level entry and exit surfaces are required; no new landings or platforms are included. Building landings, turning sections, or raised platforms belongs in Custom. No unverified ramp price is promised.',
-        labor:[
-          {name:'Install grab bars in sound existing backing',quantity:3,unitPrice:250},
-          {name:'Additional on-site access and handrail review, one hour',quantity:1,unitPrice:75}
-        ],
-        materials:[
-          {name:'Moen 18-inch stainless grab bar allowance',quantity:3,unitPrice:31.52}
-        ],
-        consumables:[{name:'Silicone tub-and-tile sealant, 10.1 oz',quantity:1,unitPrice:10.12}],
-        laborDiscountPercent:8,projectFeePercent:10
-      }
-    };
-    // Accessibility package chooser: two meaningful bundles plus custom work.
-    // Scope is a quote request, not a fixed price or promise of code-compliant
-    // installation without an on-site assessment.
-    if(id==='accessibility' && new URLSearchParams(location.search).get('accessibilityMode')==='legacy'){
-      // Old bookmarks should never expose a second, outdated package gallery.
+    if(id==='accessibility' && projectParams.get('accessibilityMode')==='legacy'){
       location.replace('/project.html?project=accessibility');
       return;
-      const packages=[
-        {id:'basic',name:'Basic',intro:'Two grab bars plus up to one hour of minor existing-ramp maintenance.',work:[
-          'Install two 18-inch grab bars into verified sound structural backing',
-          'Up to one hour of minor nonstructural repairs to an existing ramp, such as tightening fasteners or replacing one accessible deck board',
-          'Includes standard fasteners and up to one 12-foot treated deck board where needed',
-          'Structural repairs, new ramps, major railing work and threshold changes require a separate quote'
-        ]},
-        {id:'premium',name:'Premium',intro:'Three grab bars and one straight access ramp up to 12 feet.',work:[
-          'Install up to three 18-inch grab bars into verified sound structural backing',
-          'Build one straight-run ramp, up to 12 feet of sloped run, where the entry rise and available space allow',
-          'Include required handrails, edge protection, and ramp supports; existing safe level entry and exit surfaces are required',
-          'For longer ramps, new landings, or additional features, see Custom.'
-        ]},
-        {id:'custom',name:'Custom',intro:'Multi-run ramps, turning landings and individual access projects.',work:[
-          'Build new landings, multi-section ramps, turns, switchbacks, or raised platforms',
-          'Select additional handrails, existing ramp repairs, doors or threshold improvements',
-          'Request a site-specific estimate for structural design, labor, materials, and supplies'
-        ]}
-      ];
-      for(const p of packages){
-        const spec=accessibilityBaselines[p.id];
-        if(spec)Object.assign(p,window.NIK_CALCULATE_PACKAGE_BASELINE(spec));
-        // Owner-approved provisional Premium starting price (2026-11-06).
-        // Includes three grab bars and a straight 4 ft × up-to-12 ft ramp,
-        // basic 2x4/4x4 handrails, no newly constructed landings.
-        // The ramp allowance uses 24 labor-hours at $75/hr; the package
-        // applies an 8% labor discount. Full material takeoff and suitability
-        // remain subject to site verification. Do not present as a fixed quote
-        // or as a fully audited bill of materials.
-        if(p.id==='premium'){
-          p.componentEstimate=p.startingAt;
-          p.startingAt=3915;
-          p.depositEstimate=null;
-          p.laborEstimate=null;
-          p.overheadAllowance=null;
-          p.priceBasis=null;
-          p.intro='Three grab bars and a straight ramp up to 12 feet. Starting price is provisional; final quote follows site inspection.';
-        }
-      }
-      const params=new URLSearchParams(location.search);
-      const selected=packages.find(p=>p.id===params.get('accessibilityPackage'))||null;
-      if(selected&&selected.id!=='custom'&&params.get('quote')==='1'){window.beginPackageQuote('accessibility','Accessibility',selected,'accessibility-project-package');return;}
-      const original='/project.html?project=accessibility&accessibilityMode=individual';
-      // Public-domain reference photographs (Wikimedia Commons); do not present as Nik's own completed work.
-// Basic: Changing Places Accessible Toilet for Disabled Inclusion (CC0).
-// Premium: original short-ramp illustration, example only (not a completed Nik's Remodeling job).
-const photos=[
-  'https://commons.wikimedia.org/wiki/Special:FilePath/Changing_Places_Accessible_Toilet_for_Disabled_Inclusion.jpg?width=900',
-  '/assets/accessibility-premium-wooden-ramp.webp',
-  '/assets/idea-accessibility.jpg'
-];
-      const nav=packages.map((p,index)=>{
-        const href=p.id==='custom'?original:'/project.html?project=accessibility&accessibilityPackage='+p.id;
-        const price=p.startingAt?'Starting at $'+p.startingAt.toLocaleString('en-US'):'Project quote required';
-        const detailItems=p.work.map(item=>'<span>• '+item+'</span>').join('');
-        return '<div class="bath-photo-tile">'+
-          '<a class="bath-photo-card'+(selected?.id===p.id?' current':'')+'" href="'+href+'" aria-label="Explore '+p.name+'">'+
-          '<img src="'+photos[index]+'" alt="'+p.name+' accessibility project" loading="'+(index===0?'eager':'lazy')+'">'+
-          '<span class="bath-photo-label"><strong>'+p.name+'</strong><small>'+p.intro+'</small></span>'+
-          '<span class="bath-photo-hover"><strong>Included work</strong><span class="bath-includes-note">Labor, materials and needed supplies included in defined scope; final suitability and cost confirmed by quote.</span>'+detailItems+'</span></a>'+
-          (p.id==='custom'?'':'<div class="bath-price-below">'+price+'</div><button class="btn primary bath-card-add" type="button" data-accessibility-package="'+p.id+'">Calculate Quote</button>')+
-          '</div>';
-      }).join('');
-      document.body.innerHTML=header()+
-        '<main><section class="section bath-project-chooser"><div class="wrap">'+
-        '<a class="project-back" href="'+(selected?'/project.html?project=accessibility':'/#projects')+'">'+(selected?'← All Accessibility Packages':'← All Projects')+'</a>'+
-        '<h1>Accessibility Projects</h1>'+
-        '<nav class="bath-photo-grid" aria-label="Choose an accessibility package">'+nav+'</nav>'+
-        (selected&&selected.id!=='custom'?'<div class="bath-package-action"><p>Complete project estimate includes labor, materials and standard supplies for the agreed scope. Installation details, accessibility requirements and site conditions must be reviewed before final pricing.</p><a class="btn primary" href="sms:6782314377?body='+encodeURIComponent('I would like an estimate for the '+selected.name+' accessibility project package.')+'">Request Package Estimate</a></div>':'<p class="calc-note">Package scope, material selection and final price are confirmed after site review. No payment is collected online.</p>')+
-        '</div></section></main>'+footer();
-      addMobilePackageDetails();
-      const style=document.createElement('style');
-      style.textContent='.bath-project-chooser{padding:42px 0 76px}.bath-project-chooser h1{font:700 clamp(36px,5vw,60px)/1.1 Georgia,serif;margin:22px 0 10px}.bath-chooser-lead{font-size:18px;color:#526270;margin:0 0 28px}.bath-project-chooser .project-back{color:#0b5aa6}.bath-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.bath-photo-tile{min-width:0;display:flex;flex-direction:column;gap:8px}.bath-photo-card{height:360px;position:relative;display:block;overflow:hidden;border-radius:12px;box-shadow:0 12px 28px #10223224;background:#d8dee3;isolation:isolate}.bath-photo-card img{width:100%;height:100%;object-fit:cover}.bath-photo-card:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.83));pointer-events:none}.bath-photo-label{position:absolute;z-index:1;bottom:0;left:0;right:0;color:white;padding:22px 18px}.bath-photo-label strong{display:block;font:700 28px Georgia,serif}.bath-photo-label small{display:block;font-size:14px;line-height:1.4;margin-top:8px}.bath-photo-card.current{outline:3px solid #0b5aa6;outline-offset:2px}.bath-photo-card:focus-visible{outline:4px solid #0b5aa6;outline-offset:3px}.bath-photo-hover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;gap:9px;padding:20px;color:#fff;background:rgba(5,31,55,.95);opacity:0;transition:opacity .2s ease;overflow-y:auto;font-size:14px;line-height:1.35}.bath-photo-hover strong{font-size:18px}.bath-photo-card:hover .bath-photo-hover,.bath-photo-card:focus-visible .bath-photo-hover{opacity:1}.bath-includes-note{font-weight:700;color:#e1f1ff}.bath-price-below{text-align:center;font-size:16px;font-weight:800;color:#073c70}.bath-card-add{display:block;width:100%;min-height:42px}.bath-package-action{margin-top:24px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}.bath-package-action p{flex:1 1 320px;margin:0}@media(max-width:900px){.bath-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.bath-photo-grid{grid-template-columns:1fr}.bath-photo-card{height:330px}.bath-project-chooser{padding-top:28px}}';
-      style.textContent+=mobilePackageDetailsCss;
-      document.head.append(style);
-      document.querySelectorAll('[data-accessibility-package]').forEach(button=>button.addEventListener('click',()=>{
-        const choice=packages.find(p=>p.id===button.dataset.accessibilityPackage);
-        if(!choice)return;
-        window.beginPackageQuote('accessibility','Accessibility',choice,'accessibility-project-package');
-      }));
-      updateCartCount();return;
     }
 
     const room=id==='bath-remodel'||id==='bathrooms'?'Bathroom':id==='kitchen-remodel'?'Kitchen':id==='accents'?'Accent wall':project.title;

@@ -6,7 +6,7 @@ Newly itemized scopes use named products, quantities and sources in room-project
 
 ## Items needing confirmation
 
-- Premium Accessibility carries a previously approved $3,915 planning allowance. Confirm site dimensions, transitions, support conditions and a complete takeoff before quoting that figure as the job total.
+- Deluxe Accessibility assumes a 24-foot switchback, one new turnaround and suitable existing end landings. Confirm rise, footing conditions, rail layout and clearances on site.
 - Bedroom, family room, garage and sunroom additions are standalone custom construction requests. A buildable dimensioned plan, foundation, tie-in, utility and permit scope are needed before quoting construction.
 - Local stock, freight and site measurements are open for product-based scopes. For playgrounds, shelters and pool/deck work verify the actual equipment, footprint, substrate, applicable site requirements and anchoring before a job quote.
 
@@ -352,5 +352,5 @@ Newly itemized scopes use named products, quantities and sources in room-project
 |---|---:|---:|---:|---:|---:|---|
 | Basic | $460.00 | $102.40 | $10.12 | $302.25 | $45.23 | Install one 18-inch grab bar into sound structural backing · Up to one hour of minor nonstructural existing ramp repair · Include a replacement board if needed, fasteners, supplies and cleanup |
 | Standard | $855.00 | $156.20 | $10.12 | $604.50 | $84.18 | Install up to two 18-inch grab bars with secure structural mounting · Up to two hours of minor repairs to an existing sound ramp · Include up to two replacement deck boards, fasteners, supplies and cleanup |
-| Premium | $3,915.00 | Pending | Pending | Pending | Pending | Build one simple straight access ramp up to 12 feet of sloped run · Include proper supports, decking, handrails, edge protection and safe transitions · No intermediate or turning landings; longer ramps and landings are Custom · Confirm safe slope, entry conditions and structural details before final price |
+| Deluxe | $9,790.00 | $5,379.24 | $145.80 | $3,348.00 | $916.96 | Two 12-foot runs, each about 4 feet wide, with one new level turnaround deck spanning both runs (approximately 8 by 5 feet) · Includes treated decking and framing, footings, guards, graspable handrails, edge protection, transitions and cleanup · Starting layout assumes ordinary accessible ground and suitable existing level areas at the entry and exit · Rise, clear turning space, door swing and footing conditions are verified on site before a final quote |
 

@@ -36,7 +36,7 @@ test('main project packages, nested hubs, mobile details and custom workflows re
    }
   }else{
    await expect(cards).toHaveCount(4);
-   expect(await cards.locator('.pkg-image strong').allTextContents()).toEqual(id==='accessibility'?['Basic','Standard','Premium','Custom']:['Basic','Standard','Deluxe','Custom']);
+   expect(await cards.locator('.pkg-image strong').allTextContents()).toEqual(['Basic','Standard','Deluxe','Custom']);
    if(!['desktop','firefox'].includes(info.project.name)){
     await cards.first().locator('summary').click();await expect(cards.first().locator('details')).toHaveAttribute('open','');
    }
