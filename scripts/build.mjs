@@ -291,6 +291,64 @@ if(start<0||referenceEnd<0)throw Error('Material reference loader markers missin
 writeFileSync(refScript,browserSource.slice(0,start+a.length)+JSON.stringify(publicReference)+browserSource.slice(referenceEnd));
 hashes['material-prices.js']=createHash('sha256').update(readFileSync(refScript)).digest('hex');
 
+// Local SEO: publish a crawlable sitemap and robots directives from built pages.
+// No prices, private pricing references, checkout routes, or admin pages are indexed.
+const seoPages = [
+  ['index.html','', 'Home Remodeling & Handyman Services in East Alabama & West Georgia | Nik’s Remodeling',
+    'Bathroom and kitchen updates, flooring, decks, painting, drywall and handyman services around Muscadine, Heflin, Carrollton and Bremen. Call Nik’s Remodeling for an estimate.'],
+  ['contact.html','contact.html', 'Contact Nik’s Remodeling | East Alabama & West Georgia',
+    'Contact Nik’s Remodeling about home repairs, remodeling, decks, bathrooms, flooring and painting in East Alabama and West Georgia. Call to discuss your project.'],
+  ['installation.html','installation.html', 'Installation & Handyman Services | Nik’s Remodeling',
+    'Professional installation, interior repairs, trim, flooring, fixtures, painting and handyman services serving East Alabama and West Georgia.'],
+  ['project.html','project.html', 'Home Remodeling Projects | Nik’s Remodeling',
+    'Explore bathroom, kitchen, bedroom, accessibility and outdoor remodeling projects with Nik’s Remodeling in East Alabama and West Georgia.'],
+  ['bathroom.html','bathroom.html', 'Bathroom Remodeling & Installations | Nik’s Remodeling',
+    'Bathroom remodeling, vanity installation, tile, fixture updates and repairs for homeowners in Carrollton, Heflin and surrounding communities.'],
+  ['about-niks.html','about-niks.html', 'About Nik’s Remodeling | Everything Under The Roof',
+    'Get to know Nik’s Remodeling, providing home improvement and remodeling services across East Alabama and West Georgia.']
+];
+const seoBase='https://niksremodeling.com/';
+for(const [file,route,title,description] of seoPages) {
+  if(!files.includes(file)) continue;
+  const target=new URL(file,output);
+  let html=readFileSync(target,'utf8');
+  if(!/<head(?:\s[^>]*)?>/i.test(html)) throw Error('Missing document head: '+file);
+  const canonical=seoBase+route;
+  // Replace generic page metadata in the production artifact, not customer-visible copy.
+  html=html.replace(/<title>[^<]*<\/title>/i,'<title>'+title+'</title>');
+  if(/<meta\s+name=["']description["'][^>]*>/i.test(html)) {
+    html=html.replace(/<meta\s+name=["']description["'][^>]*>/i,'<meta name="description" content="'+description+'">');
+  } else html=html.replace(/<head(?:\s[^>]*)?>/i,match=>match+'<meta name="description" content="'+description+'">');
+  if(!/rel=["']canonical["']/i.test(html)) html=html.replace(/<\/head>/i,'<link rel="canonical" href="'+canonical+'"></head>');
+  if(!/property=["']og:title["']/i.test(html)) html=html.replace(/<\/head>/i,
+    '<meta property="og:type" content="website"><meta property="og:site_name" content="Nik’s Remodeling"><meta property="og:title" content="'+title+'"><meta property="og:description" content="'+description+'"><meta property="og:url" content="'+canonical+'"></head>');
+  if(file==='index.html' && !/application\/ld\+json/i.test(html)) {
+    const business={
+      '@context':'https://schema.org','@type':'HomeAndConstructionBusiness',
+      name:"Nik's Remodeling",url:seoBase,telephone:'+1-678-231-4377',
+      slogan:'Everything Under The Roof',
+      areaServed:[
+        { '@type':'Place',name:'Cleburne County, Alabama' },
+        { '@type':'Place',name:'Carroll County, Georgia' },
+        { '@type':'City',name:'Heflin, Alabama' },
+        { '@type':'City',name:'Carrollton, Georgia' },
+        { '@type':'City',name:'Bremen, Georgia' }
+      ],
+      hasOfferCatalog:{'@type':'OfferCatalog',name:'Home Remodeling and Repair Services'}
+    };
+    html=html.replace(/<\/head>/i,'<script type="application/ld+json">'+JSON.stringify(business).replace(/</g,'\\u003c')+'</script></head>');
+  }
+  writeFileSync(target,html);
+  hashes[file]=createHash('sha256').update(html).digest('hex');
+}
+const sitemap='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+seoPages
+  .filter(([file])=>files.includes(file))
+  .map(([,route])=>'  <url><loc>'+seoBase+route+'</loc></url>').join('\n')+'\n</urlset>\n';
+writeFileSync(new URL('sitemap.xml',output),sitemap);
+writeFileSync(new URL('robots.txt',output),'User-agent: *\nAllow: /\nSitemap: '+seoBase+'sitemap.xml\n');
+hashes['sitemap.xml']=createHash('sha256').update(sitemap).digest('hex');
+hashes['robots.txt']=createHash('sha256').update(readFileSync(new URL('robots.txt',output))).digest('hex');
+
 writeFileSync(new URL('release.json', output), JSON.stringify({
   commit, restoredSiteSource: '9ad1084', files: hashes
 }, null, 2) + '\n');
