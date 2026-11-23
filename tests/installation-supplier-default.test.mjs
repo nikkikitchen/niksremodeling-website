@@ -348,3 +348,21 @@ test('cabinet material-bearing notes do not contradict Nik-supplied default',asy
   }
  }finally{dom.window.close();}
 });
+
+
+test('Nik-supplied cabinet finish and hardware rows do not advertise materials as extra',async()=>{
+ const dom=await openInstallation();
+ try{
+  const d=dom.window.document;
+  for(const id of ['cabinet-finish-out','cabinet-hardware-install','door-hinge-existing']){
+   const row=d.getElementById('labor-task-'+id);
+   if(!row)continue;
+   const note=row.querySelector('.labor-line-copy small')?.textContent||'';
+   assert.doesNotMatch(note,/materials separate|hardware extra|hinges and materials separate/i,id+' should not contradict Nik-supplied default');
+   assert.ok(row.querySelector('.labor-customer-materials'),id+' must retain labor-only opt-out');
+  }
+  const finish=d.getElementById('labor-task-cabinet-finish-out');
+  assert.ok(finish,'cabinet finish-out row must exist');
+  assert.doesNotMatch(finish.querySelector('.labor-line-copy').textContent,/materials separate/i);
+ }finally{dom.window.close();}
+});
