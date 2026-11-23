@@ -320,3 +320,15 @@ test('customer-supplied labor-only work never retains Nik consumable reserve, in
   assert.equal(item.materialsPricingPending,true);
  }finally{dom.window.close();}
 });
+
+test('appliance category introduction matches Nik-supplied default and pending-price safeguards',async()=>{
+ const dom=await openInstallation();
+ try{
+  const category=dom.window.LABOR_CATALOG.find(c=>c.id==='appliances');
+  assert.ok(category,'appliance category exists');
+  assert.match(category.intro,/Nik supplies compatible appliances and required materials by default/);
+  assert.match(category.intro,/customer-supplied for labor only/);
+  assert.match(category.intro,/Final installed prices are quoted after product, delivery and applicable tax are verified/);
+  assert.doesNotMatch(category.intro,/Appliances and materials are extra/i);
+ }finally{dom.window.close();}
+});
