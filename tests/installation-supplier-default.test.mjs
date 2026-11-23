@@ -332,3 +332,19 @@ test('appliance category introduction matches Nik-supplied default and pending-p
   assert.doesNotMatch(category.intro,/Appliances and materials are extra/i);
  }finally{dom.window.close();}
 });
+
+
+test('cabinet material-bearing notes do not contradict Nik-supplied default',async()=>{
+ const dom=await openInstallation();
+ try{
+  const d=dom.window.document;
+  for(const id of ['cabinet-toe-kick','cabinet-filler','cabinet-end-panel']){
+   const row=d.getElementById('labor-task-'+id);
+   assert.ok(row,id+' is displayed');
+   assert.equal(row.querySelector('.labor-customer-materials')?.checked,false,id+' defaults to Nik-supplied');
+   const notes=[...row.querySelectorAll('.labor-line-copy small')].map(el=>el.textContent).join(' ');
+   assert.doesNotMatch(notes,/materials extra/i,id+' must not claim materials extra');
+   assert.match(notes,/Nik.s supplies required products\/materials by default/i);
+  }
+ }finally{dom.window.close();}
+});
