@@ -116,9 +116,9 @@ test('Garage Standard deposit, completed-work balance and checkout lock remain c
 test('home page keeps the simplified introduction and project gallery readable',async({page},info)=>{
  await page.goto('/');
  const heading=page.locator('.hero h1');
- await expect(heading).toHaveText('Buy it. Install it. Or remodel it all.');
+ await expect(heading).toHaveText('Home remodeling in East Alabama and West Georgia');
  await expect(heading).toBeVisible();
- await expect(page.locator('.hero p')).toContainText('review everything in one cart');
+ await expect(page.locator('.hero p').filter({hasText:'review everything in one cart'})).toBeVisible();
  await expect(page.locator('#projects h2')).toHaveText('Choose Your Room or Project');
  expect(await heading.evaluate(el=>getComputedStyle(el).color)).toBe('rgb(255, 255, 255)');
  if(info.project.name==='phone'){
