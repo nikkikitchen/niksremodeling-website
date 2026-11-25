@@ -1,0 +1,27 @@
+name: Cloudflare maintenance connection check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cloudflare-maintenance-check.yml']
+permissions: {}
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_MAINTENANCE_TOKEN }}
+    steps:
+      - name: Verify token and read zone settings without changing anything
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CF_TOKEN" || { echo "Maintenance secret missing"; exit 1; }
+          api=https://api.cloudflare.com/client/v4
+          get() { curl --silent --show-error --fail --max-time 20 -H "Authorization: Bearer $CF_TOKEN" "$api/$1"; }
+          get 'user/tokens/verify' | jq -e '.success and (.result.status == "active")' >/dev/null
+          zone=$(get 'zones?name=niksremodeling.com' | jq -er '.result[] | select(.name=="niksremodeling.com") | .id')
+          echo "Active token and target zone confirmed"
+          for setting in always_use_https min_tls_version tls_1_3 ssl; do
+            get "zones/$zone/settings/$setting" | jq -er '.result | [.id,.value] | @tsv'
+          done
