@@ -151,7 +151,7 @@ test('prepared-wall and ceiling texture matching have approved size tiers, while
 test('installation fixture starter pricing is competitive and job supplies never become labor add-ons',async()=>{
  const dom=await open('installation.html'),w=dom.window,d=w.document;
  const packages=w.BATHROOM_PACKAGES;
- for(const [id,installed,labor] of [['vanity-install',730,300],['faucet-replace',305,225],['vanity-light-install',260,175],['toilet-install',405,175],['smart-toilet-install',1500,650]]){
+ for(const [id,installed,labor] of [['vanity-install',549,300],['faucet-replace',305,225],['vanity-light-install',260,175],['toilet-install',405,175],['smart-toilet-install',1500,650]]){
   const p=packages.find(x=>x.id===id);
   assert.ok(p,'Missing bathroom fixture '+id);
   assert.equal(w.bathroomPackageTotal(p),installed,id+' installed estimate');
@@ -161,7 +161,7 @@ test('installation fixture starter pricing is competitive and job supplies never
  }
  const vanity=w.LABOR_CATALOG.find(x=>x.id==='bathroom').groups.find(x=>x.id==='vanity').actions.Install[0];
  assert.match(vanity.priceText,/Installation labor: \$300/);
- assert.match(vanity.priceText,/Estimated with a standard fixture: \$730/);
+ assert.match(vanity.priceText,/Estimated with a standard fixture: \$549/);
  const appliance=w.LABOR_CATALOG.find(x=>x.id==='appliances').groups.flatMap(g=>Object.values(g.actions).flat()).find(x=>x.label==='Dishwasher installation');
  assert.ok(appliance);
  d.getElementById('labor-task-'+appliance.id).querySelector('button').click();
