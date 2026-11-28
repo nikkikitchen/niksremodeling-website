@@ -13,7 +13,7 @@
   const title=panel.querySelector('h2'),calculate=panel.querySelector('button[onclick="calcMaterial()"]');
   const pricingNote=document.createElement('p');pricingNote.className='calc-note';pricingNote.textContent='Pricing assumes interior work unless otherwise specified. If an on-site assessment identifies exterior work or additional requirements, any price adjustment will be discussed and approved before work begins.';summary.append(pricingNote);
   const first=new Set(['material-name','material-type'].map(id=>document.getElementById(id)?.closest('.field')).filter(Boolean));
-  const own=document.createElement('label');own.className='wizard-own';own.innerHTML='<input type="checkbox" id="customer-provides-materials"> Customer supplies materials';
+  const own=document.createElement('label');own.className='wizard-own';own.innerHTML='<input type="checkbox" id="customer-provides-materials"> I’ll supply my own materials';
   document.getElementById('work-services').before(own);
   const controls=document.createElement('div');controls.className='wizard-controls';controls.innerHTML='<button type="button" class="btn outline wizard-back">Back</button><button type="button" class="btn primary wizard-next">Next</button>';workspace.append(controls);
   const back=controls.firstElementChild,next=controls.lastElementChild;
@@ -30,7 +30,8 @@
   document.addEventListener('estimate-rendered',()=>{if(current===3&&!materialEstimates.length)show(2);});
   summary.addEventListener('click',e=>{const button=e.target.closest('button');if(!button)return;if(/Edit|Recalculate/.test(button.textContent))show(2);else if(/Add Work|Add Another/.test(button.textContent)){own.querySelector('input').checked=false;show(1);}});
   document.addEventListener('work-options-change',()=>{if(current!==3)show(current);});
-  const editId=new URLSearchParams(location.search).get('editRoom');if(editId){const saved=materialEstimates.find(x=>x.roomId===editId);own.querySelector('input').checked=!!saved?.customerProvidesMaterials;}
+  // The standard estimate includes Nik's supplied materials. The customer must opt into supplying their own.
+  const editId=new URLSearchParams(location.search).get('editRoom');if(editId){const saved=materialEstimates.find(x=>x.roomId===editId);own.querySelector('input').checked=!!saved?.customerProvidesMaterials;own.querySelector('input').dispatchEvent(new Event('change',{bubbles:true}));}
   const context=new URLSearchParams(location.search);
   // The Installation / Labor catalog already chose the bathroom job.
   // Don't send customers back through the generic "What would you like done?" step.
